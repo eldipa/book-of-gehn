@@ -1,0 +1,36 @@
+<header>
+	{% if site.header == true %}
+		<h1 class="header-title"><a href="{{site.baseurl}}/">{{ site.title }}</a></h1>
+		{% if site.subtitle == "" or site.subtitle == nil %}
+		{% else %}
+			<h2 class="header-subtitle">{{ site.subtitle }}</h2>
+		{% endif %}
+	{% endif %}
+
+    {% comment %}
+    add a link in the header for each Jekyll page only if it is not
+    a css file or it is wasn't explicitly excluded
+
+    With this code, iterate over 'all the pages' that Jekyll sees, which
+    basically are almost all the subfolder of the folder that has the
+    _config.yml plus some extra files.
+    For each one, it will create a link in the header.
+
+    For each subfolder, the index.html file is used to draw the page.
+    {% endcomment %}
+
+    {% comment %}
+    <nav class="group">
+	{% assign pg = site.pages | sort: "weight" %}
+	{% for node in pg %}
+		{% unless node.nav_exclude or node.url contains ".css" %}
+		    {% if page.url == node.url %}
+		      <a class="active" href="{{node.url | prepend: site.baseurl}}" class="active">{{node.title}}</a>
+		    {% else %}
+		      <a href="{{node.url | prepend: site.baseurl}}">{{node.title}}</a>
+		    {% endif %}
+	    {% endunless %}
+  	{% endfor %}
+	</nav>
+    {% endcomment %}
+</header>
