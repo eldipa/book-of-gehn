@@ -6,6 +6,8 @@ create:
 	docker run --name GehnPages -v `pwd`:/srv/jekyll -p 127.0.0.1:4000:4000 personal-jekyll
 
 start:
+	@docker stop GehnPages || true
+	@rm -Rf _site
 	docker start GehnPages
 
 stop:

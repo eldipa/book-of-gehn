@@ -1,5 +1,5 @@
 # Note: If you want to deploy to a GitHub user site (user.github.io), change baseurl to /
-baseurl: ""
+baseurl: "/book-of-gehn"
 
 title: The Book of Gehn
 # Whether the header (with large title and subtitle) should be displayed
