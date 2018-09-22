@@ -41,7 +41,33 @@
     
         <li class="listing">
           <hr class="slender">
-          <a href="/book-of-gehn/articles/2018/03/01/Set-1-Basics-Part-I.html"><h2 class="larger">In XOR we trust</h2></a>
+          <a href="/book-of-gehn/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html"><h2 class="larger">A string of coincidences is not a coincidence</h2></a>
+          <br><span class="smaller">April 1, 2018</span>  <br/>
+          <div><p>A cipher is <em>semantically secure</em> if given a randomly chosen key, its ciphertext
+cannot be distinguishable from a truly random string.</p>
+
+<p>Detecting a ciphertext from a pool is enough to consider
+the cipher as not secure even of we can’t break it.</p>
+
+<p>In the following pool of random strings one is actually a ciphertext
+that is the <code class="highlighter-rouge">xor</code> encryption of a plaintext using a single-byte key.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.bytestring</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/4.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">{}</span>
+
+</code></pre></div></div>
+
+<p>This is obviously a poor and not secure encryption mechanism; let’s find
+the ciphertext then!<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
+          <a href="/book-of-gehn/articles/2018/03/01/In-XOR-We-Trust.html"><h2 class="larger">In XOR we trust</h2></a>
           <br><span class="smaller">March 1, 2018</span>  <br/>
           <div><p>This is the first set of exercises for the <a href="https://cryptopals.com/">Matasano Challenge</a> (also known as
 the Cryptopals Challenge)</p>
