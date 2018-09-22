@@ -25,7 +25,7 @@ in base 16 or 64 into bytes{% sidenote 'This unlocks the
 challenge.' %}.
 
 ```python
->>> from cryptonita.bytestring import B, load_bytes
+>>> from cryptonita.bytestring import B, load_bytes     # byexample: +timeout=10
 
 >>> b = B('49276d206b696c6c696e6720796f75'
 ...       '7220627261696e206c696b65206120'
