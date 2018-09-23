@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Detecting Pinguins</title>
+  <meta name="description" content="Can you see the pinguin?– Spoiler Alert! –">
+
+  
+    <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
+  
+
+  
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+  
+
+  <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
+  <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
+
+  <link rel="canonical" href="/book-of-gehn/articles/2018/05/20/Detecting-Pinguins.html">
+</head>
+
+  <body>
+    <header>
+	
+		<h1 class="header-title"><a href="/book-of-gehn/">The Book of Gehn</a></h1>
+		
+		
+	
+
+    
+
+    
+</header>
+
+    <article class="group">
+      <h1>Detecting Pinguins</h1>
+<p class="subtitle">May 20, 2018</p>
+
+<p>Can you see the pinguin?<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span>
+<!--more--></p>
+
+<p><label for="mf-a07db1235b313c8ec4cdde624f02f905" class="margin-toggle">⊕</label><input type="checkbox" id="mf-a07db1235b313c8ec4cdde624f02f905" class="margin-toggle" /><span class="marginnote">  <img class="fullwidth" alt="" src="/book-of-gehn/assets/matasano/tux.png" />  <br />The ECB encrypted image on the right
+and its plaintext original version on the left. Image taken from
+<a href="https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation">wikipedia</a>.</span></p>
+
+<h2 id="warming-up">Warming up</h2>
+
+<p>The following ciphertext was encrypted with AES in ECB mode (Electronic Code
+Book) with the given key.</p>
+
+<p>Decrypting is a piece of cake; this is just to get practice about
+<a href="https://cryptopals.com/sets/1/challenges/7">AES in ECB mode</a></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.bytestring</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">'./assets/matasano/7.txt'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="mi">64</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">blocks</span> <span class="o">=</span> <span class="n">ciphertext</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">key</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">'YELLOW SUBMARINE'</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">Crypto.Cipher</span> <span class="kn">import</span> <span class="n">AES</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plaintext</span> <span class="o">=</span> <span class="n">b</span><span class="s">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">AES</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">AES</span><span class="o">.</span><span class="n">MODE_ECB</span><span class="p">)</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">plaintext</span><span class="p">)</span>
+<span class="n">b</span><span class="s">"I'm back and I'm ringin' the bell&lt;...&gt;Play that funky music </span><span class="se">\n\x04\x04\x04\x04</span><span class="s">"</span>
+
+</code></pre></div></div>
+
+<h2 id="detecting-pinguins">Detecting Pinguins</h2>
+
+<p>If two plaintext <em>blocks</em> are the same, ECB
+will encrypt them to the <em>same</em> ciphertext block.</p>
+
+<p><a href="https://cryptopals.com/sets/1/challenges/8">Detect AES in ECB mode</a>
+from a pool of random strings is easy.</p>
+
+<p>This is possible because if the plaintext has two or more equal blocks,
+the ciphertext will have the same pattern and therefor it will have
+more duplicated bytes than the expected from a random string.</p>
+
+<p>We can use the same technique done in
+<a href="/book-of-gehn/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html">the previous post</a>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/8.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.scoring</span> <span class="kn">import</span> <span class="n">icoincidences</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">icoincidences</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ciphertexts</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="c"># higher values, less random</span>
+<span class="p">[(</span><span class="mf">0.00526729</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">92</span><span class="p">),</span>
+ <span class="p">(</span><span class="mf">0.00526729</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">173</span><span class="p">),</span>
+ <span class="p">(</span><span class="mf">0.01305031</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">132</span><span class="p">)]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'IC - Byte sequence'</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores</span>
+
+</code></pre></div></div>
+
+<p>Instead of working at the byte level, we can work with blocks:
+a coincidence of two or more blocks is much less likely to be random
+than a coincidence of two or more bytes:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">icoincidences</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ciphertexts</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="c"># higher values, less random</span>
+<span class="p">[(</span><span class="mf">0.133333333</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">132</span><span class="p">)]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'IC - Nblocks sequence'</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores</span>
+
+</code></pre></div></div>
+
+<figure class="fullwidth"><img src="/book-of-gehn/assets/matasano/score_pinguins.png" /><figcaption>Scores by methods. For the Nblocks method, the size of the block is of 16 bytes.</figcaption></figure>
+
+<p><br /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sys</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">"./assets/plotting"</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">plotting</span> <span class="kn">import</span> <span class="n">plt</span><span class="p">,</span> <span class="n">show</span>                      <span class="c"># byexample: +timeout=10</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>                                 <span class="c"># byexample: +timeout=10</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">min_max_normalizer</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="nb">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="nb">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="nb">min</span><span class="p">())</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="n">methods</span><span class="o">.</span><span class="nb">apply</span><span class="p">(</span><span class="n">min_max_normalizer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="k">with</span> <span class="n">show</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="s">'./assets/matasano/score_pinguins.png'</span><span class="p">,</span> <span class="n">latexify_kargs</span><span class="o">=</span><span class="p">{</span><span class="s">'columns'</span><span class="p">:</span><span class="mi">2</span><span class="p">}):</span> <span class="c"># byexample: +timeout=600 +skip</span>
+<span class="o">...</span>     <span class="n">axes</span> <span class="o">=</span> <span class="n">methods</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">'o'</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="o">...</span>
+<span class="o">...</span>     <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="mi">132</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s">'dashed'</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
+
+</code></pre></div></div>
+
+<h3 id="break-it">Break it?</h3>
+
+<p>Well, it is not possible to break AES easily,
+may be a <em>dictionary attack</em>?.</p>
+
+<p>The 132th plaintext  will remain encrypted, for now.</p>
+
+
+
+
+    </article>
+    <span class="print-footer">Detecting Pinguins - May 20, 2018 - Gehn</span>
+    <footer>
+    <hr class="slender">
+    <div class="credits">
+        <span>&copy; 2018
+            
+            Gehn</span></br> <br>
+        
+
+    <span>Created with <a href="//jekyllrb.com">Jekyll</a> and the theme <a href="//github.com/sdruskat/tufte-css-jekyll">tufte-css-jekyll</a>.</span>
+    </div>
+</footer>
+
+  </body>
+</html>
