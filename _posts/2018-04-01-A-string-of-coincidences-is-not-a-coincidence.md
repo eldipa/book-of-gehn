@@ -31,7 +31,7 @@ the rest of the pool{% sidenote
 '[Detect single-character XOR](https://cryptopals.com/sets/1/challenges/4)
 challenge' %}.
 
-### Index of Coincidence
+### Index of coincidence
 
 One possibility could be that the ciphertext shows more repeated bytes
 (something that clearly is not random).
@@ -206,7 +206,7 @@ Interesting, this method has more false positives than others but at the
 same time, this method makes a clear distinction between a few really non
 random strings and the rest of the strings in the pool.
 
-### Kolmogorov Complexity
+### Kolmogorov complexity
 
 As an alternative way to see this, a random string cannot be compressed. So
 the string with the shortest compressed version will be likely to be a
