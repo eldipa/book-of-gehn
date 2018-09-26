@@ -5,31 +5,38 @@ title: "Cut and Paste ECB blocks"
 
 ## ECB malleability
 
-In this game we have control partially of a plaintext that is encrypted
+In this game we control partially of a plaintext that is encrypted
 under a ECB mode with a secret key.
 
-```python
->>> from cryptonita.bytestring import B, load_bytes     # byexample: +timeout=10
+This time the idea is not to reveal the key but to *forge* a plaintext.
 
+Welcome to the [ECB cut-and-paste](https://cryptopals.com/sets/1/challenges/13)
+challenge!{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
+
+### Prelude: profile creation
+
+Imagen a scenario where two parties send encrypted messages using AES
+in ECB mode:
+
+```python
 >>> import sys
 >>> sys.path.append("./assets/matasano")
+>>> from challenge import generate_config, enc_ecb, dec_ecb  # byexample: +timeout=10
 
->>> from challenge import generate_config, enc_ecb, dec_ecb
+>>> seed = 89   # make the tests 'random' but deterministic
+>>> block_size = 16     # leave this fixed, it is what happen in practice
 
->>> seed = 89
->>> block_size = 16
-
+>>> # encrypt/decrypt under this 'random' environment
 >>> cfg = generate_config(random_state=seed, block_size=block_size, enc_mode='ecb')
 
 ```
 
-This time the idea is not to reveal the key but to forge a plaintext.
-
-CHALLENGE 13: ECB cut-and-paste
-
-Consider the following function that builds a ciphertext with some credentials.
+Consider the following function that builds a ciphertext from an hypothetical
+"create profile for a new user":
 
 ```python
+>>> from cryptonita.bytestring import B, load_bytes     # byexample: +timeout=10
+
 >>> def profile_for(email):
 ...     assert b'&' not in email
 ...     assert b'=' not in email
@@ -45,8 +52,11 @@ Consider the following function that builds a ciphertext with some credentials.
 
 ```
 
+The ``profile_for`` can create as many user we want but all of them will
+have the same privilege level: ``user``.
+
 Then the ciphertext can be sent to a server where the given credentials are
-stored (like a profile is created)
+stored and the profile is "created".
 
 ```python
 >>> from urllib.parse import parse_qs
@@ -61,6 +71,8 @@ stored (like a profile is created)
 
 ```
 
+## Forgery
+
 It would be cool to forge ``role=admin`` there but it is not possible.
 
 ```python
@@ -69,6 +81,8 @@ It would be cool to forge ``role=admin`` there but it is not possible.
 AssertionError
 
 ```
+
+Let's forge this with [cryptonita](https://pypi.org/project/cryptonita/).
 
 ### Block alignment
 
@@ -135,7 +149,7 @@ ready to be cut:
 ```
 
 where ``PPP`` is a ``pkcs#7`` padding such as if the whole ``C1`` block were
-the last block of the ciphertext, the decryption + unpadding would success.
+the last block of the ciphertext, the decryption + un-padding would success.
 
 ### Paste a block
 
@@ -154,7 +168,7 @@ In its replace we will put our crafted cut cipher block.
 ```
 
 The email address ``me-AAAAAAAAAAAAAAAAA@evil.com`` should be a valid
-one if we want be owned by us if we want to elevate our priviledges.
+one if we want be owned by us if we want to elevate our privileges.
 
 How many ``A`` we need to add will depend: I tried several times using
 ``create_profile`` as oracle until I got the payload aligned such the
