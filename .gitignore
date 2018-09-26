@@ -4,3 +4,4 @@ Gemfile.lock
 _site/
 _drafts/
 _public/
+assets/matasano/__pycache__/
