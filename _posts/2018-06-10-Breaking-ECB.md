@@ -91,7 +91,7 @@ versions. We will break the harder of course.'%}.
 ```python
 >>> from challenge import generate_config
 
->>> seed = 4
+>>> seed = 20180610
 >>> block_size = 16
 >>> secret = B('Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg' +
 ...            'aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq' +
@@ -253,7 +253,7 @@ The amount of extra bytes that we added is the answer.
 ...         break
 
 >>> alignment
-4
+3
 
 >>> len(cfg.prefix) == block_size - alignment
 True

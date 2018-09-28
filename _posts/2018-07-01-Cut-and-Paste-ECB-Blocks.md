@@ -21,7 +21,7 @@ in ECB mode:
 >>> sys.path.append("./assets/matasano")
 >>> from challenge import generate_config, enc_ecb, dec_ecb  # byexample: +timeout=10
 
->>> seed = 89   # make the tests 'random' but deterministic
+>>> seed = 20180701   # make the tests 'random' but deterministic
 >>> block_size = 16     # leave this fixed, it is what happen in practice
 
 >>> # encrypt/decrypt under this 'random' environment
@@ -46,7 +46,7 @@ Consider the following function that builds a ciphertext from an hypothetical
 
 >>> c = profile_for(b'honest-email@example.com')
 >>> c
-<...>\xb4\xe3\xe8<...>
+<...>\xc1\xa4\x89<...>
 
 ```
 
