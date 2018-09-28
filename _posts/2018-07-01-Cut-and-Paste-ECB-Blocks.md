@@ -3,8 +3,6 @@ layout: post
 title: "Cut and Paste ECB blocks"
 ---
 
-## ECB malleability
-
 In this game we control partially of a plaintext that is encrypted
 under a ECB mode with a secret key.
 

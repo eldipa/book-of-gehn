@@ -5,4 +5,5 @@ _posts/2018-05-01-Breaking-Vigenere.md
 _posts/2018-05-20-Detecting-Pinguins.md
 _posts/2018-06-10-Breaking-ECB.md
 _posts/2018-07-01-Cut-and-Paste-ECB-Blocks.md
+_posts/2018-07-03-CBC-Bitflipping.md
 assets/matasano/challenge.py
