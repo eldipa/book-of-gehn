@@ -217,7 +217,7 @@ a {
   color: #111;
   text-decoration: none; }
 
-p > a, cite > a, .sidenote a, .credits a, .marginnote a {
+p > a, cite > a, .sidenote a, .credits a, .marginnote a, footer a {
   background: -webkit-linear-gradient(#fffff8, #fffff8), -webkit-linear-gradient(#fffff8, #fffff8), -webkit-linear-gradient(#333, #333);
   background: linear-gradient(#fffff8, #fffff8), linear-gradient(#fffff8, #fffff8), linear-gradient(#333, #333);
   -webkit-background-size: 0.05em 1px, 0.05em 1px, 1px 1px;
@@ -345,6 +345,11 @@ pre, pre code, p code, p pre code, li code, li pre {
   font-size: 1rem;
   line-height: 1.71428571;
   margin-top: 1.71428571rem; }
+
+:not(pre) > code {
+  background-color: rgba(255, 237, 209, 0.5);
+  padding: 1px 2px;
+  border-radius: 2px; }
 
 h1 code, h2 code, h3 code {
   font-size: 0.80em; }
@@ -639,7 +644,7 @@ label.margin-toggle:not(.sidenote-number) {
 .larger {
   font-size: 2.8rem; }
 
-header > nav.group, body footer {
+header > nav.group, body > footer {
   width: 95%;
   padding-top: 2rem; }
 
