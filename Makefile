@@ -3,20 +3,22 @@ all:
 
 create:
 	# if fails, rm Gemfile.lock
-	docker run --name GehnPages -v `pwd`:/srv/jekyll -p 127.0.0.1:4000:4000 personal-jekyll
+	sudo docker run --name GehnPages -v `pwd`:/srv/jekyll -p 127.0.0.1:4000:4000 personal-jekyll
 
 start:
-	@docker stop GehnPages || true
-	@rm -Rf _site
-	docker start GehnPages
+	@sudo docker stop GehnPages || true
+	@sudo rm -Rf _site
+	sudo docker start GehnPages
+	@sleep 5
+	@sudo docker ps | grep GehnPages
 
 stop:
-	docker stop GehnPages
+	sudo docker stop GehnPages
 
 publish:
-	@docker stop GehnPages || true
-	@rm -Rf _site
-	docker run --rm -v `pwd`:/srv/jekyll personal-jekyll bundle exec jekyll build
+	@sudo docker stop GehnPages || true
+	@sudo rm -Rf _site
+	sudo docker run --rm -v `pwd`:/srv/jekyll personal-jekyll bundle exec jekyll build
 	@[ -d _site ] || ( echo "Missing _site (source), aborting" && exit 1 )
 	@[ -d _public ] || ( echo "Missing _public (destination), aborting" && exit 1 )
 	@[ -d _public/.git ] || ( echo "Missing _public/.git (git repository), aborting" && exit 1 )
@@ -25,5 +27,22 @@ publish:
 	grep -q -v -R 'OI/tb2g5khoRa5v3srldjQiPFqlbcFlnYpk99k0wEwE=' _public/ || ( echo "Draft are beign published, aborting" && exit 1 )
 	( cd _public && git status )
 
-test:
+test-shellshock:
+	@echo "Build the Shellshock image to play with it (without the tests)"
+	@rm -f assets/shellshock/files/20*.md
+	@rm -f assets/shellshock/files/shellshock
+	@sudo docker build -q -t shellshock assets/shellshock/
+	@echo
+	@echo "From that, build the Shellshock image for testing"
+	@cp _posts/2018-10-01-Magic-Bash-Runes.md assets/shellshock/files/
+	@cp _tests/shellshock assets/shellshock/files/
+	@sudo docker build -q -t shellshock-test -f assets/shellshock/Dockerfile.test assets/shellshock/
+	@rm -f assets/shellshock/files/20*.md
+	@rm -f assets/shellshock/files/shellshock
+	@echo
+	@sudo docker run -it --rm --cap-add=NET_ADMIN shellshock-test byexample '@shellshock'
+
+test-matasano:
 	byexample @_tests/matasano
+
+test: test-shellshock test-matasano
