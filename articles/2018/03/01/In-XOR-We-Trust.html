@@ -68,7 +68,6 @@ challenge.</span>.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
 <span class="s">'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'</span>
-
 </code></pre></div></div>
 
 <p>But <code class="highlighter-rouge">bytestring</code> is a little more than a decoder: it has a convenient
@@ -83,7 +82,6 @@ one instruction:</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">^</span> <span class="n">b</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
 <span class="s">'746865206B696420646F6E277420706C6179'</span>
-
 </code></pre></div></div>
 
 <p>Even you can perform the <code class="highlighter-rouge">xor</code> of two strings of different lengths: you
@@ -100,7 +98,6 @@ will work<label for="sn-10519915d378dfe67b28e42bec65755c" class="margin-toggle s
 <span class="o">&gt;&gt;&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">plaintext</span> <span class="o">^</span> <span class="n">key</span><span class="o">.</span><span class="n">inf</span><span class="p">()</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
 <span class="n">b</span><span class="s">'0B3637272A2B2E63622C2E69692A23693A2A3C6324202D623D63343C2A26226324272765272A282B2F20430A652E2C652A3124333A653E2B2027630C692B20283165286326302E27282F'</span>
-
 </code></pre></div></div>
 
 <h2 id="break-1-byte-key-xor">Break 1-byte key XOR</h2>
@@ -132,7 +129,6 @@ weird bytes <em>could</em> be part of a human text using another encoding like
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">all_ascii_printable</span><span class="p">(</span><span class="n">B</span><span class="p">(</span><span class="s">'hi</span><span class="se">\x00</span><span class="s">!'</span><span class="p">))</span>
 <span class="mi">0</span>
-
 </code></pre></div></div>
 
 <p>Now, the attack</p>
@@ -146,7 +142,6 @@ weird bytes <em>could</em> be part of a human text using another encoding like
 <span class="o">&gt;&gt;&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">brute_force</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">all_ascii_printable</span><span class="p">,</span> <span class="n">key_space</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
 <span class="mi">21</span>
-
 </code></pre></div></div>
 
 <p>Not bad, but we are smarter than this.</p>
@@ -173,7 +168,6 @@ to a small subset of possible keys.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
 <span class="mi">13</span>
-
 </code></pre></div></div>
 
 <p>We got 13 different possible keys, doing a small brute force we
@@ -184,7 +178,6 @@ can reduce the set further:</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">keys</span>
 <span class="p">{</span><span class="s">'X'</span> <span class="o">-&gt;</span> <span class="mf">1.0000</span><span class="p">}</span>
-
 </code></pre></div></div>
 
 <p>Finally, the plaintext is<label for="sn-06887d016fc2edf8d779de754dd3ec94" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-06887d016fc2edf8d779de754dd3ec94" class="margin-toggle" /><span class="sidenote"><a href="https://cryptopals.com/sets/1/challenges/3">Single-byte XOR cipher</a>
@@ -192,7 +185,6 @@ challenge done.</span></p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">^</span> <span class="n">B</span><span class="p">(</span><span class="s">'X'</span><span class="p">)</span><span class="o">.</span><span class="n">inf</span><span class="p">()</span>
 <span class="s">"Cooking MC's like a pound of bacon"</span>
-
 </code></pre></div></div>
 
 

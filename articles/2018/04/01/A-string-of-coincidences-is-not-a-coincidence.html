@@ -52,7 +52,6 @@ that is the <code class="highlighter-rouge">xor</code> encryption of a plaintext
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/4.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">{}</span>
-
 </code></pre></div></div>
 
 <p>This is obviously a poor and not secure encryption mechanism; let’s find
@@ -86,7 +85,6 @@ challenge</span>.</p>
  <span class="p">(</span><span class="mf">0.04597</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">170</span><span class="p">)]</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'Index of Coincidence'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
-
 </code></pre></div></div>
 
 <h3 id="entropy">Entropy</h3>
@@ -122,7 +120,6 @@ two possible events: <code class="highlighter-rouge">0</code> and <code class="h
 <span class="o">...</span>     <span class="n">ones</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">count_1s</span><span class="p">()</span>
 <span class="o">...</span>     <span class="n">zeros</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span><span class="p">)</span> <span class="o">-</span> <span class="n">ones</span>
 <span class="o">...</span>     <span class="k">return</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">ones</span>
-
 </code></pre></div></div>
 
 <p>A truly random string should yield <code class="highlighter-rouge">[n/2, n/2]</code> (half bits are <code class="highlighter-rouge">1</code>,
@@ -143,7 +140,6 @@ the strings in the pool:</p>
  <span class="p">(</span><span class="mf">0.9377</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">138</span><span class="p">)]</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'Entropy bit-level'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
-
 </code></pre></div></div>
 
 <p>The entropy defined as we did performed poorly as discriminant.</p>
@@ -164,7 +160,6 @@ doesn’t capture a pattern of more than one bit.</p>
 <span class="o">...</span>     <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
 <span class="o">...</span>         <span class="n">f</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 <span class="o">...</span>     <span class="k">return</span> <span class="n">f</span>
-
 </code></pre></div></div>
 
 <p>This time, the entropy is:</p>
@@ -180,7 +175,6 @@ doesn’t capture a pattern of more than one bit.</p>
  <span class="p">(</span><span class="mf">0.548737261933036</span><span class="p">,</span> <span class="mi">232</span><span class="p">)]</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'Entropy byte-level'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
-
 </code></pre></div></div>
 
 <p>Much better!</p>
@@ -227,7 +221,6 @@ will be the xor of two ASCII strings.</p>
  <span class="p">(</span><span class="mf">0.21639693245126465</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'Entropy xor-level'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
-
 </code></pre></div></div>
 
 <p>Interesting, this method has more false positives than others but at the
@@ -252,7 +245,6 @@ non-random string.</p>
 <span class="p">[(</span><span class="mi">53</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span> <span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'Kolmogorov Complexity'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
-
 </code></pre></div></div>
 
 <p>It works…. slowly, but it works.</p>
@@ -273,7 +265,6 @@ non-random string.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
 <span class="mi">3</span>
-
 </code></pre></div></div>
 
 <p>We narrow this down to 3 keys only. I’ll do a little cheat here</p>
@@ -283,7 +274,6 @@ non-random string.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">^</span> <span class="n">B</span><span class="p">(</span><span class="s">'5'</span><span class="p">)</span><span class="o">.</span><span class="n">inf</span><span class="p">()</span>
 <span class="s">'Now that the party is jumping</span><span class="se">\n</span><span class="s">'</span>
-
 </code></pre></div></div>
 
 <h2 id="conclusion">Conclusion</h2>
@@ -316,7 +306,6 @@ of crafted strings.</p>
 <span class="o">...</span>     <span class="n">axes</span> <span class="o">=</span> <span class="n">methods</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">'o'</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 <span class="o">...</span>
 <span class="o">...</span>     <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="mi">170</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s">'dashed'</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
-
 </code></pre></div></div>
 
 

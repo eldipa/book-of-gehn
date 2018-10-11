@@ -66,7 +66,6 @@ Book) with the given key.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">plaintext</span><span class="p">)</span>
 <span class="n">b</span><span class="s">"I'm back and I'm ringin' the bell&lt;...&gt;Play that funky music </span><span class="se">\n\x04\x04\x04\x04</span><span class="s">"</span>
-
 </code></pre></div></div>
 
 <h2 id="detecting-pinguins">Detecting Pinguins</h2>
@@ -98,7 +97,6 @@ more duplicated bytes than the expected from a random string.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'IC - Byte sequence'</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores</span>
-
 </code></pre></div></div>
 
 <p>Instead of working at the byte level, we can work with blocks:
@@ -113,7 +111,6 @@ than a coincidence of two or more bytes:</p>
 <span class="p">[(</span><span class="mf">0.133333333</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">132</span><span class="p">)]</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'IC - Nblocks sequence'</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores</span>
-
 </code></pre></div></div>
 
 <figure class="fullwidth"><img src="/book-of-gehn/assets/matasano/score_pinguins.png" /><figcaption>Scores by methods. For the Nblocks method, the size of the block is of 16 bytes.</figcaption></figure>
@@ -137,7 +134,6 @@ than a coincidence of two or more bytes:</p>
 <span class="o">...</span>     <span class="n">axes</span> <span class="o">=</span> <span class="n">methods</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">'o'</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="o">...</span>
 <span class="o">...</span>     <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="mi">132</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s">'dashed'</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
-
 </code></pre></div></div>
 
 <h3 id="break-it">Break it?</h3>

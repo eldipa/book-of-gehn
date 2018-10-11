@@ -56,7 +56,6 @@ easy cake.</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">"YELLOW SUBMARINE"</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s">'pkcs#7'</span><span class="p">)</span>
 <span class="s">'YELLOW SUBMARINE</span><span class="se">\x04\x04\x04\x04</span><span class="s">'</span>
-
 </code></pre></div></div>
 
 <p>If a plaintext has an incorrect padding, the <code class="highlighter-rouge">unpad</code> will fail<label for="sn-311cd36ae5dba51a4fed983e3ef2960f" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-311cd36ae5dba51a4fed983e3ef2960f" class="margin-toggle" /><span class="sidenote">Yeup, <a href="https://cryptopals.com/sets/2/challenges/15">PKCS#7 padding validation</a>,
@@ -66,7 +65,6 @@ I know what is coming with this….</span>.</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">unpad</span><span class="p">(</span><span class="s">'pkcs#7'</span><span class="p">)</span>
 <span class="o">&lt;...&gt;</span>
 <span class="nb">ValueError</span><span class="p">:</span> <span class="n">Bad</span> <span class="n">padding</span> <span class="s">'pkcs#7'</span> <span class="k">with</span> <span class="n">last</span> <span class="n">byte</span> <span class="mi">5</span>
-
 </code></pre></div></div>
 
 <h3 id="cipher-block-chaining">Cipher block chaining</h3>
@@ -97,7 +95,6 @@ will be full of zeros.</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">plaintext</span> <span class="o">=</span> <span class="n">dec_cbc</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">plaintext</span><span class="o">.</span><span class="n">unpad</span><span class="p">(</span><span class="s">'pkcs#7'</span><span class="p">))</span>
 <span class="n">b</span><span class="s">"I'm back and I'm ringin' the bell&lt;...&gt;Play that funky music </span><span class="se">\n</span><span class="s">"</span>
-
 </code></pre></div></div>
 
 <h3 id="generating-secrets">Generating secrets</h3>
@@ -127,7 +124,6 @@ versions. We will break the harder of course.</span>.</p>
 <span class="o">...</span>            <span class="s">'YnkK'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="n">block_size</span><span class="p">,</span> <span class="n">posfix</span><span class="o">=</span><span class="n">secret</span><span class="p">)</span>
-
 </code></pre></div></div>
 
 <p>Now, let’s create the encryption oracle: a function that encrypts
@@ -157,7 +153,6 @@ the secret payload will be appended later before the encryption.</p>
 <span class="o">...</span>         <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"Invalide chain mode </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="n">enc_mode</span><span class="p">)</span>
 <span class="o">...</span>
 <span class="o">...</span>     <span class="k">return</span> <span class="n">ciphertext</span>
-
 </code></pre></div></div>
 
 <p>On each call, the secret random configuration is regenerated. So everything
@@ -205,7 +200,6 @@ two blocks will be <em>aligned to the block boundary</em>.</p>
        V    V
 |----|----|----|----|
        CA   CA  ....    ciphertext
-
 </code></pre></div></div>
 
 <p>To workaround this we set a plaintext three times the block size:</p>
@@ -224,7 +218,7 @@ two blocks will be <em>aligned to the block boundary</em>.</p>
 a convenient <code class="highlighter-rouge">iduplicates</code> method for this.</p>
 
 <p>If we found one block duplicated assume that we are using ECB
-otherwise CBC.</p>
+otherwise CBC (so we will use <code class="highlighter-rouge">has_duplicates</code> directly).</p>
 
 <p>We will repeat this 1024 to prove that this works:</p>
 
@@ -232,12 +226,12 @@ otherwise CBC.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1024</span><span class="p">):</span>
 <span class="o">...</span>     <span class="n">c</span> <span class="o">=</span> <span class="n">encryption_oracle</span><span class="p">(</span><span class="n">choosen_partial_plaintext</span><span class="p">)</span>
-<span class="o">...</span>     <span class="n">is_ecb</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="n">iduplicates</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">...</span>     <span class="n">is_ecb</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="o">...</span>     <span class="n">enc_mode</span> <span class="o">=</span> <span class="s">'ecb'</span> <span class="k">if</span> <span class="n">is_ecb</span> <span class="k">else</span> <span class="s">'cbc'</span>
 <span class="o">...</span>
 <span class="o">...</span>     <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enc_mode</span> <span class="o">!=</span> <span class="n">enc_mode</span><span class="p">:</span>  <span class="c"># is the same that the secret cfg chose?</span>
 <span class="o">...</span>         <span class="k">print</span><span class="p">(</span><span class="s">"Fail"</span><span class="p">)</span>
-
+<span class="o">...</span>         <span class="k">break</span>
 </code></pre></div></div>
 
 <h2 id="breaking-ecb">Breaking ECB</h2>
@@ -249,7 +243,6 @@ to some arbitrary but constant text.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="c"># keep the prefix and the enc mode fixed</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">enc_mode</span><span class="o">=</span><span class="s">'ecb'</span><span class="p">)</span>
-
 </code></pre></div></div>
 
 <h3 id="block-alignment">Block alignment</h3>
@@ -269,7 +262,7 @@ and we add one byte at time.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">alignment</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">block_size</span><span class="p">):</span>
 <span class="o">...</span>     <span class="n">c</span> <span class="o">=</span> <span class="n">encryption_oracle</span><span class="p">(</span><span class="n">B</span><span class="p">(</span><span class="s">'A'</span> <span class="o">*</span> <span class="p">(</span><span class="n">block_size</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">alignment</span><span class="p">)))</span>
-<span class="o">...</span>     <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="n">iduplicates</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="o">...</span>     <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="o">...</span>         <span class="k">break</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">alignment</span>
@@ -277,7 +270,6 @@ and we add one byte at time.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span> <span class="o">==</span> <span class="n">block_size</span> <span class="o">-</span> <span class="n">alignment</span>
 <span class="bp">True</span>
-
 </code></pre></div></div>
 
 <h3 id="get-the-pinguin">Get the pinguin!</h3>
@@ -357,7 +349,6 @@ distance = 0
 abcx    probe block
         align block (0)
 distance = 0
-
 </code></pre></div></div>
 
 <p>After breaking <code class="highlighter-rouge">block_size</code> bytes, we cannot shift to the left further.</p>
@@ -392,7 +383,6 @@ distance = 1
 cdex    probe block
 AA      align block 2
 distance = 1
-
 </code></pre></div></div>
 
 <p>The following is an implementation of the previous algorithm from
@@ -409,7 +399,6 @@ that breaks the ECB cipher using a oracle.</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span>
 <span class="p">(</span><span class="s">"Rollin' in my 5.0</span><span class="se">\n</span><span class="s">With my rag-top down so my hair can blow</span><span class="se">\n</span><span class="s">The girlies o"</span>
  <span class="s">'n standby waving just to say hi</span><span class="se">\n</span><span class="s">Did you stop? No, I just drove by</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
-
 </code></pre></div></div>
 
 
