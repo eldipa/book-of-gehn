@@ -17,7 +17,6 @@ that is the ``xor`` encryption of a plaintext using a single-byte key.
 >>> ciphertexts = list(load_bytes('./assets/matasano/4.txt', encoding=16))
 
 >>> methods = {}
-
 ```
 
 This is obviously a poor and not secure encryption mechanism; let's find
@@ -53,7 +52,6 @@ For this we can calculate the
  (0.04597<...>, 170)]
 
 >>> methods['Index of Coincidence'] = [1-s for s in scores]
-
 ```
 
 ### Entropy
@@ -90,7 +88,6 @@ We can calculate the probability of each event as:
 ...     ones = x.count_1s()
 ...     zeros = (len(x)*8) - ones
 ...     return zeros, ones
-
 ```
 
 A truly random string should yield ``[n/2, n/2]`` (half bits are ``1``,
@@ -112,7 +109,6 @@ the strings in the pool:
  (0.9377<...>, 138)]
 
 >>> methods['Entropy bit-level'] = [s for s in scores]
-
 ```
 
 The entropy defined as we did performed poorly as discriminant.
@@ -134,7 +130,6 @@ We could change the model as define the byte as the unit for the entropy:
 ...     for b in x:
 ...         f[b] += 1
 ...     return f
-
 ```
 
 This time, the entropy is:
@@ -151,7 +146,6 @@ This time, the entropy is:
  (0.548737261933036, 232)]
 
 >>> methods['Entropy byte-level'] = [s for s in scores]
-
 ```
 
 Much better!
@@ -199,7 +193,6 @@ will be the xor of two ASCII strings.
  (0.21639693245126465, 8)]
 
 >>> methods['Entropy xor-level'] = [s for s in scores]
-
 ```
 
 Interesting, this method has more false positives than others but at the
@@ -225,7 +218,6 @@ non-random string.
 [(53, 170), (55, 3), (55, 8)]
 
 >>> methods['Kolmogorov Complexity'] = [s for s in scores]
-
 ```
 
 It works.... slowly, but it works.
@@ -247,7 +239,6 @@ Now let's break the ciphertext using a frequency attack (implemented in
 
 >>> len(keys)
 3
-
 ```
 
 We narrow this down to 3 keys only. I'll do a little cheat here
@@ -258,7 +249,6 @@ True
 
 >>> ciphertext ^ B('5').inf()
 'Now that the party is jumping\n'
-
 ```
 
 ## Conclusion
@@ -292,6 +282,5 @@ Here is the plot of the scores calculated by the different methods:
 ...     axes = methods.plot(style='o', subplots=True, layout=(3, 2))
 ...
 ...     _ = [ax.vlines(170, 0, 1, linestyles='dashed') for ax in axes.flat]
-
 ```
 

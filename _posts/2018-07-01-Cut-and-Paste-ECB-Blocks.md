@@ -26,7 +26,6 @@ in ECB mode:
 
 >>> # encrypt/decrypt under this 'random' environment
 >>> cfg = generate_config(random_state=seed, block_size=block_size, enc_mode='ecb')
-
 ```
 
 Consider the following function that builds a ciphertext from an hypothetical
@@ -47,7 +46,6 @@ Consider the following function that builds a ciphertext from an hypothetical
 >>> c = profile_for(b'honest-email@example.com')
 >>> c
 <...>\xc1\xa4\x89<...>
-
 ```
 
 The ``profile_for`` can create as many user we want but all of them will
@@ -66,7 +64,6 @@ stored and the profile is "created".
 
 >>> create_profile(c)
 {'email': ['honest-email@example.com'], 'role': ['user'], 'uid': ['10']}
-
 ```
 
 ## Forgery
@@ -77,7 +74,6 @@ It would be cool to forge ``role=admin`` there but it is not possible.
 >>> profile_for(b'dishonest@evil.com&role=admin')
 <...>
 AssertionError
-
 ```
 
 Let's forge this with [cryptonita](https://pypi.org/project/cryptonita/).
@@ -93,13 +89,12 @@ encrypted with to the same ciphertext block we are done:
 ```python
 >>> for alignment in range(block_size):
 ...     c = profile_for(B('@' * (block_size * 2 + alignment)))
-...     indexes = c.nblocks(block_size).iduplicates(distance=0, idx_of='both')
+...     indexes = list(c.nblocks(block_size).iduplicates(distance=0, idx_of='both'))
 ...     if indexes:
 ...         break
 
 >>> alignment
 10
-
 ```
 
 ``iduplicates`` gives us the index of the ``first`` of the duplicated blocks,
@@ -108,7 +103,6 @@ marking the *end* of the needed padding:
 ```python
 >>> indexes[0]
 1
-
 ```
 
 ### Cut a block
@@ -121,7 +115,6 @@ marking the *end* of the needed padding:
 >>> crafted_email = align_block + target + posfix
 >>> crafted_email
 'A<...>AAAadmin\x0b\x0b\x0b<padding>\x0b@evil.com'
-
 ```
 
 Now, when ``crafted_email`` gets encrypted, the ``admin\x0b...\x0b``
@@ -131,7 +124,6 @@ ready to be cut:
 ```python
 >>> c = profile_for(crafted_email)
 >>> cut = c.nblocks(block_size)[indexes[0]]
-
 ```
 
 ```
@@ -162,7 +154,6 @@ In its replace we will put our crafted cut cipher block.
 ```python
 >>> c = profile_for(b'me-AAAAAAAAAAAAAAAAA@evil.com')
 >>> forged = c[:-block_size] + cut
-
 ```
 
 The email address ``me-AAAAAAAAAAAAAAAAA@evil.com`` should be a valid
@@ -195,6 +186,5 @@ get a admin profile.
 ```python
 >>> create_profile(B(forged))
 {'email': ['me-AAAAAAAAAAAAAAAAA@evil.com'], 'role': ['admin'], 'uid': ['10']}
-
 ```
 

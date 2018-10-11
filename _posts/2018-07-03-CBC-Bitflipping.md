@@ -31,7 +31,6 @@ the block size or the encryption mode:
 ...         enc_mode='cbc',
 ...         prefix = "comment1=cooking%20MCs;userdata=",
 ...         posfix = ";comment2=%20like%20a%20pound%20of%20bacon")
-
 ```
 
 Take the following toy-function to insert the user's data (possibly
@@ -43,7 +42,6 @@ and then encrypt it:
 ...     assert ';' not in m and '=' not in m
 ...     msg = B(cfg.prefix + m + cfg.posfix).pad(block_size, 'pkcs#7')
 ...     return enc_cbc(msg, cfg.key, cfg.iv)
-
 ```
 
 Now imagine this quite-dumb role check function that process the
@@ -54,7 +52,6 @@ the user will be considered an Administrator:
 >>> def is_admin(c):
 ...     msg = dec_cbc(c, cfg.key, cfg.iv).unpad('pkcs#7')
 ...     return b'admin=true' in msg.split(b';')
-
 ```
 
 We cannot add just ``admin=true``, it would be too easy:
@@ -63,7 +60,6 @@ We cannot add just ``admin=true``, it would be too easy:
 >>> add_user_data('some;admin=true;bar')
 Traceback<...>
 AssertionError
-
 ```
 
 So the idea is to patch the ciphertext.
@@ -83,7 +79,6 @@ full of ``A``s:
 >>> c = add_user_data('A' * block_size * 2)
 >>> is_admin(c)
 False
-
 ```
 
 Now we can create the patch, and xor of what we want against what
@@ -92,7 +87,6 @@ is there.
 ```python
 >>> patch = B(';admin=true;') ^ B('A').inf()
 >>> patch += B(0) * (block_size - len(patch))
-
 ```
 
 Finally, we apply the patch targeting the ciphertext block of the
@@ -105,7 +99,6 @@ full of ``A``s
 >>> c = B(b''.join(cblocks))
 >>> is_admin(c)
 True
-
 ```
 
 [CBC bitflipping attacks](https://cryptopals.com/sets/2/challenges/16)

@@ -127,7 +127,6 @@ read
 
 out:
 (char [8]) "AABBCCDD"
-
 ```
 
 How many bytes we can write is determined by how many

@@ -34,7 +34,6 @@ and we will score each one with the
 
 >>> lengths_hd = guess_key_length(ciphertext, length_space=40,
 ...                            score_func=key_length_by_hamming_distance)
-
 ```
 
 There isn't a single response, of course.
@@ -54,7 +53,6 @@ We could cut the set further and keep only the top 5 more likely lengths:
 >>> l.cut_off(n=5)
 >>> l
 {5 -> 0.8500, 3 -> 0.7500, 2 -> 0.6875, 13 -> 0.6827, 11 -> 0.6705}
-
 ```
 
 But because we are rebels, we will guess the length of the key using
@@ -71,7 +69,6 @@ another scoring function: the
 >>> l.cut_off(n=5)
 >>> l
 {29 -> 0.0598, 40 -> 0.0235, 30 -> 0.0232, 10 -> 0.0230, 26 -> 0.0223}
-
 ```
 
 > Interesting, both guesses have one guess that has a value higher than the
@@ -83,7 +80,6 @@ Before you think that I didn't programmed the Hamming distance correctly:
 ```python
 >>> B('this is a test').hamming_distance(B('wokka wokka!!!'))
 37
-
 ```
 
 {% fullwidth 'assets/matasano/kl_guesses.png' 'Score of each guess by method. The maximum score using the Hamming distance is at 5. Using the Index of Coincidence is at 29.' %}
@@ -103,7 +99,6 @@ Before you think that I didn't programmed the Hamming distance correctly:
 >>> with show(save='./assets/matasano/kl_guesses.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
 ...     _ = guesses.plot(style='o', subplots=True, layout=(2, 1))
 ...
-
 ```
 
 I will take my changes with the length of 29 found using the IC.
@@ -143,7 +138,6 @@ assuming that the plaintext is in ASCII human plain English):
 ...     B('o'): 0.066609879237984, B('r'): 0.053122864925777,
 ...     B('s'): 0.05613969707456,  B('t'): 0.08035421158641,
 ...     B('u'): 0.02447183254807,})
-
 ```
 
 Now, we will break the key byte a byte using a
@@ -163,7 +157,6 @@ Now, we will break the key byte a byte using a
 ...     byte_guess = brute_force(c, all_ascii_printable, byte_guess, min_score=0.01)
 ...
 ...     bytes_of_key.append(byte_guess)
-
 ```
 
 ## Breaking the key
@@ -195,7 +188,6 @@ likely than others:
 ```python
 >>> bytes_of_key[3]
 {'m' -> 0.1127, '!' -> 0.0357}
-
 ```
 
 So, for the 4th byte, it is more likely that is a ``'m'`` than a ``'!'``
@@ -209,7 +201,6 @@ discard the unlikely keys and just save the most likely:
 
 >>> len(keys)
 120
-
 ```
 
 ``120`` is a really small number compared with the whole key space ``2^(8*29)``{% sidenote
@@ -222,6 +213,7 @@ And only a few of them are more likely than others:
 >>> keys.cut_off(n=2)
 >>> tuple(sorted(keys.keys()))
 ('Terminator X: Br,ng the noise', 'Terminator X: Bring the noise')
+```
 
 Voila! These two keys are the two most probably ones. In fact, those
 two have the same probability to be correct.
@@ -233,7 +225,6 @@ You probably guessed which is the one
 
 >>> ciphertext ^ key.inf()
 <...>I'm back and I'm ringin' the bell<...>Play that funky music<...>
-
 ```
 
 [Break repeating-key XOR](https://cryptopals.com/sets/1/challenges/6) *done*{% sidenote

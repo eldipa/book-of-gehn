@@ -32,7 +32,6 @@ Decrypting is a piece of cake; this is just to get practice about
 
 >>> print(plaintext)
 b"I'm back and I'm ringin' the bell<...>Play that funky music \n\x04\x04\x04\x04"
-
 ```
 
 ## Detecting Pinguins
@@ -65,7 +64,6 @@ We can use the same technique done in
 
 >>> methods = {}
 >>> methods['IC - Byte sequence'] = scores
-
 ```
 
 Instead of working at the byte level, we can work with blocks:
@@ -81,7 +79,6 @@ than a coincidence of two or more bytes:
 [(0.133333333<...>, 132)]
 
 >>> methods['IC - Nblocks sequence'] = scores
-
 ```
 
 {% fullwidth 'assets/matasano/score_pinguins.png' 'Scores by methods. For the Nblocks method, the size of the block is of 16 bytes.' %}
@@ -107,7 +104,6 @@ than a coincidence of two or more bytes:
 ...     axes = methods.plot(style='o', subplots=True, layout=(2, 1))
 ...
 ...     _ = [ax.vlines(132, 0, 1, linestyles='dashed') for ax in axes.flat]
-
 ```
 
 ### Break it?

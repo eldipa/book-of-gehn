@@ -21,7 +21,6 @@ easy cake.
 >>> m = B("YELLOW SUBMARINE")
 >>> m.pad(20, 'pkcs#7')
 'YELLOW SUBMARINE\x04\x04\x04\x04'
-
 ```
 
 If a plaintext has an incorrect padding, the ``unpad`` will fail{% sidenote
@@ -33,7 +32,6 @@ I know what is coming with this....' %}.
 >>> m.unpad('pkcs#7')
 <...>
 ValueError: Bad padding 'pkcs#7' with last byte 5
-
 ```
 
 ### Cipher block chaining
@@ -66,7 +64,6 @@ will be full of zeros.
 >>> plaintext = dec_cbc(ciphertext, key, iv)
 >>> print(plaintext.unpad('pkcs#7'))
 b"I'm back and I'm ringin' the bell<...>Play that funky music \n"
-
 ```
 
 ### Generating secrets
@@ -99,7 +96,6 @@ versions. We will break the harder of course.'%}.
 ...            'YnkK', encoding=64)
 
 >>> cfg = generate_config(random_state=seed, block_size=block_size, posfix=secret)
-
 ```
 
 Now, let's create the encryption oracle: a function that encrypts
@@ -130,7 +126,6 @@ Everything else is secret for the adversary: the key, the IV, the mode.
 ...         raise ValueError("Invalide chain mode %s" % enc_mode)
 ...
 ...     return ciphertext
-
 ```
 
 On each call, the secret random configuration is regenerated. So everything
@@ -181,7 +176,6 @@ two blocks will be *aligned to the block boundary*.
        V    V
 |----|----|----|----|
        CA   CA  ....    ciphertext
-
 ```
 
 To workaround this we set a plaintext three times the block size:
@@ -201,7 +195,7 @@ In [cryptonita](https://pypi.org/project/cryptonita/) there is
 a convenient ``iduplicates`` method for this.
 
 If we found one block duplicated assume that we are using ECB
-otherwise CBC.
+otherwise CBC (so we will use ``has_duplicates`` directly).
 
 We will repeat this 1024 to prove that this works:
 
@@ -210,12 +204,12 @@ We will repeat this 1024 to prove that this works:
 
 >>> for i in range(1024):
 ...     c = encryption_oracle(choosen_partial_plaintext)
-...     is_ecb = c.nblocks(block_size).iduplicates(distance=0)
+...     is_ecb = c.nblocks(block_size).has_duplicates(distance=0)
 ...     enc_mode = 'ecb' if is_ecb else 'cbc'
 ...
 ...     if cfg.enc_mode != enc_mode:  # is the same that the secret cfg chose?
 ...         print("Fail")
-
+...         break
 ```
 
 ## Breaking ECB
@@ -228,7 +222,6 @@ to some arbitrary but constant text.
 ```python
 >>> # keep the prefix and the enc mode fixed
 >>> cfg = generate_config(cfg, prefix=cfg.prefix, enc_mode='ecb')
-
 ```
 
 ### Block alignment
@@ -249,7 +242,7 @@ The amount of extra bytes that we added is the answer.
 ```python
 >>> for alignment in range(block_size):
 ...     c = encryption_oracle(B('A' * (block_size * 2 + alignment)))
-...     if c.nblocks(block_size).iduplicates(distance=0):
+...     if c.nblocks(block_size).has_duplicates(distance=0):
 ...         break
 
 >>> alignment
@@ -257,7 +250,6 @@ The amount of extra bytes that we added is the answer.
 
 >>> len(cfg.prefix) == block_size - alignment
 True
-
 ```
 
 ### Get the pinguin!
@@ -341,7 +333,6 @@ distance = 0
 abcx    probe block
         align block (0)
 distance = 0
-
 ```
 
 After breaking ``block_size`` bytes, we cannot shift to the left further.
@@ -378,7 +369,6 @@ And the cycle repeats again:
 cdex    probe block
 AA      align block 2
 distance = 1
-
 ```
 
 The following is an implementation of the previous algorithm from
@@ -396,6 +386,5 @@ True
 >>> t
 ("Rollin' in my 5.0\nWith my rag-top down so my hair can blow\nThe girlies o"
  'n standby waving just to say hi\nDid you stop? No, I just drove by\n')
-
 ```
 

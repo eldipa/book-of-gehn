@@ -33,7 +33,6 @@ challenge.' %}.
 
 >>> b.encode(64)
 'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'
-
 ```
 
 But ``bytestring`` is a little more than a decoder: it has a convenient
@@ -49,7 +48,6 @@ one instruction:
 >>> c = a ^ b
 >>> c.encode(16)
 '746865206B696420646F6E277420706C6179'
-
 ```
 
 Even you can perform the ``xor`` of two strings of different lengths: you
@@ -68,7 +66,6 @@ will work{% sidenote 'These last two examples solve the challenges
 >>> c = plaintext ^ key.inf()
 >>> print(c.encode(16))
 b'0B3637272A2B2E63622C2E69692A23693A2A3C6324202D623D63343C2A26226324272765272A282B2F20430A652E2C652A3124333A653E2B2027630C692B20283165286326302E27282F'
-
 ```
 
 ## Break 1-byte key XOR
@@ -101,7 +98,6 @@ weird bytes *could* be part of a human text using another encoding like
 
 >>> all_ascii_printable(B('hi\x00!'))
 0
-
 ```
 
 Now, the attack
@@ -116,7 +112,6 @@ Now, the attack
 >>> keys = brute_force(ciphertext, all_ascii_printable, key_space=1)
 >>> len(keys)
 21
-
 ```
 
 Not bad, but we are smarter than this.
@@ -145,7 +140,6 @@ to a small subset of possible keys.
 
 >>> len(keys)
 13
-
 ```
 
 We got 13 different possible keys, doing a small brute force we
@@ -157,7 +151,6 @@ can reduce the set further:
 
 >>> keys
 {'X' -> 1.0000}
-
 ```
 
 Finally, the plaintext is{% sidenote
@@ -167,6 +160,5 @@ challenge done.' %}
 ```python
 >>> ciphertext ^ B('X').inf()
 "Cooking MC's like a pound of bacon"
-
 ```
 

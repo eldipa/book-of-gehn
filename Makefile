@@ -45,4 +45,7 @@ test-shellshock:
 test-matasano:
 	byexample @_tests/matasano
 
+test-tiburoncin:
+	byexample @_tests/tiburoncin
+
 test: test-shellshock test-matasano
