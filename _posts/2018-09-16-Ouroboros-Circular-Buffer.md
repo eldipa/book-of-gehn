@@ -42,13 +42,7 @@ the *free space* has the size of the whole buffer and the
 *ready space* is empty:
 
 
-```
-   /- head/tail
-  V
-  +--------------------------+
-  |                          |
-  +--------------------------+
-```
+{% maincolumn 'assets/circular_buffer/buffer_0_0.png' '' %}
 
 ```cpp
 (buf.head == buf.tail)
@@ -66,13 +60,7 @@ When more data is written in the buffer, the
 is reduced and the *ready space* is increased,
 all of them in the same proportion.
 
-```
-   /- tail            /- head
-  V                  V
-  +--------------------------+
-  |::::::::::::::::::        |
-  +--------------------------+
-```
+{% maincolumn 'assets/circular_buffer/buffer_0_10.png' '' %}
 
 The implementation does not track how many bytes are written.
 It is up to the caller to write in the buffer from
@@ -107,13 +95,7 @@ As we did with the write, once we read the data from
 the buffer's ``tail`` we need to notify to the circular buffer
 that the data can be discarded.
 
-```
-                 /- tail    /- head
-                V          V
-  +--------------------------+
-  |             :::::::::::  |
-  +--------------------------+
-```
+{% maincolumn 'assets/circular_buffer/buffer_8_14.png' '' %}
 
 ```cpp
 memcpy(&buf.buf[buf.head], "FFGG", 4);
@@ -152,13 +134,7 @@ pointer is restarted and set back to the begin.
 The *free space* is expanded from the ``head`` to the ``tail`` and
 the ``tail`` is in front of the ``head``:
 
-```
-   /- head       /- tail
-  V             V
-  +--------------------------+
-  |             :::::::::::::|
-  +--------------------------+
-```
+{% maincolumn 'assets/circular_buffer/buffer_8_0.png' '' %}
 
 ```cpp
 circular_buffer_advance_head(&buf, 2);
@@ -181,13 +157,7 @@ increase because the circular buffer will always inform how many
 
 The *ready space* is limited by the end of the buffer in this case:
 
-```
-       /- head   /- tail
-      V         V
-  +--------------------------+
-  |:::          :::::::::::::|
-  +--------------------------+
-```
+{% maincolumn 'assets/circular_buffer/buffer_8_2.png' '' %}
 
 ```cpp
 circular_buffer_advance_head(&buf, 2);
@@ -209,13 +179,7 @@ The critical point happens when the ``head`` reaches the ``tail``.
 Now, this is exactly the same situation that happen at the begin,
 when the buffer was empty, but now it means that it is full.
 
-```
-                 /- head/tail
-                V
-  +--------------------------+
-  |::::::::::::::::::::::::::|
-  +--------------------------+
-```
+{% maincolumn 'assets/circular_buffer/buffer_8_8.png' '' %}
 
 To differentiate these two cases, internally there is a flag
 that tracks when the ``head`` is *behind* the ``tail``:
@@ -240,15 +204,7 @@ If we move the ``tail`` to the end of the buffer, the
 rest of the bytes written are *ready* to be consumed and
 the ``head`` is in front of the ``tail`` again:
 
-
-```
-   /- tail       /- head
-  V             V
-  +--------------------------+
-  |:::::::::::::             |
-  +--------------------------+
-```
-
+{% maincolumn 'assets/circular_buffer/buffer_0_8.png' '' %}
 
 ```cpp
 circular_buffer_advance_tail(&buf, 8);
@@ -270,14 +226,7 @@ If we move the ``head`` to the end we will reach again to
 the ambiguous cases but the ``hbehind`` variable tell us that
 the ``head`` is behind the ``tail`` again:
 
-```
-   /- head/tail
-  V
-  +--------------------------+
-  |::::::::::::::::::::::::::|
-  +--------------------------+
-```
-
+{% maincolumn 'assets/circular_buffer/buffer_0_0_full.png' '' %}
 
 ```cpp
 circular_buffer_advance_head(&buf, 8);
