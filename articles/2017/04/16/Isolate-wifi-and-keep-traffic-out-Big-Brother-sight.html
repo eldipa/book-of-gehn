@@ -43,10 +43,10 @@
 and IDSs looking for someone that shouldn’t be there are reasonable and
 understandable policies for a corporate environment.</p>
 
-<p>But when a friend of my opened his browser this week and went to <code class="highlighter-rouge">google.com</code>
+<p>But when a friend opened his browser this week and went to <code class="highlighter-rouge">google.com</code>
 the things got odd.</p>
 
-<p>The browser refused the connection warning me that the SSL certificate
+<p>The browser refused the connection warning him that the SSL certificate
 of the server wasn’t issue by <code class="highlighter-rouge">google.com</code> at all or signed by a
 trusted authority.<!--more--></p>
 
@@ -54,7 +54,7 @@ trusted authority.<!--more--></p>
 that the IT guys said to him: <em>“it’s OK, just accept the new certificate and
 ignore the warning of the browser”</em>.</p>
 
-<p>They were tampering the internet access of all the company!<label for="mf-5ee0a37d170bb09f6b74c0c9eb4bdb30" class="margin-toggle">⊕</label><input type="checkbox" id="mf-5ee0a37d170bb09f6b74c0c9eb4bdb30" class="margin-toggle" /><span class="marginnote">  <img class="fullwidth" alt="Big Brother sight" src="/book-of-gehn/assets/isolate_wifi_big_brother_sight.png" />  <br /></span></p>
+<p>They were tampering the internet access of all the company!<label for="mf-9d56bae39ef3717a0ac0633d00b3095c" class="margin-toggle">⊕</label><input type="checkbox" id="mf-9d56bae39ef3717a0ac0633d00b3095c" class="margin-toggle" /><span class="marginnote">  <img class="fullwidth" alt="Big Brother sight" src="/book-of-gehn/assets/isolate_wifi/isolate_wifi_big_brother_sight.png" />  <br /></span></p>
 
 <p>All his credentials, emails and documents could be read by someone else.
 That was unacceptable.</p>
@@ -63,7 +63,7 @@ That was unacceptable.</p>
 
 <p>Now the challenge is how to separate the private traffic so it can go
 only through the wifi while ensuring that the corporate traffic stays
-where it belongs, under the sight of the <em>Big Brother</em>.</p>
+where it belongs, under the sight of the <em>Big Brother</em>.<label for="sn-8a9bc5cc93357406291d1c45363f7f68" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-8a9bc5cc93357406291d1c45363f7f68" class="margin-toggle" /><span class="sidenote">Spoiler: <a href="/book-of-gehn/assets/isolate_wifi/isolate_wifi.sh">isolate_wifi.sh</a></span></p>
 
 <h3 id="isolate-a-wifi-card-with-network-namespaces">Isolate a wifi card with Network Namespaces</h3>
 
@@ -77,7 +77,6 @@ which it is perfect for our purpose.</p>
 <p>Let’s create it first; pick a nice name and run:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ip netns add <span class="s2">"starbucks"</span>
-
 </code></pre></div></div>
 
 <p>With that we have our <code class="highlighter-rouge">"starbucks"</code> namespace, empty for now.</p>
@@ -88,7 +87,6 @@ the <code class="highlighter-rouge">ip</code> command.</p>
 <p>Typically you should use something like:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ip <span class="nb">link set </span>DEVICE netns <span class="s2">"starbucks"</span>
-
 </code></pre></div></div>
 
 <p>to move the <code class="highlighter-rouge">DEVICE</code> from the default namespace to the <code class="highlighter-rouge">"starbucks"</code>
@@ -105,7 +103,6 @@ Interface
     addr &lt;mac-addr&gt;
     <span class="nb">type </span>managed
     wiphy &lt;phy-id&gt;
-
 </code></pre></div></div>
 
 <p>where <code class="highlighter-rouge">"wlan0"</code> is the name of our wifi interface.</p>
@@ -117,7 +114,6 @@ but let’s be disobedient for a while:</p>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ PHYNUM</span><span class="o">=</span><span class="k">$(</span>iw dev <span class="s2">"wlan0"</span> info | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s1">'s/^.*wiphy \([0-9]\+\)$/\1/p'</span><span class="k">)</span>
 <span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"</span><span class="nv">$PHYNUM</span><span class="s2">"</span>
 &lt;phy-id&gt;
-
 </code></pre></div></div>
 
 <p>Now, it comes the tricky part.</p>
@@ -133,7 +129,6 @@ running there in the first place.</p>
 <span class="nv">$ PID</span><span class="o">=</span><span class="nv">$!</span>
 
 <span class="nv">$ </span>iw phy <span class="s2">"phy&lt;phy-id&gt;"</span> <span class="nb">set </span>netns <span class="s2">"</span><span class="nv">$PID</span><span class="s2">"</span>
-
 </code></pre></div></div>
 
 <p>Just run a process in the namespace in background,
@@ -150,7 +145,6 @@ namespace of that process.</p>
 
 <span class="nv">$ </span>ip <span class="nt">-n</span> <span class="s2">"starbucks"</span> <span class="nb">link set</span> <span class="s2">"wlan0"</span> up
 <span class="nv">$ </span>ip <span class="nt">-n</span> <span class="s2">"starbucks"</span> <span class="nb">link set</span> <span class="s2">"lo"</span> up
-
 </code></pre></div></div>
 
 <p>And connect to the access point.</p>
@@ -162,7 +156,6 @@ your local Starbucks.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ip netns <span class="nb">exec</span> <span class="s2">"starbucks"</span> iw <span class="s2">"wlan0"</span> connect <span class="nt">-w</span> <span class="s2">"</span><span class="nv">$SSID</span><span class="s2">"</span>
 wlan0 <span class="o">(</span>phy <span class="c">#&lt;phy-id&gt;): connected to &lt;ap-mac-addr&gt;</span>
-
 </code></pre></div></div>
 
 <p>For a WPA/WPA2 protected network we need to generate a passphrase
@@ -172,7 +165,6 @@ it will keep it alive in background.</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>wpa_passphrase <span class="s2">"</span><span class="nv">$SSID</span><span class="s2">"</span> <span class="o">&gt;</span> <span class="s2">"/tmp/starbucks_wpa_file"</span>
 <span class="nv">$ </span>ip netns <span class="nb">exec</span> <span class="s2">"starbucks"</span> wpa_supplicant <span class="nt">-B</span> <span class="nt">-i</span> <span class="s2">"wlan0"</span> <span class="nt">-c</span> <span class="s2">"/tmp/starbucks_wpa_file"</span>
-
 </code></pre></div></div>
 
 <p>In both cases, the <code class="highlighter-rouge">$SSID</code> is the name of the wifi network
@@ -182,7 +174,6 @@ which you want to connect.</p>
 a DHCP client:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ip netns <span class="nb">exec</span> <span class="s2">"starbucks"</span> dhclient <span class="s2">"wlan0"</span>
-
 </code></pre></div></div>
 
 <p>Or we can setup them manually:</p>
@@ -237,7 +228,6 @@ itself.</p>
 <span class="nv">$ </span>ip netns pids <span class="s2">"starbucks"</span> | xargs <span class="nb">kill</span> <span class="nt">-9</span>  <span class="c"># but being bad is more fun</span>
 <span class="nv">$ </span>ip netns delete <span class="s2">"starbucks"</span>
 <span class="nv">$ </span><span class="nb">rm</span> <span class="nt">-Rf</span> /etc/netns/starbucks/
-
 </code></pre></div></div>
 
 <p>If you are a little paranoiac you can also block the wifi card
@@ -245,9 +235,7 @@ before leaving the namespace to ensure that nobody will use it after that
 the namespace is gone:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ip netns <span class="nb">exec</span> <span class="s2">"starbucks"</span> rfkill block <span class="s2">"&lt;phy-id&gt;"</span>
-
 </code></pre></div></div>
-
 
 
 
