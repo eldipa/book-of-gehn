@@ -25,7 +25,7 @@ and we will score each one with the
 [Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance).
 
 ```python
->>> from cryptonita.bytestring import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
 >>> ciphertext = B(open('./assets/matasano/6.txt', 'rb').read(), 64)
 
@@ -211,8 +211,9 @@ And only a few of them are more likely than others:
 
 ```python
 >>> keys.cut_off(n=2)
->>> tuple(sorted(keys.keys()))
-('Terminator X: Br,ng the noise', 'Terminator X: Bring the noise')
+>>> print(repr(keys))
+{'Terminator X: Bring the noise' -> 0.0000, 'Terminator X: Br,ng the noise' -> 0.0000}
+
 ```
 
 Voila! These two keys are the two most probably ones. In fact, those
@@ -221,7 +222,7 @@ two have the same probability to be correct.
 You probably guessed which is the one
 
 ```python
->>> key = tuple(sorted(keys.keys()))[1]
+>>> key = sorted(keys)[1]
 
 >>> ciphertext ^ key.inf()
 <...>I'm back and I'm ringin' the bell<...>Play that funky music<...>

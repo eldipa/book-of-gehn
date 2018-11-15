@@ -13,7 +13,7 @@ In the following pool of random strings one is actually a ciphertext
 that is the ``xor`` encryption of a plaintext using a single-byte key.
 
 ```python
->>> from cryptonita.bytestring import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 >>> ciphertexts = list(load_bytes('./assets/matasano/4.txt', encoding=16))
 
 >>> methods = {}
@@ -208,7 +208,7 @@ non-random string.
 ```python
 >>> import lzma
 >>> def compress_score(x):
-...     return len(lzma.compress(x, lzma.FORMAT_ALONE))
+...     return len(lzma.compress(x.tobytes(), lzma.FORMAT_ALONE))
 
 >>> scores = [compress_score(c) for c in ciphertexts]
 
@@ -284,3 +284,4 @@ Here is the plot of the scores calculated by the different methods:
 ...     _ = [ax.vlines(170, 0, 1, linestyles='dashed') for ax in axes.flat]
 ```
 
+[The CBC padding oracle](https://cryptopals.com/sets/3/challenges/17) completed!

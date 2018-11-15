@@ -3,7 +3,7 @@ layout: post
 title: "CBC Bitflipping"
 ---
 
-CBC doesn not offer any protection against an active attacker.
+CBC does not offer any protection against an active attacker.
 
 Flipping some bits in a ciphertext block totally scrambles its
 plaintext but it has a very specific effect in the *next* plaintext
@@ -18,7 +18,7 @@ But first, let's define a random configuration with some fixed values like
 the block size or the encryption mode:
 
 ```python
->>> from cryptonita.bytestring import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
 >>> import sys
 >>> sys.path.append("./assets/matasano")
@@ -86,18 +86,18 @@ is there.
 
 ```python
 >>> patch = B(';admin=true;') ^ B('A').inf()
->>> patch += B(0) * (block_size - len(patch))
+>>> patch = patch + B(0) * (block_size - len(patch))
 ```
 
 Finally, we apply the patch targeting the ciphertext block of the
 full of ``A``s
 
 ```python
->>> cblocks = list(c.nblocks(block_size))
+>>> c = B(c, mutable=True)
+>>> cblocks = c.nblocks(block_size)
 >>> cblocks[2] ^= patch
 
->>> c = B(b''.join(cblocks))
->>> is_admin(c)
+>>> is_admin(B(c))
 True
 ```
 

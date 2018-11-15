@@ -2,10 +2,10 @@ import numpy as np
 
 from collections import namedtuple
 from Crypto.Cipher import AES
-from cryptonita.bytestring import B
+from cryptonita import B
 
 '''
->>> from cryptonita.bytestring import B
+>>> from cryptonita import B
 
 >>> import sys
 >>> sys.path.append("./assets/matasano")

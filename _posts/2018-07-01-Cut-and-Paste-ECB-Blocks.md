@@ -8,7 +8,7 @@ under a ECB mode with a secret key.
 
 This time the idea is not to reveal the key but to *forge* a plaintext.
 
-Welcome to the [ECB cut-and-paste](https://cryptopals.com/sets/1/challenges/13)
+Welcome to the [ECB cut-and-paste](https://cryptopals.com/sets/2/challenges/13)
 challenge!{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
 
 ### Prelude: profile creation
@@ -32,7 +32,7 @@ Consider the following function that builds a ciphertext from an hypothetical
 "create profile for a new user":
 
 ```python
->>> from cryptonita.bytestring import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
 >>> def profile_for(email):
 ...     assert b'&' not in email
@@ -153,7 +153,8 @@ In its replace we will put our crafted cut cipher block.
 
 ```python
 >>> c = profile_for(b'me-AAAAAAAAAAAAAAAAA@evil.com')
->>> forged = c[:-block_size] + cut
+>>> forged = B(c, mutable=True)
+>>> forged[-block_size:] = cut
 ```
 
 The email address ``me-AAAAAAAAAAAAAAAAA@evil.com`` should be a valid

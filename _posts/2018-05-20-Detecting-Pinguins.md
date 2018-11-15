@@ -20,7 +20,7 @@ Decrypting is a piece of cake; this is just to get practice about
 [AES in ECB mode](https://cryptopals.com/sets/1/challenges/7)
 
 ```python
->>> from cryptonita.bytestring import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
 >>> ciphertext = B(open('./assets/matasano/7.txt', 'rb').read(), 64)
 >>> blocks = ciphertext.nblocks(16)

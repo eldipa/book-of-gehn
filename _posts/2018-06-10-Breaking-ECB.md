@@ -12,11 +12,11 @@ using
 
 ### ``PKCS#7`` padding
 
-[Implement PKCS#7 padding](https://cryptopals.com/sets/2/challenges/1),
+[Implement PKCS#7 padding](https://cryptopals.com/sets/2/challenges/9),
 easy cake.
 
 ```python
->>> from cryptonita.bytestring import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
 >>> m = B("YELLOW SUBMARINE")
 >>> m.pad(20, 'pkcs#7')
@@ -30,8 +30,8 @@ I know what is coming with this....' %}.
 ```python
 >>> m = B("ICE ICE BABY\x05\x05\x05\x05")
 >>> m.unpad('pkcs#7')
-<...>
-ValueError: Bad padding 'pkcs#7' with last byte 5
+Traceback <...>
+ValueError: Bad padding 'pkcs#7' with last byte 0x5
 ```
 
 ### Cipher block chaining
@@ -383,8 +383,8 @@ that breaks the ECB cipher using a oracle.
 >>> t == secret
 True
 
->>> t
-("Rollin' in my 5.0\nWith my rag-top down so my hair can blow\nThe girlies o"
- 'n standby waving just to say hi\nDid you stop? No, I just drove by\n')
+>>> t   # byexample: +norm-ws
+"Rollin' in my 5.0\nWith my rag-top down so my hair can blow\nThe girlies on
+standby waving just to say hi\nDid you stop? No, I just drove by\n"
 ```
 
