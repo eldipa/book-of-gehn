@@ -1,6 +1,22 @@
+---
+layout: post
+title: "CBC Padding Oracle Attack"
+---
 
+AES and other ciphers work on blocks; if the plaintext length
+is not multiple of the block size a padding is added.
 
-## Success or not of the unpad
+If during the decryption the pad is checked and returns an error,
+we can use this to build a *padding oracle*:
+a function that will tell us if an encrypted plaintext
+has a valid pad or not.
+
+Armed with this *padding oracle* we can break CBC
+one byte at time.
+
+Ready?{% sidenote '**-- Spoiler Alert! --**' %} *Go!*<!--more-->
+
+## Padding oracle
 
 Consider the following plaintext of 15 bytes:
 
@@ -12,7 +28,7 @@ Consider the following plaintext of 15 bytes:
 ```
 
 Now, if we pad this using ``pkcs#7`` to complete a 16 bytes block,
-the last byte will be 0x01:
+the last byte will be ``01``:
 
 ```python
 >>> mpadded = B(m.pad(16, 'pkcs#7'), mutable=True)
@@ -20,13 +36,16 @@ the last byte will be 0x01:
 1
 ```
 
-If we forge the last byte, there are three possible outcomes:
+Now, if we change the last byte (we forge it), the unpad of the forged
+block will success or not based on what byte we set.
 
- - the unpad works because the byte forged matches the original padding byte (0x01).
- - the unpad works because the byte forged matches *another* padding sequence (0x03).
+There are three possible outcomes based on this last byte:
+
+ - the unpad works because the last byte matches the original padding byte (``01``).
+ - the unpad works because the last byte matches *another* padding sequence (``03``).
  - the unpad fails.
 
-The first case happen with the forged byte is actually the orignal the
+The first case happen with the forged byte is actually the original the
 last byte.
 
 ```python
@@ -35,8 +54,8 @@ last byte.
 'AAAABBBBAAAA\x03\x03\x03'
 ```
 
-The second case happen because our forged byte generate, by luck, another
-padding sequence.
+The second case happen because our forged byte generates, by luck, another
+valid padding sequence.
 
 ```python
 >>> mpadded[-1] = 0x03
@@ -60,8 +79,11 @@ Traceback (most recent call last):
 ValueError: Bad padding 'pkcs#7' with last byte 0xff
 ```
 
-## CBC last byte
+Armed with this we can build a padding oracle for CBC:
+a function that will tell us if an encrypted plaintext
+has a valid pad or not.
 
+<!--
 >>> import sys
 >>> sys.path.append("./assets/matasano")
 >>> from challenge import generate_config, enc_cbc, dec_cbc  # byexample: +timeout=10
@@ -70,7 +92,9 @@ ValueError: Bad padding 'pkcs#7' with last byte 0xff
 >>> bsize = 16
 
 >>> cfg = generate_config(random_state=seed, block_size=bsize)
+-->
 
+```python
 >>> def decrypt_and_unpad_oracle(c):
 ...     iv, c = c[:bsize], c[bsize:]
 ...     p = dec_cbc(c, cfg.key, iv) # do not use cfg.iv ;)
@@ -79,158 +103,209 @@ ValueError: Bad padding 'pkcs#7' with last byte 0xff
 ...         return True
 ...     except Exception as e:
 ...         return False
-
-
-
->>> plaintext = B('MDAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=', encoding=64)
->>> ciphertext = cfg.iv + enc_cbc(plaintext.pad(bsize, 'pkcs#7'), cfg.key, cfg.iv)
-
->>> decrypt_and_unpad_oracle(ciphertext)
-True
-
-
->>> cblocks = list(ciphertext.nblocks(bsize))
-
+```
 
 ## CBC decryption and padding
 
-Let's be m the ith plaintext block, c the i-1th ciphertext block and
-x the decryption of the ith ciphertext block.
+Let's be {% m %}m{% em %} the ith plaintext block,
+{% m %}c{% em %} the i-1th ciphertext block and
+{% m %}x{% em %} the decryption of the ith ciphertext block.
 
-Then, we can say that for CBC the plaintext block m is reconstructed
-from this:
-    x ^ c = m
+Then, we can say that for CBC the plaintext block {% m %}m{% em %}
+is reconstructed from this:
 
-Let's say now that instead of c we use f, a forged ciphertext block,
+{% math %}x \oplus c = m{% endmath %}
+
+Let's say now that instead of {% m %}c{% em %}
+we use {% m %}f{% em %}, a *forged* ciphertext block,
 if we are reconstructing the last plaintext block, this one will be:
-    x ^ f = ?
+
+{% math %}x \oplus f = ?{% endmath %}
 
 Now, because this is the last block, this will affect the padding
 of the final plaintext.
 
-The padding will be ok only if one of this is true
-    x ^ f = [?  ?  ?  ... ?  ?  01]
-          = [?  ?  ?  ... ?  02 02]
-          = [?  ?  ?  ... 03 03 03]
-          = [?  0f 0f ... 0f 0f 0f]
-          = [10 10 10 ... 10 10 10]
+The padding will be ok *only if* {% m %}x \oplus f{% em %} is
+equals to one of these:
 
-We can use this to break CBC one byte at time
+```
+    [?  ?  ?  ... ?  ?  01]
+    [?  ?  ?  ... ?  02 02]
+    [?  ?  ?  ... 03 03 03]
+    [?  0f 0f ... 0f 0f 0f]
+    [10 10 10 ... 10 10 10]
+```
+
+Given this fact and using a *padding oracle* we can break CBC
+one byte at time.
 
 ## Guess the last byte
 
-The last byte of the plaintext is m1 = x1 ^ c1.
-Then, the last byte forged is x1 ^ f1.
+For the plaintext block {% m %}m{% em %}, let's be {% m %}m_1{% em %},
+the last byte of the block.
+Using the same convention, this last byte is
+
+{% math %}x_1 \oplus c_1 = m_1{% endmath %}
+
+If instead of {% m %}c_1{% em %} we use a forged last byte
+{% m %}f_1{% em %}, the decrypted byte will be
+
+{% math %}x_1 \oplus f_1 = ?{% endmath %}
 
 The decrypted message will have a valid padding only if:
 
-    x1 ^ f1 = 01    case 1
-    x1 ^ f1 = pp    case 2
+{% math %}
+\begin{cases}
+x_1 \oplus f_1 = 01 & (1)\\
+x_1 \oplus f_1 = pp & (2)
+\end{cases}
+{% endmath %}
 
-The case 2 means that x1 ^ f1 is equal to the original padding byte
-and this will happen only if f1 = c1 or in other words if we didn't
-forged anything.
+The case 2 means that {% m %}x_1 \oplus f_1{% em %} is equal to
+the original padding byte and this will happen only if
+{% m %}f_1 = c_1{% em %} or in other words if we didn't
+forge anything.
 
 It doesn't add much info.
 
-The case 1 is more juidgsy as this is the other case with a valid
-padding and, by definition, it must be 01.
+The case 1 is more juicy as this is the other case with a valid
+padding and, by definition, it must be ``01``.
 
 Then,
-    x1 ^ f1 = 01
-         x1 = 01 ^ f1
 
-So we learnt x1 and from here it is trivial to break the last plaintext
-byte:
-    x1 ^ c1 = m1
-    (01 ^ f1) ^ c1 = m1
+{% math %}
+\begin{align*}  %%*
+x_1 \oplus f_1 & = 01                           \\
+           x_1 & = 01 \oplus f_1
+\end{align*} %%*
+{% endmath %}
 
-as f1 is our forged byte and c1 is the last byte of the previous ciphertext
-block, all of them known by us.
+So we *learnt* {% m %}x_1{% em %} and from here it is trivial
+to break the last plaintext byte:
 
-The case 1 and 2 are eaisly identified as in the second case f1 = c1.
+{% math %}
+\begin{align*}  %%*
+                x_1 \oplus c_1 & = m_1          \\
+    (01 \oplus f_1) \oplus c_1 & = m_1
+\end{align*} %%*
+{% endmath %}
+
+as {% m %}f_1{% em %} is our forged byte and {% m %}c_1{% em %}
+is the last byte of the previous ciphertext block, all of them known by us.
+
+The case 1 and 2 are easily identified as in the second case
+{% m %}f_1 = c_1{% em %}.
 
 There is, however, a special situation in which the case 1 and 2 are
-the same: this happens when the original padding byte is actually 01.
+the same: this happens when the original padding byte is actually ``01``.
 
-Nevertheless, the equation (01 ^ f1) ^ c1 = m1 is still true.
+Nevertheless, the equation {% m %}(01 \oplus f_1) \oplus c_1 = m_1{% em %}
+is still true.
 
 ## Guess the penultimate byte
 
-Knowing x1 we can forge the value of m1 to 02:
-    x1 ^ f1 = 02
-         f1 = 02 ^ x1
+Knowing {% m %}x_1{% em %} we can forge the value
+of {% m %}m_1{% em %} to ``02``:
 
-This f1 is not the same than the previous section: it is a different
-forged byte used to forge a 02 in the last value of the plaintext.
+{% math %}
+\begin{align*}  %%*
+      x_1 \oplus f_1 & = 02                     \\
+                 f_1 & = (02 \oplus x_1)
+\end{align*} %%*
+{% endmath %}
+
+This {% m %}f_1{% em %} is **not** the same than the previous section:
+it is a different
+forged byte used to forge a ``02`` in the last value of the plaintext.
 
 With this, the penultimate byte will forge a plaintext with a
-valid padding only if:
-    x2 ^ f2 = 02
+*valid padding* only if:
 
-Then, for the case of a valid padding we can guess x2 and therefore m2:
-    x2 ^ f2 = 02
-         x2 = 02 ^ f2
+{% math %}x_2 \oplus f_2 = 02{% endmath %}
 
-    x2 ^ c2 = m2
-    (02 ^ f2) ^ c2 = m2
+Then, for the case of a valid padding we can guess
+{% m %}x_2{% em %} and therefore {% m %}m_2{% em %}:
 
-At difference with guessing the last byte, this scenario there is
-only one possible value for a valid padding: 02
+{% math %}
+\begin{align*}  %%*
+      x_2 \oplus f_2 & = 02                     \\
+                 x_2 & = (02 \oplus f_2)
+\end{align*} %%*
+{% endmath %}
+
+{% math %}
+\begin{align*}  %%*
+                   x_2 \oplus c_2 & = m_2                     \\
+      (02 \oplus f_2) \oplus c_2  & = m_2
+\end{align*} %%*
+{% endmath %}
+
+At difference with guessing the last byte, in this scenario there is
+only one possible value for a valid padding: ``02``
 
 ## Guessing the rest of the bytes in a block
 
 Now we just repeat.
 
 Break the last byte first, use that to forge the last byte in
-the plaintext and break the preultimate byte.
+the plaintext to ``01`` and break the penultimate byte.
 
 Then use those two to forge the last two bytes of the
-plaintext and break the third.
+plaintext to ``02 02`` and break the third.
 
+And so on till you break the whole block
 
 ```python
->>> def break_cbc_block(cblocks, bsize, oracle):
+>>> def break_cbc_last_block(cblocks, bsize, oracle):
 ...     prev_cblock = cblocks[-2]
 ...
 ...     x = B(range(bsize, 0, -1), mutable=True)
 ...     x ^= prev_cblock
 ...     for i in range(bsize-1, -1, -1):
 ...         prefix = prev_cblock[:i]
-...         padn = B(bsize-i)
+...         padn   = B(bsize-i)
 ...         posfix = B(padn * (bsize-i-1)) ^ x[i+1:]
 ...
-...         forged_cblock = B(prefix + B(0) + posfix, mutable=True)
+...         # forge the penultimate ciphertext block
+...         cblocks[-2] = B(prefix + B(0) + posfix, mutable=True)
 ...         for n in range(256):
 ...             if prev_cblock[i] == n:
 ...                 continue
 ...
-...             forged_cblock[i] = n
-...             cblocks[-2] = forged_cblock
+...             # update the forged byte
+...             cblocks[-2][i] = n
 ...             forged_ciphertext = B('').join(cblocks)
 ...
 ...             good = oracle(forged_ciphertext)
-...             cblocks[-2] = prev_cblock   # restore backup
 ...             if good:
 ...                 x[i] = (padn ^ B(n))
 ...                 break
+...
+...     cblocks[-2] = prev_cblock   # restore backup
 ...     x ^= prev_cblock
-...     return x
+...     return x    # plain text block
 ```
 
 ```python
->>> break_cbc_block(cblocks, bsize, decrypt_and_unpad_oracle)
+>>> plaintext = B('MDAwMDAwTm93IHRoYXQgdGhlIHBhcnR5IGlzIGp1bXBpbmc=', encoding=64)
+>>> ciphertext = cfg.iv + enc_cbc(plaintext.pad(bsize, 'pkcs#7'), cfg.key, cfg.iv)
+
+>>> cblocks = list(ciphertext.nblocks(bsize))
+
+>>> break_cbc_last_block(cblocks, bsize, decrypt_and_unpad_oracle)
 'ing\r\r\r\r\r\r\r\r\r\r\r\r\r'
 ```
 
 ## Break CBC
 
 Now we just need to repeat the whole thing again for each block:
+once we break the last block we remove it from the ciphertext
+and we repeat the attack to until all the ciphertext blocks are decrypted.
 
 ```python
 >>> p = []
 >>> while len(cblocks) > 1:
-...     p.append(break_cbc_block(cblocks, bsize, decrypt_and_unpad_oracle))
+...     p.append(break_cbc_last_block(cblocks, bsize, decrypt_and_unpad_oracle))
 ...     del cblocks[-1]
 
 >>> p.reverse()
@@ -244,7 +319,12 @@ True
 ```
 
 This attack is implemented in
-[cryptonita](https://pypi.org/project/cryptonita/):
+[cryptonita](https://pypi.org/project/cryptonita/). Here is a set of
+different ciphertexts to break.
+
+Enjoy!{% sidenote 'This unlocks the
+[The CBC padding oracle](https://cryptopals.com/sets/3/challenges/17)
+challenge.' %}
 
 ```python
 >>> plaintexts = list(load_bytes('./assets/matasano/17.txt', encoding=64))
