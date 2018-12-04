@@ -11,7 +11,7 @@ author: Gehn
 email: ""
 description: ""
 markdown: kramdown
-markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+markdown_ext: "md"
 highlighter: rouge
 permalink: /articles/:categories/:year/:month/:day/:title.html
 timezone: Europe/Berlin
@@ -21,3 +21,4 @@ git:
   branch: src
 lato_font_load: true
 mathjax: true
+offline: false

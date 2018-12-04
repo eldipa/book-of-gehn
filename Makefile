@@ -18,13 +18,14 @@ stop:
 publish:
 	@sudo docker stop GehnPages || true
 	@sudo rm -Rf _site
-	sudo docker run --rm -v `pwd`:/srv/jekyll personal-jekyll bundle exec jekyll build
+	@sudo docker run --rm -v `pwd`:/srv/jekyll personal-jekyll bundle exec jekyll build
 	@[ -d _site ] || ( echo "Missing _site (source), aborting" && exit 1 )
 	@[ -d _public ] || ( echo "Missing _public (destination), aborting" && exit 1 )
 	@[ -d _public/.git ] || ( echo "Missing _public/.git (git repository), aborting" && exit 1 )
 	rm -Rf _public/*
 	cp -R _site/* _public
-	grep -q -v -R 'OI/tb2g5khoRa5v3srldjQiPFqlbcFlnYpk99k0wEwE=' _public/ || ( echo "Draft are beign published, aborting" && exit 1 )
+	@grep -q -v -R 'OI/tb2g5khoRa5v3srldjQiPFqlbcFlnYpk99k0wEwE=' _public/ || ( echo "Draft are beign published. Aborting" && exit 1 )
+	@git diff --quiet _config.yml css/ fonts/ _includes/ js/ _layouts/ _plugins/ _sass/ ||  ( echo "Some 'root' folders are not commited. Commit them first before publishing. Aborting" && exit 1 )
 	( cd _public && git status )
 
 test-shellshock:
