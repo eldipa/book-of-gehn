@@ -13,7 +13,16 @@
   
 
   
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]}
+      });
+    </script>
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js' async></script>
+    
   
 
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
@@ -60,7 +69,7 @@ function.</p>
 and we will score each one with the
 <a href="https://en.wikipedia.org/wiki/Hamming_distance">Hamming Distance</a>.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.bytestring</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">'./assets/matasano/6.txt'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="mi">64</span><span class="p">)</span>
 
@@ -236,8 +245,9 @@ discard the unlikely keys and just save the most likely:</p>
 <p>And only a few of them are more likely than others:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">keys</span><span class="o">.</span><span class="n">cut_off</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">keys</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-<span class="p">(</span><span class="s">'Terminator X: Br,ng the noise'</span><span class="p">,</span> <span class="s">'Terminator X: Bring the noise'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">keys</span><span class="p">))</span>
+<span class="p">{</span><span class="s">'Terminator X: Bring the noise'</span> <span class="o">-&gt;</span> <span class="mf">0.0000</span><span class="p">,</span> <span class="s">'Terminator X: Br,ng the noise'</span> <span class="o">-&gt;</span> <span class="mf">0.0000</span><span class="p">}</span>
+
 </code></pre></div></div>
 
 <p>Voila! These two keys are the two most probably ones. In fact, those
@@ -245,7 +255,7 @@ two have the same probability to be correct.</p>
 
 <p>You probably guessed which is the one</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">keys</span><span class="o">.</span><span class="n">keys</span><span class="p">()))[</span><span class="mi">1</span><span class="p">]</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">key</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">keys</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">^</span> <span class="n">key</span><span class="o">.</span><span class="n">inf</span><span class="p">()</span>
 <span class="o">&lt;...&gt;</span><span class="n">I</span><span class="s">'m back and I'</span><span class="n">m</span> <span class="n">ringin</span><span class="s">' the bell&lt;...&gt;Play that funky music&lt;...&gt;</span><span class="err">

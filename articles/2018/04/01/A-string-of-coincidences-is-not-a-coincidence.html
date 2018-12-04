@@ -13,7 +13,16 @@
   
 
   
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]}
+      });
+    </script>
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js' async></script>
+    
   
 
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
@@ -48,7 +57,7 @@ the cipher as not secure even of we can’t break it.</p>
 <p>In the following pool of random strings one is actually a ciphertext
 that is the <code class="highlighter-rouge">xor</code> encryption of a plaintext using a single-byte key.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.bytestring</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/4.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">{}</span>
@@ -235,7 +244,7 @@ non-random string.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">lzma</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">compress_score</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-<span class="o">...</span>     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">lzma</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lzma</span><span class="o">.</span><span class="n">FORMAT_ALONE</span><span class="p">))</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">lzma</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">tobytes</span><span class="p">(),</span> <span class="n">lzma</span><span class="o">.</span><span class="n">FORMAT_ALONE</span><span class="p">))</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">compress_score</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ciphertexts</span><span class="p">]</span>
 
@@ -289,25 +298,25 @@ of crafted strings.</p>
 
 <p><br /></p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sys</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">"./assets/plotting"</span><span class="p">)</span>
+<!--
+>>> import sys
+>>> sys.path.append("./assets/plotting")
 
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">plotting</span> <span class="kn">import</span> <span class="n">plt</span><span class="p">,</span> <span class="n">show</span>                      <span class="c"># byexample: +timeout=10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>                                 <span class="c"># byexample: +timeout=10</span>
+>>> from plotting import plt, show                      # byexample: +timeout=10
+>>> import pandas as pd                                 # byexample: +timeout=10
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">methods</span><span class="p">)</span>
+>>> methods = pd.DataFrame(methods)
 
-<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">min_max_normalizer</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
-<span class="o">...</span>     <span class="k">return</span> <span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="nb">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="nb">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="nb">min</span><span class="p">())</span>
+>>> def min_max_normalizer(c):
+...     return (c - c.min()) / (c.max() - c.min())
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="n">methods</span><span class="o">.</span><span class="nb">apply</span><span class="p">(</span><span class="n">min_max_normalizer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+>>> methods = methods.apply(min_max_normalizer, axis=0)
 
-<span class="o">&gt;&gt;&gt;</span> <span class="k">with</span> <span class="n">show</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="s">'./assets/matasano/scores_by_method.png'</span><span class="p">,</span> <span class="n">latexify_kargs</span><span class="o">=</span><span class="p">{</span><span class="s">'columns'</span><span class="p">:</span><span class="mi">2</span><span class="p">}):</span> <span class="c"># byexample: +timeout=600 +skip</span>
-<span class="o">...</span>     <span class="n">axes</span> <span class="o">=</span> <span class="n">methods</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">'o'</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="o">...</span>
-<span class="o">...</span>     <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="mi">170</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s">'dashed'</span><span class="p">)</span> <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">]</span>
-</code></pre></div></div>
-
+>>> with show(save='./assets/matasano/scores_by_method.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
+...     axes = methods.plot(style='o', subplots=True, layout=(3, 2))
+...
+...     _ = [ax.vlines(170, 0, 1, linestyles='dashed') for ax in axes.flat]
+-->
 
 
 

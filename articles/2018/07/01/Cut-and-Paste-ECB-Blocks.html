@@ -13,7 +13,16 @@
   
 
   
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]}
+      });
+    </script>
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js' async></script>
+    
   
 
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
@@ -44,7 +53,7 @@ under a ECB mode with a secret key.</p>
 
 <p>This time the idea is not to reveal the key but to <em>forge</em> a plaintext.</p>
 
-<p>Welcome to the <a href="https://cryptopals.com/sets/1/challenges/13">ECB cut-and-paste</a>
+<p>Welcome to the <a href="https://cryptopals.com/sets/2/challenges/13">ECB cut-and-paste</a>
 challenge!<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span><!--more--></p>
 
 <h3 id="prelude-profile-creation">Prelude: profile creation</h3>
@@ -66,7 +75,7 @@ in ECB mode:</p>
 <p>Consider the following function that builds a ciphertext from an hypothetical
 “create profile for a new user”:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.bytestring</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">profile_for</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
 <span class="o">...</span>     <span class="k">assert</span> <span class="n">b</span><span class="s">'&amp;'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">email</span>
@@ -179,7 +188,8 @@ so we can cut it and throw it away.</p>
 <p>In its replace we will put our crafted cut cipher block.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">profile_for</span><span class="p">(</span><span class="n">b</span><span class="s">'me-AAAAAAAAAAAAAAAAA@evil.com'</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">forged</span> <span class="o">=</span> <span class="n">c</span><span class="p">[:</span><span class="o">-</span><span class="n">block_size</span><span class="p">]</span> <span class="o">+</span> <span class="n">cut</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">forged</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">forged</span><span class="p">[</span><span class="o">-</span><span class="n">block_size</span><span class="p">:]</span> <span class="o">=</span> <span class="n">cut</span>
 </code></pre></div></div>
 
 <p>The email address <code class="highlighter-rouge">me-AAAAAAAAAAAAAAAAA@evil.com</code> should be a valid

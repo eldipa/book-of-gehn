@@ -13,7 +13,16 @@
   
 
   
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]}
+      });
+    </script>
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js' async></script>
+    
   
 
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
@@ -48,10 +57,10 @@ using
 
 <h3 id="pkcs7-padding"><code class="highlighter-rouge">PKCS#7</code> padding</h3>
 
-<p><a href="https://cryptopals.com/sets/2/challenges/1">Implement PKCS#7 padding</a>,
+<p><a href="https://cryptopals.com/sets/2/challenges/9">Implement PKCS#7 padding</a>,
 easy cake.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.bytestring</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">"YELLOW SUBMARINE"</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s">'pkcs#7'</span><span class="p">)</span>
@@ -63,8 +72,8 @@ I know what is coming with this….</span>.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">"ICE ICE BABY</span><span class="se">\x05\x05\x05\x05</span><span class="s">"</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">unpad</span><span class="p">(</span><span class="s">'pkcs#7'</span><span class="p">)</span>
-<span class="o">&lt;...&gt;</span>
-<span class="nb">ValueError</span><span class="p">:</span> <span class="n">Bad</span> <span class="n">padding</span> <span class="s">'pkcs#7'</span> <span class="k">with</span> <span class="n">last</span> <span class="n">byte</span> <span class="mi">5</span>
+<span class="n">Traceback</span> <span class="o">&lt;...&gt;</span>
+<span class="nb">ValueError</span><span class="p">:</span> <span class="n">Bad</span> <span class="n">padding</span> <span class="s">'pkcs#7'</span> <span class="k">with</span> <span class="n">last</span> <span class="n">byte</span> <span class="mh">0x5</span>
 </code></pre></div></div>
 
 <h3 id="cipher-block-chaining">Cipher block chaining</h3>
@@ -396,9 +405,9 @@ that breaks the ECB cipher using a oracle.</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">==</span> <span class="n">secret</span>
 <span class="bp">True</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span>
-<span class="p">(</span><span class="s">"Rollin' in my 5.0</span><span class="se">\n</span><span class="s">With my rag-top down so my hair can blow</span><span class="se">\n</span><span class="s">The girlies o"</span>
- <span class="s">'n standby waving just to say hi</span><span class="se">\n</span><span class="s">Did you stop? No, I just drove by</span><span class="se">\n</span><span class="s">'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span>   <span class="c"># byexample: +norm-ws</span>
+<span class="s">"Rollin' in my 5.0</span><span class="se">\n</span><span class="s">With my rag-top down so my hair can blow</span><span class="se">\n</span><span class="s">The girlies on</span><span class="err">
+</span><span class="s">standby waving just to say hi</span><span class="se">\n</span><span class="s">Did you stop? No, I just drove by</span><span class="se">\n</span><span class="s">"</span>
 </code></pre></div></div>
 
 
