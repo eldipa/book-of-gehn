@@ -5,3 +5,4 @@ _site/
 _drafts/
 _public/
 assets/matasano/__pycache__/
+*.swp

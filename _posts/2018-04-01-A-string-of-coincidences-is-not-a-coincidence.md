@@ -264,7 +264,7 @@ Here is the plot of the scores calculated by the different methods:
 
 <br />
 
-```python
+<!--
 >>> import sys
 >>> sys.path.append("./assets/plotting")
 
@@ -282,6 +282,4 @@ Here is the plot of the scores calculated by the different methods:
 ...     axes = methods.plot(style='o', subplots=True, layout=(3, 2))
 ...
 ...     _ = [ax.vlines(170, 0, 1, linestyles='dashed') for ax in axes.flat]
-```
-
-[The CBC padding oracle](https://cryptopals.com/sets/3/challenges/17) completed!
+-->

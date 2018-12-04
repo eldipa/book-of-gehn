@@ -107,25 +107,25 @@ has a valid pad or not.
 
 ## CBC decryption and padding
 
-Let's be {% m %}m{% em %} the ith plaintext block,
-{% m %}c{% em %} the i-1th ciphertext block and
-{% m %}x{% em %} the decryption of the ith ciphertext block.
+Let's be $$m$$ the ith plaintext block,
+$$c$$ the i-1th ciphertext block and
+$$x$$ the decryption of the ith ciphertext block.
 
-Then, we can say that for CBC the plaintext block {% m %}m{% em %}
+Then, we can say that for CBC the plaintext block $$m$$
 is reconstructed from this:
 
-{% math %}x \oplus c = m{% endmath %}
+$$x \oplus c = m$$
 
-Let's say now that instead of {% m %}c{% em %}
-we use {% m %}f{% em %}, a *forged* ciphertext block,
+Let's say now that instead of $$c$$
+we use $$f$$, a *forged* ciphertext block,
 if we are reconstructing the last plaintext block, this one will be:
 
-{% math %}x \oplus f = ?{% endmath %}
+$$x \oplus f = ?$$
 
 Now, because this is the last block, this will affect the padding
 of the final plaintext.
 
-The padding will be ok *only if* {% m %}x \oplus f{% em %} is
+The padding will be ok *only if* $$x \oplus f$$ is
 equals to one of these:
 
 ```
@@ -141,29 +141,29 @@ one byte at time.
 
 ## Guess the last byte
 
-For the plaintext block {% m %}m{% em %}, let's be {% m %}m_1{% em %},
+For the plaintext block $$m$$, let's be $$m_1$$,
 the last byte of the block.
 Using the same convention, this last byte is
 
-{% math %}x_1 \oplus c_1 = m_1{% endmath %}
+$$x_1 \oplus c_1 = m_1$$
 
-If instead of {% m %}c_1{% em %} we use a forged last byte
-{% m %}f_1{% em %}, the decrypted byte will be
+If instead of $$c_1$$ we use a forged last byte
+$$f_1$$, the decrypted byte will be
 
-{% math %}x_1 \oplus f_1 = ?{% endmath %}
+$$x_1 \oplus f_1 = ?$$
 
 The decrypted message will have a valid padding only if:
 
-{% math %}
+$$
 \begin{cases}
 x_1 \oplus f_1 = 01 & (1)\\
 x_1 \oplus f_1 = pp & (2)
 \end{cases}
-{% endmath %}
+$$
 
-The case 2 means that {% m %}x_1 \oplus f_1{% em %} is equal to
+The case 2 means that $$x_1 \oplus f_1$$ is equal to
 the original padding byte and this will happen only if
-{% m %}f_1 = c_1{% em %} or in other words if we didn't
+$$f_1 = c_1$$ or in other words if we didn't
 forge anything.
 
 It doesn't add much info.
@@ -173,72 +173,72 @@ padding and, by definition, it must be ``01``.
 
 Then,
 
-{% math %}
+$$
 \begin{align*}  %%*
 x_1 \oplus f_1 & = 01                           \\
            x_1 & = 01 \oplus f_1
 \end{align*} %%*
-{% endmath %}
+$$
 
-So we *learnt* {% m %}x_1{% em %} and from here it is trivial
+So we *learnt* $$x_1$$ and from here it is trivial
 to break the last plaintext byte:
 
-{% math %}
+$$
 \begin{align*}  %%*
                 x_1 \oplus c_1 & = m_1          \\
     (01 \oplus f_1) \oplus c_1 & = m_1
 \end{align*} %%*
-{% endmath %}
+$$
 
-as {% m %}f_1{% em %} is our forged byte and {% m %}c_1{% em %}
+as $$f_1$$ is our forged byte and $$c_1$$
 is the last byte of the previous ciphertext block, all of them known by us.
 
 The case 1 and 2 are easily identified as in the second case
-{% m %}f_1 = c_1{% em %}.
+$$f_1 = c_1$$.
 
 There is, however, a special situation in which the case 1 and 2 are
 the same: this happens when the original padding byte is actually ``01``.
 
-Nevertheless, the equation {% m %}(01 \oplus f_1) \oplus c_1 = m_1{% em %}
+Nevertheless, the equation $$(01 \oplus f_1) \oplus c_1 = m_1$$
 is still true.
 
 ## Guess the penultimate byte
 
-Knowing {% m %}x_1{% em %} we can forge the value
-of {% m %}m_1{% em %} to ``02``:
+Knowing $$x_1$$ we can forge the value
+of $$m_1$$ to ``02``:
 
-{% math %}
+$$
 \begin{align*}  %%*
       x_1 \oplus f_1 & = 02                     \\
                  f_1 & = (02 \oplus x_1)
 \end{align*} %%*
-{% endmath %}
+$$
 
-This {% m %}f_1{% em %} is **not** the same than the previous section:
+This $$f_1$$ is **not** the same than the previous section:
 it is a different
 forged byte used to forge a ``02`` in the last value of the plaintext.
 
 With this, the penultimate byte will forge a plaintext with a
 *valid padding* only if:
 
-{% math %}x_2 \oplus f_2 = 02{% endmath %}
+$$x_2 \oplus f_2 = 02$$
 
 Then, for the case of a valid padding we can guess
-{% m %}x_2{% em %} and therefore {% m %}m_2{% em %}:
+$$x_2$$ and therefore $$m_2$$:
 
-{% math %}
+$$
 \begin{align*}  %%*
       x_2 \oplus f_2 & = 02                     \\
                  x_2 & = (02 \oplus f_2)
 \end{align*} %%*
-{% endmath %}
+$$
 
-{% math %}
+$$
 \begin{align*}  %%*
                    x_2 \oplus c_2 & = m_2                     \\
       (02 \oplus f_2) \oplus c_2  & = m_2
 \end{align*} %%*
-{% endmath %}
+$$
 
 At difference with guessing the last byte, in this scenario there is
 only one possible value for a valid padding: ``02``

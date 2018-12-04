@@ -85,8 +85,7 @@ than a coincidence of two or more bytes:
 
 <br />
 
-
-```python
+<!--
 >>> import sys
 >>> sys.path.append("./assets/plotting")
 
@@ -104,7 +103,7 @@ than a coincidence of two or more bytes:
 ...     axes = methods.plot(style='o', subplots=True, layout=(2, 1))
 ...
 ...     _ = [ax.vlines(132, 0, 1, linestyles='dashed') for ax in axes.flat]
-```
+-->
 
 ### Break it?
 
