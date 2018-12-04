@@ -6,3 +6,4 @@ _drafts/
 _public/
 assets/matasano/__pycache__/
 *.swp
+*.pyc
