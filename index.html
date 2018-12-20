@@ -50,6 +50,25 @@
     
         <li class="listing">
           <hr class="slender">
+          <a href="/book-of-gehn/articles/2018/12/04/Fixed-Nonce-CTR-Attack.html"><h2 class="larger">Fixed Nonce CTR Attack</h2></a>
+          <br><span class="smaller">December 4, 2018</span>  <br/>
+          <div><p>The Counter mode, or just CTR mode, turns a block cipher into a stream cipher.</p>
+
+<p>More specifically, it builds a pseudo random generator (PRG)
+from a block cipher and then generates a random string using
+the PRG to encrypt/decrypt the payload performing a simple xor.</p>
+
+<p>The idea is to initialize the PRG with a different <em>seed</em> each time
+but if this does not happen, all the plaintexts will be encrypted
+with the <em>same</em> pseudo random key stream – totally insecure.</p>
+
+<p>Ready to break it?<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
           <a href="/book-of-gehn/articles/2018/10/28/CBC-Padding-Oracle.html"><h2 class="larger">CBC Padding Oracle Attack</h2></a>
           <br><span class="smaller">October 28, 2018</span>  <br/>
           <div><p>AES and other ciphers work on blocks; if the plaintext length
