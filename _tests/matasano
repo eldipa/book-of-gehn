@@ -8,4 +8,5 @@ _posts/2018-06-10-Breaking-ECB.md
 _posts/2018-07-01-Cut-and-Paste-ECB-Blocks.md
 _posts/2018-07-03-CBC-Bitflipping.md
 _posts/2018-10-28-CBC-Padding-Oracle.md
+_posts/2018-12-04-Fixed-Nonce-CTR-Attack.md
 assets/matasano/challenge.py

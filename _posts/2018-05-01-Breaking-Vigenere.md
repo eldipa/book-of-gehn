@@ -112,7 +112,7 @@ If the length guessed is correct, all those bytes should had been encrypted
 with the same byte key.
 
 And we already know [how to break a ciphertext encrypted with a single byte
-key](/book-of-gehn/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html)!
+key](/book-of-gehn/articles/2018/03/01/In-XOR-We-Trust.html)!
 
 So we need to do this for all the offsets between 0 and l. In other words:
 

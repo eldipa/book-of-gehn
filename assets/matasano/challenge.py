@@ -1,4 +1,5 @@
 import numpy as np
+import struct
 
 from collections import namedtuple
 from Crypto.Cipher import AES
@@ -16,7 +17,7 @@ from cryptonita import B
 
 SecretConfig = namedtuple('SecretConfig', ['key', 'iv', 'enc_mode',
                                            'prefix', 'posfix',
-                                           'pad_mode',
+                                           'pad_mode', 'nonce',
                                            'kargs'])
 
 def generate_config(config=None, **kargs):
@@ -59,7 +60,7 @@ def generate_config(config=None, **kargs):
 
         >>> c = generate_config(config=c)
         >>> (c.key, c.iv)
-        ('AAAABBBB', 'W\xe9\xd4\xb8\xeb\xf5\x1a\xd5\x9d\xfdD\xf0%\xdb[6')
+        ('AAAABBBB', '\x81\t3\x00\xbf\x14\x8c.\xbb\x93\x01\xfe\x14\x99\xf3.')
 
         You can fix additional parameters
 
@@ -71,7 +72,7 @@ def generate_config(config=None, **kargs):
 
         >>> c = generate_config(config=c, iv=None)
         >>> (c.key, c.iv)
-        ('AAAABBBB', '\x14x\xa7+H\xebSs\xa68\xa7\x10\x11Ue\x03')
+        ('AAAABBBB', '4\n\x01\x19\x81\xdb\x1b;S\xe5)\xaf[\xd8\xb3=')
 
     '''
     if config is not None:
@@ -126,7 +127,12 @@ def generate_config(config=None, **kargs):
     if pad_mode is None:
         pad_mode = ['pkcs#7'][tmp]
 
-    return SecretConfig(key, iv, enc_mode, prefix, posfix, pad_mode, kargs)
+    tmp = random_state.bytes(16)
+    nonce = kargs.get('nonce')
+    if nonce is None:
+        nonce = B(tmp)
+
+    return SecretConfig(key, iv, enc_mode, prefix, posfix, pad_mode, nonce, kargs)
 
 def encrypt(block, key, block_size):
     r'''Encrypt the given block with the given key using AES.
@@ -269,4 +275,28 @@ def dec_cbc(ciphertext, key, iv):
 
     return B(b''.join(plain_blocks))
 
+def enc_ctr(plaintext, key, nonce, counter=0, block_size=16):
+    if isinstance(nonce, int):
+        nonce = struct.pack('<Q', nonce)
+    else:
+        nonce = nonce[:8]
+
+    assert block_size == 16
+    cipher_blocks = []
+    for pblock in plaintext.nblocks(block_size):
+        ctr = struct.pack('<Q', counter)
+        src = B(nonce + ctr)
+
+        assert len(src) == block_size
+
+        kstream = encrypt(src, key, block_size)
+        cblock = pblock ^ kstream[:len(pblock)]
+
+        cipher_blocks.append(cblock)
+        counter += 1
+
+    return B(b''.join(cipher_blocks))
+
+def dec_ctr(ciphertext, key, nonce, counter=0, block_size=16):
+    return enc_ctr(ciphertext, key, nonce, counter, block_size)
 
