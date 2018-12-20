@@ -9,10 +9,16 @@ More specifically, it builds a pseudo random generator (PRG)
 from a block cipher and then generates a random string using
 the PRG to encrypt/decrypt the payload performing a simple xor.
 
+The idea is to initialize the PRG with a different *seed* each time
+but if this does not happen, all the plaintexts will be encrypted
+with the *same* pseudo random key stream -- totally insecure.
+
+Ready to break it?{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
+
 ## Warming up
 
-Let's implement a CTR
-{% sidenote '[Implement CTR, the stream cipher mode](https://cryptopals.com/sets/3/challenges/18)' %}
+Let's implement a CTR{% sidenote
+'[Implement CTR, the stream cipher mode](https://cryptopals.com/sets/3/challenges/18)' %}
 
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
@@ -270,9 +276,7 @@ So we got the correct key stream? Well, we didn't:
 ### Undistinguishable
 
 Unless we have more knowledge about the plaintexts, we cannot distinguish
-between ``i'm rated`` and ``I'm rated``.
-
-:,|
+between ``i'm rated`` and ``I'm rated``. ``:´|``
 
 ```python
 >>> fix = B(b'i') ^ B(b'I')
@@ -353,7 +357,9 @@ True
 
 ## Break fixed-nonce CTR - Second chance
 
-{% sidenote '[Break fixed-nonce CTR mode using substitutions](https://cryptopals.com/sets/3/challenges/19)' %}
+Let's take another set of plaintexts{% sidenote
+'[Break fixed-nonce CTR mode using substitutions](https://cryptopals.com/sets/3/challenges/19)' %},
+encrypt them with a fixed-nonce CTR and break the encryption.
 
 ```python
 >>> plaintexts = list(load_bytes('./assets/matasano/19.txt', encoding=64))
