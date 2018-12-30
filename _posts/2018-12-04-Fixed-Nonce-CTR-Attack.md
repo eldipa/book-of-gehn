@@ -455,4 +455,35 @@ True
  'A terrible beauty is']
 ```
 
+## Final thoughts
 
+``ETAOIN SHRDLU`` is a statistical model for letter frequency in English
+and it was used to break most of the key stream bytes but its strength
+depends exclusively in how well the model represents the underlying plaintext.
+
+For the case of the first letter of all the plaintexts it was upper case and
+the ``ETAOIN SHRDLU`` model didn't work and it was extended later.
+
+Once that we have a guess, filter them out requires more knowledge about the
+plaintext.
+
+Requiring to be the decrypted text plain ASCII is simple but too open;
+requiring to follow the English statistical model using a Chi-square
+test (``fit_freq_score``) is stricter.
+
+However, like before, the statistical model only applies for long
+sequences (samples) and only if the underlying plaintexts are what
+one could expect.
+
+A *liberal* scoring function like ``all_ascii_printable`` serves
+as a backup and it is better than nothing.
+
+Even with all of this, the most likely key stream guess may not be
+the correct one, inclusive, none of the key stream guesses may be the
+correct one!
+
+Correcting a key stream using more information about the plaintext
+like using a speller can narrow the search area further but there is no
+warranties.
+
+Sometimes you will need to relay in your own brain and do a manual fix.
