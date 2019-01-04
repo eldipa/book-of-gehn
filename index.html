@@ -50,6 +50,29 @@
     
         <li class="listing">
           <hr class="slender">
+          <a href="/book-of-gehn/articles/2019/01/02/Break-Hill-Cipher-with-a-Knonw-Plaintext-Attack.html"><h2 class="larger">Break Hill Cipher with a Known Plaintext Attack</h2></a>
+          <br><span class="smaller">January 2, 2019</span>  <br/>
+          <div><p>Given a matrix secret key <script type="math/tex">K</script> with shape <script type="math/tex">n\textrm{x}n</script>, the
+<a href="https://en.wikipedia.org/wiki/Hill_cipher">Hill cipher</a> splits
+the plaintext into blocks of length <script type="math/tex">n</script> and for each block, computes
+the ciphertext block doing a linear transformation in module <script type="math/tex">m</script></p>
+
+<script type="math/tex; mode=display">K p_i = c_i\quad(\textrm{mod } m)</script>
+
+<p>For decrypting, we apply the inverse of <script type="math/tex">K</script></p>
+
+<script type="math/tex; mode=display">p_i = [K]^{-1} c_i \quad(\textrm{mod } m)</script>
+
+<p>To make sense, the secret key <script type="math/tex">K</script> must be chosen such as its inverse
+exists in module <script type="math/tex">m</script>.</p>
+
+<p>Ready to break it?</p>
+
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
           <a href="/book-of-gehn/articles/2018/12/04/Fixed-Nonce-CTR-Attack.html"><h2 class="larger">Fixed Nonce CTR Attack</h2></a>
           <br><span class="smaller">December 4, 2018</span>  <br/>
           <div><p>The Counter mode, or just CTR mode, turns a block cipher into a stream cipher.</p>
@@ -271,7 +294,7 @@ trusted authority.</p>
     <footer>
     <hr class="slender">
     <div class="credits">
-        <span>&copy; 2018
+        <span>&copy; 2019
             
             Gehn</span></br> <br>
         

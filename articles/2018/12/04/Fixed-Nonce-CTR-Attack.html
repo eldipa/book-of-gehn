@@ -476,6 +476,38 @@ encrypt them with a fixed-nonce CTR and break the encryption.</p>
  <span class="s">'A terrible beauty is'</span><span class="p">]</span>
 </code></pre></div></div>
 
+<h2 id="final-thoughts">Final thoughts</h2>
+
+<p><code class="highlighter-rouge">ETAOIN SHRDLU</code> is a statistical model for letter frequency in English
+and it was used to break most of the key stream bytes but its strength
+depends exclusively in how well the model represents the underlying plaintext.</p>
+
+<p>For the case of the first letter of all the plaintexts it was upper case and
+the <code class="highlighter-rouge">ETAOIN SHRDLU</code> model didn’t work and it was extended later.</p>
+
+<p>Once that we have a guess, filter them out requires more knowledge about the
+plaintext.</p>
+
+<p>Requiring to be the decrypted text plain ASCII is simple but too open;
+requiring to follow the English statistical model using a Chi-square
+test (<code class="highlighter-rouge">fit_freq_score</code>) is stricter.</p>
+
+<p>However, like before, the statistical model only applies for long
+sequences (samples) and only if the underlying plaintexts are what
+one could expect.</p>
+
+<p>A <em>liberal</em> scoring function like <code class="highlighter-rouge">all_ascii_printable</code> serves
+as a backup and it is better than nothing.</p>
+
+<p>Even with all of this, the most likely key stream guess may not be
+the correct one, inclusive, none of the key stream guesses may be the
+correct one!</p>
+
+<p>Correcting a key stream using more information about the plaintext
+like using a speller can narrow the search area further but there is no
+warranties.</p>
+
+<p>Sometimes you will need to relay in your own brain and do a manual fix.</p>
 
 
 
@@ -484,7 +516,7 @@ encrypt them with a fixed-nonce CTR and break the encryption.</p>
     <footer>
     <hr class="slender">
     <div class="credits">
-        <span>&copy; 2018
+        <span>&copy; 2019
             
             Gehn</span></br> <br>
         
