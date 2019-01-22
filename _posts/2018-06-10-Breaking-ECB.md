@@ -376,7 +376,7 @@ The following is an implementation of the previous algorithm from
 that breaks the ECB cipher using a oracle.
 
 ```python
->>> from cryptonita.attacks import decrypt_ecb_tail
+>>> from cryptonita.attacks.block_ciphers import decrypt_ecb_tail
 
 >>> t = decrypt_ecb_tail(alignment, block_size, encryption_oracle)  # byexample: +timeout 10
 >>> t = t.unpad('pkcs#7')

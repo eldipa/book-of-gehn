@@ -20,16 +20,16 @@ First, let's load this module to play with it{% sidenote
 and [byexample](https://byexamples.github.io/byexample/)' %}:
 
 ```cpp
-.L circular_buffer.c
-#include "circular_buffer.h"
-#include <string.h>
+?: .L circular_buffer.c
+?: #include "circular_buffer.h"
+?: #include <string.h>
 ```
 
 Now, let's create a buffer of 16 bytes:
 
 ```cpp
-struct circular_buffer_t buf;
-circular_buffer_init(&buf, 16);
+?: struct circular_buffer_t buf;
+?: circular_buffer_init(&buf, 16);
 ```
 
 The circular buffer has 2 pointers, the ``head``
@@ -45,13 +45,13 @@ the *free space* has the size of the whole buffer and the
 {% maincolumn 'assets/circular_buffer/buffer_0_0.png' '' %}
 
 ```cpp
-(buf.head == buf.tail)
-circular_buffer_get_free(&buf)
-circular_buffer_get_ready(&buf)
-
-out:
+?: (buf.head == buf.tail)
 (bool) true
+
+?: circular_buffer_get_free(&buf)
 (unsigned long) 16
+
+?: circular_buffer_get_ready(&buf)
 (unsigned long) 0
 ```
 
@@ -70,22 +70,22 @@ bytes wrote.
 For example, if we write 10 bytes:
 
 ```cpp
-memcpy(&buf.buf[buf.head], "AABBCCDDEE", 10);
+?: memcpy(&buf.buf[buf.head], "AABBCCDDEE", 10);
 ```
 
 Then we must notify how many bytes were written updating
 the ``head`` pointer:
 
 ```cpp
-circular_buffer_advance_head(&buf, 10);
+?: circular_buffer_advance_head(&buf, 10);
 
-(buf.head > buf.tail)
-circular_buffer_get_free(&buf)
-circular_buffer_get_ready(&buf)
-
-out:
+?: (buf.head > buf.tail)
 (bool) true
+
+?: circular_buffer_get_free(&buf)
 (unsigned long) 6
+
+?: circular_buffer_get_ready(&buf)
 (unsigned long) 10
 ```
 
@@ -98,16 +98,14 @@ that the data can be discarded.
 {% maincolumn 'assets/circular_buffer/buffer_8_14.png' '' %}
 
 ```cpp
-memcpy(&buf.buf[buf.head], "FFGG", 4);
-circular_buffer_advance_head(&buf, 4);
+?: memcpy(&buf.buf[buf.head], "FFGG", 4);
+?: circular_buffer_advance_head(&buf, 4);
 
-char read[8];
-memcpy(read, &buf.buf[buf.tail], 8);
-circular_buffer_advance_tail(&buf, 8);
+?: char read[8];
+?: memcpy(read, &buf.buf[buf.tail], 8);
+?: circular_buffer_advance_tail(&buf, 8);
 
-read
-
-out:
+?: read
 (char [8]) "AABBCCDD"
 ```
 
@@ -118,13 +116,13 @@ is determined by how many *ready space* the buffer has.
 It is up to the caller honor this.
 
 ```cpp
-(buf.head > buf.tail)
-circular_buffer_get_free(&buf)
-circular_buffer_get_ready(&buf)
-
-out:
+?: (buf.head > buf.tail)
 (bool) true
+
+?: circular_buffer_get_free(&buf)
 (unsigned long) 2
+
+?: circular_buffer_get_ready(&buf)
 (unsigned long) 6
 ```
 
@@ -137,15 +135,15 @@ the ``tail`` is in front of the ``head``:
 {% maincolumn 'assets/circular_buffer/buffer_8_0.png' '' %}
 
 ```cpp
-circular_buffer_advance_head(&buf, 2);
+?: circular_buffer_advance_head(&buf, 2);
 
-(buf.tail > buf.head)
-circular_buffer_get_free(&buf)
-circular_buffer_get_ready(&buf)
-
-out:
+?: (buf.tail > buf.head)
 (bool) true
+
+?: circular_buffer_get_free(&buf)
 (unsigned long) 8
+
+?: circular_buffer_get_ready(&buf)
 (unsigned long) 8
 ```
 
@@ -160,15 +158,15 @@ The *ready space* is limited by the end of the buffer in this case:
 {% maincolumn 'assets/circular_buffer/buffer_8_2.png' '' %}
 
 ```cpp
-circular_buffer_advance_head(&buf, 2);
+?: circular_buffer_advance_head(&buf, 2);
 
-(buf.tail > buf.head)
-circular_buffer_get_free(&buf)
-circular_buffer_get_ready(&buf)
-
-out:
+?: (buf.tail > buf.head)
 (bool) true
+
+?: circular_buffer_get_free(&buf)
 (unsigned long) 6
+
+?: circular_buffer_get_ready(&buf)
 (unsigned long) 8
 ```
 
@@ -185,18 +183,18 @@ To differentiate these two cases, internally there is a flag
 that tracks when the ``head`` is *behind* the ``tail``:
 
 ```cpp
-circular_buffer_advance_head(&buf, 6);
+?: circular_buffer_advance_head(&buf, 6);
 
-(buf.tail >= buf.head)
-circular_buffer_get_free(&buf)
-circular_buffer_get_ready(&buf)
-
-(buf.hbehind)
-
-out:
+?: (buf.tail >= buf.head)
 (bool) true
+
+?: circular_buffer_get_free(&buf)
 (unsigned long) 0
+
+?: circular_buffer_get_ready(&buf)
 (unsigned long) 8
+
+?: (buf.hbehind)
 (bool) true
 ```
 
@@ -207,18 +205,18 @@ the ``head`` is in front of the ``tail`` again:
 {% maincolumn 'assets/circular_buffer/buffer_0_8.png' '' %}
 
 ```cpp
-circular_buffer_advance_tail(&buf, 8);
+?: circular_buffer_advance_tail(&buf, 8);
 
-(buf.head >= buf.tail)
-circular_buffer_get_free(&buf)
-circular_buffer_get_ready(&buf)
-
-(buf.hbehind)
-
-out:
+?: (buf.head >= buf.tail)
 (bool) true
+
+?: circular_buffer_get_free(&buf)
 (unsigned long) 8
+
+?: circular_buffer_get_ready(&buf)
 (unsigned long) 8
+
+?: (buf.hbehind)
 (bool) false
 ```
 
@@ -229,18 +227,18 @@ the ``head`` is behind the ``tail`` again:
 {% maincolumn 'assets/circular_buffer/buffer_0_0_full.png' '' %}
 
 ```cpp
-circular_buffer_advance_head(&buf, 8);
+?: circular_buffer_advance_head(&buf, 8);
 
-(buf.tail >= buf.head)
-circular_buffer_get_free(&buf)
-circular_buffer_get_ready(&buf)
-
-(buf.hbehind)
-
-out:
+?: (buf.tail >= buf.head)
 (bool) true
+
+?: circular_buffer_get_free(&buf)
 (unsigned long) 0
+
+?: circular_buffer_get_ready(&buf)
 (unsigned long) 16
+
+?: (buf.hbehind)
 (bool) true
 ```
 
@@ -249,6 +247,6 @@ out:
 Finally, do not forget to destroy the buffer:
 
 ```cpp
-circular_buffer_destroy(&buf);
+?: circular_buffer_destroy(&buf);
 ```
 

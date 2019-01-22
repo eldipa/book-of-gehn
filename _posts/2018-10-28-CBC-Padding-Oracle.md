@@ -330,7 +330,7 @@ challenge.' %}
 >>> plaintexts = list(load_bytes('./assets/matasano/17.txt', encoding=64))
 >>> ciphertexts = [cfg.iv + enc_cbc(p.pad(bsize, 'pkcs#7'), cfg.key, cfg.iv) for p in plaintexts]
 
->>> from cryptonita.attacks import decrypt_cbc_padding_attack
+>>> from cryptonita.attacks.block_ciphers import decrypt_cbc_padding_attack
 >>> brokens = [decrypt_cbc_padding_attack(c, bsize, decrypt_and_unpad_oracle) for c in ciphertexts] # byexample: +timeout 20
 >>> brokens = [p.unpad("pkcs#7") for p in brokens]
 
