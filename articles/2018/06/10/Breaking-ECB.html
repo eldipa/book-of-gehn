@@ -398,7 +398,7 @@ distance = 1
 <a href="https://pypi.org/project/cryptonita/">cryptonita</a>
 that breaks the ECB cipher using a oracle.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks</span> <span class="kn">import</span> <span class="n">decrypt_ecb_tail</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks.block_ciphers</span> <span class="kn">import</span> <span class="n">decrypt_ecb_tail</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">decrypt_ecb_tail</span><span class="p">(</span><span class="n">alignment</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="n">encryption_oracle</span><span class="p">)</span>  <span class="c"># byexample: +timeout 10</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">unpad</span><span class="p">(</span><span class="s">'pkcs#7'</span><span class="p">)</span>

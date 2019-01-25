@@ -63,15 +63,15 @@ its own tail – a convenient image for a circular buffer.</p>
 <p>First, let’s load this module to play with it<label for="sn-12b40619938c1daacf66c2513c3cae60" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-12b40619938c1daacf66c2513c3cae60" class="margin-toggle" /><span class="sidenote">You can run this code with <a href="https://github.com/root-project/cling">cling</a>
 and <a href="https://byexamples.github.io/byexample/">byexample</a></span>:</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">.</span><span class="n">L</span> <span class="n">circular_buffer</span><span class="p">.</span><span class="n">c</span>
-<span class="cp">#include "circular_buffer.h"
-#include &lt;string.h&gt;
-</span></code></pre></div></div>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="p">.</span><span class="n">L</span> <span class="n">circular_buffer</span><span class="p">.</span><span class="n">c</span>
+<span class="o">?:</span> <span class="err">#</span><span class="n">include</span> <span class="s">"circular_buffer.h"</span>
+<span class="o">?:</span> <span class="err">#</span><span class="n">include</span> <span class="o">&lt;</span><span class="n">string</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;</span>
+</code></pre></div></div>
 
 <p>Now, let’s create a buffer of 16 bytes:</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">circular_buffer_t</span> <span class="n">buf</span><span class="p">;</span>
-<span class="n">circular_buffer_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="k">struct</span> <span class="n">circular_buffer_t</span> <span class="n">buf</span><span class="p">;</span>
+<span class="o">?:</span> <span class="n">circular_buffer_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">16</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p>The circular buffer has 2 pointers, the <code class="highlighter-rouge">head</code>
@@ -85,13 +85,13 @@ the <em>free space</em> has the size of the whole buffer and the
 
 <figure><figcaption><span></span></figcaption><img src="/book-of-gehn/assets/circular_buffer/buffer_0_0.png" /></figure>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span>
-<span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-<span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-
-<span class="n">out</span><span class="o">:</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">16</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">0</span>
 </code></pre></div></div>
 
@@ -109,21 +109,21 @@ bytes wrote.</p>
 
 <p>For example, if we write 10 bytes:</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">memcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">.</span><span class="n">buf</span><span class="p">[</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">],</span> <span class="s">"AABBCCDDEE"</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="n">memcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">.</span><span class="n">buf</span><span class="p">[</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">],</span> <span class="s">"AABBCCDDEE"</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
 </code></pre></div></div>
 
 <p>Then we must notify how many bytes were written updating
 the <code class="highlighter-rouge">head</code> pointer:</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
 
-<span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span> <span class="o">&gt;</span> <span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span>
-<span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-<span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-
-<span class="n">out</span><span class="o">:</span>
+<span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span> <span class="o">&gt;</span> <span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">6</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">10</span>
 </code></pre></div></div>
 
@@ -135,16 +135,14 @@ that the data can be discarded.</p>
 
 <figure><figcaption><span></span></figcaption><img src="/book-of-gehn/assets/circular_buffer/buffer_8_14.png" /></figure>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">memcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">.</span><span class="n">buf</span><span class="p">[</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">],</span> <span class="s">"FFGG"</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
-<span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="n">memcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">.</span><span class="n">buf</span><span class="p">[</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">],</span> <span class="s">"FFGG"</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="o">?:</span> <span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
 
-<span class="kt">char</span> <span class="n">read</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
-<span class="n">memcpy</span><span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">.</span><span class="n">buf</span><span class="p">[</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
-<span class="n">circular_buffer_advance_tail</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="o">?:</span> <span class="kt">char</span> <span class="n">read</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+<span class="o">?:</span> <span class="n">memcpy</span><span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buf</span><span class="p">.</span><span class="n">buf</span><span class="p">[</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">],</span> <span class="mi">8</span><span class="p">);</span>
+<span class="o">?:</span> <span class="n">circular_buffer_advance_tail</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
 
-<span class="n">read</span>
-
-<span class="n">out</span><span class="o">:</span>
+<span class="o">?:</span> <span class="n">read</span>
 <span class="p">(</span><span class="kt">char</span> <span class="p">[</span><span class="mi">8</span><span class="p">])</span> <span class="s">"AABBCCDD"</span>
 </code></pre></div></div>
 
@@ -154,13 +152,13 @@ is determined by how many <em>ready space</em> the buffer has.</p>
 
 <p>It is up to the caller honor this.</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span> <span class="o">&gt;</span> <span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span>
-<span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-<span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-
-<span class="n">out</span><span class="o">:</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span> <span class="o">&gt;</span> <span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">2</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">6</span>
 </code></pre></div></div>
 
@@ -172,15 +170,15 @@ the <code class="highlighter-rouge">tail</code> is in front of the <code class="
 
 <figure><figcaption><span></span></figcaption><img src="/book-of-gehn/assets/circular_buffer/buffer_8_0.png" /></figure>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
 
-<span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span> <span class="o">&gt;</span> <span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">)</span>
-<span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-<span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-
-<span class="n">out</span><span class="o">:</span>
+<span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span> <span class="o">&gt;</span> <span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">8</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">8</span>
 </code></pre></div></div>
 
@@ -194,15 +192,15 @@ increase because the circular buffer will always inform how many
 
 <figure><figcaption><span></span></figcaption><img src="/book-of-gehn/assets/circular_buffer/buffer_8_2.png" /></figure>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
 
-<span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span> <span class="o">&gt;</span> <span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">)</span>
-<span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-<span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-
-<span class="n">out</span><span class="o">:</span>
+<span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span> <span class="o">&gt;</span> <span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">6</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">8</span>
 </code></pre></div></div>
 
@@ -218,18 +216,18 @@ when the buffer was empty, but now it means that it is full.</p>
 <p>To differentiate these two cases, internally there is a flag
 that tracks when the <code class="highlighter-rouge">head</code> is <em>behind</em> the <code class="highlighter-rouge">tail</code>:</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
 
-<span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span> <span class="o">&gt;=</span> <span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">)</span>
-<span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-<span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-
-<span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">hbehind</span><span class="p">)</span>
-
-<span class="n">out</span><span class="o">:</span>
+<span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span> <span class="o">&gt;=</span> <span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">0</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">8</span>
+
+<span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">hbehind</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
 </code></pre></div></div>
 
@@ -239,18 +237,18 @@ the <code class="highlighter-rouge">head</code> is in front of the <code class="
 
 <figure><figcaption><span></span></figcaption><img src="/book-of-gehn/assets/circular_buffer/buffer_0_8.png" /></figure>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">circular_buffer_advance_tail</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="n">circular_buffer_advance_tail</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
 
-<span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span> <span class="o">&gt;=</span> <span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span>
-<span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-<span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-
-<span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">hbehind</span><span class="p">)</span>
-
-<span class="n">out</span><span class="o">:</span>
+<span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">head</span> <span class="o">&gt;=</span> <span class="n">buf</span><span class="p">.</span><span class="n">tail</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">8</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">8</span>
+
+<span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">hbehind</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">false</span>
 </code></pre></div></div>
 
@@ -260,18 +258,18 @@ the <code class="highlighter-rouge">head</code> is behind the <code class="highl
 
 <figure><figcaption><span></span></figcaption><img src="/book-of-gehn/assets/circular_buffer/buffer_0_0_full.png" /></figure>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="n">circular_buffer_advance_head</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
 
-<span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span> <span class="o">&gt;=</span> <span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">)</span>
-<span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-<span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
-
-<span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">hbehind</span><span class="p">)</span>
-
-<span class="n">out</span><span class="o">:</span>
+<span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">tail</span> <span class="o">&gt;=</span> <span class="n">buf</span><span class="p">.</span><span class="n">head</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_free</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">0</span>
+
+<span class="o">?:</span> <span class="n">circular_buffer_get_ready</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span> <span class="mi">16</span>
+
+<span class="o">?:</span> <span class="p">(</span><span class="n">buf</span><span class="p">.</span><span class="n">hbehind</span><span class="p">)</span>
 <span class="p">(</span><span class="kt">bool</span><span class="p">)</span> <span class="nb">true</span>
 </code></pre></div></div>
 
@@ -279,7 +277,7 @@ the <code class="highlighter-rouge">head</code> is behind the <code class="highl
 
 <p>Finally, do not forget to destroy the buffer:</p>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">circular_buffer_destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">);</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">?:</span> <span class="n">circular_buffer_destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">buf</span><span class="p">);</span>
 </code></pre></div></div>
 
 
