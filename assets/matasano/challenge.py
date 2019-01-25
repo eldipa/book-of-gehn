@@ -17,7 +17,8 @@ from cryptonita import B
 
 SecretConfig = namedtuple('SecretConfig', ['key', 'iv', 'enc_mode',
                                            'prefix', 'posfix',
-                                           'pad_mode', 'nonce',
+                                           'pad_mode', 'nonce', 'lnonce',
+                                           'n8', 'n16', 'n32', 'n64',
                                            'kargs'])
 
 def generate_config(config=None, **kargs):
@@ -60,7 +61,7 @@ def generate_config(config=None, **kargs):
 
         >>> c = generate_config(config=c)
         >>> (c.key, c.iv)
-        ('AAAABBBB', '\x81\t3\x00\xbf\x14\x8c.\xbb\x93\x01\xfe\x14\x99\xf3.')
+        ('AAAABBBB', 'H\xebSs\xa68\xa7\x10\x11Ue\x03\x83)\xea\xf2')
 
         You can fix additional parameters
 
@@ -72,7 +73,7 @@ def generate_config(config=None, **kargs):
 
         >>> c = generate_config(config=c, iv=None)
         >>> (c.key, c.iv)
-        ('AAAABBBB', '4\n\x01\x19\x81\xdb\x1b;S\xe5)\xaf[\xd8\xb3=')
+        ('AAAABBBB', '\xcd5\x97\xb6\x82jR\xd9\x00\xcf\xc2\xc2\x04D\xc3\xb8')
 
     '''
     if config is not None:
@@ -132,7 +133,20 @@ def generate_config(config=None, **kargs):
     if nonce is None:
         nonce = B(tmp)
 
-    return SecretConfig(key, iv, enc_mode, prefix, posfix, pad_mode, nonce, kargs)
+    tmp = random_state.bytes(128)
+    lnonce = kargs.get('lnonce')
+    if lnonce is None:
+        lnonce = B(tmp)
+
+    tmp = random_state.bytes(1+2+4+8)
+    n8, n16, n32, n64 = struct.unpack('>BHIQ', tmp)
+    n8 = kargs.get('n8', n8)
+    n16 = kargs.get('n16', n16)
+    n32 = kargs.get('n32', n32)
+    n64 = kargs.get('n64', n64)
+
+    return SecretConfig(key, iv, enc_mode, prefix, posfix, pad_mode,
+            nonce, lnonce, n8, n16, n32, n64, kargs)
 
 def encrypt(block, key, block_size):
     r'''Encrypt the given block with the given key using AES.

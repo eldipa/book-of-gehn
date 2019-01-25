@@ -9,4 +9,5 @@ _posts/2018-07-01-Cut-and-Paste-ECB-Blocks.md
 _posts/2018-07-03-CBC-Bitflipping.md
 _posts/2018-10-28-CBC-Padding-Oracle.md
 _posts/2018-12-04-Fixed-Nonce-CTR-Attack.md
+_posts/2018-12-23-Mersenne-Twister-PRNG.md
 assets/matasano/challenge.py
