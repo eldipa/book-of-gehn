@@ -83,6 +83,12 @@ convenient to *transpose* them.
 
 ```python
 >>> tciphertexts_transposed = transpose(tciphertexts)
+
+>>> len(tciphertexts_transposed)    # rows
+53
+
+>>> len(tciphertexts_transposed[0]) # columns
+60
 ```
 
 ### Plaintext statistic model

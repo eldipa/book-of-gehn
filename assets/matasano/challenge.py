@@ -15,7 +15,7 @@ from cryptonita import B
 
 '''
 
-SecretConfig = namedtuple('SecretConfig', ['key', 'iv', 'enc_mode',
+SecretConfig = namedtuple('SecretConfig', ['rnd', 'key', 'iv', 'enc_mode',
                                            'prefix', 'posfix',
                                            'pad_mode', 'nonce', 'lnonce',
                                            'n8', 'n16', 'n32', 'n64',
@@ -145,7 +145,7 @@ def generate_config(config=None, **kargs):
     n32 = kargs.get('n32', n32)
     n64 = kargs.get('n64', n64)
 
-    return SecretConfig(key, iv, enc_mode, prefix, posfix, pad_mode,
+    return SecretConfig(random_state, key, iv, enc_mode, prefix, posfix, pad_mode,
             nonce, lnonce, n8, n16, n32, n64, kargs)
 
 def encrypt(block, key, block_size):
