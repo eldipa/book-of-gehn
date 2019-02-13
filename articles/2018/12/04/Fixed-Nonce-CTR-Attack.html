@@ -122,6 +122,12 @@ all the plaintexts were xored with the same key byte), it is more
 convenient to <em>transpose</em> them.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">tciphertexts_transposed</span> <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">tciphertexts</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts_transposed</span><span class="p">)</span>    <span class="c"># rows</span>
+<span class="mi">53</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts_transposed</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c"># columns</span>
+<span class="mi">60</span>
 </code></pre></div></div>
 
 <h3 id="plaintext-statistic-model">Plaintext statistic model</h3>
