@@ -87,7 +87,7 @@ True
 ## Cloning
 
 A property that all PRNG cryptographically secure must hold is that
-even if the attack know the partial output of the PRNG he cannot distinguish
+even if the attacker knows the partial output of the PRNG he cannot distinguish
 it from a truly random sequence.{% sidenote
 'Formally, there is not such efficient algorithm that allow an attack
 to distinguish even with a small probability for large but finite
