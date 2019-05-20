@@ -18,7 +18,7 @@ damage.<!--more-->
 
 ## Explicit is better than implicit
 
-You can instruct to your ``ssh-agent`` to request you *explicit* permission
+You can instruct to your ``ssh-agent`` to request your *explicit* permission
 to use a particular key.
 
 This gives you the opportunity to detect when someone is trying to use
@@ -33,7 +33,7 @@ $ alias ssh-add='ssh-add -c'
 To make it usable you are going to need a program that can ask you
 if a particular key can be used or not.
 There are several options but if you want simplicity I think that
-``ssh-askpass`` is fair enough.
+``ssh-askpass`` is good enough.
 
 ## Multiple ``ssh-agent``s
 
@@ -47,13 +47,19 @@ the agent has.
 Only if one is accepted, the agent will ask you confirmation; technically
 a public key is for that but it may reveal more than you want.
 
-For example you could have a personal ``github`` account with a different
-ssh key. Using your work ssh key to log in to some work-related host and
-forwarding the *same* agent, it may leak the fact that you have
-a personal ``github`` account.
+For example you could have ssh key for your personal ``github`` account
+and another key for your work.
+
+You use the latter ssh key to log in to some work-related host and
+forward the agent.
+
+But if you loaded *both* keys to the *same* agent, it may leak the fact
+that you have a personal ``github`` account.
 
 The only way to prevent this is to not load all the keys in the same agent
 and use *different* ``ssh-agent``s instead.
+
+### Switch by hand
 
 Assuming that you have two ``ssh-agent``s running, to use a particular one you
 need to set some environment variables in your current shell:
@@ -70,7 +76,7 @@ But doing that by hand is error prone.
 
 ## ``ssh-use-agent``
 
-For this I wrote [ssh-use-agent](),
+For this I wrote [ssh-use-agent](https://github.com/eldipa/ssh-use-agent),
 a simple script to spawn and switch between ``ssh-agent``s.
 
 To install it, save the script somewhere and give it execution permissions.
@@ -129,3 +135,6 @@ $ echo $SSH_AGENT_PID
 $ echo $SSH_AUTH_SOCK
 $ echo $SSH_AGENT_NAME
 ```
+
+To remove a key or all the keys use ``ssh-add`` as usual; to kill
+a particular ``ssh-agent`` use the traditional ``kill -15``.
