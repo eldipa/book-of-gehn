@@ -65,6 +65,26 @@ be vulnerable to a <em>differential</em> attack.</p>
     
         <li class="listing">
           <hr class="slender">
+          <a href="/book-of-gehn/articles/2019/03/15/Separate-your-SSH-Agent-Identities.html"><h2 class="larger">Separate your SSH Agent Identities</h2></a>
+          <br><span class="smaller">March 15, 2019</span>  <br/>
+          <div><p>Using a <code class="highlighter-rouge">ssh-agent</code> to handle our keys is handy.</p>
+
+<p>When you need to access to different hosts jumping from one to another,
+<em>forwarding</em> the agent is much more secure than copying and pasting
+your keys around.</p>
+
+<p>But if one host gets compromised it will expose your agent: even if the
+attacker will not get your secret keys he will be able to login into
+any system as you.</p>
+
+<p>You cannot prevent this, but you can restrict this to reduce the splash
+damage.</p>
+
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
           <a href="/book-of-gehn/articles/2019/02/03/Cape-Encryption.html"><h2 class="larger">Cape Encryption</h2></a>
           <br><span class="smaller">February 3, 2019</span>  <br/>
           <div><p>The Cape library<label for="sn-4bc32159a5b520259ac8bbc444bdd485" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-4bc32159a5b520259ac8bbc444bdd485" class="margin-toggle" /><span class="sidenote">https://github.com/gioblu/Cape/tree/294f810ac4831af26832e70e4ba5d073908232e2</span>
