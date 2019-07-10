@@ -1,10 +1,19 @@
+#DOCKERIMG=personal-jekyll
+#DOCKERIMG=jekyll/jekyll:3.6
+DOCKERIMG=gehnjekyll
+
 all:
 	@echo ":´("
 
 create:
 	# if fails, rm Gemfile.lock
-	sudo docker run --name GehnPages -v `pwd`:/srv/jekyll -p 127.0.0.1:4000:4000 personal-jekyll
-
+	@[ -f _config.yml ] || ( echo "Are you sure that your working directory is a Jekyll repo?" && exit 1 )
+	sudo docker run \
+		--name GehnPages \
+		-v `pwd`:/srv/jekyll \
+		-p 127.0.0.1:4000:4000 \
+		${DOCKERIMG} \
+		jekyll serve --watch --drafts
 start:
 	@sudo docker stop GehnPages || true
 	@sudo rm -Rf _site
@@ -12,13 +21,19 @@ start:
 	@sleep 5
 	@sudo docker ps | grep GehnPages
 
+start-attach:
+	@sudo docker stop GehnPages || true
+	@sudo rm -Rf _site
+	sudo docker start -a GehnPages
+
 stop:
 	sudo docker stop GehnPages
 
 publish:
 	@sudo docker stop GehnPages || true
 	@sudo rm -Rf _site
-	@sudo docker run --rm -v `pwd`:/srv/jekyll personal-jekyll bundle exec jekyll build
+	#@sudo docker run --rm -v `pwd`:/srv/jekyll ${DOCKERIMG} bundle exec jekyll build
+	@sudo docker run --rm -v `pwd`:/srv/jekyll ${DOCKERIMG} jekyll build
 	@[ -d _site ] || ( echo "Missing _site (source), aborting" && exit 1 )
 	@[ -d _public ] || ( echo "Missing _public (destination), aborting" && exit 1 )
 	@[ -d _public/.git ] || ( echo "Missing _public/.git (git repository), aborting" && exit 1 )
