@@ -5,7 +5,7 @@
 module Jekyll
   class RenderMarginFigureTag < Liquid::Tag
 
-  	require "shellwords"
+    require "shellwords"
     require "digest"
 
     def initialize(tag_name, text, tokens)
