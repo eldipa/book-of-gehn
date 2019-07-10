@@ -7,3 +7,4 @@ _public/
 assets/matasano/__pycache__/
 *.swp
 *.pyc
+uml

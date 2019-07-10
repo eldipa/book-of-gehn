@@ -21,4 +21,6 @@ git:
   branch: src
 lato_font_load: true
 mathjax: true
+plantuml:
+    jar: /usr/local/share/java/plantuml.jar
 offline: false
