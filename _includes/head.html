@@ -25,6 +25,19 @@
     {% endif %}
   {% endif %}
 
+  {% if site.phaser %}
+    {% if site.offline %}
+      <script src='{{ "/js/phaser-3.18.1.js" | prepend: site.baseurl }}' ></script>
+    {% else %}
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    {% endif %}
+  {% endif %}
+
+    {% if site.offline %}
+      <script src='{{ "/js/underscore-1.9.1.js" | prepend: site.baseurl }}' ></script>
+    {% else %}
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    {% endif %}
   <link rel="stylesheet" type="text/css" href="{{ "/css/tufte.css" | prepend: site.baseurl }}">
   <link rel="stylesheet" type="text/css" href="{{ "/css/latex.css" | prepend: site.baseurl }}">
 
