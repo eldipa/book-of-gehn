@@ -24,6 +24,7 @@
 # [First] - [Second]
 # {% endplantuml %}
 
+# See original code in
 # https://github.com/yegor256/jekyll-plantuml/blob/master/lib/jekyll-plantuml.rb
 require 'digest'
 require 'fileutils'
@@ -32,10 +33,13 @@ module Jekyll
   class PlantumlBlock < Liquid::Block
     def initialize(tag_name, markup, tokens)
       super
-      @html = (markup or '').strip
+      @attributes = {}
+      markup.scan(Liquid::TagAttributes) do |key, value|
+          @attributes[key] = value.gsub(/^'|"/, '').gsub(/'|"$/, '')
+      end
     end
 
-    def render(context)
+    def generate_diagram(context, text)
       site = context.registers[:site]
       conf = site.config['plantuml'] || {}
 
@@ -43,7 +47,6 @@ module Jekyll
       umlpath = conf['umlpath'] || 'uml'
       img_format = conf['format'] || 'svg'
 
-      text = super
       name = Digest::MD5.hexdigest(text)
 
       fname = "#{name}.#{img_format}"
@@ -73,9 +76,53 @@ module Jekyll
           puts "File #{dst} created (#{File.size(dst)} bytes)"
         end
       end
-      "<p><object data='#{site.baseurl}/#{umlpath}/#{fname}' type='image/#{img_format}+xml' #{@html}></object></p>"
+      html = "<object align='middle' data='#{site.baseurl}/#{umlpath}/#{fname}' type='image/#{img_format}+xml'></object>"
+      return [site, umlpath, fname, img_format, html]
+    end
+  end
+
+  class FullWidthPlantumlBlock < PlantumlBlock
+    def render(context)
+      site, umlpath, fname, img_format, html = generate_diagram(context, super)
+
+      # NB: if we use single quotes instead of double quotes to wrap the html
+      # Jekyll will escape it using html entities
+      tag = "{% fullwidth \"#{html}\" '#{@attributes['caption']||''}' %}"
+      Liquid::Template.parse(tag).render(context)
+    end
+  end
+
+  class MainColumnPlantumlBlock < PlantumlBlock
+    def render(context)
+      site, umlpath, fname, img_format, html = generate_diagram(context, super)
+
+      # NB: if we use single quotes instead of double quotes to wrap the html
+      # Jekyll will escape it using html entities
+      tag = "{% maincolumn  \"#{html}\" '#{@attributes['caption']||''}' %}"
+      Liquid::Template.parse(tag).render(context)
+    end
+  end
+
+  class MarginPlantumlBlock < PlantumlBlock
+    def render(context)
+      site, umlpath, fname, img_format, html = generate_diagram(context, super)
+
+      # NB: if we use single quotes instead of double quotes to wrap the html
+      # Jekyll will escape it using html entities
+      tag = "{% marginfigure '' \"#{html}\" '#{@attributes['caption']||''}' %}"
+      Liquid::Template.parse(tag).render(context)
     end
   end
 end
 
-Liquid::Template.register_tag('plantuml', Jekyll::PlantumlBlock)
+# {% fullwidthplantuml caption:'a caption here' %}
+# diagram code here
+# {% endfullwidthplantuml %}
+Liquid::Template.register_tag('fullwidthplantuml', Jekyll::FullWidthPlantumlBlock)
+
+# {% maincolumnplantuml caption:'a caption here' %}
+# diagram code here
+# {% endmaincolumnplantuml %}
+Liquid::Template.register_tag('maincolumnplantuml', Jekyll::MainColumnPlantumlBlock)
+
+Liquid::Template.register_tag('marginplantuml', Jekyll::MarginPlantumlBlock)

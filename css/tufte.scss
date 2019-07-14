@@ -337,6 +337,10 @@ figcaption { float: right;
 figure.fullwidth figcaption { float: left; margin-right: 0%; margin-left: 36%; }
 
 img { max-width: 100%; }
+object { max-width: 100%; }
+
+figure object { margin: auto; display: block; }
+figure img { margin: auto; display: block; }
 
 .sidenote, .marginnote { float: right;
                          clear: right;
@@ -452,7 +456,8 @@ label.margin-toggle:not(.sidenote-number) { display: none; }
                                              position: relative; }
                             div.table-wrapper, table, table.booktabs { width: 85%; }
                             div.table-wrapper { border-right: 1px solid #efefef; }
-                            img { max-width: 100%; } }
+                            img { max-width: 100%; }
+                            object { max-width: 100%; } }
 /*--- End of Basic Layout stuff from tufte.css ---*/
 
 /* -- Jekyll specific styling --*/
@@ -617,6 +622,9 @@ hr.slender {
     }
 
     img {
+        max-width: 100% !important;
+    }
+    object {
         max-width: 100% !important;
     }
 

@@ -19,9 +19,11 @@ module Jekyll
       id = "mf-#{token}"
 
       if @text[1].start_with?('http://', 'https://', '//')
-        img_src = "#{@text[1]}"
+        img_html = "<img class='fullwidth' alt='#{@text[0]}' src='#{@text[1]}' />"
+      elsif @text[1].start_with?('<')
+        img_html = "#{@text[1]}"
       else
-        img_src = "#{baseurl}/#{@text[1]}"
+        img_html = "<img class='fullwidth' alt='#{@text[0]}' src='#{baseurl}/#{@text[1]}' />"
       end
 
       if @text[2]
@@ -33,7 +35,7 @@ module Jekyll
       "<label for='#{id}' class='margin-toggle'>&#8853;</label>"+
       "<input type='checkbox' id='#{id}' class='margin-toggle'/>"+
       "<span class='marginnote'>"+
-      "  <img class='fullwidth' alt='#{@text[0]}' src='#{img_src}'/>"+
+        img_html +
       caption_html +
       "</span>"
     end
