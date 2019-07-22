@@ -3,8 +3,8 @@ layout: post
 title: "Cut and Paste ECB blocks"
 ---
 
-In this game we control partially of a plaintext that is encrypted
-under a ECB mode with a secret key.
+In this game we control partially a plaintext that is encrypted
+under ECB mode with a secret key.
 
 This time the idea is not to reveal the key but to *forge* a plaintext.
 
@@ -48,8 +48,8 @@ Consider the following function that builds a ciphertext from an hypothetical
 <...>\xc1\xa4\x89<...>
 ```
 
-The ``profile_for`` can create as many user we want but all of them will
-have the same privilege level: ``user``.
+The ``profile_for`` can create as many user as we want but all of them will
+have the same privilege level or role: ``user``.
 
 Then the ciphertext can be sent to a server where the given credentials are
 stored and the profile is "created".
@@ -83,8 +83,17 @@ Let's forge this with [cryptonita](https://pypi.org/project/cryptonita/).
 We want to know how many bytes are needed so the plaintext
 at its right is aligned with the block boundary.
 
-We already know how to do this... when we have two blocks
-encrypted with to the same ciphertext block we are done:
+In other words, given the prefix ``email=`` we now that we need 10 bytes
+to append and complete the block leaving the rest of our own plaintext
+aligned with the block boundary:
+
+```python
+>>> block_size - len("email=")
+10
+```
+
+We already know how to do this even if we don't know the prefix...
+when we have two blocks encrypted with to the same ciphertext block we are done:
 
 ```python
 >>> for alignment in range(block_size):
@@ -138,7 +147,7 @@ ready to be cut:
          :.......cut
 ```
 
-where ``PPP`` is a ``pkcs#7`` padding such as if the whole ``C1`` block were
+where ``PPP`` is a ``pkcs#7`` padding such as if the whole ``C1`` block was
 the last block of the ciphertext, the decryption + un-padding would success.
 
 ### Paste a block
@@ -149,7 +158,7 @@ We will use our valid email (at the end *we* want to be admin) but it has
 to be special: it has to contain enough padding to align the *last* block
 so we can cut it and throw it away.
 
-In its replace we will put our crafted cut cipher block.
+In its replacement we will put our crafted cut cipher block.
 
 ```python
 >>> c = profile_for(b'me-AAAAAAAAAAAAAAAAA@evil.com')
@@ -158,7 +167,8 @@ In its replace we will put our crafted cut cipher block.
 ```
 
 The email address ``me-AAAAAAAAAAAAAAAAA@evil.com`` should be a valid
-one if we want be owned by us if we want to elevate our privileges.
+one and with an account controlled by us if we want to do something
+beyond the cryptography exercise later.
 
 How many ``A`` we need to add will depend: I tried several times using
 ``create_profile`` as oracle until I got the payload aligned such the

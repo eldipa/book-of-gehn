@@ -268,8 +268,8 @@ Here is the plot of the scores calculated by the different methods:
 >>> import sys
 >>> sys.path.append("./assets/plotting")
 
->>> from plotting import plt, show                      # byexample: +timeout=10
->>> import pandas as pd                                 # byexample: +timeout=10
+>>> from plotting import plt, show                      # byexample: +timeout=20
+>>> import pandas as pd                                 # byexample: +timeout=20
 
 >>> methods = pd.DataFrame(methods)
 
