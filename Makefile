@@ -14,6 +14,9 @@ create:
 		-p 127.0.0.1:4000:4000 \
 		${DOCKERIMG} \
 		jekyll serve --watch --drafts
+
+build:
+	sudo docker build -t ${DOCKERIMG} .
 start:
 	@sudo docker stop GehnPages || true
 	@sudo rm -Rf _site

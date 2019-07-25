@@ -2,5 +2,3 @@
 
 !Gemfile
 !_docker
-!_docker/plantuml.jar
-!_docker/plantuml.sh
