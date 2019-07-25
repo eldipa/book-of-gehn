@@ -334,6 +334,14 @@ figcaption { float: right;
              position: relative;
              max-width: 40%; }
 
+figcaption .MathJax span {
+             font-size: 1.0rem;
+}
+
+figcaption span > code {
+             font-size: 0.8rem;
+}
+
 figure.fullwidth figcaption { float: left; margin-right: 0%; margin-left: 36%; }
 
 img { max-width: 100%; }
@@ -389,7 +397,7 @@ div.table-wrapper { overflow-x: auto; } //changed all overflow values to 'auto' 
                                                                           padding-right: 5%;
                                                                         }}
 
-.marginnote code, .sidenote code { font-size: 1rem; } //more .code class removal
+.marginnote code, .sidenote code { font-size: 0.8rem; } //more .code class removal
 
 /* originally this rule applied to
         pre, pre code, p pre code
