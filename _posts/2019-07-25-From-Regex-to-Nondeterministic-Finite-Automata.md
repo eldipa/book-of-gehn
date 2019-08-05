@@ -12,6 +12,8 @@ deficiencies.
 
 A regular expression is an example of this. As an introductory step
 let's review how to turn a regex into a NFA.
+
+Take at look of the [source code in Github](https://github.com/eldipa/nfa).
 <!--more-->
 
 ## From a regular expression to a NFA
@@ -20,12 +22,12 @@ Before getting deep in this, let's define a very simple problem: we
 want to validate if a particular string follows or not a given structure.
 
 Let's assume that this structure can be writing using a
-*regular language*{% sidenote '**??**' %}
+*regular language*.
 
 A *regular expresion* or *regex* is a handy way to write this in a concise
 way. Keep in mind that most of the regex engines are more powerful than
 a NFA so not all the features that such engines provide can be translated
-to a NFA.{% sidenote '**??**' %}
+to a NFA.
 
 But a NFA is powerful enough to solve a lot of problems so it worth it.
 
@@ -204,7 +206,8 @@ sm1c -> [*]
 
 ## Union
 
-Finally, the ``a|b`` regex:
+Finally, the ``a|b`` regex. As you may guessed, we stick two or
+more state machines using $$\epsilon$$-transitions.
 
 {% maincolumnplantuml caption:'Disjunction/union of two state machines $$sm_1$$ and $$sm_2$$.' %}
 `
@@ -214,10 +217,10 @@ hide empty description
 state "<math>sm_1</math>" as sm1
 state "<math>sm_2</math>" as sm2
 
-[*] -> sm1 : <math>\epsilon</math>
-[*] -> sm2 : <math>\epsilon</math>
-sm1 -> [*] : <math>\epsilon</math>
-sm2 -> [*] : <math>\epsilon</math>
+[*] --> sm1
+[*] --> sm2 : <math>\epsilon</math>
+sm1 --> [*]
+sm2 --> [*] : <math>\epsilon</math>
 
 @enduml
 `
@@ -225,4 +228,6 @@ sm2 -> [*] : <math>\epsilon</math>
 
 ## Further readings
 
-Compilers: Principles, Techniques, & Tools, Aho, Lam, Sethi and Ullman, Second edition, Chapter 3.
+Aho, Lam, Sethi and Ullman. *Compilers: Principles, Techniques, & Tools*, Second edition, Chapter 3.
+
+You can find a NFA implementation in Python [here in Github](https://github.com/eldipa/nfa).
