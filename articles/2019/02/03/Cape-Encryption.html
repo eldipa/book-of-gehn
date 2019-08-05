@@ -25,6 +25,15 @@
     
   
 
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -140,8 +149,8 @@ let’s use it to encrypt the plaintext  and save it to disk:</p>
 <a href="https://pypi.org/project/cryptonita/">cryptonita</a>, a Python lib for
 cryptanalysis.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span>                 <span class="c"># byexample: +timeout=10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">"cape-ciphertext"</span><span class="p">,</span> <span class="s">"rb"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span>                 <span class="c1"># byexample: +timeout=10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">"cape-ciphertext"</span><span class="p">,</span> <span class="s">"rb"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">plaintext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">"assets/cape_encryption/1.txt"</span><span class="p">,</span> <span class="s">"rt"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 </code></pre></div></div>
 
@@ -211,8 +220,8 @@ we are dropping it.</p>
 <span class="mi">2852</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">ciphertext</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">uniform_length</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>   <span class="c"># drop any shorter row</span>
-</code></pre></div></div>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">uniform_length</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>   <span class="c1"># drop any shorter row
+</span></code></pre></div></div>
 
 <p>Because the key stream is repeated, each column will be xored
 with the <em>same</em> key stream byte.</p>
@@ -221,11 +230,11 @@ with the <em>same</em> key stream byte.</p>
 the same key stream byte:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">tciphertexts</span> <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts</span><span class="p">)</span> <span class="c"># rows</span>
-<span class="mi">256</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts</span><span class="p">)</span> <span class="c1"># rows
+</span><span class="mi">256</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c"># columns</span>
-<span class="mi">11</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># columns
+</span><span class="mi">11</span>
 </code></pre></div></div>
 
 <h3 id="frequency-attack">Frequency attack</h3>
@@ -245,8 +254,8 @@ frequent cipher-symbol is one of the most common plaintext symbols encrypted.</p
 <p>But with only <code class="highlighter-rouge">len(tciphertexts[0]) == 11</code>, we need to set <code class="highlighter-rouge">ntop</code> to
 higher value.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.scoring.freq</span> <span class="kn">import</span> <span class="n">etaoin_shrdlu</span>   <span class="c"># byexample: +timeout 10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks</span> <span class="kn">import</span> <span class="n">freq_attack</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.scoring.freq</span> <span class="kn">import</span> <span class="n">etaoin_shrdlu</span>   <span class="c1"># byexample: +timeout 10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks</span> <span class="kn">import</span> <span class="n">freq_attack</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">most_common</span> <span class="o">=</span> <span class="n">etaoin_shrdlu</span><span class="p">()</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ntop</span> <span class="o">=</span> <span class="mi">5</span>
@@ -305,8 +314,8 @@ out plaintext model.</p>
 guesses:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">gkeys</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tciphertexts</span><span class="p">:</span>                          <span class="c"># byexample: +timeout=10</span>
-<span class="o">...</span>     <span class="n">gk</span> <span class="o">=</span> <span class="n">freq_attack</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">most_common</span><span class="p">,</span> <span class="n">ntop</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tciphertexts</span><span class="p">:</span>                          <span class="c1"># byexample: +timeout=10
+</span><span class="o">...</span>     <span class="n">gk</span> <span class="o">=</span> <span class="n">freq_attack</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">most_common</span><span class="p">,</span> <span class="n">ntop</span><span class="p">)</span>
 <span class="o">...</span>     <span class="n">gk</span>  <span class="o">=</span> <span class="n">brute_force</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">score_func</span><span class="o">=</span><span class="n">all_in_alphabet</span><span class="p">,</span> <span class="n">key_space</span><span class="o">=</span><span class="n">gk</span><span class="p">)</span>
 <span class="o">...</span>     <span class="n">gkeys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gk</span><span class="p">)</span>
 </code></pre></div></div>

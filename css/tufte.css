@@ -357,7 +357,7 @@ h1 code, h2 code, h3 code {
 /*-- Table styling section - For Tufte-Jekyll, booktabs style is default for Markdown tables  --*/
 table, table.booktabs {
   width: auto;
-  margin: 0 auto;
+  margin: 15px auto;
   border-spacing: 0px;
   border-top: 2px solid #333333;
   border-bottom: 2px solid #333333; }
@@ -439,9 +439,13 @@ section {
 ul, ol {
   width: 45%;
   -webkit-padding-start: 5%;
-  -webkit-padding-end: 5%;
-  /*list-style-type: none;*/
-  list-style: inside; }
+  -webkit-padding-end: 5%; }
+
+ul {
+  list-style: circle inside; }
+
+ol {
+  list-style: lower-roman inside; }
 
 figure, figure img.maincolumn {
   max-width: 55%;
@@ -464,6 +468,12 @@ figcaption {
   position: relative;
   max-width: 40%; }
 
+figcaption .MathJax span {
+  font-size: 1.0rem; }
+
+figcaption span > code {
+  font-size: 0.8rem; }
+
 figure.fullwidth figcaption {
   float: left;
   margin-right: 0%;
@@ -471,6 +481,17 @@ figure.fullwidth figcaption {
 
 img {
   max-width: 100%; }
+
+object {
+  max-width: 100%; }
+
+figure object {
+  margin: auto;
+  display: block; }
+
+figure img {
+  margin: auto;
+  display: block; }
 
 .sidenote, .marginnote {
   float: right;
@@ -539,7 +560,7 @@ div.table-wrapper {
     padding-left: 5%;
     padding-right: 5%; } }
 .marginnote code, .sidenote code {
-  font-size: 1rem; }
+  font-size: 0.8rem; }
 
 /* originally this rule applied to
         pre, pre code, p pre code
@@ -632,6 +653,9 @@ label.margin-toggle:not(.sidenote-number) {
     border-right: 1px solid #efefef; }
 
   img {
+    max-width: 100%; }
+
+  object {
     max-width: 100%; } }
 /*--- End of Basic Layout stuff from tufte.css ---*/
 /* -- Jekyll specific styling --*/
@@ -769,6 +793,9 @@ hr.slender {
     page-break-inside: avoid; }
 
   img {
+    max-width: 100% !important; }
+
+  object {
     max-width: 100% !important; }
 
   p,

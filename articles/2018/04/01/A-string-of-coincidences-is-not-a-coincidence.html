@@ -25,6 +25,15 @@
     
   
 
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -57,8 +66,8 @@ the cipher as not secure even of we can’t break it.</p>
 <p>In the following pool of random strings one is actually a ciphertext
 that is the <code class="highlighter-rouge">xor</code> encryption of a plaintext using a single-byte key.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/4.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/4.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">{}</span>
 </code></pre></div></div>
@@ -88,8 +97,8 @@ challenge</span>.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">)]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="c"># higher values, less random</span>
-<span class="p">[(</span><span class="mf">0.02298</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">101</span><span class="p">),</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="c1"># higher values, less random
+</span><span class="p">[(</span><span class="mf">0.02298</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">101</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.02988</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">102</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.04597</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">170</span><span class="p">)]</span>
 
@@ -142,8 +151,8 @@ the strings in the pool:</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">)]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="c"># lower values, less random</span>
-<span class="p">[(</span><span class="mf">0.9097</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">311</span><span class="p">),</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="c1"># lower values, less random
+</span><span class="p">[(</span><span class="mf">0.9097</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">311</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.9182</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">230</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.9377</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">68</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.9377</span><span class="o">&lt;...&gt;</span><span class="p">,</span> <span class="mi">138</span><span class="p">)]</span>
@@ -177,8 +186,8 @@ doesn’t capture a pattern of more than one bit.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">)]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="c"># lower values, less random</span>
-<span class="p">[(</span><span class="mf">0.4983211558075781</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="c1"># lower values, less random
+</span><span class="p">[(</span><span class="mf">0.4983211558075781</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.5399878224742447</span><span class="p">,</span> <span class="mi">102</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.5404039285997025</span><span class="p">,</span> <span class="mi">101</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.548737261933036</span><span class="p">,</span> <span class="mi">232</span><span class="p">)]</span>
@@ -217,8 +226,8 @@ will be the xor of two ASCII strings.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">)]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span> <span class="c"># lower values, less random</span>
-<span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">35</span><span class="p">),</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span> <span class="c1"># lower values, less random
+</span><span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">35</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">149</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">165</span><span class="p">),</span>
  <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span>
@@ -250,8 +259,8 @@ non-random string.</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">)]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="c"># lower values, less random</span>
-<span class="p">[(</span><span class="mi">53</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span> <span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">scores_and_indexes</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="c1"># lower values, less random
+</span><span class="p">[(</span><span class="mi">53</span><span class="p">,</span> <span class="mi">170</span><span class="p">),</span> <span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">55</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span><span class="p">[</span><span class="s">'Kolmogorov Complexity'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
 </code></pre></div></div>
@@ -263,8 +272,8 @@ non-random string.</p>
 <p>Now let’s break the ciphertext using a frequency attack (implemented in
 <a href="https://pypi.org/project/cryptonita/">cryptonita</a>).</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.scoring</span> <span class="kn">import</span> <span class="n">all_ascii_printable</span>         <span class="c"># byexample: +timeout 10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks</span> <span class="kn">import</span> <span class="n">brute_force</span><span class="p">,</span> <span class="n">freq_attack</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.scoring</span> <span class="kn">import</span> <span class="n">all_ascii_printable</span>         <span class="c1"># byexample: +timeout 10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks</span> <span class="kn">import</span> <span class="n">brute_force</span><span class="p">,</span> <span class="n">freq_attack</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">most_common_plain_ngrams</span> <span class="o">=</span> <span class="p">[</span><span class="n">B</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="s">'etaoin shrdlu'</span><span class="p">]</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">ciphertexts</span><span class="p">[</span><span class="mi">170</span><span class="p">]</span>
@@ -302,8 +311,8 @@ of crafted strings.</p>
 >>> import sys
 >>> sys.path.append("./assets/plotting")
 
->>> from plotting import plt, show                      # byexample: +timeout=10
->>> import pandas as pd                                 # byexample: +timeout=10
+>>> from plotting import plt, show                      # byexample: +timeout=20
+>>> import pandas as pd                                 # byexample: +timeout=20
 
 >>> methods = pd.DataFrame(methods)
 

@@ -25,6 +25,15 @@
     
   
 
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -62,15 +71,15 @@ to modify the plaintext at will.<label for="sn-92c40aed2262db60522dbf16855f07d8"
 <p>But first, let’s define a random configuration with some fixed values like
 the block size or the encryption mode:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
-
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
+</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sys</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">"./assets/matasano"</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">challenge</span> <span class="kn">import</span> <span class="n">generate_config</span><span class="p">,</span> <span class="n">enc_cbc</span><span class="p">,</span> <span class="n">dec_cbc</span>  <span class="c"># byexample: +timeout=10</span>
-
-<span class="o">&gt;&gt;&gt;</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">20180703</span>   <span class="c"># make the tests 'random' but deterministic</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">block_size</span> <span class="o">=</span> <span class="mi">16</span>     <span class="c"># leave this fixed, it is what happen in practice</span>
-
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">challenge</span> <span class="kn">import</span> <span class="n">generate_config</span><span class="p">,</span> <span class="n">enc_cbc</span><span class="p">,</span> <span class="n">dec_cbc</span>  <span class="c1"># byexample: +timeout=10
+</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">20180703</span>   <span class="c1"># make the tests 'random' but deterministic
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">block_size</span> <span class="o">=</span> <span class="mi">16</span>     <span class="c1"># leave this fixed, it is what happen in practice
+</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="n">block_size</span><span class="p">,</span>
 <span class="o">...</span>         <span class="n">enc_mode</span><span class="o">=</span><span class="s">'cbc'</span><span class="p">,</span>
 <span class="o">...</span>         <span class="n">prefix</span> <span class="o">=</span> <span class="s">"comment1=cooking</span><span class="si">%20</span><span class="s">MCs;userdata="</span><span class="p">,</span>

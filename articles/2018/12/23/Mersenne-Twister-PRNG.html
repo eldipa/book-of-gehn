@@ -25,6 +25,15 @@
     
   
 
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -109,8 +118,8 @@ which turns the
 <a href="https://cryptopals.com/sets/3/challenges/22">crack an MT19937 seed</a>
 into a much simpler task:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks</span> <span class="kn">import</span> <span class="n">search</span>    <span class="c"># byexample: +timeout=10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks</span> <span class="kn">import</span> <span class="n">search</span>    <span class="c1"># byexample: +timeout=10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">MT19937_oracle</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">first_known_output</span><span class="p">):</span>
 <span class="o">...</span>     <span class="n">g</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">seed</span><span class="p">))</span>
@@ -122,8 +131,8 @@ into a much simpler task:</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">-</span> <span class="n">delta</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">stop</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">delta</span><span class="o">*</span><span class="mi">2</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">search</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">oracle</span><span class="p">,</span> <span class="n">likely</span><span class="o">=</span><span class="s">'middle'</span><span class="p">)</span> <span class="o">==</span> <span class="n">secret_seed</span>      <span class="c"># byexample: +timeout=10</span>
-<span class="bp">True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">search</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">oracle</span><span class="p">,</span> <span class="n">likely</span><span class="o">=</span><span class="s">'middle'</span><span class="p">)</span> <span class="o">==</span> <span class="n">secret_seed</span>      <span class="c1"># byexample: +timeout=10
+</span><span class="bp">True</span>
 </code></pre></div></div>
 
 <h2 id="cloning">Cloning</h2>
@@ -141,8 +150,8 @@ break it.</span></p>
 <a href="https://cryptopals.com/sets/3/challenges/23">clone an MT19937 RNG from its output</a>
 allowing an attacker to predict any future value:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks.prng</span> <span class="kn">import</span> <span class="n">clone_mt19937</span>               <span class="c"># byexample: +timeout=10</span>
-
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks.prng</span> <span class="kn">import</span> <span class="n">clone_mt19937</span>               <span class="c1"># byexample: +timeout=10
+</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">g</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">secret_seed</span><span class="p">))</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">624</span><span class="p">)]</span>
 
@@ -170,8 +179,8 @@ can be obtained.</p>
 <p>From a pseudo random generator we can build a stream of pseudo random bytes,
 just seeing each number a 4 or 8 bytes:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.conv</span> <span class="kn">import</span> <span class="n">repack</span>          <span class="c"># byexample: +timeout=10</span>
-
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.conv</span> <span class="kn">import</span> <span class="n">repack</span>          <span class="c1"># byexample: +timeout=10
+</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">prng</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">n16</span><span class="p">))</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">kstream</span> <span class="o">=</span> <span class="n">repack</span><span class="p">(</span><span class="n">prng</span><span class="p">,</span> <span class="n">ifmt</span><span class="o">=</span><span class="s">'&gt;I'</span><span class="p">,</span> <span class="n">ofmt</span><span class="o">=</span><span class="s">'&gt;BBBB'</span><span class="p">)</span>
 </code></pre></div></div>
@@ -179,8 +188,8 @@ just seeing each number a 4 or 8 bytes:</p>
 <p>Given this stream we can build a stream cipher just xoring the random stream
 with the plaintext in a similar way like CTR works</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">secret</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lnonce</span>     <span class="c"># quite large random "secret" stuff</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="n">s</span> <span class="o">^</span> <span class="nb">next</span><span class="p">(</span><span class="n">kstream</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">secret</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">secret</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">lnonce</span>     <span class="c1"># quite large random "secret" stuff
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="n">s</span> <span class="o">^</span> <span class="nb">next</span><span class="p">(</span><span class="n">kstream</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">secret</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">clen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">clen</span>
@@ -193,8 +202,8 @@ an unknown position:</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">at</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">n8</span> <span class="o">%</span> <span class="p">(</span><span class="n">clen</span><span class="o">-</span><span class="mi">8</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">known_plaintext</span> <span class="o">=</span> <span class="n">secret</span><span class="p">[</span><span class="n">at</span><span class="p">:</span><span class="n">at</span><span class="o">+</span><span class="mi">8</span><span class="p">]</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">plen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">known_plaintext</span><span class="p">)</span>     <span class="c"># quite arbitrary, it could work with less</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">plen</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">plen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">known_plaintext</span><span class="p">)</span>     <span class="c1"># quite arbitrary, it could work with less
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">plen</span>
 <span class="mi">8</span>
 </code></pre></div></div>
 
@@ -228,8 +237,8 @@ guessed seed and see if a substring matches or not.</p>
 <span class="o">...</span>     <span class="n">count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="n">p</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sngrams</span><span class="p">,</span> <span class="n">pngrams</span><span class="p">))</span>
 <span class="o">...</span>     <span class="k">return</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">seed</span> <span class="o">=</span> <span class="n">search</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">16</span><span class="p">,</span> <span class="n">oracle</span><span class="p">)</span>                         <span class="c"># byexample: +timeout=300</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">prng</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">seed</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">seed</span> <span class="o">=</span> <span class="n">search</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">16</span><span class="p">,</span> <span class="n">oracle</span><span class="p">)</span>                         <span class="c1"># byexample: +timeout=300
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">prng</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">seed</span><span class="p">))</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">kstream</span> <span class="o">=</span> <span class="n">repack</span><span class="p">(</span><span class="n">prng</span><span class="p">,</span> <span class="n">ifmt</span><span class="o">=</span><span class="s">'&gt;I'</span><span class="p">,</span> <span class="n">ofmt</span><span class="o">=</span><span class="s">'&gt;BBBB'</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">B</span><span class="p">(</span><span class="n">c</span> <span class="o">^</span> <span class="nb">next</span><span class="p">(</span><span class="n">kstream</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ciphertext</span><span class="p">)</span> <span class="o">==</span> <span class="n">secret</span>

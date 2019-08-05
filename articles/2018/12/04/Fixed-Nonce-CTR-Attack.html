@@ -25,6 +25,15 @@
     
   
 
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -64,12 +73,12 @@ with the <em>same</em> pseudo random key stream – totally insecure.</p>
 
 <p>Let’s implement a CTR<label for="sn-3df421617783be9cdc50680bb6447518" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-3df421617783be9cdc50680bb6447518" class="margin-toggle" /><span class="sidenote"><a href="https://cryptopals.com/sets/3/challenges/18">Implement CTR, the stream cipher mode</a></span></p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
-
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
+</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sys</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">"./assets/matasano"</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">challenge</span> <span class="kn">import</span> <span class="n">generate_config</span><span class="p">,</span> <span class="n">enc_ctr</span><span class="p">,</span> <span class="n">dec_ctr</span>  <span class="c"># byexample: +timeout=10</span>
-
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">challenge</span> <span class="kn">import</span> <span class="n">generate_config</span><span class="p">,</span> <span class="n">enc_ctr</span><span class="p">,</span> <span class="n">dec_ctr</span>  <span class="c1"># byexample: +timeout=10
+</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">20181204</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">bsize</span> <span class="o">=</span> <span class="mi">16</span>
 
@@ -93,8 +102,8 @@ will be encrypted with the same key stream.</p>
 <p>Let’s load some plaintexts and let’s encrypt them in that way
 and see if we can break the encryption.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.conv</span> <span class="kn">import</span> <span class="n">transpose</span><span class="p">,</span> <span class="n">uniform_length</span>    <span class="c"># byexample: +timeout=10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">plaintexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/20.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">64</span><span class="p">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.conv</span> <span class="kn">import</span> <span class="n">transpose</span><span class="p">,</span> <span class="n">uniform_length</span>    <span class="c1"># byexample: +timeout=10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">plaintexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/20.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">64</span><span class="p">))</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="p">[</span><span class="n">enc_ctr</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">nonce</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plaintexts</span><span class="p">]</span>
 </code></pre></div></div>
@@ -123,11 +132,11 @@ convenient to <em>transpose</em> them.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">tciphertexts_transposed</span> <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">tciphertexts</span><span class="p">)</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts_transposed</span><span class="p">)</span>    <span class="c"># rows</span>
-<span class="mi">53</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts_transposed</span><span class="p">)</span>    <span class="c1"># rows
+</span><span class="mi">53</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts_transposed</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c"># columns</span>
-<span class="mi">60</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">tciphertexts_transposed</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># columns
+</span><span class="mi">60</span>
 </code></pre></div></div>
 
 <h3 id="plaintext-statistic-model">Plaintext statistic model</h3>
@@ -187,15 +196,15 @@ yields none key we roll back and score using a more relaxed score function:</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">guesses</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tciphertexts_transposed</span><span class="p">):</span>
-<span class="o">...</span>     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c"># first letter, use a special statistical model</span>
-<span class="o">...</span>         <span class="n">most_common</span> <span class="o">=</span> <span class="n">etaoin_shrdlu</span><span class="p">()</span> <span class="o">|</span> <span class="n">tsamcin_brped</span><span class="p">()</span>
+<span class="o">...</span>     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># first letter, use a special statistical model
+</span><span class="o">...</span>         <span class="n">most_common</span> <span class="o">=</span> <span class="n">etaoin_shrdlu</span><span class="p">()</span> <span class="o">|</span> <span class="n">tsamcin_brped</span><span class="p">()</span>
 <span class="o">...</span>     <span class="k">else</span><span class="p">:</span>
 <span class="o">...</span>         <span class="n">most_common</span> <span class="o">=</span> <span class="n">etaoin_shrdlu</span><span class="p">()</span>
 <span class="o">...</span>
 <span class="o">...</span>     <span class="n">byte_guess</span> <span class="o">=</span> <span class="n">freq_attack</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">most_common</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="o">...</span>     <span class="n">g</span> <span class="o">=</span> <span class="n">brute_force</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">partial</span><span class="p">(</span><span class="n">fit_freq_score</span><span class="p">,</span> <span class="n">expected_prob</span><span class="o">=</span><span class="n">most_common</span><span class="p">),</span> <span class="n">byte_guess</span><span class="p">)</span>
-<span class="o">...</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">g</span><span class="p">:</span>   <span class="c"># fit_freq_score was too hard, rollback to a more soft score func</span>
-<span class="o">...</span>         <span class="n">g</span> <span class="o">=</span> <span class="n">brute_force</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">all_ascii_printable</span><span class="p">,</span> <span class="n">byte_guess</span><span class="p">)</span>
+<span class="o">...</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">g</span><span class="p">:</span>   <span class="c1"># fit_freq_score was too hard, rollback to a more soft score func
+</span><span class="o">...</span>         <span class="n">g</span> <span class="o">=</span> <span class="n">brute_force</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">all_ascii_printable</span><span class="p">,</span> <span class="n">byte_guess</span><span class="p">)</span>
 <span class="o">...</span>
 <span class="o">...</span>     <span class="n">byte_guess</span> <span class="o">=</span> <span class="n">g</span>
 <span class="o">...</span>     <span class="n">guesses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">byte_guess</span><span class="p">)</span>
@@ -401,15 +410,15 @@ encrypt them with a fixed-nonce CTR and break the encryption.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">guesses</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tciphertexts_transposed</span><span class="p">):</span>
-<span class="o">...</span>     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c"># first letter, use a special statistical model</span>
-<span class="o">...</span>         <span class="n">most_common</span> <span class="o">=</span> <span class="n">etaoin_shrdlu</span><span class="p">()</span> <span class="o">|</span> <span class="n">tsamcin_brped</span><span class="p">()</span>
+<span class="o">...</span>     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># first letter, use a special statistical model
+</span><span class="o">...</span>         <span class="n">most_common</span> <span class="o">=</span> <span class="n">etaoin_shrdlu</span><span class="p">()</span> <span class="o">|</span> <span class="n">tsamcin_brped</span><span class="p">()</span>
 <span class="o">...</span>     <span class="k">else</span><span class="p">:</span>
 <span class="o">...</span>         <span class="n">most_common</span> <span class="o">=</span> <span class="n">etaoin_shrdlu</span><span class="p">()</span>
 <span class="o">...</span>
 <span class="o">...</span>     <span class="n">byte_guess</span> <span class="o">=</span> <span class="n">freq_attack</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">most_common</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="o">...</span>     <span class="n">g</span> <span class="o">=</span> <span class="n">brute_force</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">partial</span><span class="p">(</span><span class="n">fit_freq_score</span><span class="p">,</span> <span class="n">expected_prob</span><span class="o">=</span><span class="n">most_common</span><span class="p">),</span> <span class="n">byte_guess</span><span class="p">)</span>
-<span class="o">...</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">g</span><span class="p">:</span>   <span class="c"># fit_freq_score was too hard, rollback to a more soft score func</span>
-<span class="o">...</span>         <span class="n">g</span> <span class="o">=</span> <span class="n">brute_force</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">all_ascii_printable</span><span class="p">,</span> <span class="n">byte_guess</span><span class="p">)</span>
+<span class="o">...</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">g</span><span class="p">:</span>   <span class="c1"># fit_freq_score was too hard, rollback to a more soft score func
+</span><span class="o">...</span>         <span class="n">g</span> <span class="o">=</span> <span class="n">brute_force</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">all_ascii_printable</span><span class="p">,</span> <span class="n">byte_guess</span><span class="p">)</span>
 <span class="o">...</span>
 <span class="o">...</span>     <span class="n">byte_guess</span> <span class="o">=</span> <span class="n">g</span>
 <span class="o">...</span>     <span class="n">guesses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">byte_guess</span><span class="p">)</span>

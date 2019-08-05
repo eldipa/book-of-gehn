@@ -25,6 +25,15 @@
     
   
 
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -60,8 +69,8 @@ using
 <p><a href="https://cryptopals.com/sets/2/challenges/9">Implement PKCS#7 padding</a>,
 easy cake.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
-
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
+</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">"YELLOW SUBMARINE"</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s">'pkcs#7'</span><span class="p">)</span>
 <span class="s">'YELLOW SUBMARINE</span><span class="se">\x04\x04\x04\x04</span><span class="s">'</span>
@@ -145,16 +154,16 @@ the secret payload will be appended later before the encryption.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">encryption_oracle</span><span class="p">(</span><span class="n">partial_plaintext</span><span class="p">):</span>
 <span class="o">...</span>     <span class="k">global</span> <span class="n">cfg</span>
-<span class="o">...</span>     <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span> <span class="c"># update the random attributes</span>
-<span class="o">...</span>
+<span class="o">...</span>     <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span> <span class="c1"># update the random attributes
+</span><span class="o">...</span>
 <span class="o">...</span>     <span class="n">block_size</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">kargs</span><span class="p">[</span><span class="s">'block_size'</span><span class="p">]</span>
 <span class="o">...</span>
-<span class="o">...</span>     <span class="c"># prepend + append with two random strings; pad it later</span>
-<span class="o">...</span>     <span class="n">plaintext</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">partial_plaintext</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">posfix</span>
+<span class="o">...</span>     <span class="c1"># prepend + append with two random strings; pad it later
+</span><span class="o">...</span>     <span class="n">plaintext</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">partial_plaintext</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">posfix</span>
 <span class="o">...</span>     <span class="n">plaintext</span> <span class="o">=</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">pad_mode</span><span class="p">)</span>
 <span class="o">...</span>
-<span class="o">...</span>     <span class="c"># encrypt the plaintext with one of the available modes</span>
-<span class="o">...</span>     <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enc_mode</span> <span class="o">==</span> <span class="s">'ecb'</span><span class="p">:</span>
+<span class="o">...</span>     <span class="c1"># encrypt the plaintext with one of the available modes
+</span><span class="o">...</span>     <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enc_mode</span> <span class="o">==</span> <span class="s">'ecb'</span><span class="p">:</span>
 <span class="o">...</span>         <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">enc_ecb</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">block_size</span><span class="p">)</span>
 <span class="o">...</span>     <span class="k">elif</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enc_mode</span> <span class="o">==</span> <span class="s">'cbc'</span><span class="p">:</span>
 <span class="o">...</span>         <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">enc_cbc</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">iv</span><span class="p">)</span>
@@ -238,8 +247,8 @@ otherwise CBC (so we will use <code class="highlighter-rouge">has_duplicates</co
 <span class="o">...</span>     <span class="n">is_ecb</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="o">...</span>     <span class="n">enc_mode</span> <span class="o">=</span> <span class="s">'ecb'</span> <span class="k">if</span> <span class="n">is_ecb</span> <span class="k">else</span> <span class="s">'cbc'</span>
 <span class="o">...</span>
-<span class="o">...</span>     <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enc_mode</span> <span class="o">!=</span> <span class="n">enc_mode</span><span class="p">:</span>  <span class="c"># is the same that the secret cfg chose?</span>
-<span class="o">...</span>         <span class="k">print</span><span class="p">(</span><span class="s">"Fail"</span><span class="p">)</span>
+<span class="o">...</span>     <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enc_mode</span> <span class="o">!=</span> <span class="n">enc_mode</span><span class="p">:</span>  <span class="c1"># is the same that the secret cfg chose?
+</span><span class="o">...</span>         <span class="k">print</span><span class="p">(</span><span class="s">"Fail"</span><span class="p">)</span>
 <span class="o">...</span>         <span class="k">break</span>
 </code></pre></div></div>
 
@@ -250,8 +259,8 @@ otherwise CBC (so we will use <code class="highlighter-rouge">has_duplicates</co
 <p>For this challenge we will set the encryption mode to ECB and the prepended payload
 to some arbitrary but constant text.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="c"># keep the prefix and the enc mode fixed</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">enc_mode</span><span class="o">=</span><span class="s">'ecb'</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="c1"># keep the prefix and the enc mode fixed
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">enc_mode</span><span class="o">=</span><span class="s">'ecb'</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h3 id="block-alignment">Block alignment</h3>
@@ -400,13 +409,13 @@ that breaks the ECB cipher using a oracle.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks.block_ciphers</span> <span class="kn">import</span> <span class="n">decrypt_ecb_tail</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">decrypt_ecb_tail</span><span class="p">(</span><span class="n">alignment</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="n">encryption_oracle</span><span class="p">)</span>  <span class="c"># byexample: +timeout 10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">unpad</span><span class="p">(</span><span class="s">'pkcs#7'</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">decrypt_ecb_tail</span><span class="p">(</span><span class="n">alignment</span><span class="p">,</span> <span class="n">block_size</span><span class="p">,</span> <span class="n">encryption_oracle</span><span class="p">)</span>  <span class="c1"># byexample: +timeout 10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">unpad</span><span class="p">(</span><span class="s">'pkcs#7'</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">==</span> <span class="n">secret</span>
 <span class="bp">True</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span>   <span class="c"># byexample: +norm-ws</span>
-<span class="s">"Rollin' in my 5.0</span><span class="se">\n</span><span class="s">With my rag-top down so my hair can blow</span><span class="se">\n</span><span class="s">The girlies on</span><span class="err">
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span>   <span class="c1"># byexample: +norm-ws
+</span><span class="s">"Rollin' in my 5.0</span><span class="se">\n</span><span class="s">With my rag-top down so my hair can blow</span><span class="se">\n</span><span class="s">The girlies on</span><span class="err">
 </span><span class="s">standby waving just to say hi</span><span class="se">\n</span><span class="s">Did you stop? No, I just drove by</span><span class="se">\n</span><span class="s">"</span>
 </code></pre></div></div>
 

@@ -25,6 +25,15 @@
     
   
 
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -63,7 +72,7 @@ trusted authority.<!--more--></p>
 that the IT guys said to him: <em>“it’s OK, just accept the new certificate and
 ignore the warning of the browser”</em>.</p>
 
-<p>They were tampering the internet access of all the company!<label for="mf-9d56bae39ef3717a0ac0633d00b3095c" class="margin-toggle">⊕</label><input type="checkbox" id="mf-9d56bae39ef3717a0ac0633d00b3095c" class="margin-toggle" /><span class="marginnote">  <img class="fullwidth" alt="Big Brother sight" src="/book-of-gehn/assets/isolate_wifi/isolate_wifi_big_brother_sight.png" />  <br /></span></p>
+<p>They were tampering the internet access of all the company!<label for="mf-9d56bae39ef3717a0ac0633d00b3095c" class="margin-toggle">⊕</label><input type="checkbox" id="mf-9d56bae39ef3717a0ac0633d00b3095c" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Big Brother sight" src="/book-of-gehn/assets/isolate_wifi/isolate_wifi_big_brother_sight.png" />  <br /></span></p>
 
 <p>All his credentials, emails and documents could be read by someone else.
 That was unacceptable.</p>
@@ -120,7 +129,7 @@ Interface
 The <code class="highlighter-rouge">iw</code> manpage warns that the output of this command shouldn’t be scrapped,
 but let’s be disobedient for a while:</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ PHYNUM</span><span class="o">=</span><span class="k">$(</span>iw dev <span class="s2">"wlan0"</span> info | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s1">'s/^.*wiphy \([0-9]\+\)$/\1/p'</span><span class="k">)</span>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ PHYNUM</span><span class="o">=</span><span class="si">$(</span>iw dev <span class="s2">"wlan0"</span> info | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s1">'s/^.*wiphy \([0-9]\+\)$/\1/p'</span><span class="si">)</span>
 <span class="nv">$ </span><span class="nb">echo</span> <span class="s2">"</span><span class="nv">$PHYNUM</span><span class="s2">"</span>
 &lt;phy-id&gt;
 </code></pre></div></div>

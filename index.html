@@ -25,6 +25,15 @@
     
   
 
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -47,6 +56,59 @@
     <article>
         <h1 class="content-listing-header sans">Articles</h1>
   <ul class="content-listing ">
+    
+        <li class="listing">
+          <hr class="slender">
+          <a href="/book-of-gehn/articles/2019/08/04/Better-Compression-Log-Files-PoC.html"><h2 class="larger">Better Compression of Log Files (PoC)</h2></a>
+          <br><span class="smaller">August 4, 2019</span>  <br/>
+          <div><p>The logs present several patterns that are repeated again and again;
+LZMA takes advantage of that and reaches very high compress ratios.</p>
+
+<p>Doing a quick test, LZMA at the 6 level of compression, compressed
+a 2.5 GB log into 147 MB very tight binary blog. A ratio of 94.069%,
+not bad!</p>
+
+<p>But could we get better results?</p>
+
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
+          <a href="/book-of-gehn/articles/2019/07/25/From-Regex-to-Nondeterministic-Finite-Automata.html"><h2 class="larger">From a Regex to a Nondeterministic Finite Automata</h2></a>
+          <br><span class="smaller">July 25, 2019</span>  <br/>
+          <div><p>Before building complex state machine we need to learn the basics blocks.</p>
+
+<p>When the solution to a problem can be seen as set of states with
+transitions from ones to others, modeling them as a nondeterministic
+finite automatas makes clear how the solution works and allows to spot
+deficiencies.</p>
+
+<p>A regular expression is an example of this. As an introductory step
+let’s review how to turn a regex into a NFA.</p>
+
+<p>Take at look of the <a href="https://github.com/eldipa/nfa">source code in Github</a>.</p>
+
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
+          <a href="/book-of-gehn/articles/2019/05/08/CTR-Edit-Inject-Plaintext-Attacks.html"><h2 class="larger">CTR Edit/Inject Plaintext Attacks</h2></a>
+          <br><span class="smaller">May 8, 2019</span>  <br/>
+          <div><p>CTR mode cipher turns a block cipher into a stream cipher.</p>
+
+<p>With this, a ciphertext can be edited <em>in place</em> generating
+enough of the key stream, decrypting and re-encrypting the edited
+portion.</p>
+
+<p>One can replace part of the plaintext, extend it or even reduce it.</p>
+
+<p>But this beautiful property of a CTR mode (and any other stream cipher)
+is actually a booby-trap.</p>
+
+</div>
+        </li>
     
         <li class="listing">
           <hr class="slender">
@@ -186,7 +248,7 @@ topic to me not for the vulnerability itself but for the large
 ways to trigger it even in the most unexpected places.</p>
 
 <p>Take the 4 characters <code class="highlighter-rouge">() {</code> and open the world.
-<label for="mf-f40ce0988735db556d111316cae05d24" class="margin-toggle">⊕</label><input type="checkbox" id="mf-f40ce0988735db556d111316cae05d24" class="margin-toggle" /><span class="marginnote">  <img class="fullwidth" alt="Fragments found in the field." src="/book-of-gehn/assets/shellshock/runes.png" />  <br /></span></p>
+<label for="mf-f40ce0988735db556d111316cae05d24" class="margin-toggle">⊕</label><input type="checkbox" id="mf-f40ce0988735db556d111316cae05d24" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Fragments found in the field." src="/book-of-gehn/assets/shellshock/runes.png" />  <br /></span></p>
 
 <p>Creativity and few hours reading man pages are all what you need.</p>
 
@@ -230,8 +292,8 @@ to modify the plaintext at will.<label for="sn-92c40aed2262db60522dbf16855f07d8"
           <hr class="slender">
           <a href="/book-of-gehn/articles/2018/07/01/Cut-and-Paste-ECB-Blocks.html"><h2 class="larger">Cut and Paste ECB blocks</h2></a>
           <br><span class="smaller">July 1, 2018</span>  <br/>
-          <div><p>In this game we control partially of a plaintext that is encrypted
-under a ECB mode with a secret key.</p>
+          <div><p>In this game we control partially a plaintext that is encrypted
+under ECB mode with a secret key.</p>
 
 <p>This time the idea is not to reveal the key but to <em>forge</em> a plaintext.</p>
 
@@ -296,8 +358,8 @@ the cipher as not secure even of we can’t break it.</p>
 <p>In the following pool of random strings one is actually a ciphertext
 that is the <code class="highlighter-rouge">xor</code> encryption of a plaintext using a single-byte key.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/4.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/4.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">{}</span>
 </code></pre></div></div>

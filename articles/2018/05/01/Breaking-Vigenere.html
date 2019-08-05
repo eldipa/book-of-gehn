@@ -25,6 +25,15 @@
     
   
 
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -69,8 +78,8 @@ function.</p>
 and we will score each one with the
 <a href="https://en.wikipedia.org/wiki/Hamming_distance">Hamming Distance</a>.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c"># byexample: +timeout=10</span>
-
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
+</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">'./assets/matasano/6.txt'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="mi">64</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks</span> <span class="kn">import</span> <span class="n">guess_key_length</span>
@@ -132,14 +141,14 @@ guesses)</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sys</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">"./assets/plotting"</span><span class="p">)</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">plotting</span> <span class="kn">import</span> <span class="n">plt</span><span class="p">,</span> <span class="n">show</span>                      <span class="c"># byexample: +timeout=10</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>                                 <span class="c"># byexample: +timeout=10</span>
-
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">plotting</span> <span class="kn">import</span> <span class="n">plt</span><span class="p">,</span> <span class="n">show</span>                      <span class="c1"># byexample: +timeout=10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>                                 <span class="c1"># byexample: +timeout=10
+</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">guesses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'Hamming Distance'</span><span class="p">:</span> <span class="n">lengths_hd</span><span class="p">,</span>
 <span class="o">...</span>                         <span class="s">'Index of Coincidence'</span><span class="p">:</span> <span class="n">lengths_ic</span><span class="p">})</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="k">with</span> <span class="n">show</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="s">'./assets/matasano/kl_guesses.png'</span><span class="p">,</span> <span class="n">latexify_kargs</span><span class="o">=</span><span class="p">{</span><span class="s">'columns'</span><span class="p">:</span><span class="mi">2</span><span class="p">}):</span> <span class="c"># byexample: +timeout=600 +skip</span>
-<span class="o">...</span>     <span class="n">_</span> <span class="o">=</span> <span class="n">guesses</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">'o'</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">with</span> <span class="n">show</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="s">'./assets/matasano/kl_guesses.png'</span><span class="p">,</span> <span class="n">latexify_kargs</span><span class="o">=</span><span class="p">{</span><span class="s">'columns'</span><span class="p">:</span><span class="mi">2</span><span class="p">}):</span> <span class="c1"># byexample: +timeout=600 +skip
+</span><span class="o">...</span>     <span class="n">_</span> <span class="o">=</span> <span class="n">guesses</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">'o'</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="o">...</span>
 </code></pre></div></div>
 
