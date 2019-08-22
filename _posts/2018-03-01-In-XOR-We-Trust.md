@@ -3,7 +3,8 @@ layout: post
 title: "In XOR we trust"
 ---
 
-This is the first set of exercises for the [Matasano Challenge](https://cryptopals.com/) (also known as
+This is the first set of exercises for the
+[Matasano Challenge](https://cryptopals.com/) (also known as
 the Cryptopals Challenge)
 
 It starts from the very begin, really easy, but it goes up to more
@@ -25,7 +26,7 @@ in base 16 or 64 into bytes{% sidenote 'This unlocks the
 challenge.' %}.
 
 ```python
->>> from cryptonita import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B         # byexample: +timeout=10
 
 >>> b = B('49276d206b696c6c696e6720796f75'
 ...       '7220627261696e206c696b65206120'

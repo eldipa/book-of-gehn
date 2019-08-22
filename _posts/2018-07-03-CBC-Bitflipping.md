@@ -18,7 +18,7 @@ But first, let's define a random configuration with some fixed values like
 the block size or the encryption mode:
 
 ```python
->>> from cryptonita import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B                # byexample: +timeout=10
 
 >>> import sys
 >>> sys.path.append("./assets/matasano")

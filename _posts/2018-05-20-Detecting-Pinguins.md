@@ -22,13 +22,13 @@ Decrypting is a piece of cake; this is just to get practice about
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
->>> ciphertext = B(open('./assets/matasano/7.txt', 'rb').read(), 64)
+>>> ciphertext = B(open('./assets/matasano/7.txt'), encoding=64)
 >>> blocks = ciphertext.nblocks(16)
 
 >>> key = B('YELLOW SUBMARINE')
 
 >>> from Crypto.Cipher import AES
->>> plaintext = b''.join(AES.new(key, AES.MODE_ECB).decrypt(b) for b in blocks)
+>>> plaintext = B.join(AES.new(key, AES.MODE_ECB).decrypt(b) for b in blocks)
 
 >>> print(plaintext)
 b"I'm back and I'm ringin' the bell<...>Play that funky music \n\x04\x04\x04\x04"

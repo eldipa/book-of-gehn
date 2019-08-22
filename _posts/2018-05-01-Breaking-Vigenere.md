@@ -25,9 +25,9 @@ and we will score each one with the
 [Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance).
 
 ```python
->>> from cryptonita import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B                # byexample: +timeout=10
 
->>> ciphertext = B(open('./assets/matasano/6.txt', 'rb').read(), 64)
+>>> ciphertext = B(open('./assets/matasano/6.txt'), encoding=64)
 
 >>> from cryptonita.attacks import guess_key_length
 >>> from cryptonita.scoring import key_length_by_hamming_distance
@@ -196,8 +196,7 @@ What we need is to join all the sets
 discard the unlikely keys and just save the most likely:
 
 ```python
->>> from cryptonita.fuzzy_set import join_fuzzy_sets
->>> keys = join_fuzzy_sets(bytes_of_key, cut_off=0.0, j=B(''))
+>>> keys = FuzzySet.join(bytes_of_key, cut_off=0.0, j=B(''))
 
 >>> len(keys)
 120

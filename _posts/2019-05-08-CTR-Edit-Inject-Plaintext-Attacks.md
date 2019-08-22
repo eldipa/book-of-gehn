@@ -3,7 +3,7 @@ layout: post
 title: "CTR Edit/Inject Plaintext Attacks"
 ---
 
-CTR mode cipher turns a block cipher into a stream cipher.
+A CTR-mode cipher turns a block cipher into a stream cipher.
 
 With this, a ciphertext can be edited *in place* generating
 enough of the key stream, decrypting and re-encrypting the edited
@@ -35,7 +35,10 @@ Imagine the following function:
 ...     return enc_ctr(ptext, secret_cfg.key, secret_cfg.nonce)
 ```
 
-The ``edit`` function allows us to generate two different ciphertexts
+The ``edit`` function allows us edit or patch a ciphertext modifying
+the plaintext.
+
+This generates two different ciphertexts
 encrypted with the **same** key stream which breaks CTR
 with a simple known-plaintext attack{% sidenote 'This unlocks the
 [Break "random access read/write" AES CTR](https://cryptopals.com/sets/1/challenges/25)
@@ -43,8 +46,9 @@ challenge.' %}.
 
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita.conv import join         # byexample: +timeout=10
 
->>> ptext = B('').join(load_bytes('./assets/matasano/25.txt', encoding=64))
+>>> ptext = load_bytes('./assets/matasano/25.txt', encoding=64, multiline=False)
 >>> ctext = enc_ctr(ptext, secret_cfg.key, secret_cfg.nonce)
 
 >>> patch = B('A') * len(ctext)
@@ -63,9 +67,9 @@ the patch, we only need to edit it by pieces:
 >>> N = 16
 >>> for n, pb in enumerate(patch.nblocks(N)):        # byexample: +timeout=10
 ...     offset = n*N
-...     tmp.append(edit(ctext, pb, n*N, secret_cfg)[offset:offset+N])
+...     tmp.append(edit(ctext, pb, offset, secret_cfg)[offset:offset+N])
 
->>> cpatched = B('').join(tmp)
+>>> cpatched = join(tmp)
 
 >>> kstream = cpatched ^ patch
 >>> ptext == ctext ^ kstream
@@ -98,29 +102,30 @@ but you can control the length of the padding inserted.
 ...     return enc_ctr(ptext, secret_cfg.key, secret_cfg.nonce)
 ```
 
-Now imagine that you know a fraction of the plaintext but
-you don't know *where* is in the plaintext:
-
-```python
->>> N = 16
->>> pknown = ptext[secret_cfg.n8:secret_cfg.n8+N]
-```
-
-With these two pieces one can determinate where it is injecting
-a 1 byte of padding.
+This *feature* makes the system vulnerable.
 
 Because the original and the new ciphertexts are encrypted in CTR
 with the *same* secret, both will use the *same* key stream and therefor
-are vulnerable.
-
-Xoring them will cancel the key stream leaving the xor of
-the original plaintext and the same plaintext but with one byte extra:
+both stream will *share the same prefix* until the offset were the
+injection was done.
 
 ```python
 >>> ctext2 = inject_pad(ctext, 1, secret_cfg)
 
 >>> clen = len(ctext)
 >>> x_ctexts = ctext ^ ctext2[:clen]
+
+>>> next((i for i, c in enumerate(x_ctexts) if c != 0), None)
+187
+```
+
+Now imagine that you know a fraction of the plaintext but
+you don't know *where* is in the plaintext but you know
+that it is *after* the injection point:
+
+```python
+>>> N = 16
+>>> pknown = ptext[secret_cfg.n8:secret_cfg.n8+N]
 ```
 
 Under the assumption that the known plaintext is on the right *after*
@@ -130,15 +135,18 @@ for the self-xor of it:
 ```python
 >>> x_pknowns = pknown[1:] ^ pknown[:-1]
 >>> pknown_offset = x_ctexts.index(x_pknowns) - 1
+
+>>> 187 <= pknown_offset
+True
 ```
 
 Now, with this we can recover ``N`` bytes of the key stream. No much.
 
 But if we *inject* more padding, let's say ``N`` bytes the known
-plaintext will move to the right the same allowing us to recover
+plaintext will move to the right the same amount allowing us to recover
 the *next* ``N`` bytes of the key stream.
 
-Repeating this we can recover all the key stream (except with the begin):
+Repeating this we can recover all the key stream (except the begin):
 
 ```python
 >>> tmp = []
@@ -164,10 +172,10 @@ We are not interested in those:
 ```
 
 Finally, from the key stream we can break the ciphering and recover
-the plaintext (except with the begin):
+the plaintext (except the begin):
 
 ```python
->>> kstream = B('').join(tmp)
+>>> kstream = join(tmp)
 >>> pbroken = ctext[pknown_offset:] ^ kstream
 
 >>> ptext[pknown_offset:] == pbroken

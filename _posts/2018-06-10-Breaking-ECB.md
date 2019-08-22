@@ -56,7 +56,7 @@ will be full of zeros.
 
 >>> from challenge import dec_cbc, enc_cbc, enc_ecb
 
->>> ciphertext = B(open('./assets/matasano/10.txt', 'rb').read(), encoding=64)
+>>> ciphertext = B(open('./assets/matasano/10.txt'), encoding=64)
 
 >>> iv = B(0) * 16
 >>> key = B("YELLOW SUBMARINE")

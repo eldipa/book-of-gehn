@@ -274,7 +274,7 @@ And so on till you break the whole block
 ...
 ...             # update the forged byte
 ...             cblocks[-2][i] = n
-...             forged_ciphertext = B('').join(cblocks)
+...             forged_ciphertext = B.join(cblocks)
 ...
 ...             good = oracle(forged_ciphertext)
 ...             if good:

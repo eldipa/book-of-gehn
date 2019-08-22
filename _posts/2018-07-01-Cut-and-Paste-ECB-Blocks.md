@@ -32,7 +32,7 @@ Consider the following function that builds a ciphertext from an hypothetical
 "create profile for a new user":
 
 ```python
->>> from cryptonita import B, load_bytes     # byexample: +timeout=10
+>>> from cryptonita import B                # byexample: +timeout=10
 
 >>> def profile_for(email):
 ...     assert b'&' not in email

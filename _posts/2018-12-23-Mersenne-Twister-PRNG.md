@@ -129,7 +129,7 @@ can be obtained.
 ## Cracking a cipher based on a MT19937
 
 From a pseudo random generator we can build a stream of pseudo random bytes,
-just seeing each number a 4 or 8 bytes:
+just seeing each number as 4 or 8 bytes:
 
 ```python
 >>> from cryptonita.conv import repack          # byexample: +timeout=10
