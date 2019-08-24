@@ -46,9 +46,8 @@ challenge.' %}.
 
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
->>> from cryptonita.conv import join         # byexample: +timeout=10
 
->>> ptext = load_bytes('./assets/matasano/25.txt', encoding=64, multiline=False)
+>>> ptext = B(open('./assets/matasano/25.txt', 'rt'), encoding=64)
 >>> ctext = enc_ctr(ptext, secret_cfg.key, secret_cfg.nonce)
 
 >>> patch = B('A') * len(ctext)
@@ -69,7 +68,7 @@ the patch, we only need to edit it by pieces:
 ...     offset = n*N
 ...     tmp.append(edit(ctext, pb, offset, secret_cfg)[offset:offset+N])
 
->>> cpatched = join(tmp)
+>>> cpatched = B.join(tmp)
 
 >>> kstream = cpatched ^ patch
 >>> ptext == ctext ^ kstream
@@ -175,7 +174,7 @@ Finally, from the key stream we can break the ciphering and recover
 the plaintext (except the begin):
 
 ```python
->>> kstream = join(tmp)
+>>> kstream = B.join(tmp)
 >>> pbroken = ctext[pknown_offset:] ^ kstream
 
 >>> ptext[pknown_offset:] == pbroken
