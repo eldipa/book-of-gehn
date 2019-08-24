@@ -11,4 +11,6 @@ _posts/2018-07-03-CBC-Bitflipping.md
 _posts/2018-10-28-CBC-Padding-Oracle.md
 _posts/2018-12-04-Fixed-Nonce-CTR-Attack.md
 _posts/2018-12-23-Mersenne-Twister-PRNG.md
+_posts/2019-05-08-CTR-Edit-Inject-Plaintext-Attacks.md
+_posts/2019-08-22-CTR-Bitfliping.md
 assets/matasano/challenge.py
