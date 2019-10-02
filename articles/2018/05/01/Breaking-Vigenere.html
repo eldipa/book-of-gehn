@@ -78,9 +78,9 @@ function.</p>
 and we will score each one with the
 <a href="https://en.wikipedia.org/wiki/Hamming_distance">Hamming Distance</a>.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span>                <span class="c1"># byexample: +timeout=10
 </span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">'./assets/matasano/6.txt'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="mi">64</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">'./assets/matasano/6.txt'</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.attacks</span> <span class="kn">import</span> <span class="n">guess_key_length</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.scoring</span> <span class="kn">import</span> <span class="n">key_length_by_hamming_distance</span>
@@ -241,8 +241,7 @@ likely than others:</p>
 <p>What we need is to join all the sets
 discard the unlikely keys and just save the most likely:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.fuzzy_set</span> <span class="kn">import</span> <span class="n">join_fuzzy_sets</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">join_fuzzy_sets</span><span class="p">(</span><span class="n">bytes_of_key</span><span class="p">,</span> <span class="n">cut_off</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="n">B</span><span class="p">(</span><span class="s">''</span><span class="p">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">FuzzySet</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bytes_of_key</span><span class="p">,</span> <span class="n">cut_off</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">j</span><span class="o">=</span><span class="n">B</span><span class="p">(</span><span class="s">''</span><span class="p">))</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
 <span class="mi">120</span>

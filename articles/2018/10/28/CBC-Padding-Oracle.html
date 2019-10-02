@@ -316,7 +316,7 @@ plaintext to <code class="highlighter-rouge">02 02</code> and break the third.</
 <span class="o">...</span>
 <span class="o">...</span>             <span class="c1"># update the forged byte
 </span><span class="o">...</span>             <span class="n">cblocks</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
-<span class="o">...</span>             <span class="n">forged_ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">''</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cblocks</span><span class="p">)</span>
+<span class="o">...</span>             <span class="n">forged_ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cblocks</span><span class="p">)</span>
 <span class="o">...</span>
 <span class="o">...</span>             <span class="n">good</span> <span class="o">=</span> <span class="n">oracle</span><span class="p">(</span><span class="n">forged_ciphertext</span><span class="p">)</span>
 <span class="o">...</span>             <span class="k">if</span> <span class="n">good</span><span class="p">:</span>

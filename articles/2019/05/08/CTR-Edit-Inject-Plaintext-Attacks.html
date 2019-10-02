@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>CTR Edit/Inject Plaintext Attacks</title>
-  <meta name="description" content="CTR mode cipher turns a block cipher into a stream cipher.With this, a ciphertext can be edited in place generatingenough of the key stream, decrypting and r...">
+  <meta name="description" content="A CTR-mode cipher turns a block cipher into a stream cipher.With this, a ciphertext can be edited in place generatingenough of the key stream, decrypting and...">
 
   
     <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
@@ -57,7 +57,7 @@
       <h1>CTR Edit/Inject Plaintext Attacks</h1>
 <p class="subtitle">May 8, 2019</p>
 
-<p>CTR mode cipher turns a block cipher into a stream cipher.</p>
+<p>A CTR-mode cipher turns a block cipher into a stream cipher.</p>
 
 <p>With this, a ciphertext can be edited <em>in place</em> generating
 enough of the key stream, decrypting and re-encrypting the edited
@@ -88,7 +88,10 @@ is actually a booby-trap.
 <span class="o">...</span>     <span class="k">return</span> <span class="n">enc_ctr</span><span class="p">(</span><span class="n">ptext</span><span class="p">,</span> <span class="n">secret_cfg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">secret_cfg</span><span class="o">.</span><span class="n">nonce</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>The <code class="highlighter-rouge">edit</code> function allows us to generate two different ciphertexts
+<p>The <code class="highlighter-rouge">edit</code> function allows us edit or patch a ciphertext modifying
+the plaintext.</p>
+
+<p>This generates two different ciphertexts
 encrypted with the <strong>same</strong> key stream which breaks CTR
 with a simple known-plaintext attack<label for="sn-805e102485d5c01d372c578b35ceb2c1" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-805e102485d5c01d372c578b35ceb2c1" class="margin-toggle" /><span class="sidenote">This unlocks the
 <a href="https://cryptopals.com/sets/1/challenges/25">Break “random access read/write” AES CTR</a>
@@ -96,7 +99,7 @@ challenge.</span>.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
 </span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">ptext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">''</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/25.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">64</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ptext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">'./assets/matasano/25.txt'</span><span class="p">,</span> <span class="s">'rt'</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ctext</span> <span class="o">=</span> <span class="n">enc_ctr</span><span class="p">(</span><span class="n">ptext</span><span class="p">,</span> <span class="n">secret_cfg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">secret_cfg</span><span class="o">.</span><span class="n">nonce</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">patch</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">'A'</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ctext</span><span class="p">)</span>
@@ -114,9 +117,9 @@ the patch, we only need to edit it by pieces:</p>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">16</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">pb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="n">N</span><span class="p">)):</span>        <span class="c1"># byexample: +timeout=10
 </span><span class="o">...</span>     <span class="n">offset</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="n">N</span>
-<span class="o">...</span>     <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edit</span><span class="p">(</span><span class="n">ctext</span><span class="p">,</span> <span class="n">pb</span><span class="p">,</span> <span class="n">n</span><span class="o">*</span><span class="n">N</span><span class="p">,</span> <span class="n">secret_cfg</span><span class="p">)[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="n">N</span><span class="p">])</span>
+<span class="o">...</span>     <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edit</span><span class="p">(</span><span class="n">ctext</span><span class="p">,</span> <span class="n">pb</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">secret_cfg</span><span class="p">)[</span><span class="n">offset</span><span class="p">:</span><span class="n">offset</span><span class="o">+</span><span class="n">N</span><span class="p">])</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">cpatched</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">''</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cpatched</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">kstream</span> <span class="o">=</span> <span class="n">cpatched</span> <span class="o">^</span> <span class="n">patch</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ptext</span> <span class="o">==</span> <span class="n">ctext</span> <span class="o">^</span> <span class="n">kstream</span>
@@ -148,27 +151,28 @@ but you can control the length of the padding inserted.</p>
 <span class="o">...</span>     <span class="k">return</span> <span class="n">enc_ctr</span><span class="p">(</span><span class="n">ptext</span><span class="p">,</span> <span class="n">secret_cfg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">secret_cfg</span><span class="o">.</span><span class="n">nonce</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>Now imagine that you know a fraction of the plaintext but
-you don’t know <em>where</em> is in the plaintext:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">16</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">pknown</span> <span class="o">=</span> <span class="n">ptext</span><span class="p">[</span><span class="n">secret_cfg</span><span class="o">.</span><span class="n">n8</span><span class="p">:</span><span class="n">secret_cfg</span><span class="o">.</span><span class="n">n8</span><span class="o">+</span><span class="n">N</span><span class="p">]</span>
-</code></pre></div></div>
-
-<p>With these two pieces one can determinate where it is injecting
-a 1 byte of padding.</p>
+<p>This <em>feature</em> makes the system vulnerable.</p>
 
 <p>Because the original and the new ciphertexts are encrypted in CTR
 with the <em>same</em> secret, both will use the <em>same</em> key stream and therefor
-are vulnerable.</p>
-
-<p>Xoring them will cancel the key stream leaving the xor of
-the original plaintext and the same plaintext but with one byte extra:</p>
+both stream will <em>share the same prefix</em> until the offset were the
+injection was done.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">ctext2</span> <span class="o">=</span> <span class="n">inject_pad</span><span class="p">(</span><span class="n">ctext</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">secret_cfg</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">clen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ctext</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">x_ctexts</span> <span class="o">=</span> <span class="n">ctext</span> <span class="o">^</span> <span class="n">ctext2</span><span class="p">[:</span><span class="n">clen</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">next</span><span class="p">((</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x_ctexts</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+<span class="mi">187</span>
+</code></pre></div></div>
+
+<p>Now imagine that you know a fraction of the plaintext but
+you don’t know <em>where</em> is in the plaintext but you know
+that it is <em>after</em> the injection point:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pknown</span> <span class="o">=</span> <span class="n">ptext</span><span class="p">[</span><span class="n">secret_cfg</span><span class="o">.</span><span class="n">n8</span><span class="p">:</span><span class="n">secret_cfg</span><span class="o">.</span><span class="n">n8</span><span class="o">+</span><span class="n">N</span><span class="p">]</span>
 </code></pre></div></div>
 
 <p>Under the assumption that the known plaintext is on the right <em>after</em>
@@ -177,15 +181,18 @@ for the self-xor of it:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">x_pknowns</span> <span class="o">=</span> <span class="n">pknown</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">^</span> <span class="n">pknown</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">pknown_offset</span> <span class="o">=</span> <span class="n">x_ctexts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">x_pknowns</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="mi">187</span> <span class="o">&lt;=</span> <span class="n">pknown_offset</span>
+<span class="bp">True</span>
 </code></pre></div></div>
 
 <p>Now, with this we can recover <code class="highlighter-rouge">N</code> bytes of the key stream. No much.</p>
 
 <p>But if we <em>inject</em> more padding, let’s say <code class="highlighter-rouge">N</code> bytes the known
-plaintext will move to the right the same allowing us to recover
+plaintext will move to the right the same amount allowing us to recover
 the <em>next</em> <code class="highlighter-rouge">N</code> bytes of the key stream.</p>
 
-<p>Repeating this we can recover all the key stream (except with the begin):</p>
+<p>Repeating this we can recover all the key stream (except the begin):</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">tmp</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">pknown_offset</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ctext</span><span class="p">),</span> <span class="n">N</span><span class="p">)):</span> <span class="c1"># byexample: +timeout=10
@@ -209,9 +216,9 @@ to the original key stream.</p>
 </code></pre></div></div>
 
 <p>Finally, from the key stream we can break the ciphering and recover
-the plaintext (except with the begin):</p>
+the plaintext (except the begin):</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kstream</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">''</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">kstream</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">pbroken</span> <span class="o">=</span> <span class="n">ctext</span><span class="p">[</span><span class="n">pknown_offset</span><span class="p">:]</span> <span class="o">^</span> <span class="n">kstream</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ptext</span><span class="p">[</span><span class="n">pknown_offset</span><span class="p">:]</span> <span class="o">==</span> <span class="n">pbroken</span>
