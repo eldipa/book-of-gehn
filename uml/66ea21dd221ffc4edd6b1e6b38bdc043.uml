@@ -1,0 +1,15 @@
+@startuml
+
+`
+@startuml
+hide empty description
+
+state "<math>sm_1</math>" as sm1
+
+[*] -> sm1 : <math>\epsilon</math>
+sm1 -> [*] : <math>\epsilon</math>
+
+@enduml
+`
+
+@enduml

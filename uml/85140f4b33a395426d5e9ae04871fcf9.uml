@@ -1,0 +1,12 @@
+@startuml
+
+`
+@startuml
+hide empty description
+
+[*] -> [*] : a
+
+@enduml
+`
+
+@enduml

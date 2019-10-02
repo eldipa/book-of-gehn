@@ -1,0 +1,12 @@
+@startuml
+
+`
+@startuml
+hide empty description
+
+[*] -> [*] : <math>\epsilon</math>
+
+@enduml
+`
+
+@enduml

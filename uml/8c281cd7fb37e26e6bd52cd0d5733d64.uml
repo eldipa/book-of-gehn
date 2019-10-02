@@ -1,0 +1,24 @@
+@startuml
+
+`
+@startuml
+hide empty description
+
+state "<math>sm_1</math>" as sm1a
+state "<math>sm_1</math>" as sm1b
+state "<math>sm_1</math>" as sm1c
+state "<math>sm_1</math>" as sm1d
+
+[*]  -> sm1a : <math>\epsilon</math>
+sm1a -> sm1b : <math>\epsilon</math>
+sm1b -> sm1c : <math>\epsilon</math>
+sm1c -> sm1d : <math>\epsilon</math>
+sm1d -> [*]  : <math>\epsilon</math>
+
+sm1b -> [*]
+sm1c -> [*]
+
+@enduml
+`
+
+@enduml
