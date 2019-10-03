@@ -5,7 +5,7 @@ title: Weirdo (SQLi writeup - EKO 2019)
 
 Quick writeup of a SQL injection challenge.
 
-<!-- more -->
+<!--more-->
 We start with a
 [pcap](/book-of-gehn/assets/eko2019-writeups/weiro-dir/wtf.pcap)
 of a HTTP communication between a client and a server.

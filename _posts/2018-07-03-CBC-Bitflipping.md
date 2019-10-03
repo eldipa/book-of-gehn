@@ -73,10 +73,10 @@ If we modify one ciphertext block its decryption will be totally scrambled
 but we will have control of the *next* plaintext block.
 
 Let's create a ciphertext with enough ``A``s to get at least one plaintext block
-full of ``A``s{% sidenote 'We don't know if our inject plaintext
+full of ``A``s{% sidenote "We don't know if our inject plaintext
 will be aligned to the block size boundary. To ensure that we inject
 padding of twice the block size which warranties that at least one block
-will be full with our ``A``s' %}
+will be full with our ``A``s" %}
 
 ```python
 >>> c = add_user_data('A' * block_size * 2)
