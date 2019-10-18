@@ -59,6 +59,113 @@
     
         <li class="listing">
           <hr class="slender">
+          <a href="/book-of-gehn/articles/2019/10/16/Timeout-Propagation.html"><h2 class="larger">Timeout Propagation</h2></a>
+          <br><span class="smaller">October 16, 2019</span>  <br/>
+          <div>
+<p>Considere the following code. The <code class="highlighter-rouge">client</code> wants to compute
+the <script type="math/tex">ax + b</script> where the functions <code class="highlighter-rouge">add</code> and <code class="highlighter-rouge">mul</code> perform
+a really heavy work.</p>
+
+<p>Moreover the functions are <em>distributed</em>: they are services running
+in other machines.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="o">...</span>     <span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="o">...</span>     <span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="o">...</span>     <span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="o">...</span>     <span class="n">term1</span> <span class="o">=</span> <span class="n">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="o">...</span>     <span class="n">term0</span> <span class="o">=</span> <span class="n">c</span>
+<span class="o">...</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="n">add</span><span class="p">(</span><span class="n">term1</span><span class="p">,</span> <span class="n">term0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">sleep</code> calls simulate the heavy work and any other delay introduced
+by the network.</p>
+
+<p>With this, how much time it will take the <code class="highlighter-rouge">client</code> to get the result?</p>
+
+<p>The calls are serialized so we need to sum the delays:
+<script type="math/tex">0.1 + 0.5 + 0.2 = 0.8</script></p>
+
+<p>But a distributed scenario is very hostile. Network may fail, services
+may be down and other bad things could happen.</p>
+
+<p>In the case of a failure we need to protect our <code class="highlighter-rouge">client</code> code from
+calling a function that may block undefinely.</p>
+
+<p>Here is where the timeouts are introduced and a bunch of real funny things
+happen.</p>
+
+<p>What could be a <em>good timeout</em> for the <code class="highlighter-rouge">add</code> function? $40.3<script type="math/tex">?</script>0.5$$?
+Any value greater than 0.2 should work… at least most of times.</p>
+
+<p>Let’s say that arbitrary we say that the timeout of every
+function is <em>twice the usual exec time</em>.</p>
+
+<p>So we could write something like this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="o">...</span>     <span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="o">...</span>     <span class="n">term1</span> <span class="o">=</span> <span class="n">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">...</span>     <span class="n">term0</span> <span class="o">=</span> <span class="n">c</span>
+<span class="o">...</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="n">add</span><span class="p">(</span><span class="n">term1</span><span class="p">,</span> <span class="n">term0</span><span class="p">)</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Now, the <em>usual</em> execution time of <code class="highlighter-rouge">client</code> is the same, <script type="math/tex">0.8</script>;
+in the worst case however, it is the sum of the timeouts:
+<script type="math/tex">0.1 + 1 + 0.4 = 1.5</script></p>
+
+<figure><figcaption><span></span></figcaption><object align="middle" data="/book-of-gehn/uml/e35f78c2bb82deb523332264606e23a4.svg" type="image/svg+xml"></object></figure>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">web_server</span><span class="o">.</span><span class="n">get_a_web_page</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+<span class="o">...</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">auth_server</span><span class="o">.</span><span class="n">allow</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+<span class="o">...</span>         <span class="k">return</span> <span class="mi">403</span> <span class="c1"># Forbidden
+</span><span class="o">...</span>
+<span class="o">...</span>     <span class="n">page</span> <span class="o">=</span> <span class="n">cache_server</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+<span class="o">...</span>     <span class="k">if</span> <span class="n">page</span><span class="p">:</span>
+<span class="o">...</span>         <span class="k">return</span> <span class="n">page</span>
+<span class="o">...</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="n">backend</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">backend</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+<span class="o">...</span>     <span class="n">data</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+<span class="o">...</span>     <span class="n">page</span> <span class="o">=</span> <span class="n">render_stuff</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="o">...</span>     <span class="n">cache_server</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">page</span><span class="p">)</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="n">page</span>
+</code></pre></div></div>
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
+          <a href="/book-of-gehn/articles/2019/10/04/Index-of-Coincidence.html"><h2 class="larger">Index of Coincidence Explained</h2></a>
+          <br><span class="smaller">October 4, 2019</span>  <br/>
+          <div><p>The concept of Index of Coincidence was introduced by William Friedman
+in 1922-1923 in the paper titled
+“The Index of Coincidence and its Applications in Cryptoanalysis”.</p>
+
+<p>The Navy Department (US) worked in the following years on this topic
+coming, in 1955, with a paper titled “The Index of Coincidence”
+by Howard Campaigne.</p>
+
+<p>However I found some confusing and misleading concepts in the <em>modern</em>
+literature.</p>
+
+<p>This post is a summary of what I could understand from Howard’s work.</p>
+
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
           <a href="/book-of-gehn/articles/2019/10/01/Writeup-EKO2019-Cipherchat.html"><h2 class="larger">Cipherchat (Crypto writeup - EKO 2019)</h2></a>
           <br><span class="smaller">October 1, 2019</span>  <br/>
           <div><p>We start with a <a href="/book-of-gehn/assets/eko2019-writeups/cipherchat-dir/cipherchat.pcap">communication</a>

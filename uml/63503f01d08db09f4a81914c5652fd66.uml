@@ -1,0 +1,16 @@
+@startuml
+
+`
+@startuml
+hide empty description
+
+[*] -> WebServer : get a web page
+WebServer --> AuthServer : allow?
+WebServer --> Cache : cached?
+WebServer -> Backend: get web page
+Backend -> Database : get data
+
+@enduml
+`
+
+@enduml
