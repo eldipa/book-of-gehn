@@ -36,13 +36,15 @@ We will call this Aligned Count of Coincidences or $$AC(s_1,s_2)$$.
 But if the substrings are not *aligned* we may think, incorrectly,
 that two strings does not have nothing in common.
 
-{% marginfigure '' 'assets/icoincidences/align3.png' 'Two strings, the second shifted 6 positions to the left, have 2 coincidences.' %}
+{% marginfigure '' 'assets/icoincidences/align3.png' 'Two strings, the second shifted 6 positions to the left, have 3 coincidences too.' %}
 
 So we define the Count of Coincidences $$C(s_1,s_2)$$
 between two strings as how
 many columns have the same letter for *every* possible alignment.
 
 It's more simple than it looks.
+
+### Count for Every Possible Alignment
 
 Pick the first ``e`` of the first string. It will have a coincidence
 with every possible ``e`` in the second string.
