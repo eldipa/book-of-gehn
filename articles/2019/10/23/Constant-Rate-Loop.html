@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Constant Rate Loop</title>
+  <meta name="description" content="">
+
+  
+    <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
+  
+
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]}
+      });
+    </script>
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js' async></script>
+    
+  
+
+  
+    
+      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
+    
+  
+
+    
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
+    
+  <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
+  <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
+
+  <link rel="canonical" href="/book-of-gehn/articles/2019/10/23/Constant-Rate-Loop.html">
+</head>
+
+  <body>
+    <header>
+	
+		<h1 class="header-title"><a href="/book-of-gehn/">The Book of Gehn</a></h1>
+		
+		
+	
+
+    
+
+    
+</header>
+
+    <article class="group">
+      <h1>Constant Rate Loop</h1>
+<p class="subtitle">October 23, 2019</p>
+
+<!--more-->
+
+<h2 id="motivation">Motivation</h2>
+
+<p>Consider a <code class="highlighter-rouge">draw()</code> function that renders an animation. An animation
+is just a list of images or frames that <code class="highlighter-rouge">draw()</code> will render
+one frame per iteration.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">draw</span><span class="p">():</span>
+<span class="o">...</span>     <span class="k">global</span> <span class="n">it</span>
+<span class="o">...</span>     <span class="n">it</span> <span class="o">+=</span> <span class="mi">1</span>     <span class="c1"># pick the "next" frame
+</span><span class="o">...</span>
+<span class="o">...</span>     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="o">...</span>     <span class="n">f</span> <span class="o">=</span> <span class="n">frames</span><span class="p">[</span><span class="n">it</span> <span class="o">%</span> <span class="n">n</span><span class="p">]</span>
+<span class="o">...</span>
+<span class="o">...</span>     <span class="n">render</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>To get the animation effect we want to call <code class="highlighter-rouge">draw()</code> in a loop.</p>
+
+<p>We may do this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">loop</span><span class="p">():</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">draw</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>But then the animation speed will be determinate by the speed of
+the machine: faster machines will render faster animations.</p>
+
+<p>Adding a <code class="highlighter-rouge">sleep()</code> solves this partially</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">fixed_sleep_loop</span><span class="p">():</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">draw</span><span class="p">()</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><label for="mf-6c50a98ac0d90ac5f3dc549382891686" class="margin-toggle">⊕</label><input type="checkbox" id="mf-6c50a98ac0d90ac5f3dc549382891686" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Clock drift" src="/book-of-gehn/assets/distributing/constant_rate/examples/clock_drift.png" />  <br />Plot the difference between the real time <code class="highlighter-rouge">now()</code> and the expected in
+each iteration <code class="highlighter-rouge">it * rate</code> looping during 1 second at a rate of <code class="highlighter-rouge">1/60</code>.
+Using a <em>fixed sleep</em> loop the difference
+increase linearly while using a <em>constant rate</em> loop the difference is
+quite low and relatively constant.</span></p>
+
+<p>The problem is that we are not considering neither the time elapsed
+in <code class="highlighter-rouge">draw()</code> nor the fact that <code class="highlighter-rouge">sleep()</code> may sleep more than it
+should be.</p>
+
+<blockquote>
+  <p>“If the interval specified not an exact multiple of the
+granularity underlying clock, then the interval will be rounded up to
+the next multiple. Furthermore, after the sleep completes, there may still be a
+delay before the CPU becomes free to once again execute the calling thread.”
+From nanosleep(2)</p>
+</blockquote>
+
+<p>This error is <em>accumulative</em>, increasing in each iteration, making
+the <code class="highlighter-rouge">draw()</code> out of synchronization very quickly.</p>
+
+<h2 id="problem">Problem</h2>
+
+<p>You want to do an action every X time maintaining a constant rate.</p>
+
+<h2 id="solution">Solution</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">constant_rate_loop</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+<span class="o">...</span>     <span class="n">t1</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+<span class="o">...</span>     <span class="n">it</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="o">...</span>     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+<span class="o">...</span>         <span class="n">func</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="o">...</span>         <span class="n">t2</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span>
+<span class="o">...</span>         <span class="n">rest</span> <span class="o">=</span> <span class="n">rate</span> <span class="o">-</span> <span class="p">(</span><span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">)</span>
+<span class="o">...</span>         <span class="k">if</span> <span class="n">rest</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<span class="o">...</span>             <span class="n">behind</span> <span class="o">=</span> <span class="o">-</span><span class="n">rest</span>  <span class="c1"># this is always positive
+</span><span class="o">...</span>             <span class="n">lost</span> <span class="o">=</span> <span class="p">(</span><span class="n">behind</span> <span class="o">-</span> <span class="n">behind</span> <span class="o">%</span> <span class="n">rate</span><span class="p">)</span>
+<span class="o">...</span>             <span class="n">rest</span> <span class="o">=</span> <span class="n">rate</span> <span class="o">-</span> <span class="n">behind</span> <span class="o">%</span> <span class="n">rate</span>
+<span class="o">...</span>             <span class="n">t1</span> <span class="o">+=</span> <span class="n">lost</span>
+<span class="o">...</span>             <span class="n">it</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lost</span> <span class="o">//</span> <span class="n">rate</span><span class="p">)</span>  <span class="c1"># floor division
+</span><span class="o">...</span>
+<span class="o">...</span>         <span class="n">sleep</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+<span class="o">...</span>         <span class="n">t1</span> <span class="o">+=</span> <span class="n">rate</span>
+<span class="o">...</span>         <span class="n">it</span> <span class="o">+=</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<p>The difference between <code class="highlighter-rouge">t2</code> and <code class="highlighter-rouge">t1</code> yields how much time we were in the
+<code class="highlighter-rouge">func()</code> call.</p>
+
+<p>In a normal situation, this should be <em>less</em> than the expected rate and
+the loop sleeps the remaining time to complete the current iteration.</p>
+
+<p>The <em>next</em> <code class="highlighter-rouge">t1</code> is increased by <code class="highlighter-rouge">rate</code>: we don’t call <code class="highlighter-rouge">now()</code>
+again otherwise will be introducing a clock drift due the extra
+delays of <code class="highlighter-rouge">sleep()</code>.</p>
+
+<p>That’s the happy path. But what happen if <code class="highlighter-rouge">func()</code> is too slow and takes more
+time than the expected for one iteration?</p>
+
+<p>First we determinate how much time we lost:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">behind</span> <span class="o">=</span> <span class="o">-</span><span class="n">rest</span>  <span class="c1"># this is always positive
+</span>    <span class="n">lost</span> <span class="o">=</span> <span class="p">(</span><span class="n">behind</span> <span class="o">-</span> <span class="n">behind</span> <span class="o">%</span> <span class="n">rate</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Then, it is very likely that we are in some point in the middle, and incomplete
+iteration, so we calculate how much time we should sleep to synchronize
+ourselves with the <em>next</em> iteration:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">rest</span> <span class="o">=</span> <span class="n">rate</span> <span class="o">-</span> <span class="n">behind</span> <span class="o">%</span> <span class="n">rate</span>
+    <span class="n">t1</span> <span class="o">+=</span> <span class="n">lost</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">t1 += lost</code> is crucial otherwise <code class="highlighter-rouge">t1</code> will be always behind like
+if the following <code class="highlighter-rouge">func()</code> calls were always too slow.</p>
+
+<h3 id="synchronization-on-drops">Synchronization on Drops</h3>
+
+<p>The <code class="highlighter-rouge">func()</code> may need to know when it is not being called
+as expected, when some iterations are being dropped.</p>
+
+<p><label for="mf-2ca339a34aad35e1aaf10d5a26b846e5" class="margin-toggle">⊕</label><input type="checkbox" id="mf-2ca339a34aad35e1aaf10d5a26b846e5" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Bite" src="/book-of-gehn/assets/distributing/constant_rate/examples/bite.gif" />  <br />Same animation that last 1 second in a loop. From top to down, the first
+is an animation without any frame lost, the second had lost some frames
+but <code class="highlighter-rouge">draw()</code> is still in sync, the last one lost the same amount
+of frames but <code class="highlighter-rouge">draw()</code> used its own notion of time an got out of sync.</span></p>
+
+<p>If <code class="highlighter-rouge">draw()</code> is too slow, the loop will drop some iterations as shown.</p>
+
+<p>But <code class="highlighter-rouge">draw()</code> will never notice this and instead of <em>skipping</em> some frames
+it will render the <em>next</em> frame <em>accordingly to him</em>.</p>
+
+<p>The animation will appear smooth to the user but behind the scene
+the <code class="highlighter-rouge">draw()</code> will be out of sync: the animation will take more time
+to complete or it will be cut in the middle.</p>
+
+<p>Instead, we can pass to <code class="highlighter-rouge">func()</code> the iteration number explicitly.</p>
+
+<p>The <code class="highlighter-rouge">draw()</code> must be updated accordingly:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="n">it</span><span class="p">):</span>
+<span class="o">...</span>     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="o">...</span>     <span class="n">f</span> <span class="o">=</span> <span class="n">frames</span><span class="p">[</span><span class="n">it</span> <span class="o">%</span> <span class="n">n</span><span class="p">]</span>      <span class="c1"># pick what correspond to "this" iteration
+</span><span class="o">...</span>
+<span class="o">...</span>     <span class="n">render</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>In a normal situation, this is always an sequential number but
+if iterations are being dropped, there will be <em>shifts</em> in the count
+and <code class="highlighter-rouge">draw()</code> will skip some frames but it will remain in sync.</p>
+
+<figure><figcaption><span>The first row shows all the frames that forms the animation. The other two
+are the frames plotted by a <em>slow</em> <code class="highlighter-rouge">draw()</code> with some frames dropped.
+But the first <code class="highlighter-rouge">draw()</code> (second row) kept in sync while the other did not.</span></figcaption><img src="/book-of-gehn/assets/distributing/constant_rate/examples/bite_frames.png" /></figure>
+
+<h2 id="known-uses">Known Uses</h2>
+
+<p>Game and rendering loops.</p>
+
+<h2 id="also-known-as">Also Known as</h2>
+
+<p>Frame-rate limiting.</p>
+
+<h3 id="attributions">Attributions</h3>
+
+<p>The <em>werewolf</em> images were made by
+<a href="https://opengameart.org/users/mindchamber">MindChamber</a>, licensed CC-BY 3.0,
+from <a href="https://opengameart.org/content/dark-saber-werewolf">OpenGameArt</a></p>
+
+
+
+    </article>
+    <span class="print-footer">Constant Rate Loop - October 23, 2019 - Gehn</span>
+    <footer>
+    <hr class="slender">
+    <div class="credits">
+        <span>&copy; 2019
+            
+            Gehn</span></br> <br>
+        
+
+    <span>Created with <a href="//jekyllrb.com">Jekyll</a> and the theme <a href="//github.com/sdruskat/tufte-css-jekyll">tufte-css-jekyll</a>.</span>
+    </div>
+</footer>
+
+  </body>
+</html>
