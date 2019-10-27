@@ -38,6 +38,8 @@
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
   <link rel="canonical" href="/book-of-gehn/articles/2019/10/23/Constant-Rate-Loop.html">
+
+  <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/all.min.css">
 </head>
 
   <body>
@@ -95,11 +97,12 @@ the machine: faster machines will render faster animations.</p>
         <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><label for="mf-6c50a98ac0d90ac5f3dc549382891686" class="margin-toggle">⊕</label><input type="checkbox" id="mf-6c50a98ac0d90ac5f3dc549382891686" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Clock drift" src="/book-of-gehn/assets/distributing/constant_rate/examples/clock_drift.png" />  <br />Plot the difference between the real time <code class="highlighter-rouge">now()</code> and the expected in
+<p><label for="mf-4252ef4640f595889a83767042f30726" class="margin-toggle">⊕</label><input type="checkbox" id="mf-4252ef4640f595889a83767042f30726" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Clock drift" src="/book-of-gehn/assets/distributing/constant_rate/examples/clock_drift.png" />  <br />Plot the difference between the real time <code class="highlighter-rouge">now()</code> and the expected in
 each iteration <code class="highlighter-rouge">it * rate</code> looping during 1 second at a rate of <code class="highlighter-rouge">1/60</code>.
 Using a <em>fixed sleep</em> loop the difference
 increase linearly while using a <em>constant rate</em> loop the difference is
-quite low and relatively constant.</span></p>
+quite low and relatively constant.
+ <a href="https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/examples/clock_drift.py"><i class="fab fa-github"></i> code</a></span></p>
 
 <p>The problem is that we are not considering neither the time elapsed
 in <code class="highlighter-rouge">draw()</code> nor the fact that <code class="highlighter-rouge">sleep()</code> may sleep more than it
@@ -110,7 +113,7 @@ should be.</p>
 granularity underlying clock, then the interval will be rounded up to
 the next multiple. Furthermore, after the sleep completes, there may still be a
 delay before the CPU becomes free to once again execute the calling thread.”
-From nanosleep(2)</p>
+From <a href="http://man7.org/linux/man-pages/man2/nanosleep.2.html">nanosleep(2)</a></p>
 </blockquote>
 
 <p>This error is <em>accumulative</em>, increasing in each iteration, making
@@ -172,15 +175,18 @@ ourselves with the <em>next</em> iteration:</p>
 <p>The <code class="highlighter-rouge">t1 += lost</code> is crucial otherwise <code class="highlighter-rouge">t1</code> will be always behind like
 if the following <code class="highlighter-rouge">func()</code> calls were always too slow.</p>
 
+<p>Full code in <a href="https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/constant_rate.py"><i class="fab fa-github"></i> github</a>.</p>
+
 <h3 id="synchronization-on-drops">Synchronization on Drops</h3>
 
 <p>The <code class="highlighter-rouge">func()</code> may need to know when it is not being called
 as expected, when some iterations are being dropped.</p>
 
-<p><label for="mf-2ca339a34aad35e1aaf10d5a26b846e5" class="margin-toggle">⊕</label><input type="checkbox" id="mf-2ca339a34aad35e1aaf10d5a26b846e5" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Bite" src="/book-of-gehn/assets/distributing/constant_rate/examples/bite.gif" />  <br />Same animation that last 1 second in a loop. From top to down, the first
+<p><label for="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle">⊕</label><input type="checkbox" id="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Bite" src="/book-of-gehn/assets/distributing/constant_rate/examples/bite.gif" />  <br />Same animation that last 1 second in a loop. From top to down, the first
 is an animation without any frame lost, the second had lost some frames
 but <code class="highlighter-rouge">draw()</code> is still in sync, the last one lost the same amount
-of frames but <code class="highlighter-rouge">draw()</code> used its own notion of time an got out of sync.</span></p>
+of frames but <code class="highlighter-rouge">draw()</code> used its own notion of time an got out of sync.
+ <a href="https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/examples/drop_iterations.py"><i class="fab fa-github"></i> code</a></span></p>
 
 <p>If <code class="highlighter-rouge">draw()</code> is too slow, the loop will drop some iterations as shown.</p>
 
@@ -208,7 +214,8 @@ and <code class="highlighter-rouge">draw()</code> will skip some frames but it w
 
 <figure><figcaption><span>The first row shows all the frames that forms the animation. The other two
 are the frames plotted by a <em>slow</em> <code class="highlighter-rouge">draw()</code> with some frames dropped.
-But the first <code class="highlighter-rouge">draw()</code> (second row) kept in sync while the other did not.</span></figcaption><img src="/book-of-gehn/assets/distributing/constant_rate/examples/bite_frames.png" /></figure>
+But the first <code class="highlighter-rouge">draw()</code> (second row) kept in sync while the other did not.
+ <a href="https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/examples/drop_iterations.py"><i class="fab fa-github"></i> code</a></span></figcaption><img src="/book-of-gehn/assets/distributing/constant_rate/examples/bite_frames.png" /></figure>
 
 <h2 id="known-uses">Known Uses</h2>
 
