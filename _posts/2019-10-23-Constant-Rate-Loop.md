@@ -49,7 +49,8 @@ def fixed_sleep_loop():
 each iteration ``it * rate`` looping during 1 second at a rate of ``1/60``.
 Using a *fixed sleep* loop the difference
 increase linearly while using a *constant rate* loop the difference is
-quite low and relatively constant.' %}
+quite low and relatively constant.
+ [<i class="fab fa-github"></i> code](https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/examples/clock_drift.py)' %}
 
 The problem is that we are not considering neither the time elapsed
 in ``draw()`` nor the fact that ``sleep()`` may sleep more than it
@@ -59,7 +60,7 @@ should be.
 > granularity underlying clock, then the interval will be rounded up to
 > the next multiple. Furthermore, after the sleep completes, there may still be a
 > delay before the CPU becomes free to once again execute the calling thread."
-> From nanosleep(2)
+> From [nanosleep(2)](http://man7.org/linux/man-pages/man2/nanosleep.2.html)
 
 This error is *accumulative*, increasing in each iteration, making
 the ``draw()`` out of synchronization very quickly.
@@ -123,6 +124,8 @@ ourselves with the *next* iteration:
 The ``t1 += lost`` is crucial otherwise ``t1`` will be always behind like
 if the following ``func()`` calls were always too slow.
 
+Full code in [<i class="fab fa-github"></i> github](https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/constant_rate.py).
+
 ### Synchronization on Drops
 
 The ``func()`` may need to know when it is not being called
@@ -132,7 +135,8 @@ as expected, when some iterations are being dropped.
 'Same animation that last 1 second in a loop. From top to down, the first
 is an animation without any frame lost, the second had lost some frames
 but ``draw()`` is still in sync, the last one lost the same amount
-of frames but ``draw()`` used its own notion of time an got out of sync.' %}
+of frames but ``draw()`` used its own notion of time an got out of sync.
+ [<i class="fab fa-github"></i> code](https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/examples/drop_iterations.py)' %}
 
 If ``draw()`` is too slow, the loop will drop some iterations as shown.
 
@@ -162,7 +166,8 @@ and ``draw()`` will skip some frames but it will remain in sync.
 {% maincolumn 'assets/distributing/constant_rate/examples/bite_frames.png'
 'The first row shows all the frames that forms the animation. The other two
 are the frames plotted by a *slow* ``draw()`` with some frames dropped.
-But the first ``draw()`` (second row) kept in sync while the other did not.' %}
+But the first ``draw()`` (second row) kept in sync while the other did not.
+ [<i class="fab fa-github"></i> code](https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/examples/drop_iterations.py)' %}
 
 ## Known Uses
 
