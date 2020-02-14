@@ -25,6 +25,15 @@
     {% endif %}
   {% endif %}
 
+  {% if site.offline %}
+    <script src="{{ "/js/jquery-3.4.1.min.js" | prepend: site.baseurl }}"></script>
+  {% else %}
+    <script
+       src="https://code.jquery.com/jquery-3.4.1.min.js"
+       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+       crossorigin="anonymous"></script>
+  {% endif %}
+
   {% if site.phaser %}
     {% if site.offline %}
       <script src='{{ "/js/phaser-3.18.1.js" | prepend: site.baseurl }}' ></script>
