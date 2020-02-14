@@ -505,6 +505,9 @@ figure img {
   vertical-align: baseline;
   position: relative; }
 
+.marginmarkdowncode {
+  margin-top: -25px; }
+
 li .sidenote, li .marginnote {
   margin-right: -80%; }
 
