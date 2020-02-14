@@ -95,7 +95,7 @@ taken from the families $$S_1$$ and $$S_2$$ is:
 
 $$    EC(S_1,S_2) = N \sum_{\forall i} p_i q_i \tag{4}\label{ExpCoincS1S2}$$
 
-[Howard], equation (psuedo 2.5)
+[Howard], equation (pseudo 2.5)
 
 ### Expected Coincidences Between Two Random Strings
 
@@ -113,7 +113,7 @@ $$
 \end{align*}
 $$
 
-And therefor the *expected count* is
+And therefore the *expected count* is
 
 $$    EC(R) = N \sum_{\forall i} p_i q_i = \frac{N}{c} \tag{6}\label{ExpCoincR}$$
 
