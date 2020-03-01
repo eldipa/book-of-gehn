@@ -193,3 +193,8 @@ behaviour.
 
 This means that other parties like the CPU may perform
 optimizations and `volatile` will not help us.
+
+## References
+
+ - [Why the “volatile” type class should not be used](https://www.kernel.org/doc/html/v4.12/process/volatile-considered-harmful.html)
+ - [Nine ways to break your systems code using volatile](https://blog.regehr.org/archives/28)
