@@ -18,7 +18,7 @@ Creativity and few hours reading man pages are all what you need.<!--more-->
 For the following examples I created a docker image that compiles
 a vulnerable Bash version.
 
-You can [download](/book-of-gehn/assets/shellshock/)
+From [here]({{site.repo_url}}/tree/master/assets/shellshock) you can download
 the Dockerfile and the rest of the files and
 build the image yourself{% sidenote
 'Based on this [Dockerfile](https://github.com/tianon/docker-bash/tree/master/4.1)' %}:
@@ -345,7 +345,7 @@ vuln
 ## OpenVPN
 
 In the following examples the
-[configuration files](/book-of-gehn/assets/shellshock/files/)
+[configuration files]({{site.repo_url}}/tree/master/assets/shellshock/files)
 ``vpn-srv.conf`` and
 ``vpn-cli.conf`` sets the IP addresses, ports and certificates:
 standard stuff{% sidenote
