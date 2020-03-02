@@ -194,7 +194,7 @@ $$ IC(S) = c \sum_{\forall i} p_i (p_i - 1) \tag{13}\label{IdxCoincNormS}$$
 
 ## Final Thoughts
 
-This post toke me a lot of time. The topic is not complex and the
+This post took me a lot of time. The topic is not complex and the
 maths are very simple but it is the amount of several and slightly
 different definitions that makes hard to read and interpret.
 
