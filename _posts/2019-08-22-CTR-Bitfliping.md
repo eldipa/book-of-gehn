@@ -94,5 +94,5 @@ Priv escalated! Patch at 32
 ```
 
 Broken!
-[CTR bitflipping](https://cryptopals.com/sets/2/challenges/26)
+[CTR bitflipping](https://cryptopals.com/sets/4/challenges/26)
 challenge unlock!
