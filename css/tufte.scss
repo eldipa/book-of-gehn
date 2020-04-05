@@ -309,10 +309,11 @@ section { padding-top: 1rem;
   */
 ul,ol { width: 55%;
      -webkit-padding-start: 5%;
-     -webkit-padding-end: 5%; }
+     -webkit-padding-end: 5%;
+ }
 
 ul { list-style: circle inside; }
-ol { list-style: lower-roman inside; }
+ol { list-style: lower-roman; }
 
 //li { padding: 0.5em 0; } //vertical padding on list items screws up vertical rhythym
 
