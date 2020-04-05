@@ -144,6 +144,13 @@ void* loop(void *p) {
     ...
 ```
 
+{% marginnote 'You can generalize this cast as a macro
+`READ(x) ((volatile typeof((x)))(x))`
+<br />
+Take at look at Linux&apos;s
+[`READ_ONCE`](https://github.com/torvalds/linux/blob/master/include/linux/compiler.h)
+for a more complete construction even for non-atomic/non-primitive variables.' %}
+
 Or we could use `volatile` in a cast:
 
 ```cpp
