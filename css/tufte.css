@@ -437,7 +437,7 @@ section {
   Because of this I'm restoring it to its normal state
   */
 ul, ol {
-  width: 45%;
+  width: 55%;
   -webkit-padding-start: 5%;
   -webkit-padding-end: 5%; }
 
@@ -445,7 +445,7 @@ ul {
   list-style: circle inside; }
 
 ol {
-  list-style: lower-roman inside; }
+  list-style: lower-roman; }
 
 figure, figure img.maincolumn {
   max-width: 55%;

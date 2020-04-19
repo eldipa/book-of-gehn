@@ -68,6 +68,186 @@
     
         <li class="listing">
           <hr class="slender">
+          <a href="/book-of-gehn/articles/2020/04/19/Sidenote-Identifiers.html"><h2 class="larger">Sidenote: Identifiers</h2></a>
+          <br><span class="smaller">April 19, 2020</span>  <br/>
+          <div><p>What would be a nice identifier for the people in, let’s say, a database?</p>
+
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
+          <a href="/book-of-gehn/articles/2020/04/05/Kasiski-Test.html"><h2 class="larger">Kasiski Test</h2></a>
+          <br><span class="smaller">April 5, 2020</span>  <br/>
+          <div><h2 id="3-gram-list-build-phase">3-gram list build phase</h2>
+
+<p>We are interested in find all the positions of every single repeated
+ngram in the text.</p>
+
+<p>In this phase however we want to focus only in the ngrams of 3 characters.</p>
+
+<p>The algorithm to build the list is simple: read/scan the text
+and for each 3-character ngram do:</p>
+
+<ol>
+  <li>Assign an unique identifier to each ngram <em>value</em>: two ngrams with
+the same value like <code class="highlighter-rouge">ABC</code> and <code class="highlighter-rouge">ABC</code> must have the same id, however two
+different values like <code class="highlighter-rouge">ABC</code> and  <code class="highlighter-rouge">DBA</code> must have different ids.</li>
+  <li>Append to the list a tuple with the position of the ngram and its id.</li>
+  <li>Increment by one a counter for the ngrams seen indexed by ngram value:
+if you found <code class="highlighter-rouge">ABC</code>, <code class="highlighter-rouge">DBA</code> and <code class="highlighter-rouge">ABC</code> you should have two counters with
+2 and 1 for <code class="highlighter-rouge">ABC</code> and <code class="highlighter-rouge">DBA</code> respectively.</li>
+</ol>
+
+<p>The following Python fragment summarizes the above:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># input: s, the original text
+</span><span class="n">id_of_ngram</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
+<span class="n">pos_sorted</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">ngram_cnt_by_id</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)])</span> <span class="c1"># id==0 is special with a count of 0 always
+</span><span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">ngram</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">ngrams</span><span class="p">(</span><span class="mi">3</span><span class="p">)):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">id_of_ngram</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">ngram</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_of_ngram</span><span class="p">))</span>
+
+    <span class="n">pos_sorted</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pos</span><span class="p">,</span> <span class="nb">id</span><span class="p">))</span>
+    <span class="n">ngram_cnt_by_id</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<p>For a string of <script type="math/tex">|s|</script> characters the algorithm generates a list of <script type="math/tex">|s|</script>
+tuples. If chosen the data structures correctly, the algorithm runs
+in <script type="math/tex">O(|s|)</script> (linear time and space).</p>
+
+<p>One final step remains: once we have the list we need to filter out
+any unique ngram (those that have a counter of less than 2).
+Filter is also linear.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pos_sorted</span> <span class="o">=</span> <span class="p">[(</span><span class="n">p</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">pos_sorted</span> <span class="k">if</span> <span class="n">ngram_cnt_by_id</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>The final result is a list of tuples <code class="highlighter-rouge">(position, id)</code> with the
+positions of the ngrams and their identifiers <em>sorted</em> by their
+position.</p>
+
+<h3 id="unique-identifier-assignment-and-counting">Unique identifier assignment and counting</h3>
+
+<p>We used a hashmap (<code class="highlighter-rouge">defaultdict</code>) to generate an unique identifier
+for each ngram in <script type="math/tex">O(1)</script>. Similar (<code class="highlighter-rouge">dict</code>) for counting the ngrams.</p>
+
+<p><label for="mn-bf9f892d67aa8618c2ece62691072a99" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-bf9f892d67aa8618c2ece62691072a99" class="margin-toggle" /><span class="marginnote">Given an ngram <code class="highlighter-rouge">ABC</code> you can access to its slot computing its index
+as $A+256B+256^2C$. </span></p>
+
+<p>Another alternative could be a flat-dense array with a <script type="math/tex">O(1)</script>
+access.</p>
+
+<p>Assuming an alphabet of <script type="math/tex">256</script> symbols, we only have <script type="math/tex">256^3</script> possible
+ngrams. With 4 bytes integers per ngram we will require 64 MB to store
+all of them but the array will be mostly full of zeros.</p>
+
+<p>That’s a <em>sparse</em> array.</p>
+
+<p>Judy <em>sparse</em> arrays could handle them better in terms of memory at the
+expense of an <script type="math/tex">O(log n)</script> access. Hashing can be used to achieve <script type="math/tex">O(1)</script>
+however.</p>
+
+<h3 id="position-identifier-list">Position-identifier list</h3>
+
+<p>The other structure needed is a list with fast <script type="math/tex">O(1)</script> appends and
+deletions and <script type="math/tex">O(n)</script> iterations.</p>
+
+<p>A linked list (<code class="highlighter-rouge">list</code>) should work.</p>
+
+<h2 id="larger-ngram-list-build-phase">Larger ngram list build phase</h2>
+
+<p>Now, the trick is to build a list of repeated ngrams of
+4 characters <em>using</em> the previous 3-ngram list.</p>
+
+<p>It is a linear operation but instead of building the list
+from scratch <script type="math/tex">O(|s|)</script>, we <em>reuse</em> our previous work in <script type="math/tex">O(g)</script>
+where <script type="math/tex">g</script> is the amount of repeated ngrams which it is less
+than <script type="math/tex">s</script>.</p>
+
+<p>The idea is that two ngrams <script type="math/tex">g_1</script> and <script type="math/tex">g_2</script> of <script type="math/tex">|n|</script> characters
+at positions <script type="math/tex">p_1</script> and <script type="math/tex">p_2</script> in the original string can be <em>merged</em>
+and build a ngram of <script type="math/tex">n+1</script> bytes at <script type="math/tex">p_1</script> if and only if
+<script type="math/tex">p_1 + 1 = p_2</script>.</p>
+
+<p>A merged ngram not necessary means that it is a repeated ngram but
+we know that any repeated ngram will be a merged one.</p>
+
+<p>If for a given ngram of <script type="math/tex">n</script> characters at <script type="math/tex">p_1</script> does not exist
+another ngram at <script type="math/tex">p_2</script> that satisfy <script type="math/tex">p_1 + 1 = p_2</script> then we are sure
+that it does not exist an ngram of <script type="math/tex">n+1</script> characters at <script type="math/tex">p_1</script>.</p>
+
+<p>This construction gives us the ngrams that we want plus
+some other <em>false positives</em>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">id_of_ngram</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
+<span class="n">ngram_cnt_by_id</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)])</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pos_sorted</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">cur</span><span class="p">,</span> <span class="nb">id</span>  <span class="o">=</span> <span class="n">pos_sorted</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">nex</span><span class="p">,</span> <span class="n">id2</span> <span class="o">=</span> <span class="n">pos_sorted</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">cur</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">!=</span> <span class="n">nex</span><span class="p">:</span>
+        <span class="n">pos_sorted</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># delete later (index 0 is special)
+</span>    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># instead of building the ngram from G1 and G2 we use
+</span>        <span class="c1"># G1's and G2's identifiers as a temporally ngram representation
+</span>        <span class="c1"># to map the new larger ngram to an new identifier
+</span>        <span class="c1"># Note how (id, id2) means that the ngram was built from G1 and G2
+</span>        <span class="c1"># *in that order* (G2 and G1 gives another ngram of course so
+</span>        <span class="c1"># the (id, id2) tuple order is important)
+</span>        <span class="nb">id</span> <span class="o">=</span> <span class="n">id_of_ngram</span><span class="o">.</span><span class="n">setdefault</span><span class="p">((</span><span class="nb">id</span><span class="p">,</span> <span class="n">id2</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_of_ngram</span><span class="p">))</span>
+
+        <span class="n">pos_sorted</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>   <span class="c1"># new ngram
+</span>        <span class="n">ngram_cnt_by_id</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="c1"># the last position P1 always is deleted because there is
+# not P2 such P1 + 1 == P2 *and* P1 &lt; P2 (basically because there
+# are no more positions after P1)
+</span><span class="n">pos_sorted</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>During the scan we also count how many ngrams we built: unique
+ngrams are filtered later in linear time removing the false positives.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pos_sorted</span> <span class="o">=</span> <span class="p">[(</span><span class="n">p</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">pos_sorted</span> <span class="k">if</span> <span class="n">ngram_cnt_by_id</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h3 id="os-and-og">O(|s|) and O(g)</h3>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Given a string of $$</td>
+      <td>s</td>
+      <td>$$ characters the first 3-ngram list build was linear</td>
+    </tr>
+    <tr>
+      <td>in terms of $$O(</td>
+      <td>s</td>
+      <td>)$$.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A subsequent n-gram list is built from a (<script type="math/tex">n-1</script>)-gram list in <script type="math/tex">O(g)</script> where
+<script type="math/tex">g</script> is the amount of (<script type="math/tex">n-1</script>)-grams that are in the list.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><script type="math/tex">g</script> is always less than $$</td>
+      <td>s</td>
+      <td>$$.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In the worst case you have a lot of ngrams repeated only twice. For a 3-ngrams that means g  XXXXXXXXX</p>
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
           <a href="/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html"><h2 class="larger">Lock-Free Queue - Part I</h2></a>
           <br><span class="smaller">March 22, 2020</span>  <br/>
           <div><p>While implementing a bounded queue or <em>ring buffer</em> in a single-thread

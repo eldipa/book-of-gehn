@@ -195,6 +195,13 @@ volatile <em>pointer</em> to data. They are not the same.</span></p>
     <span class="p">...</span>
 </code></pre></div></div>
 
+<p><label for="mn-7aa0b705959af467cd29ba2b5cae42a9" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-7aa0b705959af467cd29ba2b5cae42a9" class="margin-toggle" /><span class="marginnote">You can generalize this cast as a macro
+<code class="highlighter-rouge">READ(x) ((volatile typeof((x)))(x))</code>
+<br />
+Take at look at Linux's
+<a href="https://github.com/torvalds/linux/blob/master/include/linux/compiler.h"><code class="highlighter-rouge">READ_ONCE</code></a>
+for a more complete construction even for non-atomic/non-primitive variables. </span></p>
+
 <p>Or we could use <code class="highlighter-rouge">volatile</code> in a cast:</p>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span><span class="o">*</span> <span class="nf">loop</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="p">{</span>
