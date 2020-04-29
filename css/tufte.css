@@ -593,8 +593,8 @@ pre {
 
 .fullwidth {
   display: block;
-  margin-left: auto;
-  margin-right: auto; }
+  /*margin-left: auto;
+    margin-right: auto;*/ }
 
 li.listing pre {
   max-width: 100%; }

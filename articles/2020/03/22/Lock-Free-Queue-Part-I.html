@@ -403,12 +403,10 @@ uses a full memory barrier.
 by the consumer once she <code class="highlighter-rouge">ACQUIRE</code> the updated producer’s tail pointer
 in a much efficient way that a full barrier</p>
 
-<h2 id="single-consumer-single-producer-queue-final-version">Single-consumer single-producer queue (final version)</h2>
+<h2 id="single-producer-single-consumer-queue-final-version">Single-producer single-consumer queue (final version)</h2>
 
 <p>This is the wrap up: a not only lock-free but a wait-free single-producer
 single-consumer queue (or ring).</p>
-
-<p>A multi-producer multi-consumer queue is explained in the second part.</p>
 
 <p>For those how want something compilable,
 the final bits are in <a href="https://github.com/eldipa/loki">the loki library</a>.</p>
