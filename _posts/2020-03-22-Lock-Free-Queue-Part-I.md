@@ -362,12 +362,10 @@ Indeed the `RELEASE` ensures that the producer's writes will be visible
 by the consumer once she `ACQUIRE` the updated producer's tail pointer
 in a much efficient way that a full barrier
 
-## Single-consumer single-producer queue (final version)
+## Single-producer single-consumer queue (final version)
 
 This is the wrap up: a not only lock-free but a wait-free single-producer
 single-consumer queue (or ring).
-
-A multi-producer multi-consumer queue is explained in the second part.
 
 For those how want something compilable,
 the final bits are in [the loki library](https://github.com/eldipa/loki).

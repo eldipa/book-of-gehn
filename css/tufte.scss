@@ -428,8 +428,8 @@ pre { max-width: 90%;
 .fullwidth, li.listing > div{ max-width: 90%; }
 .fullwidth {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    /*margin-left: auto;
+      margin-right: auto;*/
 }
 
 li.listing pre {max-width: 100%; }
