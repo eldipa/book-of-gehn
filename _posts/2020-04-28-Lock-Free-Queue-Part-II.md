@@ -117,7 +117,7 @@ the producer's tail to the new head.
 
 ```cpp
 uint32_t push(...) {
-    // ....
+    // ...
     // write the data
     for (uint32_t i = 0; i < n; ++i)
         q->data[(old_prod_head + i) & mask] = data[i];
@@ -161,7 +161,7 @@ at the new head.
 
 ```cpp
 uint32_t push(...) {
-    // ....
+    // ...
     // write the data
     for (uint32_t i = 0; i < n; ++i)
         q->data[(old_prod_head + i) & mask] = data[i];

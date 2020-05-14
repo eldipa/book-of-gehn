@@ -9,7 +9,9 @@ two threads, the implementation of a lock-free queue
 is *more challenging*.
 
 In this first part will analyse and implement a lock-free single-producer
-single-consumer queue.<!--more-->
+single-consumer queue. A multi-producer multi-consumer queue is
+described in the
+[second part](/book-of-gehn/articles/2020/04/28/Lock-Free-Queue-Part-II.html).<!--more-->
 
 In a traditional queue we have two pointers:
 the *head*, that points to the next free entry to write and the
@@ -69,7 +71,7 @@ The key to resolve this is to have two heads and two tails.
 
 ## Reserve-Commit
 
-Both the producer and the consumer need their one head and tail.
+Both the producer and the consumer need their own head and tail.
 
 The producer moves her head to *reserve* the space so other writers will
 begin to write starting from *that* point.
@@ -107,7 +109,7 @@ uint32_t push(struct queue_t *q, uint32_t *data, uint32_t len) {
     n = (free_entries < len) ? free_entries : n;
 
     if (!free_entries || free_entries < n) {
-        errno = ENOBUFS;
+        errno = EAGAIN;
         return 0;
     }
 
