@@ -174,7 +174,7 @@ it can proceed. The queue is lock-free but no <em>wait-free</em> anymore.</p>
 the producer’s tail to the new head.</p>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint32_t</span> <span class="nf">push</span><span class="p">(...)</span> <span class="p">{</span>
-    <span class="c1">// ....</span>
+    <span class="c1">// ...</span>
     <span class="c1">// write the data</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
         <span class="n">q</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">[(</span><span class="n">old_prod_head</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
@@ -216,7 +216,7 @@ was used and released.</p>
 at the new head.</p>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint32_t</span> <span class="nf">push</span><span class="p">(...)</span> <span class="p">{</span>
-    <span class="c1">// ....</span>
+    <span class="c1">// ...</span>
     <span class="c1">// write the data</span>
     <span class="k">for</span> <span class="p">(</span><span class="kt">uint32_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
         <span class="n">q</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">[(</span><span class="n">old_prod_head</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>

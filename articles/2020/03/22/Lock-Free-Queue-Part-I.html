@@ -72,7 +72,9 @@ two threads, the implementation of a lock-free queue
 is <em>more challenging</em>.</p>
 
 <p>In this first part will analyse and implement a lock-free single-producer
-single-consumer queue.<!--more--></p>
+single-consumer queue. A multi-producer multi-consumer queue is
+described in the
+<a href="/book-of-gehn/articles/2020/04/28/Lock-Free-Queue-Part-II.html">second part</a>.<!--more--></p>
 
 <p>In a traditional queue we have two pointers:
 the <em>head</em>, that points to the next free entry to write and the
@@ -127,7 +129,7 @@ atomic action.</p>
 
 <h2 id="reserve-commit">Reserve-Commit</h2>
 
-<p>Both the producer and the consumer need their one head and tail.</p>
+<p>Both the producer and the consumer need their own head and tail.</p>
 
 <p>The producer moves her head to <em>reserve</em> the space so other writers will
 begin to write starting from <em>that</em> point.</p>
@@ -162,7 +164,7 @@ The full code can be found in the
     <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="n">free_entries</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">)</span> <span class="o">?</span> <span class="n">free_entries</span> <span class="o">:</span> <span class="n">n</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">free_entries</span> <span class="o">||</span> <span class="n">free_entries</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">errno</span> <span class="o">=</span> <span class="n">ENOBUFS</span><span class="p">;</span>
+        <span class="n">errno</span> <span class="o">=</span> <span class="n">EAGAIN</span><span class="p">;</span>
         <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
     <span class="p">}</span>
 
