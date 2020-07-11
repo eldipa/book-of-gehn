@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "Detecting Pinguins"
+title: "Detecting Penguins"
 ---
 
-Can you see the pinguin?{% sidenote '**-- Spoiler Alert! --**' %}
+Can you see the penguin?{% sidenote '**-- Spoiler Alert! --**' %}
 <!--more-->
 
 {% marginfigure '' 'assets/matasano/tux.png' 'The ECB encrypted image on the right
@@ -15,6 +15,11 @@ and its plaintext original version on the left. Image taken from
 
 The following ciphertext was encrypted with AES in ECB mode (Electronic Code
 Book) with the given key.
+
+In ECB each plaintext block is encrypted using the same key.
+
+
+{% maincolumn '<img style="max-width:60%;" alt="ECB Enc" src="/book-of-gehn/assets/matasano/ecb-enc.png">' '' %}
 
 Decrypting is a piece of cake; this is just to get practice about
 [AES in ECB mode](https://cryptopals.com/sets/1/challenges/7)
@@ -34,20 +39,22 @@ Decrypting is a piece of cake; this is just to get practice about
 b"I'm back and I'm ringin' the bell<...>Play that funky music \n\x04\x04\x04\x04"
 ```
 
-## Detecting Pinguins
+{% maincolumn '<img style="max-width:60%;" alt="ECB Dec" src="/book-of-gehn/assets/matasano/ecb-dec.png">'
+'<br />Note how to encryption/decryption of one block don&apos;t depend of any other: this allows the encryption/decryption to be at random places and in parallel.' %}
+
+## Detecting Penguins
 
 If two plaintext *blocks* are the same, ECB
 will encrypt them to the *same* ciphertext block.
 
-[Detect AES in ECB mode](https://cryptopals.com/sets/1/challenges/8)
-from a pool of random strings is easy.
-
-This is possible because if the plaintext has two or more equal blocks,
-the ciphertext will have the same pattern and therefor it will have
-more duplicated bytes than the expected from a random string.
+[Detecting AES in ECB mode](https://cryptopals.com/sets/1/challenges/8)
+from a pool of random strings is therefore trivial: if the plaintext has two or
+more equal blocks, the ciphertext will have the same blocks repeated, something
+unlikely for a truly random string.
 
 We can use the same technique done in
-[the previous post](/book-of-gehn/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html).
+[the previous post](/book-of-gehn/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html)
+for detecting coincidences.
 
 ```python
 >>> ciphertexts = list(load_bytes('./assets/matasano/8.txt', encoding=16))
@@ -105,10 +112,11 @@ than a coincidence of two or more bytes:
 ...     _ = [ax.vlines(132, 0, 1, linestyles='dashed') for ax in axes.flat]
 -->
 
-### Break it?
+### Broken?
 
-Well, it is not possible to break AES easily,
-may be a *dictionary attack*?.
+Well, distinguishing  a encryption from a random string is enough to considere
+a cipher broken, but trying to get the plaintext from it is another
+level.
 
-The 132th plaintext  will remain encrypted, for now.
+The 132th plaintext  will still be a secret, for now.
 
