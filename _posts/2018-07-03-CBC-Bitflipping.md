@@ -66,11 +66,13 @@ So the idea is to patch the ciphertext.
 
 ## Bit flipping attack
 
-In CBC, if a ciphertext block is xored with the output of the decryption
+Recall that in CBC a ciphertext block is xored with the output of the decryption
 of the *next* ciphertext block to get the *next* plaintext block.
 
 If we modify one ciphertext block its decryption will be totally scrambled
 but we will have control of the *next* plaintext block.
+
+{% maincolumn '<img style="max-width:60%;" alt="CBC Dec" src="/book-of-gehn/assets/matasano/cbc-dec.png">' '' %}
 
 Let's create a ciphertext with enough ``A``s to get at least one plaintext block
 full of ``A``s{% sidenote "We don't know if our inject plaintext
@@ -84,12 +86,12 @@ will be full with our ``A``s" %}
 False
 ```
 
-Now we can create the patch, and xor of what we want against what
-is there.
+Now we can create the patch: the plaintext that we want
+xored with the plaintext that was encrypted:
 
 ```python
 >>> patch = B(';admin=true;') ^ B('A').inf()
->>> patch = patch + B(0) * (block_size - len(patch))
+>>> patch = patch.pad(block_size, 'zeros')
 ```
 
 Finally, we apply the patch targeting the ciphertext block of the
