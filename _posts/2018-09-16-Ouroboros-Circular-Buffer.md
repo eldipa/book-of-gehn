@@ -15,9 +15,11 @@ Source code can be found in the
 
 ### Playing with a Circular Buffer
 
-First, let's load this module to play with it{% sidenote
+{% marginnote
 'You can run this code with [cling](https://github.com/root-project/cling)
-and [byexample](https://byexamples.github.io/byexample/)' %}:
+and [byexample](https://byexamples.github.io/byexample/)' %}
+
+First, let's load this module to play with it:
 
 ```cpp
 ?: .L circular_buffer.c

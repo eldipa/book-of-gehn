@@ -127,9 +127,11 @@ being linked one to the other using $$\epsilon$$-transitions.
 
 In regex notation this corresponds to ``ab`` (``a`` followed by ``b``)
 
-As a extension, a NFA can be *link to a clone of itself*{% sidenote 'This
+{% marginnote 'This
 is made obvious in the diagrams:
 $$sm_1$$ cannot link to itself. Underwood we will have three $$sm_1$$ identical objects.' %}
+
+As a extension, a NFA can be *link to a clone of itself*
 to match a sequence of *repeated* submatches. In regex syntax, ``a{n}``.
 
 {% marginplantuml caption:'Repetition of $$sm_1$$ three times  (``a{3}`` in regex syntax).' %}

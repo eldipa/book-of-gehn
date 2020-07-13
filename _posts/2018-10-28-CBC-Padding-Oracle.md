@@ -322,9 +322,11 @@ This attack is implemented in
 [cryptonita](https://pypi.org/project/cryptonita/). Here is a set of
 different ciphertexts to break.
 
-Enjoy!{% sidenote 'This unlocks the
+{% marginnote 'This unlocks the
 [The CBC padding oracle](https://cryptopals.com/sets/3/challenges/17)
 challenge.' %}
+
+Enjoy!
 
 ```python
 >>> plaintexts = list(load_bytes('./assets/matasano/17.txt', encoding=64))

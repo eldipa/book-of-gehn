@@ -25,9 +25,11 @@ easy cake.
 'YELLOW SUBMARINE\x04\x04\x04\x04'
 ```
 
-If a plaintext has an incorrect padding, the ``unpad`` will fail{% sidenote
+{% marginnote
 'Yeup, [PKCS#7 padding validation](https://cryptopals.com/sets/2/challenges/15),
-I know what is coming with this....' %}.
+I know what is coming with this....' %}
+
+If a plaintext has an incorrect padding, the ``unpad`` will fail.
 
 ```python
 >>> m = B("ICE ICE BABY\x05\x05\x05\x05")
@@ -75,10 +77,12 @@ b"I'm back and I'm ringin' the bell<...>Play that funky music \n"
 
 ### Generating secrets
 
-Before doing real crypto, we need to generate a
-*secret and random* configuration{% sidenote
+{% marginnote
 'With the exception of the *seed* that will be fix to make the test
 reproducible and the *block side* to make it a little easier.' %}
+
+Before doing real crypto, we need to generate a
+*secret and random* configuration
 
 This configuration will have all the components needed for the challenges:
 the random key, the IV, the encryption mode and the *secret payload*.
@@ -140,8 +144,10 @@ remain fixed.
 
 Now this is where the action begins.
 
-In this challenge{% sidenote
+{% marginnote
 '[An ECB/CBC detection oracle](https://cryptopals.com/sets/2/challenges/11)' %}
+
+In this challenge
 we need to find when a secret encryption is using ECB or CBC mode.
 
 Now, lets create a (partial) plaintext of *three times* the block size.

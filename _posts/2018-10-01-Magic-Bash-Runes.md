@@ -18,10 +18,12 @@ Creativity and few hours reading man pages are all what you need.<!--more-->
 For the following examples I created a docker image that compiles
 a vulnerable Bash version.
 
+{% marginnote
+'Based on this [Dockerfile](https://github.com/tianon/docker-bash/tree/master/4.1)' %}
+
 From [here]({{site.repo_url}}/tree/master/assets/shellshock) you can download
 the Dockerfile and the rest of the files and
-build the image yourself{% sidenote
-'Based on this [Dockerfile](https://github.com/tianon/docker-bash/tree/master/4.1)' %}:
+build the image yourself:
 
 ```shell
 $ docker build -t shellshock .      # byexample: +skip
@@ -290,10 +292,12 @@ $ rm -f /home/bar # clean up
 
 -->
 
-If you think, this can be used for a privilege escalation{% sidenote
+{% marginnote
 'I am sure that there are other clever
 and creative ways to *priv esc* using shellshock besides using a
-``setuid`` program.' %}:
+``setuid`` program.' %}
+
+If you think, this can be used for a privilege escalation:
 running as a
 normal user, if a ``setuid`` program spawn a shell you will get a path to root
 pretty straightforward.
@@ -344,14 +348,16 @@ vuln
 
 ## OpenVPN
 
+{% marginnote
+'By the way, the [OpenVPN](https://github.com/OpenVPN/openvpn/tree/master/sample)
+repository has a very complete script that
+shows you how to create CA, Certs and other stuff. Nice!' %}
+
 In the following examples the
 [configuration files]({{site.repo_url}}/tree/master/assets/shellshock/files)
 ``vpn-srv.conf`` and
 ``vpn-cli.conf`` sets the IP addresses, ports and certificates:
-standard stuff{% sidenote
-'By the way, the [OpenVPN](https://github.com/OpenVPN/openvpn/tree/master/sample)
-repository has a very complete script that
-shows you how to create CA, Certs and other stuff. Nice!' %}.
+standard stuff.
 
 In each example I am passing the extra
 parameters that enable the attack
@@ -528,8 +534,10 @@ What I can say? Having a remote execution crafting a X509 attribute
 writing just ``() {`` makes me think about the complexity of
 the software with a smile in my face.
 
-There are more vulnerabilities{% sidenote
+{% marginnote
 "See these in [lcamtuf's post](https://lcamtuf.blogspot.com/2014/10/bash-bug-how-we-finally-cracked.html)" %}
+
+There are more vulnerabilities
 and [vectors](https://github.com/mubix/shellshocker-pocs)
 out there than the shown here: Web Servers, CUPS, DHCP.
 

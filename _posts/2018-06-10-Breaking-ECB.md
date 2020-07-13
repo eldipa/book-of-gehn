@@ -4,7 +4,8 @@ title: "Breaking ECB"
 ---
 
 In the previous post we built
-[an ECB/CBC oracle](); now it's time to take this to the next level and
+[an ECB/CBC oracle](/book-of-gehn/articles/2018/06/09/ECB-CBC-Oracle.html);
+now it's time to take this to the next level and
 break ECB [one byte at time](https://cryptopals.com/sets/2/challenges/14).
 {% sidenote '**-- Spoiler Alert! --**' %}.<!--more-->
 
@@ -12,17 +13,19 @@ break ECB [one byte at time](https://cryptopals.com/sets/2/challenges/14).
 ### Generating secrets
 
 We will use the same setup of the
-[previous post](/book-of-gehn/articles/2018/06/10/ECB-CBC-Oracle.html)
+[previous post](/book-of-gehn/articles/2018/06/09/ECB-CBC-Oracle.html)
 but this time, our objective will decrypt ECB without the key.
 
-Remember that we will have a secret payload appended to the attacker-controlled plaintext
-and it is the objective for the
-[byte-at-a-time ECB decryption challenge](https://cryptopals.com/sets/2/challenges/14).{% sidenote
+{% marginnote
 'In fact, there are two challenges: the
 [simple](https://cryptopals.com/sets/2/challenges/12)
 and the
 [harder](https://cryptopals.com/sets/2/challenges/14)
-versions. We will break the harder of course.'%}.
+versions. We will break the harder of course.' %}
+
+Remember that we will have a secret payload appended to the attacker-controlled plaintext
+and it is the objective for the
+[byte-at-a-time ECB decryption challenge](https://cryptopals.com/sets/2/challenges/14)..
 
 ```python
 >>> import sys

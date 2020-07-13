@@ -110,7 +110,7 @@ cryptanalysis.
 
 The ``cape_hash`` cipher is as follows:
 
-```.cpp
+```cpp
 uint8_t srk = cape->salt ^ cape->reduced_key;
 for(uint16_t i = 0; i < length; i++) {
     uint8_t isrk = srk ^ i;
@@ -123,10 +123,12 @@ the secret key ``cape->key``.
 
 We will consider that ``cape->salt`` as secret too.
 
-Despite that ``cape->key`` can hold 65535 bytes{% sidenote
+{% marginnote
 'Technically, it can hold 65536 bytes but the length is a 16 bits
 unsigned integer so we lost one number wasted by representing the 0 length'
-%}, ``isrk`` has only
+%}
+
+Despite that ``cape->key`` can hold 65535 bytes, ``isrk`` has only
 8 bits and therefor the ``isrk ^ cape->key[ .. ]`` can only give 256 bytes
 and after that it will repeat itself.
 
@@ -206,8 +208,10 @@ is in the ``ntop`` of the ciphertext symbols, encrypted of course.
 
 In this case we are going to use the famous ``ETAOIN SHRDLU`` model.
 
-For longer ciphertexts{% sidenote
+{% marginnote
 'As rule of thumb 64 bytes is cool.' %}
+
+For longer ciphertexts
 you can set ``ntop = 1`` and assume that the most
 frequent cipher-symbol is one of the most common plaintext symbols encrypted.
 
@@ -239,21 +243,25 @@ But in the practice we have less (duplicated are removed):
 44
 ```
 
-``gkey1`` is *a guess*: the most likely possible values for the first byte
-of the key stream{% sidenote
+{% marginnote
 'Without a frequency attack we could try the whole space of 256 bytes. It is
 totally feasible but it is faster to do a frequency attack first to reduce
-the search space' %}.
+the search space' %}
+
+``gkey1`` is *a guess*: the most likely possible values for the first byte
+of the key stream.
 
 ### Brute force
 
 We can discard some guesses if they produce the wrong plaintext.
 
-Knowing that the plaintext has a reduced set of ASCII printable of letters, numbers
-and only a few punctuation symbols we can narrow the set of guesses further{% sidenote
+{% marginnote
 'Even if the alphabet of all ASCII printable has 100 symbols and the proposed has
 64 symbols (more than half), the impact of this is **enormous** reducing the guesses
-in two or more orders of magnitude.' %}:
+in two or more orders of magnitude.' %}
+
+Knowing that the plaintext has a reduced set of ASCII printable of letters, numbers
+and only a few punctuation symbols we can narrow the set of guesses further:
 
 ```python
 >>> from functools import partial
@@ -330,15 +338,17 @@ perfectly visible like "aitn't", "soul", "I'm" and "degree".
 
 ## Final thoughts
 
-``cape_hash`` is symmetric cipher which, despising of having a 65536 bytes
+``cape_hash`` is symmetric cipher which, despite of having a 65536 bytes
 length key, the key stream is repeated each 256
 of plaintext enabling a *cipher only attack*.
 
 Even with a short plaintext of just 2852 we got 11 bytes xored with the
 same key byte and this was enough to get almost 60% of the plaintext.
 
-With a theoretical maximum length of 65534 bytes{% sidenote
-'Based on the documentation' %} for a single plaintext, we
+{% marginnote
+'Based on the documentation' %}
+
+With a theoretical maximum length of 65534 bytes for a single plaintext, we
 can obtain 256 bytes xored with the same key byte. Virtually any plaintext
 of that size can be broken completely.
 

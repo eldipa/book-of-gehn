@@ -20,10 +20,12 @@ to break crypo: [cryptonita](https://pypi.org/project/cryptonita/)
 Working with bytes can be a mess so let's use some nice object that
 would help us in our journey.
 
-We can use ``bytestring`` or just ``B`` to convert strings encoded
-in base 16 or 64 into bytes{% sidenote 'This unlocks the
+{% marginnote 'This unlocks the
 [Convert hex to base 64](https://cryptopals.com/sets/1/challenges/1)
-challenge.' %}.
+challenge.' %}
+
+We can use ``bytestring`` or just ``B`` to convert strings encoded
+in base 16 or 64 into bytes.
 
 ```python
 >>> from cryptonita import B         # byexample: +timeout=10
@@ -51,12 +53,14 @@ one instruction:
 '746865206B696420646F6E277420706C6179'
 ```
 
-Even you can perform the ``xor`` of two strings of different lengths: you
-just say that the shorter string will be repeated to infinitum and everything
-will work{% sidenote 'These last two examples solve the challenges
+{% marginnote 'These last two examples solve the challenges
 [Fixed XOR](https://cryptopals.com/sets/1/challenges/2) and
 [Implement repeating-key XOR](https://cryptopals.com/sets/1/challenges/5)'
-%}.
+%}
+
+Even you can perform the ``xor`` of two strings of different lengths: you
+just say that the shorter string will be repeated to infinitum and everything
+will work.
 
 ```python
 >>> plaintext = B("Burning 'em, if you ain't quick and nimble\n"
@@ -123,10 +127,12 @@ Brute forcing is expensive even for a small key space. And it is not
 very cleaver either as we are not using any information about the plaintext to
 our favor.
 
+{% marginnote
+'``ETAOIN SHRDLU`` Achievement Unlocked' %}
+
 If we assume that the plaintext is in English, it is likely that one of
 the most common bytes in the ciphertext is actually *one of the most common*
-bytes in English but encrypted{% sidenote
-'``ETAOIN SHRDLU`` Achievement Unlocked' %}.
+bytes in English but encrypted.
 
 The ``xor`` between them will give us the key or at least we will narrow
 to a small subset of possible keys.
@@ -154,9 +160,11 @@ can reduce the set further:
 {'X' -> 1.0000}
 ```
 
-Finally, the plaintext is{% sidenote
+{% marginnote
 '[Single-byte XOR cipher](https://cryptopals.com/sets/1/challenges/3)
 challenge done.' %}
+
+Finally, the plaintext is
 
 ```python
 >>> ciphertext ^ B('X').inf()

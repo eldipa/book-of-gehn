@@ -17,8 +17,10 @@ Ready to break it?{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
 
 ## Warming up
 
-Let's implement a CTR{% sidenote
+{% marginnote
 '[Implement CTR, the stream cipher mode](https://cryptopals.com/sets/3/challenges/18)' %}
+
+Let's implement a CTR
 
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
@@ -291,8 +293,10 @@ between ``i'm rated`` and ``I'm rated``. ``:´|``
 >>> kstream = (kstream[:1] ^ fix) + kstream[1:]
 ```
 
+{% marginnote '[Break fixed-nonce CTR statistically](https://cryptopals.com/sets/3/challenges/20)' %}
+
 And we are done!
-{% sidenote '[Break fixed-nonce CTR statistically](https://cryptopals.com/sets/3/challenges/20)' %}
+
 
 ```python
 >>> all(p == c ^ kstream for p, c in zip(tplaintexts, tciphertexts))
@@ -363,8 +367,10 @@ True
 
 ## Break fixed-nonce CTR - Second chance
 
-Let's take another set of plaintexts{% sidenote
-'[Break fixed-nonce CTR mode using substitutions](https://cryptopals.com/sets/3/challenges/19)' %},
+{% marginnote
+'[Break fixed-nonce CTR mode using substitutions](https://cryptopals.com/sets/3/challenges/19)' %}
+
+Let's take another set of plaintexts,
 encrypt them with a fixed-nonce CTR and break the encryption.
 
 ```python

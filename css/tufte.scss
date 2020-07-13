@@ -63,6 +63,10 @@ a {
 
   }
 
+a > h1, a > h2, a > h3, a > h4 {
+  color: $text-color;
+}
+
 li > a, p > a, cite > a, .sidenote a, .credits a, .marginnote a, footer a {
 
 // CUSTOM

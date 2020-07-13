@@ -38,11 +38,13 @@ Imagine the following function:
 The ``edit`` function allows us edit or patch a ciphertext modifying
 the plaintext.
 
+{% marginnote 'This unlocks the
+[Break "random access read/write" AES CTR](https://cryptopals.com/sets/1/challenges/25)
+challenge.' %}
+
 This generates two different ciphertexts
 encrypted with the **same** key stream which breaks CTR
-with a simple known-plaintext attack{% sidenote 'This unlocks the
-[Break "random access read/write" AES CTR](https://cryptopals.com/sets/1/challenges/25)
-challenge.' %}.
+with a simple known-plaintext attack.
 
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10

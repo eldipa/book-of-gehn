@@ -118,19 +118,23 @@ an infinite loop which explains why the program hangs.
 
 ## Volatile
 
-C and C++ has the `volatile` qualifier that instructs to the compiler
-to not assume that reading twice{% sidenote
+{% marginnote
 'Writes (*stores*) too: a compiler could optimize issuing
 only the last of many writes if not read (*load*) happen in between or it could
 issue one of them if all of them write the same value.
 <br />
 `volatile` disables these assumptions.' %}
+
+C and C++ has the `volatile` qualifier that instructs to the compiler
+to not assume that reading twice
 the same variable could yield the
 same result even if no *apparent* write happen in between.
 
-We could define a pointer to the volatile data:{% sidenote
+{% marginnote
 '`volatile int *p`  pointer to volatile-data; `int * volatile p`
 volatile *pointer* to data. They are not the same.' %}
+
+We could define a pointer to the volatile data:
 
 ```cpp
 void* loop(void *p) {

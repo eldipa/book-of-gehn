@@ -24,11 +24,13 @@ the ciphertext then!{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
 
 ## Distinguish a ciphertext
 
+{% marginnote
+'[Detect single-character XOR](https://cryptopals.com/sets/1/challenges/4)
+challenge' %}
+
 The basic idea is that some patterns in the plaintext are propagated
 to the ciphertext and those we will be enough to distinguish it from
-the rest of the pool{% sidenote
-'[Detect single-character XOR](https://cryptopals.com/sets/1/challenges/4)
-challenge' %}.
+the rest of the pool.
 
 ### Index of coincidence
 

@@ -86,13 +86,15 @@ True
 
 ## Cloning
 
-A property that all PRNG cryptographically secure must hold is that
-even if the attacker knows the partial output of the PRNG he cannot distinguish
-it from a truly random sequence.{% sidenote
+{% marginnote
 'Formally, there is not such efficient algorithm that allow an attack
 to distinguish even with a small probability for large but finite
 sequences. Eventually with a *really large* sequences the attacker may
 break it.' %}
+
+A property that all PRNG cryptographically secure must hold is that
+even if the attacker knows the partial output of the PRNG he cannot distinguish
+it from a truly random sequence.
 
 In particular he cannot predict any future output.
 
@@ -115,13 +117,15 @@ True
 The fundamental problem of the MT19937 is that part of the
 output generation is a *reversible* operation.
 
-And because each output byte has a dependency with one and
-just one single secret byte, from that output byte an attacker
-can get the single secret byte.{% sidenote
+{% marginnote
 'And this is how we could make the MT19937 a little harder:
 make the operation non-invertible *and* making each output
 byte a function based on the whole secret state adding more
 entropy and shuffling into the mix.' %}
+
+And because each output byte has a dependency with one and
+just one single secret byte, from that output byte an attacker
+can get the single secret byte.
 
 For a 624 output samples, the full secret state of the MT19937
 can be obtained.
@@ -162,10 +166,12 @@ an unknown position:
 8
 ```
 
-Because the cipher does not use a *random* secret key (the seed),
-it is possible to break this ciphering{% sidenote
+{% marginnote
 '[Create the MT19937 stream cipher and break it](https://cryptopals.com/sets/3/challenges/24)'
-%}.
+%}
+
+Because the cipher does not use a *random* secret key (the seed),
+it is possible to break this ciphering.
 
 First, lets see all the possible substrings of the same length than
 the known plaintext:

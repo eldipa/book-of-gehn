@@ -202,9 +202,11 @@ discard the unlikely keys and just save the most likely:
 120
 ```
 
-``120`` is a really small number compared with the whole key space ``2^(8*29)``{% sidenote
+{% marginnote
 'More keys than grams of ordinay mass in the
 [observable universe](https://en.wikipedia.org/wiki/Observable_universe)' %}
+
+``120`` is a really small number compared with the whole key space ``2^(8*29)``
 
 And only a few of them are more likely than others:
 
@@ -226,8 +228,9 @@ You probably guessed which is the one
 >>> ciphertext ^ key.inf()
 <...>I'm back and I'm ringin' the bell<...>Play that funky music<...>
 ```
+{% marginnote
+'[Vanilla Ice - Play that Funky Music](https://www.youtube.com/watch?v=n2Ubq9XII8c)' %}
 
-[Break repeating-key XOR](https://cryptopals.com/sets/1/challenges/6) *done*{% sidenote
-'[Vanilla Ice - Play that Funky Music](https://www.youtube.com/watch?v=n2Ubq9XII8c)' %}.
+[Break repeating-key XOR](https://cryptopals.com/sets/1/challenges/6) *done*.
 
 

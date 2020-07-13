@@ -55,10 +55,12 @@ def 𡛓(t):
 The ``ۈ`` looks like a variable where ``䈶`` is just
 an alias of ``socket.gethostbyname``.
 
-I did a little of search-and-replace{% sidenote
+{% marginnote
 'Vim tip: ``:%s//x/g`` replaces the last searched string by ``x``.
 Combined with ``*`` it is very useful to replace hard-to-write words
-like ``ۈ``.' %} to have better names, I filtered out
+like ``ۈ``.' %}
+
+I did a little of search-and-replace to have better names, I filtered out
 artificial constructions like using a variable to hold the constant ``True``
 and things like that.
 
@@ -129,11 +131,13 @@ This is the same function but simplified:
 ...     return out.encode('latin-1')
 ```
 
-Another particularity is that the cipher is *stateless*: two
-plaintexts will be encrypted with *almost* the same key stream.{% sidenote
+{% marginnote
 'We say *almost* because to runs of the key stream will be identical until
 one of them, based on the plaintext, hit the ``x == 0 or x == key`` condition
 *shifting* with respect the other.' %}
+
+Another particularity is that the cipher is *stateless*: two
+plaintexts will be encrypted with *almost* the same key stream.
 
 The other interesting part is how the ``key_seed`` and
 ``key_shift`` are initialized.
@@ -144,12 +148,14 @@ key_seed = (srcport & 65280) >> 8
 key_shift = srcport & 255
 ```
 
-Not secret at all. ``srcport`` is the source port chosen by the OS which
-from the [pcap](/book-of-gehn/assets/eko2019-writeups/cipherchat-dir/cipherchat.pcap)
-we know that it is 47898. {% sidenote
+{% marginnote
 'The pcap had only one single TCP stream but in much nosier captures
 it is handy to use ``Statistic > Conversations`` in ``wireshark``
 to summarize the protocols, addresses and ports.' %}
+
+Not secret at all. ``srcport`` is the source port chosen by the OS which
+from the [pcap](/book-of-gehn/assets/eko2019-writeups/cipherchat-dir/cipherchat.pcap)
+we know that it is 47898.
 
 So
 
@@ -167,10 +173,12 @@ So
 With this and the ``encxor`` function we can decrypt every message sent from the
 client to the server.
 
-Which by the way are these{% sidenote
+{% marginnote
 'Another ``wireshark`` tip: select one packet, then
 ``Follow TCP stream``, filter to see only the ``client->server`` packets
-and select ``show data`` as ``raw``.' %}:
+and select ``show data`` as ``raw``.' %}
+
+Which by the way are these:
 
 ```python
 >>> raw = '''

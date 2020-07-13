@@ -51,13 +51,15 @@ $$
 A (p_i - p_j) = (c_i - c_j)\quad(\textrm{mod } m)
 $$
 
-In order to break an affine cipher we need $$2n$$ independent
-plaintext-ciphertext pairs (for a linear cipher we need just $$n$$){% sidenote
+{% marginnote
 'Keep in mind the affine transformation is a *block cipher* with blocks
 of $$n$$ bytes.
 So the plaintext/ciphertext pairs **must** be $$n$$-bytes *aligned*
 (they **must** come from positions multiple of $$n$$).'
 %}
+
+In order to break an affine cipher we need $$2n$$ independent
+plaintext-ciphertext pairs (for a linear cipher we need just $$n$$)
 
 Here is the first two pairs and the first difference:
 

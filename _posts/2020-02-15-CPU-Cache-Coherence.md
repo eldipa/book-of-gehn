@@ -60,8 +60,10 @@ How many times a busy-loop cycled gives us a rough estimation.{% marginnote
 'That is the purpose of `counters`: track how many cycles took see the
 expected value at each index.' %}
 
-To play with different cpus, the program sets the cpu's affinity{% sidenote
+{% marginnote
 'See man page of `pthread_attr_setaffinity_np`' %}
+
+To play with different cpus, the program sets the cpu's affinity
 of each thread configurable from the command line.
 
 For example, to set the affinity of both threads to the cpu number 0 we do:
@@ -194,9 +196,11 @@ but the store will take some time to be visible to L1/L2 caches
 of other cores in the same socket and a little longer to be
 visible in the caches of other sockets.
 
-To have a *coherent view* of the memory, the caches *synchronize*
-themselves{% sidenote '"Multicore Cache Coherence" (in the reference)
+{% marginnote '"Multicore Cache Coherence" (in the reference)
 explains how to achieve this.' %}
+
+To have a *coherent view* of the memory, the caches *synchronize*
+themselves
 
 Let's see the effects of this comparing each cpu against the other.
 

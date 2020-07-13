@@ -25,10 +25,12 @@ That was unacceptable.
 
 Fortunately he has a Starbucks near with a decent wifi signal strength.
 
+{% marginnote
+'Spoiler: [isolate_wifi.sh](/book-of-gehn/assets/isolate_wifi/isolate_wifi.sh)' %}
+
 Now the challenge is how to separate the private traffic so it can go
 only through the wifi while ensuring that the corporate traffic stays
-where it belongs, under the sight of the *Big Brother*.{% sidenote
-'Spoiler: [isolate_wifi.sh](/book-of-gehn/assets/isolate_wifi/isolate_wifi.sh)' %}
+where it belongs, under the sight of the *Big Brother*.
 
 ### Isolate a wifi card with Network Namespaces
 
