@@ -120,7 +120,9 @@ does it take?</p>
 <p>How many times a busy-loop cycled gives us a rough estimation.<label for="mn-7eae8864761ccf972aa824fd18352073" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-7eae8864761ccf972aa824fd18352073" class="margin-toggle" /><span class="marginnote">That is the purpose of <code class="highlighter-rouge">counters</code>: track how many cycles took see the
 expected value at each index. </span></p>
 
-<p>To play with different cpus, the program sets the cpu’s affinity<label for="sn-13df53b6943eef89557be17c1fee6918" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-13df53b6943eef89557be17c1fee6918" class="margin-toggle" /><span class="sidenote">See man page of <code class="highlighter-rouge">pthread_attr_setaffinity_np</code></span>
+<p><label for="mn-13df53b6943eef89557be17c1fee6918" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-13df53b6943eef89557be17c1fee6918" class="margin-toggle" /><span class="marginnote">See man page of <code class="highlighter-rouge">pthread_attr_setaffinity_np</code> </span></p>
+
+<p>To play with different cpus, the program sets the cpu’s affinity
 of each thread configurable from the command line.</p>
 
 <p>For example, to set the affinity of both threads to the cpu number 0 we do:</p>
@@ -248,9 +250,11 @@ but the store will take some time to be visible to L1/L2 caches
 of other cores in the same socket and a little longer to be
 visible in the caches of other sockets.</p>
 
+<p><label for="mn-fe89caff6ba37f96128be77a66704d91" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-fe89caff6ba37f96128be77a66704d91" class="margin-toggle" /><span class="marginnote">“Multicore Cache Coherence” (in the reference)
+explains how to achieve this. </span></p>
+
 <p>To have a <em>coherent view</em> of the memory, the caches <em>synchronize</em>
-themselves<label for="sn-fe89caff6ba37f96128be77a66704d91" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-fe89caff6ba37f96128be77a66704d91" class="margin-toggle" /><span class="sidenote">“Multicore Cache Coherence” (in the reference)
-explains how to achieve this.</span></p>
+themselves</p>
 
 <p>Let’s see the effects of this comparing each cpu against the other.</p>
 

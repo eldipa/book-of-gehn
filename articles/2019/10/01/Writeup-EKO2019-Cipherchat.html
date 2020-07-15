@@ -115,9 +115,11 @@ so our first task is to decompile it.</p>
 <p>The <code class="highlighter-rouge">ۈ</code> looks like a variable where <code class="highlighter-rouge">䈶</code> is just
 an alias of <code class="highlighter-rouge">socket.gethostbyname</code>.</p>
 
-<p>I did a little of search-and-replace<label for="sn-53880a7583d72ebb86ba6fdc0c12b444" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-53880a7583d72ebb86ba6fdc0c12b444" class="margin-toggle" /><span class="sidenote">Vim tip: <code class="highlighter-rouge">:%s//x/g</code> replaces the last searched string by <code class="highlighter-rouge">x</code>.
+<p><label for="mn-53880a7583d72ebb86ba6fdc0c12b444" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-53880a7583d72ebb86ba6fdc0c12b444" class="margin-toggle" /><span class="marginnote">Vim tip: <code class="highlighter-rouge">:%s//x/g</code> replaces the last searched string by <code class="highlighter-rouge">x</code>.
 Combined with <code class="highlighter-rouge">*</code> it is very useful to replace hard-to-write words
-like <code class="highlighter-rouge">ۈ</code>.</span> to have better names, I filtered out
+like <code class="highlighter-rouge">ۈ</code>. </span></p>
+
+<p>I did a little of search-and-replace to have better names, I filtered out
 artificial constructions like using a variable to hold the constant <code class="highlighter-rouge">True</code>
 and things like that.</p>
 
@@ -186,10 +188,12 @@ key stream is moved forward one byte.</p>
 <span class="o">...</span>     <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'latin-1'</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>Another particularity is that the cipher is <em>stateless</em>: two
-plaintexts will be encrypted with <em>almost</em> the same key stream.<label for="sn-6c2727d0ceb9d0b3dd59966c8aeea305" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-6c2727d0ceb9d0b3dd59966c8aeea305" class="margin-toggle" /><span class="sidenote">We say <em>almost</em> because to runs of the key stream will be identical until
+<p><label for="mn-6c2727d0ceb9d0b3dd59966c8aeea305" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-6c2727d0ceb9d0b3dd59966c8aeea305" class="margin-toggle" /><span class="marginnote">We say <em>almost</em> because to runs of the key stream will be identical until
 one of them, based on the plaintext, hit the <code class="highlighter-rouge">x == 0 or x == key</code> condition
-<em>shifting</em> with respect the other.</span></p>
+<em>shifting</em> with respect the other. </span></p>
+
+<p>Another particularity is that the cipher is <em>stateless</em>: two
+plaintexts will be encrypted with <em>almost</em> the same key stream.</p>
 
 <p>The other interesting part is how the <code class="highlighter-rouge">key_seed</code> and
 <code class="highlighter-rouge">key_shift</code> are initialized.</p>
@@ -199,11 +203,13 @@ one of them, based on the plaintext, hit the <code class="highlighter-rouge">x =
 <span class="n">key_shift</span> <span class="o">=</span> <span class="n">srcport</span> <span class="o">&amp;</span> <span class="mi">255</span>
 </code></pre></div></div>
 
+<p><label for="mn-29b74d3a67b35195e76b5cc3656b1d05" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-29b74d3a67b35195e76b5cc3656b1d05" class="margin-toggle" /><span class="marginnote">The pcap had only one single TCP stream but in much nosier captures
+it is handy to use <code class="highlighter-rouge">Statistic &gt; Conversations</code> in <code class="highlighter-rouge">wireshark</code>
+to summarize the protocols, addresses and ports. </span></p>
+
 <p>Not secret at all. <code class="highlighter-rouge">srcport</code> is the source port chosen by the OS which
 from the <a href="/book-of-gehn/assets/eko2019-writeups/cipherchat-dir/cipherchat.pcap">pcap</a>
-we know that it is 47898. <label for="sn-29b74d3a67b35195e76b5cc3656b1d05" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-29b74d3a67b35195e76b5cc3656b1d05" class="margin-toggle" /><span class="sidenote">The pcap had only one single TCP stream but in much nosier captures
-it is handy to use <code class="highlighter-rouge">Statistic &gt; Conversations</code> in <code class="highlighter-rouge">wireshark</code>
-to summarize the protocols, addresses and ports.</span></p>
+we know that it is 47898.</p>
 
 <p>So</p>
 
@@ -220,9 +226,11 @@ to summarize the protocols, addresses and ports.</span></p>
 <p>With this and the <code class="highlighter-rouge">encxor</code> function we can decrypt every message sent from the
 client to the server.</p>
 
-<p>Which by the way are these<label for="sn-c23d52cd96fa1c4eb14218c5cb4e1c78" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-c23d52cd96fa1c4eb14218c5cb4e1c78" class="margin-toggle" /><span class="sidenote">Another <code class="highlighter-rouge">wireshark</code> tip: select one packet, then
+<p><label for="mn-c23d52cd96fa1c4eb14218c5cb4e1c78" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-c23d52cd96fa1c4eb14218c5cb4e1c78" class="margin-toggle" /><span class="marginnote">Another <code class="highlighter-rouge">wireshark</code> tip: select one packet, then
 <code class="highlighter-rouge">Follow TCP stream</code>, filter to see only the <code class="highlighter-rouge">client-&gt;server</code> packets
-and select <code class="highlighter-rouge">show data</code> as <code class="highlighter-rouge">raw</code>.</span>:</p>
+and select <code class="highlighter-rouge">show data</code> as <code class="highlighter-rouge">raw</code>. </span></p>
+
+<p>Which by the way are these:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">raw</span> <span class="o">=</span> <span class="s">'''
 ... cba28100

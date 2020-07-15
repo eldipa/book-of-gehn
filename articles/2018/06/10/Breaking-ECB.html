@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Breaking ECB</title>
-  <meta name="description" content="In this post I will show how to usean ECB/CBC detection oracleto break ECB,one byte at time,usingcryptonita– Spoiler Alert! –.">
+  <meta name="description" content="In the previous post we builtan ECB/CBC oracle;now it’s time to take this to the next level andbreak ECB one byte at time.– Spoiler Alert! –.">
 
   
     <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
@@ -66,82 +66,33 @@
       <h1>Breaking ECB</h1>
 <p class="subtitle">June 10, 2018</p>
 
-<p>In this post I will show how to use
-<a href="https://cryptopals.com/sets/2/challenges/11">an ECB/CBC detection oracle</a>
-to break ECB,
-<a href="https://cryptopals.com/sets/2/challenges/14">one byte at time</a>,
-using
-<a href="https://pypi.org/project/cryptonita/">cryptonita</a><label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span>.<!--more--></p>
+<p>In the previous post we built
+<a href="/book-of-gehn/articles/2018/06/09/ECB-CBC-Oracle.html">an ECB/CBC oracle</a>;
+now it’s time to take this to the next level and
+break ECB <a href="https://cryptopals.com/sets/2/challenges/14">one byte at time</a>.
+<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span>.<!--more--></p>
 
-<h3 id="pkcs7-padding"><code class="highlighter-rouge">PKCS#7</code> padding</h3>
+<h3 id="generating-secrets">Generating secrets</h3>
 
-<p><a href="https://cryptopals.com/sets/2/challenges/9">Implement PKCS#7 padding</a>,
-easy cake.</p>
+<p>We will use the same setup of the
+<a href="/book-of-gehn/articles/2018/06/09/ECB-CBC-Oracle.html">previous post</a>
+but this time, our objective will decrypt ECB without the key.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
-</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">"YELLOW SUBMARINE"</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s">'pkcs#7'</span><span class="p">)</span>
-<span class="s">'YELLOW SUBMARINE</span><span class="se">\x04\x04\x04\x04</span><span class="s">'</span>
-</code></pre></div></div>
+<p><label for="mn-de18d2f17e116f7c6c35bca4ce6261e7" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-de18d2f17e116f7c6c35bca4ce6261e7" class="margin-toggle" /><span class="marginnote">In fact, there are two challenges: the
+<a href="https://cryptopals.com/sets/2/challenges/12">simple</a>
+and the
+<a href="https://cryptopals.com/sets/2/challenges/14">harder</a>
+versions. We will break the harder of course. </span></p>
 
-<p>If a plaintext has an incorrect padding, the <code class="highlighter-rouge">unpad</code> will fail<label for="sn-311cd36ae5dba51a4fed983e3ef2960f" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-311cd36ae5dba51a4fed983e3ef2960f" class="margin-toggle" /><span class="sidenote">Yeup, <a href="https://cryptopals.com/sets/2/challenges/15">PKCS#7 padding validation</a>,
-I know what is coming with this….</span>.</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">m</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">"ICE ICE BABY</span><span class="se">\x05\x05\x05\x05</span><span class="s">"</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">m</span><span class="o">.</span><span class="n">unpad</span><span class="p">(</span><span class="s">'pkcs#7'</span><span class="p">)</span>
-<span class="n">Traceback</span> <span class="o">&lt;...&gt;</span>
-<span class="nb">ValueError</span><span class="p">:</span> <span class="n">Bad</span> <span class="n">padding</span> <span class="s">'pkcs#7'</span> <span class="k">with</span> <span class="n">last</span> <span class="n">byte</span> <span class="mh">0x5</span>
-</code></pre></div></div>
-
-<h3 id="cipher-block-chaining">Cipher block chaining</h3>
-
-<p>This time we need to <a href="https://cryptopals.com/sets/2/challenges/10">Implement CBC mode</a>
-ourselves, also known as <em>Cipher Block Chaining</em> mode.</p>
-
-<p>At difference with the ECB, the CBC mode uses the previous ciphertext block
-to XOR the current plaintext block before encrypting it.</p>
-
-<p>For the first plaintext block we use an
-<a href="https://en.wikipedia.org/wiki/Initialization_vector">Initialization Vector</a>
-for the XOR operation.</p>
-
-<p>This IV should be random but for the sake of the test it
-will be full of zeros.</p>
+<p>Remember that we will have a secret payload appended to the attacker-controlled plaintext
+and it is the objective for the
+<a href="https://cryptopals.com/sets/2/challenges/14">byte-at-a-time ECB decryption challenge</a>..</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sys</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">"./assets/matasano"</span><span class="p">)</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">challenge</span> <span class="kn">import</span> <span class="n">dec_cbc</span><span class="p">,</span> <span class="n">enc_cbc</span><span class="p">,</span> <span class="n">enc_ecb</span>
-
-<span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">'./assets/matasano/10.txt'</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
-
-<span class="o">&gt;&gt;&gt;</span> <span class="n">iv</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">16</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">key</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">"YELLOW SUBMARINE"</span><span class="p">)</span>
-
-<span class="o">&gt;&gt;&gt;</span> <span class="n">plaintext</span> <span class="o">=</span> <span class="n">dec_cbc</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">plaintext</span><span class="o">.</span><span class="n">unpad</span><span class="p">(</span><span class="s">'pkcs#7'</span><span class="p">))</span>
-<span class="n">b</span><span class="s">"I'm back and I'm ringin' the bell&lt;...&gt;Play that funky music </span><span class="se">\n</span><span class="s">"</span>
-</code></pre></div></div>
-
-<h3 id="generating-secrets">Generating secrets</h3>
-
-<p>Before doing real crypto, we need to generate a
-<em>secret and random</em> configuration<label for="sn-1ad0a1c13e55255a02fd667dc15e03e0" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-1ad0a1c13e55255a02fd667dc15e03e0" class="margin-toggle" /><span class="sidenote">With the exception of the <em>seed</em> that will be fix to make the test
-reproducible and the <em>block side</em> to make it a little easier.</span></p>
-
-<p>This configuration will have all the components needed for the challenges:
-the random key, the IV, the encryption mode and the <em>secret payload</em>.</p>
-
-<p>This secret payload will be appended to the attacker-controlled plaintext
-and it is the objective for the next challenge
-<a href="https://cryptopals.com/sets/2/challenges/14">Byte-at-a-time ECB decryption</a><label for="sn-de18d2f17e116f7c6c35bca4ce6261e7" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-de18d2f17e116f7c6c35bca4ce6261e7" class="margin-toggle" /><span class="sidenote">In fact, there are two challenges: the
-<a href="https://cryptopals.com/sets/2/challenges/12">simple</a>
-and the
-<a href="https://cryptopals.com/sets/2/challenges/14">harder</a>
-versions. We will break the harder of course.</span>.</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">challenge</span> <span class="kn">import</span> <span class="n">generate_config</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
+</span><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">challenge</span> <span class="kn">import</span> <span class="n">enc_ecb</span><span class="p">,</span> <span class="n">generate_config</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">20180610</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">block_size</span> <span class="o">=</span> <span class="mi">16</span>
@@ -151,15 +102,12 @@ versions. We will break the harder of course.</span>.</p>
 <span class="o">...</span>            <span class="s">'YnkK'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="n">block_size</span><span class="p">,</span> <span class="n">posfix</span><span class="o">=</span><span class="n">secret</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="c1"># pick the random prefix and let it fixed (constant)
+</span><span class="o">&gt;&gt;&gt;</span> <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>Now, let’s create the encryption oracle: a function that encrypts
-a plaintext under a secret encryption mode.</p>
-
-<p>The attacker/adversary will be in control of part of the plaintext to which
-the secret payload will be appended later before the encryption.</p>
-
-<p>Everything else is secret for the adversary: the key, the IV, the mode.</p>
+<p>This is our encryption oracle:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">encryption_oracle</span><span class="p">(</span><span class="n">partial_plaintext</span><span class="p">):</span>
 <span class="o">...</span>     <span class="k">global</span> <span class="n">cfg</span>
@@ -171,105 +119,7 @@ the secret payload will be appended later before the encryption.</p>
 </span><span class="o">...</span>     <span class="n">plaintext</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">partial_plaintext</span> <span class="o">+</span> <span class="n">cfg</span><span class="o">.</span><span class="n">posfix</span>
 <span class="o">...</span>     <span class="n">plaintext</span> <span class="o">=</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">pad_mode</span><span class="p">)</span>
 <span class="o">...</span>
-<span class="o">...</span>     <span class="c1"># encrypt the plaintext with one of the available modes
-</span><span class="o">...</span>     <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enc_mode</span> <span class="o">==</span> <span class="s">'ecb'</span><span class="p">:</span>
-<span class="o">...</span>         <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">enc_ecb</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">block_size</span><span class="p">)</span>
-<span class="o">...</span>     <span class="k">elif</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enc_mode</span> <span class="o">==</span> <span class="s">'cbc'</span><span class="p">:</span>
-<span class="o">...</span>         <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">enc_cbc</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">iv</span><span class="p">)</span>
-<span class="o">...</span>     <span class="k">else</span><span class="p">:</span>
-<span class="o">...</span>         <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="s">"Invalide chain mode </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="n">enc_mode</span><span class="p">)</span>
-<span class="o">...</span>
-<span class="o">...</span>     <span class="k">return</span> <span class="n">ciphertext</span>
-</code></pre></div></div>
-
-<p>On each call, the secret random configuration is regenerated. So everything
-changes on each call with the exception of the <code class="highlighter-rouge">block_size</code> and
-<code class="highlighter-rouge">posfix</code> (secret).</p>
-
-<p>Those two where fixed during the construction of the configuration and they will
-remain fixed.</p>
-
-<h2 id="the-ecbcbc-oracle">The ECB/CBC oracle</h2>
-
-<p>Now this is where the action begins.</p>
-
-<p>In this challenge<label for="sn-74b39fe3f77f267a980ef7cc3e3f08ba" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-74b39fe3f77f267a980ef7cc3e3f08ba" class="margin-toggle" /><span class="sidenote"><a href="https://cryptopals.com/sets/2/challenges/11">An ECB/CBC detection oracle</a></span>
-we need to find when a secret encryption is using ECB or CBC mode.</p>
-
-<p>Now, lets create a (partial) plaintext of <em>three times</em> the block size.</p>
-
-<p>With a (partial) plaintext of twice the block size we can know if
-the cipher is using ECB or CBC because if it is using ECB, two same
-plaintext blocks will be encrypted to the same ciphertext block</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>|----|----|----|----|
- AAAA AAAA .... ....    plaintext
-  |    |
-  V    V
-|----|----|----|----|
-  CA   CA  .... ....    ciphertext
-</code></pre></div></div>
-
-<p>But because we have some <em>extra plaintext prepended</em>, we cannot know if our
-two blocks will be <em>aligned to the block boundary</em>.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>|----|----|----|----|
- xAAA AAAA Ayyy ....    plaintext (not aligned)
-  |    |    |
-  V    V    V
-|----|----|----|----|
-  C1   CA   C2  ....    ciphertext
-
-
-|----|----|----|----|
- xxxx AAAA AAAA ....    plaintext (aligned)
-       |    |
-       V    V
-|----|----|----|----|
-       CA   CA  ....    ciphertext
-</code></pre></div></div>
-
-<p>To workaround this we set a plaintext three times the block size:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>|----|----|----|----|
- xAAA AAAA AAAA Ayyy    plaintext (always aligned)
-  |    |    |    |
-  V    V    V    V
-|----|----|----|----|
-  C1   CA   CA   C2     ciphertext
-</code></pre></div></div>
-
-<p>Now it is a matter of counting duplicated blocks.</p>
-
-<p>In <a href="https://pypi.org/project/cryptonita/">cryptonita</a> there is
-a convenient <code class="highlighter-rouge">iduplicates</code> method for this.</p>
-
-<p>If we found one block duplicated assume that we are using ECB
-otherwise CBC (so we will use <code class="highlighter-rouge">has_duplicates</code> directly).</p>
-
-<p>We will repeat this 1024 to prove that this works:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">choosen_partial_plaintext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">'A'</span> <span class="o">*</span> <span class="n">block_size</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
-
-<span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1024</span><span class="p">):</span>
-<span class="o">...</span>     <span class="n">c</span> <span class="o">=</span> <span class="n">encryption_oracle</span><span class="p">(</span><span class="n">choosen_partial_plaintext</span><span class="p">)</span>
-<span class="o">...</span>     <span class="n">is_ecb</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">nblocks</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="o">...</span>     <span class="n">enc_mode</span> <span class="o">=</span> <span class="s">'ecb'</span> <span class="k">if</span> <span class="n">is_ecb</span> <span class="k">else</span> <span class="s">'cbc'</span>
-<span class="o">...</span>
-<span class="o">...</span>     <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">enc_mode</span> <span class="o">!=</span> <span class="n">enc_mode</span><span class="p">:</span>  <span class="c1"># is the same that the secret cfg chose?
-</span><span class="o">...</span>         <span class="k">print</span><span class="p">(</span><span class="s">"Fail"</span><span class="p">)</span>
-<span class="o">...</span>         <span class="k">break</span>
-</code></pre></div></div>
-
-<h2 id="breaking-ecb">Breaking ECB</h2>
-
-<p>This is it.</p>
-
-<p>For this challenge we will set the encryption mode to ECB and the prepended payload
-to some arbitrary but constant text.</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="c1"># keep the prefix and the enc mode fixed
-</span><span class="o">&gt;&gt;&gt;</span> <span class="n">cfg</span> <span class="o">=</span> <span class="n">generate_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">enc_mode</span><span class="o">=</span><span class="s">'ecb'</span><span class="p">)</span>
+<span class="o">...</span>     <span class="k">return</span> <span class="n">enc_ecb</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">cfg</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">block_size</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h3 id="block-alignment">Block alignment</h3>
@@ -293,13 +143,13 @@ and we add one byte at time.</p>
 <span class="o">...</span>         <span class="k">break</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">alignment</span>
-<span class="mi">3</span>
+<span class="mi">10</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span> <span class="o">==</span> <span class="n">block_size</span> <span class="o">-</span> <span class="n">alignment</span>
 <span class="bp">True</span>
 </code></pre></div></div>
 
-<h3 id="get-the-pinguin">Get the pinguin!</h3>
+<h3 id="get-the-penguin">Get the penguin!</h3>
 
 <p>Now, with our blocks aligned, we can set as our plaintext two identical blocks
 but the last one will have one byte less.</p>

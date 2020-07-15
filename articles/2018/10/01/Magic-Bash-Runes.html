@@ -80,9 +80,11 @@ ways to trigger it even in the most unexpected places.</p>
 <p>For the following examples I created a docker image that compiles
 a vulnerable Bash version.</p>
 
+<p><label for="mn-9f5a493d0f4af2374b4250ca1416cd85" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-9f5a493d0f4af2374b4250ca1416cd85" class="margin-toggle" /><span class="marginnote">Based on this <a href="https://github.com/tianon/docker-bash/tree/master/4.1">Dockerfile</a> </span></p>
+
 <p>From <a href="https://github.com/eldipa/book-of-gehn//tree/master/assets/shellshock">here</a> you can download
 the Dockerfile and the rest of the files and
-build the image yourself<label for="sn-9f5a493d0f4af2374b4250ca1416cd85" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-9f5a493d0f4af2374b4250ca1416cd85" class="margin-toggle" /><span class="sidenote">Based on this <a href="https://github.com/tianon/docker-bash/tree/master/4.1">Dockerfile</a></span>:</p>
+build the image yourself:</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker build <span class="nt">-t</span> shellshock <span class="nb">.</span>      <span class="c"># byexample: +skip</span>
 &lt;...&gt;
@@ -339,9 +341,11 @@ $ rm -f /home/bar # clean up
 
 -->
 
-<p>If you think, this can be used for a privilege escalation<label for="sn-be6b5d22eaa77c857d6993dcf00fe3ab" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-be6b5d22eaa77c857d6993dcf00fe3ab" class="margin-toggle" /><span class="sidenote">I am sure that there are other clever
+<p><label for="mn-be6b5d22eaa77c857d6993dcf00fe3ab" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-be6b5d22eaa77c857d6993dcf00fe3ab" class="margin-toggle" /><span class="marginnote">I am sure that there are other clever
 and creative ways to <em>priv esc</em> using shellshock besides using a
-<code class="highlighter-rouge">setuid</code> program.</span>:
+<code class="highlighter-rouge">setuid</code> program. </span></p>
+
+<p>If you think, this can be used for a privilege escalation:
 running as a
 normal user, if a <code class="highlighter-rouge">setuid</code> program spawn a shell you will get a path to root
 pretty straightforward.</p>
@@ -390,13 +394,15 @@ vuln
 
 <h2 id="openvpn">OpenVPN</h2>
 
+<p><label for="mn-a64ceecdf327f743578104fb344c422c" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-a64ceecdf327f743578104fb344c422c" class="margin-toggle" /><span class="marginnote">By the way, the <a href="https://github.com/OpenVPN/openvpn/tree/master/sample">OpenVPN</a>
+repository has a very complete script that
+shows you how to create CA, Certs and other stuff. Nice! </span></p>
+
 <p>In the following examples the
 <a href="https://github.com/eldipa/book-of-gehn//tree/master/assets/shellshock/files">configuration files</a>
 <code class="highlighter-rouge">vpn-srv.conf</code> and
 <code class="highlighter-rouge">vpn-cli.conf</code> sets the IP addresses, ports and certificates:
-standard stuff<label for="sn-a64ceecdf327f743578104fb344c422c" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-a64ceecdf327f743578104fb344c422c" class="margin-toggle" /><span class="sidenote">By the way, the <a href="https://github.com/OpenVPN/openvpn/tree/master/sample">OpenVPN</a>
-repository has a very complete script that
-shows you how to create CA, Certs and other stuff. Nice!</span>.</p>
+standard stuff.</p>
 
 <p>In each example I am passing the extra
 parameters that enable the attack
@@ -565,7 +571,9 @@ $ killall openvpn ; wait  # byexample: +pass
 writing just <code class="highlighter-rouge">() {</code> makes me think about the complexity of
 the software with a smile in my face.</p>
 
-<p>There are more vulnerabilities<label for="sn-8dee7e4f8cd082eb99a3de63d39aaaf8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-8dee7e4f8cd082eb99a3de63d39aaaf8" class="margin-toggle" /><span class="sidenote">See these in <a href="https://lcamtuf.blogspot.com/2014/10/bash-bug-how-we-finally-cracked.html">lcamtuf’s post</a></span>
+<p><label for="mn-8dee7e4f8cd082eb99a3de63d39aaaf8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-8dee7e4f8cd082eb99a3de63d39aaaf8" class="margin-toggle" /><span class="marginnote">See these in <a href="https://lcamtuf.blogspot.com/2014/10/bash-bug-how-we-finally-cracked.html">lcamtuf’s post</a> </span></p>
+
+<p>There are more vulnerabilities
 and <a href="https://github.com/mubix/shellshocker-pocs">vectors</a>
 out there than the shown here: Web Servers, CUPS, DHCP.</p>
 

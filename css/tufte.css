@@ -214,8 +214,11 @@ html {
   font-size: 1.3rem; }
 
 a {
-  color: #111;
+  color: #073564;
   text-decoration: none; }
+
+a > h1, a > h2, a > h3, a > h4, h1 > a, h2 > a, h3 > a, h4 > a {
+  color: #111; }
 
 li > a, p > a, cite > a, .sidenote a, .credits a, .marginnote a, footer a {
   background: -webkit-linear-gradient(#fffff8, #fffff8), -webkit-linear-gradient(#fffff8, #fffff8), -webkit-linear-gradient(#333, #333);
@@ -226,7 +229,7 @@ li > a, p > a, cite > a, .sidenote a, .credits a, .marginnote a, footer a {
   background-repeat: no-repeat, no-repeat, repeat-x;
   text-shadow: 0.03em 0 #fffff8, -0.03em 0 #fffff8, 0 0.03em #fffff8, 0 -0.03em #fffff8, 0.06em 0 #fffff8, -0.06em 0 #fffff8, 0.09em 0 #fffff8, -0.09em 0 #fffff8, 0.12em 0 #fffff8, -0.12em 0 #fffff8, 0.15em 0 #fffff8, -0.15em 0 #fffff8;
   background-position: 0% 93%, 100% 93%, 0% 93%;
-  color: #111;
+  color: #073564;
   text-decoration: none; }
 
 p > cite {
@@ -520,7 +523,7 @@ blockquote .sidenote, blockquote .marginnote {
 .sidenote-number:after, .sidenote:before {
   content: counter(sidenote-counter) " ";
   font-family: et-book-roman-old-style;
-  color: #111;
+  color: #073564;
   position: relative;
   vertical-align: baseline; }
 
@@ -532,7 +535,7 @@ blockquote .sidenote, blockquote .marginnote {
 
 .sidenote:before {
   content: counter(sidenote-counter) ". ";
-  color: #111;
+  color: #073564;
   top: 0rem; }
 
 p, footer, div.table-wrapper, div.mathblock {
@@ -619,7 +622,7 @@ label.margin-toggle:not(.sidenote-number) {
 @media (max-width: 760px) {
   label.margin-toggle:not(.sidenote-number) {
     display: inline;
-    color: #111; }
+    color: #073564; }
 
   .sidenote, .marginnote {
     display: none; }
@@ -668,7 +671,7 @@ label.margin-toggle:not(.sidenote-number) {
 /*--- End of Basic Layout stuff from tufte.css ---*/
 /* -- Jekyll specific styling --*/
 .contrast {
-  color: #111; }
+  color: #073564; }
 
 .smaller {
   font-size: 80%; }
@@ -694,7 +697,7 @@ header > nav a {
   font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #111;
+  color: #073564;
   padding-top: 1.5rem;
   text-decoration: none;
   display: inline-block;

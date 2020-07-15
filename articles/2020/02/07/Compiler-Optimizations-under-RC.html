@@ -172,17 +172,21 @@ an infinite loop which explains why the program hangs.</p>
 
 <h2 id="volatile">Volatile</h2>
 
-<p>C and C++ has the <code class="highlighter-rouge">volatile</code> qualifier that instructs to the compiler
-to not assume that reading twice<label for="sn-5e5dae5c09ec6702f0a87584374d4238" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-5e5dae5c09ec6702f0a87584374d4238" class="margin-toggle" /><span class="sidenote">Writes (<em>stores</em>) too: a compiler could optimize issuing
+<p><label for="mn-5e5dae5c09ec6702f0a87584374d4238" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-5e5dae5c09ec6702f0a87584374d4238" class="margin-toggle" /><span class="marginnote">Writes (<em>stores</em>) too: a compiler could optimize issuing
 only the last of many writes if not read (<em>load</em>) happen in between or it could
 issue one of them if all of them write the same value.
 <br />
-<code class="highlighter-rouge">volatile</code> disables these assumptions.</span>
+<code class="highlighter-rouge">volatile</code> disables these assumptions. </span></p>
+
+<p>C and C++ has the <code class="highlighter-rouge">volatile</code> qualifier that instructs to the compiler
+to not assume that reading twice
 the same variable could yield the
 same result even if no <em>apparent</em> write happen in between.</p>
 
-<p>We could define a pointer to the volatile data:<label for="sn-7f9e3bdbc605f4fe193b633827320851" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-7f9e3bdbc605f4fe193b633827320851" class="margin-toggle" /><span class="sidenote"><code class="highlighter-rouge">volatile int *p</code>  pointer to volatile-data; <code class="highlighter-rouge">int * volatile p</code>
-volatile <em>pointer</em> to data. They are not the same.</span></p>
+<p><label for="mn-7f9e3bdbc605f4fe193b633827320851" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-7f9e3bdbc605f4fe193b633827320851" class="margin-toggle" /><span class="marginnote"><code class="highlighter-rouge">volatile int *p</code>  pointer to volatile-data; <code class="highlighter-rouge">int * volatile p</code>
+volatile <em>pointer</em> to data. They are not the same. </span></p>
+
+<p>We could define a pointer to the volatile data:</p>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span><span class="o">*</span> <span class="nf">loop</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">struct</span> <span class="n">ctx_t</span> <span class="o">*</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">p</span><span class="p">;</span>

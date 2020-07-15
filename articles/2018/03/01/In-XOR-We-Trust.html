@@ -83,10 +83,12 @@ to break crypo: <a href="https://pypi.org/project/cryptonita/">cryptonita</a></p
 <p>Working with bytes can be a mess so let’s use some nice object that
 would help us in our journey.</p>
 
-<p>We can use <code class="highlighter-rouge">bytestring</code> or just <code class="highlighter-rouge">B</code> to convert strings encoded
-in base 16 or 64 into bytes<label for="sn-ee164b1015e63dc6ecebfbbc78a0bf73" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ee164b1015e63dc6ecebfbbc78a0bf73" class="margin-toggle" /><span class="sidenote">This unlocks the
+<p><label for="mn-ee164b1015e63dc6ecebfbbc78a0bf73" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-ee164b1015e63dc6ecebfbbc78a0bf73" class="margin-toggle" /><span class="marginnote">This unlocks the
 <a href="https://cryptopals.com/sets/1/challenges/1">Convert hex to base 64</a>
-challenge.</span>.</p>
+challenge. </span></p>
+
+<p>We can use <code class="highlighter-rouge">bytestring</code> or just <code class="highlighter-rouge">B</code> to convert strings encoded
+in base 16 or 64 into bytes.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span>         <span class="c1"># byexample: +timeout=10
 </span>
@@ -112,11 +114,13 @@ one instruction:</p>
 <span class="s">'746865206B696420646F6E277420706C6179'</span>
 </code></pre></div></div>
 
+<p><label for="mn-10519915d378dfe67b28e42bec65755c" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-10519915d378dfe67b28e42bec65755c" class="margin-toggle" /><span class="marginnote">These last two examples solve the challenges
+<a href="https://cryptopals.com/sets/1/challenges/2">Fixed XOR</a> and
+<a href="https://cryptopals.com/sets/1/challenges/5">Implement repeating-key XOR</a> </span></p>
+
 <p>Even you can perform the <code class="highlighter-rouge">xor</code> of two strings of different lengths: you
 just say that the shorter string will be repeated to infinitum and everything
-will work<label for="sn-10519915d378dfe67b28e42bec65755c" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-10519915d378dfe67b28e42bec65755c" class="margin-toggle" /><span class="sidenote">These last two examples solve the challenges
-<a href="https://cryptopals.com/sets/1/challenges/2">Fixed XOR</a> and
-<a href="https://cryptopals.com/sets/1/challenges/5">Implement repeating-key XOR</a></span>.</p>
+will work.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">plaintext</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">"Burning 'em, if you ain't quick and nimble</span><span class="se">\n</span><span class="s">"</span>
 <span class="o">...</span>               <span class="s">"I go crazy when I hear a cymbal"</span><span class="p">)</span>
@@ -180,9 +184,11 @@ weird bytes <em>could</em> be part of a human text using another encoding like
 very cleaver either as we are not using any information about the plaintext to
 our favor.</p>
 
+<p><label for="mn-e542745fa1c33b6e8bc5c1b296a8835f" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-e542745fa1c33b6e8bc5c1b296a8835f" class="margin-toggle" /><span class="marginnote"><code class="highlighter-rouge">ETAOIN SHRDLU</code> Achievement Unlocked </span></p>
+
 <p>If we assume that the plaintext is in English, it is likely that one of
 the most common bytes in the ciphertext is actually <em>one of the most common</em>
-bytes in English but encrypted<label for="sn-e542745fa1c33b6e8bc5c1b296a8835f" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-e542745fa1c33b6e8bc5c1b296a8835f" class="margin-toggle" /><span class="sidenote"><code class="highlighter-rouge">ETAOIN SHRDLU</code> Achievement Unlocked</span>.</p>
+bytes in English but encrypted.</p>
 
 <p>The <code class="highlighter-rouge">xor</code> between them will give us the key or at least we will narrow
 to a small subset of possible keys.</p>
@@ -208,8 +214,10 @@ can reduce the set further:</p>
 <span class="p">{</span><span class="s">'X'</span> <span class="o">-&gt;</span> <span class="mf">1.0000</span><span class="p">}</span>
 </code></pre></div></div>
 
-<p>Finally, the plaintext is<label for="sn-06887d016fc2edf8d779de754dd3ec94" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-06887d016fc2edf8d779de754dd3ec94" class="margin-toggle" /><span class="sidenote"><a href="https://cryptopals.com/sets/1/challenges/3">Single-byte XOR cipher</a>
-challenge done.</span></p>
+<p><label for="mn-06887d016fc2edf8d779de754dd3ec94" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-06887d016fc2edf8d779de754dd3ec94" class="margin-toggle" /><span class="marginnote"><a href="https://cryptopals.com/sets/1/challenges/3">Single-byte XOR cipher</a>
+challenge done. </span></p>
+
+<p>Finally, the plaintext is</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertext</span> <span class="o">^</span> <span class="n">B</span><span class="p">(</span><span class="s">'X'</span><span class="p">)</span><span class="o">.</span><span class="n">inf</span><span class="p">()</span>
 <span class="s">"Cooking MC's like a pound of bacon"</span>

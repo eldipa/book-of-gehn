@@ -5,8 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Detecting Pinguins</title>
-  <meta name="description" content="Can you see the pinguin?– Spoiler Alert! –">
+  <title>Detecting Penguins</title>
+  <meta name="description" content="Can you see the penguin?– Spoiler Alert! –">
 
   
     <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
@@ -44,7 +44,7 @@
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
-  <link rel="canonical" href="/book-of-gehn/articles/2018/05/20/Detecting-Pinguins.html">
+  <link rel="canonical" href="/book-of-gehn/articles/2018/05/20/Detecting-Penguins.html">
 
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/all.min.css">
 </head>
@@ -63,10 +63,10 @@
 </header>
 
     <article class="group">
-      <h1>Detecting Pinguins</h1>
+      <h1>Detecting Penguins</h1>
 <p class="subtitle">May 20, 2018</p>
 
-<p>Can you see the pinguin?<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span>
+<p>Can you see the penguin?<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span>
 <!--more--></p>
 
 <p><label for="mf-a07db1235b313c8ec4cdde624f02f905" class="margin-toggle">⊕</label><input type="checkbox" id="mf-a07db1235b313c8ec4cdde624f02f905" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="" src="/book-of-gehn/assets/matasano/tux.png" />  <br />The ECB encrypted image on the right
@@ -77,6 +77,10 @@ and its plaintext original version on the left. Image taken from
 
 <p>The following ciphertext was encrypted with AES in ECB mode (Electronic Code
 Book) with the given key.</p>
+
+<p>In ECB each plaintext block is encrypted using the same key.</p>
+
+<figure><figcaption><span></span></figcaption><img style="max-width:60%;" alt="ECB Enc" src="/book-of-gehn/assets/matasano/ecb-enc.png" /></figure>
 
 <p>Decrypting is a piece of cake; this is just to get practice about
 <a href="https://cryptopals.com/sets/1/challenges/7">AES in ECB mode</a></p>
@@ -95,20 +99,21 @@ Book) with the given key.</p>
 <span class="n">b</span><span class="s">"I'm back and I'm ringin' the bell&lt;...&gt;Play that funky music </span><span class="se">\n\x04\x04\x04\x04</span><span class="s">"</span>
 </code></pre></div></div>
 
-<h2 id="detecting-pinguins">Detecting Pinguins</h2>
+<figure><figcaption><span><br />Note how to encryption/decryption of one block don't depend of any other: this allows the encryption/decryption to be at random places and in parallel.</span></figcaption><img style="max-width:60%;" alt="ECB Dec" src="/book-of-gehn/assets/matasano/ecb-dec.png" /></figure>
+
+<h2 id="detecting-penguins">Detecting Penguins</h2>
 
 <p>If two plaintext <em>blocks</em> are the same, ECB
 will encrypt them to the <em>same</em> ciphertext block.</p>
 
-<p><a href="https://cryptopals.com/sets/1/challenges/8">Detect AES in ECB mode</a>
-from a pool of random strings is easy.</p>
-
-<p>This is possible because if the plaintext has two or more equal blocks,
-the ciphertext will have the same pattern and therefor it will have
-more duplicated bytes than the expected from a random string.</p>
+<p><a href="https://cryptopals.com/sets/1/challenges/8">Detecting AES in ECB mode</a>
+from a pool of random strings is therefore trivial: if the plaintext has two or
+more equal blocks, the ciphertext will have the same blocks repeated, something
+unlikely for a truly random string.</p>
 
 <p>We can use the same technique done in
-<a href="/book-of-gehn/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html">the previous post</a>.</p>
+<a href="/book-of-gehn/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html">the previous post</a>
+for detecting coincidences.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">ciphertexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/8.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">))</span>
 
@@ -164,18 +169,19 @@ than a coincidence of two or more bytes:</p>
 ...     _ = [ax.vlines(132, 0, 1, linestyles='dashed') for ax in axes.flat]
 -->
 
-<h3 id="break-it">Break it?</h3>
+<h3 id="broken">Broken?</h3>
 
-<p>Well, it is not possible to break AES easily,
-may be a <em>dictionary attack</em>?.</p>
+<p>Well, distinguishing  a encryption from a random string is enough to considere
+a cipher broken, but trying to get the plaintext from it is another
+level.</p>
 
-<p>The 132th plaintext  will remain encrypted, for now.</p>
+<p>The 132th plaintext  will still be a secret, for now.</p>
 
 
 
 
     </article>
-    <span class="print-footer">Detecting Pinguins - May 20, 2018 - Gehn</span>
+    <span class="print-footer">Detecting Penguins - May 20, 2018 - Gehn</span>
     <footer>
     <hr class="slender">
     <div class="credits">

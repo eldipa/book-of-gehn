@@ -100,11 +100,13 @@ is actually a booby-trap.
 <p>The <code class="highlighter-rouge">edit</code> function allows us edit or patch a ciphertext modifying
 the plaintext.</p>
 
+<p><label for="mn-805e102485d5c01d372c578b35ceb2c1" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-805e102485d5c01d372c578b35ceb2c1" class="margin-toggle" /><span class="marginnote">This unlocks the
+<a href="https://cryptopals.com/sets/1/challenges/25">Break “random access read/write” AES CTR</a>
+challenge. </span></p>
+
 <p>This generates two different ciphertexts
 encrypted with the <strong>same</strong> key stream which breaks CTR
-with a simple known-plaintext attack<label for="sn-805e102485d5c01d372c578b35ceb2c1" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-805e102485d5c01d372c578b35ceb2c1" class="margin-toggle" /><span class="sidenote">This unlocks the
-<a href="https://cryptopals.com/sets/1/challenges/25">Break “random access read/write” AES CTR</a>
-challenge.</span>.</p>
+with a simple known-plaintext attack.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
 </span>

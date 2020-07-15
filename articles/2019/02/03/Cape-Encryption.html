@@ -167,20 +167,22 @@ cryptanalysis.</p>
 
 <p>The <code class="highlighter-rouge">cape_hash</code> cipher is as follows:</p>
 
-<pre><code class="language-.cpp">uint8_t srk = cape-&gt;salt ^ cape-&gt;reduced_key;
-for(uint16_t i = 0; i &lt; length; i++) {
-    uint8_t isrk = srk ^ i;
-    destination[i] = source[i] ^ isrk ^ cape-&gt;key[isrk % cape-&gt;length];
-}
-</code></pre>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint8_t</span> <span class="n">srk</span> <span class="o">=</span> <span class="n">cape</span><span class="o">-&gt;</span><span class="n">salt</span> <span class="o">^</span> <span class="n">cape</span><span class="o">-&gt;</span><span class="n">reduced_key</span><span class="p">;</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">uint8_t</span> <span class="n">isrk</span> <span class="o">=</span> <span class="n">srk</span> <span class="o">^</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">destination</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">^</span> <span class="n">isrk</span> <span class="o">^</span> <span class="n">cape</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">[</span><span class="n">isrk</span> <span class="o">%</span> <span class="n">cape</span><span class="o">-&gt;</span><span class="n">length</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p><code class="highlighter-rouge">cape-&gt;reduced_key</code> is a 8 bits secret value derived from
 the secret key <code class="highlighter-rouge">cape-&gt;key</code>.</p>
 
 <p>We will consider that <code class="highlighter-rouge">cape-&gt;salt</code> as secret too.</p>
 
-<p>Despite that <code class="highlighter-rouge">cape-&gt;key</code> can hold 65535 bytes<label for="sn-ae57ba1dd073ebef4cfd32179d03b723" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-ae57ba1dd073ebef4cfd32179d03b723" class="margin-toggle" /><span class="sidenote">Technically, it can hold 65536 bytes but the length is a 16 bits
-unsigned integer so we lost one number wasted by representing the 0 length</span>, <code class="highlighter-rouge">isrk</code> has only
+<p><label for="mn-ae57ba1dd073ebef4cfd32179d03b723" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-ae57ba1dd073ebef4cfd32179d03b723" class="margin-toggle" /><span class="marginnote">Technically, it can hold 65536 bytes but the length is a 16 bits
+unsigned integer so we lost one number wasted by representing the 0 length </span></p>
+
+<p>Despite that <code class="highlighter-rouge">cape-&gt;key</code> can hold 65535 bytes, <code class="highlighter-rouge">isrk</code> has only
 8 bits and therefor the <code class="highlighter-rouge">isrk ^ cape-&gt;key[ .. ]</code> can only give 256 bytes
 and after that it will repeat itself.</p>
 
@@ -256,7 +258,9 @@ is in the <code class="highlighter-rouge">ntop</code> of the ciphertext symbols,
 
 <p>In this case we are going to use the famous <code class="highlighter-rouge">ETAOIN SHRDLU</code> model.</p>
 
-<p>For longer ciphertexts<label for="sn-a3af0a4f12f1e7c23c99266417e1fd27" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-a3af0a4f12f1e7c23c99266417e1fd27" class="margin-toggle" /><span class="sidenote">As rule of thumb 64 bytes is cool.</span>
+<p><label for="mn-a3af0a4f12f1e7c23c99266417e1fd27" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-a3af0a4f12f1e7c23c99266417e1fd27" class="margin-toggle" /><span class="marginnote">As rule of thumb 64 bytes is cool. </span></p>
+
+<p>For longer ciphertexts
 you can set <code class="highlighter-rouge">ntop = 1</code> and assume that the most
 frequent cipher-symbol is one of the most common plaintext symbols encrypted.</p>
 
@@ -285,19 +289,23 @@ in the worst case we will have <code class="highlighter-rouge">len(most_common) 
 <span class="mi">44</span>
 </code></pre></div></div>
 
-<p><code class="highlighter-rouge">gkey1</code> is <em>a guess</em>: the most likely possible values for the first byte
-of the key stream<label for="sn-a7594b5b5851e476cce4d9c6acaa0072" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-a7594b5b5851e476cce4d9c6acaa0072" class="margin-toggle" /><span class="sidenote">Without a frequency attack we could try the whole space of 256 bytes. It is
+<p><label for="mn-a7594b5b5851e476cce4d9c6acaa0072" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-a7594b5b5851e476cce4d9c6acaa0072" class="margin-toggle" /><span class="marginnote">Without a frequency attack we could try the whole space of 256 bytes. It is
 totally feasible but it is faster to do a frequency attack first to reduce
-the search space</span>.</p>
+the search space </span></p>
+
+<p><code class="highlighter-rouge">gkey1</code> is <em>a guess</em>: the most likely possible values for the first byte
+of the key stream.</p>
 
 <h3 id="brute-force">Brute force</h3>
 
 <p>We can discard some guesses if they produce the wrong plaintext.</p>
 
-<p>Knowing that the plaintext has a reduced set of ASCII printable of letters, numbers
-and only a few punctuation symbols we can narrow the set of guesses further<label for="sn-18ac1e8b34bc09dfd130789459a05a34" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-18ac1e8b34bc09dfd130789459a05a34" class="margin-toggle" /><span class="sidenote">Even if the alphabet of all ASCII printable has 100 symbols and the proposed has
+<p><label for="mn-18ac1e8b34bc09dfd130789459a05a34" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-18ac1e8b34bc09dfd130789459a05a34" class="margin-toggle" /><span class="marginnote">Even if the alphabet of all ASCII printable has 100 symbols and the proposed has
 64 symbols (more than half), the impact of this is <strong>enormous</strong> reducing the guesses
-in two or more orders of magnitude.</span>:</p>
+in two or more orders of magnitude. </span></p>
+
+<p>Knowing that the plaintext has a reduced set of ASCII printable of letters, numbers
+and only a few punctuation symbols we can narrow the set of guesses further:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita.scoring</span> <span class="kn">import</span> <span class="n">all_in_alphabet</span>
@@ -367,14 +375,16 @@ perfectly visible like “aitn’t”, “soul”, “I’m” and “degree”.
 
 <h2 id="final-thoughts">Final thoughts</h2>
 
-<p><code class="highlighter-rouge">cape_hash</code> is symmetric cipher which, despising of having a 65536 bytes
+<p><code class="highlighter-rouge">cape_hash</code> is symmetric cipher which, despite of having a 65536 bytes
 length key, the key stream is repeated each 256
 of plaintext enabling a <em>cipher only attack</em>.</p>
 
 <p>Even with a short plaintext of just 2852 we got 11 bytes xored with the
 same key byte and this was enough to get almost 60% of the plaintext.</p>
 
-<p>With a theoretical maximum length of 65534 bytes<label for="sn-88d9a764371608df6d34d6f3bba826eb" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-88d9a764371608df6d34d6f3bba826eb" class="margin-toggle" /><span class="sidenote">Based on the documentation</span> for a single plaintext, we
+<p><label for="mn-88d9a764371608df6d34d6f3bba826eb" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-88d9a764371608df6d34d6f3bba826eb" class="margin-toggle" /><span class="marginnote">Based on the documentation </span></p>
+
+<p>With a theoretical maximum length of 65534 bytes for a single plaintext, we
 can obtain 256 bytes xored with the same key byte. Virtually any plaintext
 of that size can be broken completely.</p>
 

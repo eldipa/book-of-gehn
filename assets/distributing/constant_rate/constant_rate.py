@@ -26,8 +26,8 @@ def constant_rate_loop(func, rate):
         rest = rate - (t2 - t1)
         if rest < 0:
             behind = -rest  # this is always positive
-            lost = (behind - behind % rate)
             rest = rate - behind % rate
+            lost = behind + rest
             t1 += lost
             it += int(lost // rate)  # floor division
 

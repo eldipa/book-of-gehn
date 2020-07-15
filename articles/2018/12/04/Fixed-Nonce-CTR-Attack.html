@@ -80,7 +80,9 @@ with the <em>same</em> pseudo random key stream – totally insecure.</p>
 
 <h2 id="warming-up">Warming up</h2>
 
-<p>Let’s implement a CTR<label for="sn-3df421617783be9cdc50680bb6447518" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-3df421617783be9cdc50680bb6447518" class="margin-toggle" /><span class="sidenote"><a href="https://cryptopals.com/sets/3/challenges/18">Implement CTR, the stream cipher mode</a></span></p>
+<p><label for="mn-3df421617783be9cdc50680bb6447518" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-3df421617783be9cdc50680bb6447518" class="margin-toggle" /><span class="marginnote"><a href="https://cryptopals.com/sets/3/challenges/18">Implement CTR, the stream cipher mode</a> </span></p>
+
+<p>Let’s implement a CTR</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">cryptonita</span> <span class="kn">import</span> <span class="n">B</span><span class="p">,</span> <span class="n">load_bytes</span>     <span class="c1"># byexample: +timeout=10
 </span>
@@ -335,8 +337,9 @@ between <code class="highlighter-rouge">i'm rated</code> and <code class="highli
 <span class="o">&gt;&gt;&gt;</span> <span class="n">kstream</span> <span class="o">=</span> <span class="p">(</span><span class="n">kstream</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="o">^</span> <span class="n">fix</span><span class="p">)</span> <span class="o">+</span> <span class="n">kstream</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 </code></pre></div></div>
 
-<p>And we are done!
-<label for="sn-335529b88e6850e165cbd17f88eb1437" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-335529b88e6850e165cbd17f88eb1437" class="margin-toggle" /><span class="sidenote"><a href="https://cryptopals.com/sets/3/challenges/20">Break fixed-nonce CTR statistically</a></span></p>
+<p><label for="mn-335529b88e6850e165cbd17f88eb1437" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-335529b88e6850e165cbd17f88eb1437" class="margin-toggle" /><span class="marginnote"><a href="https://cryptopals.com/sets/3/challenges/20">Break fixed-nonce CTR statistically</a> </span></p>
+
+<p>And we are done!</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="n">c</span> <span class="o">^</span> <span class="n">kstream</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tplaintexts</span><span class="p">,</span> <span class="n">tciphertexts</span><span class="p">))</span>
 <span class="bp">True</span>
@@ -406,7 +409,9 @@ between <code class="highlighter-rouge">i'm rated</code> and <code class="highli
 
 <h2 id="break-fixed-nonce-ctr---second-chance">Break fixed-nonce CTR - Second chance</h2>
 
-<p>Let’s take another set of plaintexts<label for="sn-5247cc03b20e15bdb6c97b1fe5ff8567" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-5247cc03b20e15bdb6c97b1fe5ff8567" class="margin-toggle" /><span class="sidenote"><a href="https://cryptopals.com/sets/3/challenges/19">Break fixed-nonce CTR mode using substitutions</a></span>,
+<p><label for="mn-5247cc03b20e15bdb6c97b1fe5ff8567" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-5247cc03b20e15bdb6c97b1fe5ff8567" class="margin-toggle" /><span class="marginnote"><a href="https://cryptopals.com/sets/3/challenges/19">Break fixed-nonce CTR mode using substitutions</a> </span></p>
+
+<p>Let’s take another set of plaintexts,
 encrypt them with a fixed-nonce CTR and break the encryption.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">plaintexts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">load_bytes</span><span class="p">(</span><span class="s">'./assets/matasano/19.txt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">64</span><span class="p">))</span>

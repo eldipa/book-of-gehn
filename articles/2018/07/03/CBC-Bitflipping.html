@@ -125,28 +125,32 @@ the user will be considered an Administrator:</p>
 
 <h2 id="bit-flipping-attack">Bit flipping attack</h2>
 
-<p>In CBC, if a ciphertext block is xored with the output of the decryption
+<p>Recall that in CBC a ciphertext block is xored with the output of the decryption
 of the <em>next</em> ciphertext block to get the <em>next</em> plaintext block.</p>
 
 <p>If we modify one ciphertext block its decryption will be totally scrambled
 but we will have control of the <em>next</em> plaintext block.</p>
 
-<p>Let’s create a ciphertext with enough <code class="highlighter-rouge">A</code>s to get at least one plaintext block
-full of <code class="highlighter-rouge">A</code>s<label for="sn-780e229e9af3ba2f8bcf7333e8c79223" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-780e229e9af3ba2f8bcf7333e8c79223" class="margin-toggle" /><span class="sidenote">We don’t know if our inject plaintext
+<figure><figcaption><span></span></figcaption><img style="max-width:60%;" alt="CBC Dec" src="/book-of-gehn/assets/matasano/cbc-dec.png" /></figure>
+
+<p><label for="mn-780e229e9af3ba2f8bcf7333e8c79223" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-780e229e9af3ba2f8bcf7333e8c79223" class="margin-toggle" /><span class="marginnote">We don’t know if our inject plaintext
 will be aligned to the block size boundary. To ensure that we inject
 padding of twice the block size which warranties that at least one block
-will be full with our <code class="highlighter-rouge">A</code>s</span></p>
+will be full with our <code class="highlighter-rouge">A</code>s </span></p>
+
+<p>Let’s create a ciphertext with enough <code class="highlighter-rouge">A</code>s to get at least one plaintext block
+full of <code class="highlighter-rouge">A</code>s</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">add_user_data</span><span class="p">(</span><span class="s">'A'</span> <span class="o">*</span> <span class="n">block_size</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">is_admin</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="bp">False</span>
 </code></pre></div></div>
 
-<p>Now we can create the patch, and xor of what we want against what
-is there.</p>
+<p>Now we can create the patch: the plaintext that we want
+xored with the plaintext that was encrypted:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">patch</span> <span class="o">=</span> <span class="n">B</span><span class="p">(</span><span class="s">';admin=true;'</span><span class="p">)</span> <span class="o">^</span> <span class="n">B</span><span class="p">(</span><span class="s">'A'</span><span class="p">)</span><span class="o">.</span><span class="n">inf</span><span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">patch</span> <span class="o">=</span> <span class="n">patch</span> <span class="o">+</span> <span class="n">B</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">block_size</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">patch</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">patch</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">block_size</span><span class="p">,</span> <span class="s">'zeros'</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>Finally, we apply the patch targeting the ciphertext block of the
