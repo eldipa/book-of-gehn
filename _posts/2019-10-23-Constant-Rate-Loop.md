@@ -17,7 +17,7 @@ one frame per iteration.
 ...     it += 1     # pick the "next" frame
 ...
 ...     n = len(frames)
-...     f = frames[it % n]
+...     f = frames[it % n]  # keep looping
 ...
 ...     render(f)
 ```
@@ -71,6 +71,16 @@ You want to do an action every X time maintaining a constant rate.
 
 ## Solution
 
+The idea is to have a loop that can call a function `foo()` every
+X time, like a precise clock.
+
+If the loop gets out of sync and begins to be *behind* schedule, the
+loop needs to compensate somehow to catch up.
+
+Two alternatives are possible: *drop & rest* and *no rest-keep working*
+
+### If behind, drop & rest
+
 ```python
 >>> def constant_rate_loop(func, rate):
 ...     t1 = now()
@@ -82,8 +92,8 @@ You want to do an action every X time maintaining a constant rate.
 ...         rest = rate - (t2 - t1)
 ...         if rest < 0:
 ...             behind = -rest  # this is always positive
-...             lost = (behind - behind % rate)
 ...             rest = rate - behind % rate
+...             lost = behind + rest
 ...             t1 += lost
 ...             it += int(lost // rate)  # floor division
 ...
@@ -102,29 +112,125 @@ The *next* ``t1`` is increased by ``rate``: we don't call ``now()``
 again otherwise will be introducing a clock drift due the extra
 delays of ``sleep()``.
 
-That's the happy path. But what happen if ``func()`` is too slow and takes more
+
+{% maincolumn 'assets/distributing/constant_rate/examples/rest-nodrop.png'
+'' %}
+
+
+That's the happy path.
+
+But what happen if ``func()`` is too slow and takes more
 time than the expected for one iteration?
 
-First we determinate how much time we lost:
+First we determinate how much time we are *behind schedule*:
 
 ```python
     behind = -rest  # this is always positive
-    lost = (behind - behind % rate)
 ```
 
 Then, it is very likely that we are in some point in the middle, and incomplete
 iteration, so we calculate how much time we should sleep to synchronize
-ourselves with the *next* iteration:
+ourselves with the *next* iteration -- this is the *drop & rest*:
 
 ```python
     rest = rate - behind % rate
+```
+
+Finally, how many iterations we lost or skipped:
+
+```python
+    lost = behind + rest
+
+    it += int(lost // rate)  # floor division
     t1 += lost
 ```
 
 The ``t1 += lost`` is crucial otherwise ``t1`` will be always behind like
 if the following ``func()`` calls were always too slow.
 
+{% maincolumn 'assets/distributing/constant_rate/examples/rest-drop.png'
+'The iteration 1 took too long and the iteration 2 was lost.
+<br />
+Note how the begin of the iteration 3 starts at the begin of
+a new slot.' %}
+
 Full code in [<i class="fab fa-github"></i> github](https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/constant_rate.py).
+
+### If behind, keep working
+
+```python
+>>> def constant_rate_loop(func, rate):
+...     t1 = now()
+...     it = 0
+...     while True:
+...         func(it)
+...
+...         t2 = now()
+...         rest = rate - (t2 - t1)
+...         if rest < 0:
+...             behind = -rest  # this is always positive
+...             lost = behind - behind % rate
+...             t1 += lost
+...             it += int(lost // rate)  # floor division
+...         else:
+...             sleep(rest)
+...
+...         t1 += rate
+...         it += 1
+```
+
+Like in *drop & rest*, the happy path is the same: if we finish an
+iteration before the deadline we take some rest until the next
+iteration.
+
+{% maincolumn 'assets/distributing/constant_rate/examples/rest-nodrop.png'
+'' %}
+
+
+{% marginfigure 'no rest keep working' 'assets/distributing/constant_rate/examples/norest-nolost.png'
+'Iteration 2 is not dropped and begins as soon as possible.
+<br />
+Contrast this with the *drop & rest* strategy:
+' %}
+
+{% marginfigure 'drop and rest' 'assets/distributing/constant_rate/examples/rest-drop.png' '' %}
+
+But if we are behind schedule we do something different: the last
+partially consumed iteration is not considered lost.
+
+```python
+    lost = behind - behind % rate
+```
+
+While *drop & rest* consideres an
+iteration lost if `func()` cannot be called at the begin of the
+iteration, *no rest-keep working* consideres an iteration lost if
+it was totally consumed without calling `func()`.
+
+If there is room to call it even if it is not at the begin of the
+iteration, *no rest-keep working* will call it immediately -- it will
+not rest, it will keep working.
+
+{% maincolumn 'assets/distributing/constant_rate/examples/norest-nolost.png'
+'`func()` is called in the iteration 2 as soon as the previous finishes.
+<br />
+No rest is taken, trying to *catch up* as soon as possible without
+loosing any frame even if that means call `func()` in the middle of an
+iteration.
+' %}
+
+*No rest-keep working* is suitable for situations where we want to
+minimize the drops; *drop & rest* is better when we want to call
+`func()` at specific times even if we have to drop an iteration.
+
+Of course, if `func()` spans 2 or more iterations, *no rest-keep
+working* will be forced to drop the iterations in the middle.
+
+{% maincolumn 'assets/distributing/constant_rate/examples/norest-lost.png'
+'`func()` took more than 2 iterations to complete so the iteration
+2 is considered lost.
+' %}
+
 
 ### Synchronization on Drops
 
