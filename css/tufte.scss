@@ -348,7 +348,14 @@ figcaption span > code {
              font-size: 0.8rem;
 }
 
-figure.fullwidth figcaption { float: left; margin-right: 0%; margin-left: 36%; }
+figure.fullwidth figcaption {
+    float: left;
+    margin-right: 0%;
+    margin-left: 20%;
+    margin-bottom: 2em;
+    max-width: 60%;
+    text-align: center;
+}
 
 img { max-width: 100%; }
 object { max-width: 100%; }
