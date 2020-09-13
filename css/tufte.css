@@ -480,7 +480,10 @@ figcaption span > code {
 figure.fullwidth figcaption {
   float: left;
   margin-right: 0%;
-  margin-left: 36%; }
+  margin-left: 20%;
+  margin-bottom: 2em;
+  max-width: 60%;
+  text-align: center; }
 
 img {
   max-width: 100%; }

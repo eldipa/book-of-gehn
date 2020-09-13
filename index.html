@@ -68,6 +68,27 @@
     
         <li class="listing">
           <hr class="slender">
+          <a href="/book-of-gehn/articles/2020/09/13/Debug-the-Case-of-a-CPU-Burning-Ruby-Process.html"><h2 class="larger">Debug: the Case of a CPU Burning Ruby Process</h2></a>
+          <br><span class="smaller">September 13, 2020</span>  <br/>
+          <div><p><code class="highlighter-rouge">executor.rb</code> is a little program that starts and finishes other programs
+based on the needs of the system.</p>
+
+<p>It is expected to have one and only one <code class="highlighter-rouge">executor.rb</code> process running with
+little overhead.</p>
+
+<p>In one of the machines in the lab I found the opposite: two <code class="highlighter-rouge">executor.rb</code>
+instances and one of them running at top speed, consuming 100% of CPU.</p>
+
+<p>For the rest, the system was working properly so one of
+the <code class="highlighter-rouge">executor.rb</code> was doing its job.</p>
+
+<p>But what was the <em>“twin evil”</em> process doing with the CPU?</p>
+
+</div>
+        </li>
+    
+        <li class="listing">
+          <hr class="slender">
           <a href="/book-of-gehn/articles/2020/09/09/Reds-and-Blues-Architecture.html"><h2 class="larger">Reds and Blues Architecture</h2></a>
           <br><span class="smaller">September 9, 2020</span>  <br/>
           <div><p>Could we design an architecture that allows us to have insight about the
