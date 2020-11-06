@@ -23,5 +23,5 @@ lato_font_load: true
 mathjax: true
 plantuml:
     jar: /usr/local/share/java/plantuml.jar
-phaser: true
+phaser: false
 offline: false
