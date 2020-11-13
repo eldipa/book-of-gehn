@@ -17,7 +17,12 @@
       MathJax.Hub.Config({
         extensions: ["tex2jax.js"],
         jax: ["input/TeX","output/HTML-CSS"],
-        tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]}
+        tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]},
+	TeX: {
+	  Macros: {
+            
+	  }
+	}
       });
     </script>
     
@@ -32,10 +37,6 @@
        crossorigin="anonymous"></script>
   
 
-  
-    
-      <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
-    
   
 
     
@@ -65,6 +66,30 @@
     <article>
         <h1 class="content-listing-header sans">Articles</h1>
   <ul class="content-listing ">
+    
+        <li class="listing">
+          <hr class="slender">
+          <a href="/book-of-gehn/articles/2020/11/12/TLDR-Stylometrics.html"><h2 class="larger">TL;DR Stylometrics</h2></a>
+          <br><span class="smaller">November 12, 2020</span>  <br/>
+          <div><p>A ghost writer is a person that writes a document, essay or paper but
+the work is presented by other person who <em>claims</em> to be the author.</p>
+
+<p><a href="https://thebestschools.org/resources/detecting-deterring-ghostwritten-papers-best-practices/">Detecting deterring ghostwritten papers</a>
+is an article written by a (ex)ghost writer and explains what happens
+behind the scene when a student pays for this <em>dark</em> service.</p>
+
+<p>Would be possible to detect this in an automated way?</p>
+
+<p>Given a set of documents, could we determine of they were written or not
+by the person or people who claim to be the authors?</p>
+
+<p>This problem is known as <em>authorship attribution</em> and I will show a few
+papers that I read about this, in particular around the concept of
+<em>stylometric</em>, fingerprints that the real author leaves when he or she
+writes.</p>
+
+</div>
+        </li>
     
         <li class="listing">
           <hr class="slender">
