@@ -775,6 +775,9 @@ hr.slender {
   margin-bottom: 2.1rem;
   background-color: black; }
 
+hr.slender.post-layout {
+  width: 55%; }
+
 @media screen {
   .print-footer {
     display: none; } }
