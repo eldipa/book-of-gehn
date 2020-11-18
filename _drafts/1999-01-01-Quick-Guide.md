@@ -8,6 +8,13 @@ About how to write a post.<!--more-->
 
 Use me as a template or as a repository of small snippets.
 
+## Excerpt
+
+Use `< !-- more -- >` to mark the end of the post's excerpt.
+
+Use `{ % marginfigure % }` with the CSS class `in-index-only` to show the
+margin figure in the index but not in the post.
+
 ## Links
 
 To an *external resource*:
@@ -79,7 +86,8 @@ and this comment to its right.' %}
 {% marginfigure 'Alternative name' 'assets/eko2019-writeups/rpg-dir/second_indirection.png'
 'Image on the right of the main column,
 <bt />
-and this comment below of it. Captions and CSS style are optional' 'max-width: 100%;'%}
+and this comment below of it. Captions and CSS style are optional' 'max-width: 100%;'
+'more optional classes here' %}
 
 
 {% marginfigure '' '<img class="fullwidth" alt="Alternative name" src="/book-of-gehn/assets/foo.png" />'

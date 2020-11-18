@@ -1,7 +1,7 @@
 ## Liquid tag 'marginfigure' used to add image data in the side
-## Usage {% marginfigure 'alternate text' 'path/to/image' 'This is the caption' 'style' %}
+## Usage {% marginfigure 'alternate text' 'path/to/image' 'This is the caption' 'style' 'class' %}
 #
-#  The caption and the style are optional.
+#  The caption, style and class are optional.
 module Jekyll
   class RenderMarginFigureTag < Liquid::Tag
 
@@ -24,6 +24,12 @@ module Jekyll
         style = ""
       end
 
+      if @text[4]
+        cls = " #{@text[4]}"
+      else
+        cls = ""
+      end
+
       if @text[1].start_with?('http://', 'https://', '//')
         img_html = "<img #{style} class='fullwidth' alt='#{@text[0]}' src='#{@text[1]}' />"
       elsif @text[1].start_with?('<')
@@ -38,9 +44,9 @@ module Jekyll
         caption_html = ""
       end
 
-      "<label for='#{id}' class='margin-toggle'>&#8853;</label>"+
-      "<input type='checkbox' id='#{id}' class='margin-toggle'/>"+
-      "<span class='marginnote'>"+
+      "<label for='#{id}' class='margin-toggle #{cls}'>&#8853;</label>"+
+      "<input type='checkbox' id='#{id}' class='margin-toggle #{cls}'/>"+
+      "<span class='marginnote #{cls}'>"+
         img_html +
       caption_html +
       "</span>"

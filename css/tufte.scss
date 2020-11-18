@@ -609,6 +609,19 @@ hr.slender.post-layout {
     width: 55%;
 }
 
+hr.slender.post-layout.small {
+    width: 25%;
+    margin-left: 15%;
+}
+
+.in-index-only {
+    display: none;
+}
+
+.index-single-post .marginnote.in-index-only {
+    display: initial;
+}
+
 // Printing ands screen media queries
 
 // Does not display a print-footer for screen display
