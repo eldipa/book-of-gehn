@@ -86,7 +86,7 @@ the <em>head</em> and writes the data; meanwhile the consumer
 reads the data and moves forward the <em>tail</em>.
 </span></figcaption><img src="/book-of-gehn/assets/mpmc-queue/queue-data.png" /></figure>
 
-<p><label for="mf-d26917559fb6cef03a9c838a1c5b70ed" class="margin-toggle">⊕</label><input type="checkbox" id="mf-d26917559fb6cef03a9c838a1c5b70ed" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Full queue" src="/book-of-gehn/assets/mpmc-queue/queue-full.png" />  <br />Full queue. One entry is always left empty to differentiate a
+<p><label for="mf-d26917559fb6cef03a9c838a1c5b70ed" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-d26917559fb6cef03a9c838a1c5b70ed" class="margin-toggle " /><span class="marginnote "><img class="fullwidth" alt="Full queue" src="/book-of-gehn/assets/mpmc-queue/queue-full.png" />  <br />Full queue. One entry is always left empty to differentiate a
 full queue from an empty queue.
 <br />
 <a href="/book-of-gehn/articles/2018/09/16/Ouroboros-Circular-Buffer.html">Other implementations</a>
@@ -97,7 +97,7 @@ the head points to an entry that is immediately before the entry
 pointed by the head; the consumer will not read if the tail and the
 head are pointing to the same entry.</p>
 
-<p><label for="mf-cdd9896fded24335cbc1f13fa08a7234" class="margin-toggle">⊕</label><input type="checkbox" id="mf-cdd9896fded24335cbc1f13fa08a7234" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Empty queue" src="/book-of-gehn/assets/mpmc-queue/queue-empty.png" />  <br />Empty queue. When head and tail pointers are the same there
+<p><label for="mf-cdd9896fded24335cbc1f13fa08a7234" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-cdd9896fded24335cbc1f13fa08a7234" class="margin-toggle " /><span class="marginnote "><img class="fullwidth" alt="Empty queue" src="/book-of-gehn/assets/mpmc-queue/queue-empty.png" />  <br />Empty queue. When head and tail pointers are the same there
 is not ambiguity.</span></p>
 
 <p>In the first case we say that the queue is full; in the second, the
@@ -268,7 +268,7 @@ is masked <code class="highlighter-rouge">size-1</code> instead with module of <
 the actual write of the data. Even if the compiler does not do that,
 the CPU may do it.</p>
 
-<p><label for="mf-175a47fc061191f1816b3f3809a516ca" class="margin-toggle">⊕</label><input type="checkbox" id="mf-175a47fc061191f1816b3f3809a516ca" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Store reorder" src="/book-of-gehn/assets/mpmc-queue/reorder-2stores.png" />  <br /></span></p>
+<p><label for="mf-175a47fc061191f1816b3f3809a516ca" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-175a47fc061191f1816b3f3809a516ca" class="margin-toggle " /><span class="marginnote "><img class="fullwidth" alt="Store reorder" src="/book-of-gehn/assets/mpmc-queue/reorder-2stores.png" />  <br /></span></p>
 
 <p>This is a <em>store reorder</em>. A store is typically much expensive than
 a load and they are moved <em>upwards</em> to start them sooner

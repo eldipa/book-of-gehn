@@ -335,6 +335,17 @@ blockquote footer {
   width: 45%;
   text-align: right; }
 
+blockquote blockquote blockquote p {
+  font-size: 1.6rem;
+  line-height: 1.78181818;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  width: 45%;
+  padding-left: 2.5%;
+  padding-right: 2.5%;
+  font-style: italic;
+  border-left: 3px solid #c8b5a7; }
+
 .sans {
   font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
   letter-spacing: .03em; }
@@ -777,6 +788,16 @@ hr.slender {
 
 hr.slender.post-layout {
   width: 55%; }
+
+hr.slender.post-layout.small {
+  width: 25%;
+  margin-left: 15%; }
+
+.in-index-only {
+  display: none; }
+
+.index-single-post .marginnote.in-index-only {
+  display: initial; }
 
 @media screen {
   .print-footer {

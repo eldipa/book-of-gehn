@@ -128,7 +128,7 @@ be a simple <em>literal</em>.</p>
 
 <h2 id="concatenation-and-repetition-of-nfas">Concatenation and repetition of NFAs</h2>
 
-<p><label for="mf-1ea7e5fb62ccaeb5a03d2e05b8d46e62" class="margin-toggle">⊕</label><input type="checkbox" id="mf-1ea7e5fb62ccaeb5a03d2e05b8d46e62" class="margin-toggle" /><span class="marginnote"><object align="middle" data="/book-of-gehn/uml/9b612d3832cb1e6080081e4c404d4cb9.svg" type="image/svg+xml"></object>  <br />Concatenation of two state machines <script type="math/tex">sm_1</script> and <script type="math/tex">sm_2</script> (<code class="highlighter-rouge">ab</code> in regex syntax).</span></p>
+<p><label for="mf-1ea7e5fb62ccaeb5a03d2e05b8d46e62" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-1ea7e5fb62ccaeb5a03d2e05b8d46e62" class="margin-toggle " /><span class="marginnote "><object align="middle" data="/book-of-gehn/uml/9b612d3832cb1e6080081e4c404d4cb9.svg" type="image/svg+xml"></object>  <br />Concatenation of two state machines <script type="math/tex">sm_1</script> and <script type="math/tex">sm_2</script> (<code class="highlighter-rouge">ab</code> in regex syntax).</span></p>
 
 <p>Two or more NFAs can be concatenated to match a <em>sequence</em> of submatches
 being linked one to the other using <script type="math/tex">\epsilon</script>-transitions.</p>
@@ -142,7 +142,7 @@ is made obvious in the diagrams:
 <p>As a extension, a NFA can be <em>link to a clone of itself</em>
 to match a sequence of <em>repeated</em> submatches. In regex syntax, <code class="highlighter-rouge">a{n}</code>.</p>
 
-<p><label for="mf-76d1091934e54c01dd071b61e269b557" class="margin-toggle">⊕</label><input type="checkbox" id="mf-76d1091934e54c01dd071b61e269b557" class="margin-toggle" /><span class="marginnote"><object align="middle" data="/book-of-gehn/uml/cc0ddf105fcc304d647ccf2a90bd7e35.svg" type="image/svg+xml"></object>  <br />Repetition of <script type="math/tex">sm_1</script> three times  (<code class="highlighter-rouge">a{3}</code> in regex syntax).</span></p>
+<p><label for="mf-76d1091934e54c01dd071b61e269b557" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-76d1091934e54c01dd071b61e269b557" class="margin-toggle " /><span class="marginnote "><object align="middle" data="/book-of-gehn/uml/cc0ddf105fcc304d647ccf2a90bd7e35.svg" type="image/svg+xml"></object>  <br />Repetition of <script type="math/tex">sm_1</script> three times  (<code class="highlighter-rouge">a{3}</code> in regex syntax).</span></p>
 
 <p>We say that the link is to a clone because technically a link to itself would
 end up in an <em>unbounded</em> loop and what we want instead is a <em>sequence</em> of

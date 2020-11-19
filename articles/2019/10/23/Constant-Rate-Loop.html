@@ -105,7 +105,7 @@ the machine: faster machines will render faster animations.</p>
         <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><label for="mf-4252ef4640f595889a83767042f30726" class="margin-toggle">⊕</label><input type="checkbox" id="mf-4252ef4640f595889a83767042f30726" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Clock drift" src="/book-of-gehn/assets/distributing/constant_rate/examples/clock_drift.png" />  <br />Plot the difference between the real time <code class="highlighter-rouge">now()</code> and the expected in
+<p><label for="mf-4252ef4640f595889a83767042f30726" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-4252ef4640f595889a83767042f30726" class="margin-toggle " /><span class="marginnote "><img class="fullwidth" alt="Clock drift" src="/book-of-gehn/assets/distributing/constant_rate/examples/clock_drift.png" />  <br />Plot the difference between the real time <code class="highlighter-rouge">now()</code> and the expected in
 each iteration <code class="highlighter-rouge">it * rate</code> looping during 1 second at a rate of <code class="highlighter-rouge">1/60</code>.
 Using a <em>fixed sleep</em> loop the difference
 increase linearly while using a <em>constant rate</em> loop the difference is
@@ -238,12 +238,12 @@ iteration.</p>
 
 <figure><figcaption><span></span></figcaption><img src="/book-of-gehn/assets/distributing/constant_rate/examples/rest-nodrop.png" /></figure>
 
-<p><label for="mf-a67ec2010f261bceaa51f2667a0feced" class="margin-toggle">⊕</label><input type="checkbox" id="mf-a67ec2010f261bceaa51f2667a0feced" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="no rest keep working" src="/book-of-gehn/assets/distributing/constant_rate/examples/norest-nolost.png" />  <br />Iteration 2 is not dropped and begins as soon as possible.
+<p><label for="mf-a67ec2010f261bceaa51f2667a0feced" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-a67ec2010f261bceaa51f2667a0feced" class="margin-toggle " /><span class="marginnote "><img class="fullwidth" alt="no rest keep working" src="/book-of-gehn/assets/distributing/constant_rate/examples/norest-nolost.png" />  <br />Iteration 2 is not dropped and begins as soon as possible.
 <br />
 Contrast this with the <em>drop &amp; rest</em> strategy:
 </span></p>
 
-<p><label for="mf-dada2313d9f8fe68e7cc74c1fb541b6e" class="margin-toggle">⊕</label><input type="checkbox" id="mf-dada2313d9f8fe68e7cc74c1fb541b6e" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="drop and rest" src="/book-of-gehn/assets/distributing/constant_rate/examples/rest-drop.png" />  <br /></span></p>
+<p><label for="mf-dada2313d9f8fe68e7cc74c1fb541b6e" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-dada2313d9f8fe68e7cc74c1fb541b6e" class="margin-toggle " /><span class="marginnote "><img class="fullwidth" alt="drop and rest" src="/book-of-gehn/assets/distributing/constant_rate/examples/rest-drop.png" />  <br /></span></p>
 
 <p>But if we are behind schedule we do something different: the last
 partially consumed iteration is not considered lost.</p>
@@ -283,7 +283,7 @@ working</em> will be forced to drop the iterations in the middle.</p>
 <p>The <code class="highlighter-rouge">func()</code> may need to know when it is not being called
 as expected, when some iterations are being dropped.</p>
 
-<p><label for="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle">⊕</label><input type="checkbox" id="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle" /><span class="marginnote"><img class="fullwidth" alt="Bite" src="/book-of-gehn/assets/distributing/constant_rate/examples/bite.gif" />  <br />Same animation that last 1 second in a loop. From top to down, the first
+<p><label for="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle " /><span class="marginnote "><img class="fullwidth" alt="Bite" src="/book-of-gehn/assets/distributing/constant_rate/examples/bite.gif" />  <br />Same animation that last 1 second in a loop. From top to down, the first
 is an animation without any frame lost, the second had lost some frames
 but <code class="highlighter-rouge">draw()</code> is still in sync, the last one lost the same amount
 of frames but <code class="highlighter-rouge">draw()</code> used its own notion of time an got out of sync.

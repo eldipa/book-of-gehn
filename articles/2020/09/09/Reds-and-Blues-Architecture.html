@@ -95,7 +95,7 @@ seen or if it is a novel one.</p>
 
 <p>The following pseudo-code shows the proposed solution:</p>
 
-<p><label for="mf-c517aba0e777644668f87b82062240e3" class="margin-toggle">⊕</label><input type="checkbox" id="mf-c517aba0e777644668f87b82062240e3" class="margin-toggle" /><span class="marginnote"><img style="max-width: 100%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/reds-and-blues-original.png" />  <br />Original design: a little messy with IO mixed with CPU bounded code.</span></p>
+<p><label for="mf-c517aba0e777644668f87b82062240e3" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-c517aba0e777644668f87b82062240e3" class="margin-toggle " /><span class="marginnote "><img style="max-width: 100%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/reds-and-blues-original.png" />  <br />Original design: a little messy with IO mixed with CPU bounded code.</span></p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="n">req</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">receive_request</span><span class="p">()</span>
@@ -163,7 +163,7 @@ problem. Slow network? Too chatty protocol? A server-side problem?</li>
 
 <p>To make any insight the queues must track:</p>
 
-<p><label for="mf-281f20833cb43e4fcb40920dfa571ba5" class="margin-toggle">⊕</label><input type="checkbox" id="mf-281f20833cb43e4fcb40920dfa571ba5" class="margin-toggle" /><span class="marginnote"><img style="max-width: 60%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/comm/queues-stats.png" />  <br />Metrics: in and out over time, plus drops and queue's length. When
+<p><label for="mf-281f20833cb43e4fcb40920dfa571ba5" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-281f20833cb43e4fcb40920dfa571ba5" class="margin-toggle " /><span class="marginnote "><img style="max-width: 60%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/comm/queues-stats.png" />  <br />Metrics: in and out over time, plus drops and queue's length. When
 two queues are connected, one of the metrics can be deduced from the
 other.</span></p>
 
@@ -184,7 +184,7 @@ queue to estimate the items popped from the enter queue.</p>
 queue (that connects H with N), we can conclude that H is popping 10k items
 per seconds from its enter queue (that connects R with H).</p>
 
-<p><label for="mf-7ab23d6394645fa9e0949d9dc148e056" class="margin-toggle">⊕</label><input type="checkbox" id="mf-7ab23d6394645fa9e0949d9dc148e056" class="margin-toggle" /><span class="marginnote"><img style="max-width: 40%;" class="fullwidth" alt="" src="/book-of-gehn/assets/stuff/reallycoolstuff.png" />  <br /></span></p>
+<p><label for="mf-7ab23d6394645fa9e0949d9dc148e056" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-7ab23d6394645fa9e0949d9dc148e056" class="margin-toggle " /><span class="marginnote "><img style="max-width: 40%;" class="fullwidth" alt="" src="/book-of-gehn/assets/stuff/reallycoolstuff.png" />  <br /></span></p>
 
 <p>For analyzing the performance
 <a href="http://www.brendangregg.com/usemethod.html">Brendan Gregg’s USE method</a>
@@ -214,7 +214,7 @@ queues for statistics is a particular case.</p>
 
 <h2 id="batchbulk-for-free">Batch/Bulk for free</h2>
 
-<p><label for="mf-e52f0d894e8b298f95ffdd338fa34654" class="margin-toggle">⊕</label><input type="checkbox" id="mf-e52f0d894e8b298f95ffdd338fa34654" class="margin-toggle" /><span class="marginnote"><img style="max-width: 60%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/comm/chatty.png" />  <br />Each message requires an encapsulation header and a <em>syscall</em> to send it.
+<p><label for="mf-e52f0d894e8b298f95ffdd338fa34654" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-e52f0d894e8b298f95ffdd338fa34654" class="margin-toggle " /><span class="marginnote "><img style="max-width: 60%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/comm/chatty.png" />  <br />Each message requires an encapsulation header and a <em>syscall</em> to send it.
 Costs that you may per message; more messages means more you pay.</span></p>
 
 <p>The explicit queues allows to delay the processing but in exchange they
@@ -227,7 +227,7 @@ we could query every 1k items doing a single bulk operation.</p>
 
 <p>This not only save bandwidth with the database but also IO operations.</p>
 
-<p><label for="mf-5d01a65f89c4de875e29e386764cc57e" class="margin-toggle">⊕</label><input type="checkbox" id="mf-5d01a65f89c4de875e29e386764cc57e" class="margin-toggle" /><span class="marginnote"><img style="max-width: 60%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/comm/less-chatty.png" />  <br />Less is more. Also it enables specific per-bundle compression.</span></p>
+<p><label for="mf-5d01a65f89c4de875e29e386764cc57e" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-5d01a65f89c4de875e29e386764cc57e" class="margin-toggle " /><span class="marginnote "><img style="max-width: 60%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/comm/less-chatty.png" />  <br />Less is more. Also it enables specific per-bundle compression.</span></p>
 
 <p>The communication with the server could be also improved. Instead of
 sending a request per work item, we could send them in packs: less
@@ -242,7 +242,7 @@ a better channel utilization.</p>
 <p>And talking about network, sending a request and <em>waiting</em> for the
 response is incredible slow.</p>
 
-<p><label for="mf-9d739157461ce1da740357d1ae16d884" class="margin-toggle">⊕</label><input type="checkbox" id="mf-9d739157461ce1da740357d1ae16d884" class="margin-toggle" /><span class="marginnote"><img style="max-width: 60%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/comm/async.png" />  <br />While a bulk calls amortize the cost per message, asynchronous
+<p><label for="mf-9d739157461ce1da740357d1ae16d884" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-9d739157461ce1da740357d1ae16d884" class="margin-toggle " /><span class="marginnote "><img style="max-width: 60%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/comm/async.png" />  <br />While a bulk calls amortize the cost per message, asynchronous
 calls make more use of the capacity of the network so you can send
 more in the same time.</span></p>
 
