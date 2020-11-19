@@ -206,18 +206,31 @@ blockquote p {  font-size: 1.1rem;
                 padding-left: 2.5%;
                 padding-right: 2.5%; }
 
-blockquote p.epigraph {  font-size: 1.1rem;
-                line-height: 1.78181818;
-                margin-top: 3rem;
-                margin-bottom: 3rem;
-                width: 45%;
-                padding-left: 2.5%;
-                padding-right: 2.5%;
-                font-style:italic }
+blockquote p.epigraph {
+    font-size: 1.1rem;
+    line-height: 1.78181818;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    width: 45%;
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    font-style:italic;
+}
 
 blockquote footer { width: 45%;
                     text-align: right; }
 
+blockquote blockquote blockquote p {
+    font-size: 1.6rem;
+    line-height: 1.78181818;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    width: 45%;
+    padding-left: 2.5%;
+    padding-right: 2.5%;
+    font-style:italic;
+    border-left: 3px solid #c8b5a7;
+}
 
 .sans { font-family: $sans-font;
         letter-spacing: .03em; }

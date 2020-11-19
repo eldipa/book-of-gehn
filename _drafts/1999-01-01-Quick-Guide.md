@@ -126,3 +126,27 @@ if (data[i] % 2 == n)
 > the corresponding interfaces in the Net/Proxy VM are
 > called `vifX.Y` and are created by the `xen_netback` module."
 > <br />--[Playing with Qubes networking for fun](https://theinvisiblethings.blogspot.com/2011/09/playing-with-qubes-networking-for-fun.html)
+
+Highlight/Take home message
+
+>>> "This is important"
+
+## Diagrams
+
+State machine diagrams `marginplantuml` and `maincolumnplantuml`
+
+{% marginplantuml caption:'Caption $$sm_1$$ and $$sm_2$$ (``ab``).' %}
+`
+@startuml
+hide empty description
+
+state "<math>sm_1</math>" as sm1
+state "other state name" as sm2
+
+[*] -> sm1 : a description
+sm1 -> sm2
+sm2 -> [*] : <math>\epsilon</math>
+
+@enduml
+`
+{% endmarginplantuml %}
