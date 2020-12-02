@@ -15,6 +15,10 @@ Use `< !-- more -- >` to mark the end of the post's excerpt.
 Use `{ % marginfigure % }` with the CSS class `in-index-only` to show the
 margin figure in the index but not in the post.
 
+```
+{   % marginfigure 'IPs' 'assets/qubes/qubes-ips.png' '' '' 'in-index-only' %  }
+```
+
 ## Links
 
 To an *external resource*:
@@ -125,7 +129,7 @@ if (data[i] % 2 == n)
 > and are provided by the `xen_netfront` kernel module, and
 > the corresponding interfaces in the Net/Proxy VM are
 > called `vifX.Y` and are created by the `xen_netback` module."
-> <br />--[Playing with Qubes networking for fun](https://theinvisiblethings.blogspot.com/2011/09/playing-with-qubes-networking-for-fun.html)
+> <cite class="epigraph">[Playing with Qubes networking for fun](https://theinvisiblethings.blogspot.com/2011/09/playing-with-qubes-networking-for-fun.html)</cite>
 
 Highlight/Take home message
 
