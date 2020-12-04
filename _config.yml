@@ -25,3 +25,5 @@ plantuml:
     jar: /usr/local/share/java/plantuml.jar
 phaser: false
 offline: false
+plugins:
+    - jekyll-feed
