@@ -796,7 +796,8 @@ hr.slender.post-layout.small {
 .in-index-only {
   display: none; }
 
-.index-single-post .marginnote.in-index-only {
+.index-single-post .marginnote.in-index-only,
+.index-single-post img.in-index-only {
   display: initial; }
 
 @media screen {
