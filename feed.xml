@@ -1,4 +1,204 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2020-12-06T02:25:36+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Self-Licensing</title><link href="/book-of-gehn/articles/2020/12/05/Self-Licensing.html" rel="alternate" type="text/html" title="Self-Licensing" /><published>2020-12-05T00:00:00+01:00</published><updated>2020-12-05T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/05/Self-Licensing</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/05/Self-Licensing.html">&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img class=&quot;in-index-only&quot; style=&quot;max-width:60%;&quot; alt=&quot;self-licensing&quot; src=&quot;/book-of-gehn/assets/self-licensing/self-licensing-small.png&quot; /&gt;&lt;/figure&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2020-12-16T03:14:33+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">QEMUlating a Rasbian (ARM)</title><link href="/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html" rel="alternate" type="text/html" title="QEMUlating a Rasbian (ARM)" /><published>2020-12-15T00:00:00+01:00</published><updated>2020-12-15T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html">&lt;p&gt;Quick how-to download and run a Raspbian Buster (ARM) emulating
+the vm with QEMU.&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Download &lt;a href=&quot;https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/&quot;&gt;Raspbian lite image (Buster)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Download &lt;a href=&quot;https://github.com/dhruvvyas90/qemu-rpi-kernel&quot;&gt;kernel image&lt;/a&gt; for
+Raspbian (&lt;code class=&quot;highlighter-rouge&quot;&gt;kernel-qemu-*-buster&lt;/code&gt;) and the &lt;em&gt;dtb&lt;/em&gt; file for that kernel
+(&lt;code class=&quot;highlighter-rouge&quot;&gt;versatile-pb-buster-*.dtb&lt;/code&gt;)&lt;/li&gt;
+  &lt;li&gt;Install QEMU: &lt;code class=&quot;highlighter-rouge&quot;&gt;apt-get install qemu-system&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;preparing-the-image&quot;&gt;Preparing the image&lt;/h2&gt;
+
+&lt;p&gt;Unpack and check the disk file.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;unzip 2020-12-02-raspios-buster-armhf-lite.zip
+Archive:  2020-12-02-raspios-buster-armhf-lite.zip
+  inflating: 2020-12-02-raspios-buster-armhf-lite.img
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;fdisk &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt; 2020-12-02-raspios-buster-armhf-lite.img
+Disk 2020-12-02-raspios-buster-armhf-lite.img: 1.7 GiB, 1858076672 bytes, 3629056 sectors
+Units: sectors of 1 &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; 512 &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 512 bytes
+Sector size &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;logical/physical&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: 512 bytes / 512 bytes
+I/O size &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;minimum/optimal&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: 512 bytes / 512 bytes
+Disklabel &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;: dos
+Disk identifier: 0x067e19d7
+
+Device                                    Boot  Start     End Sectors Size Id Type
+2020-12-02-raspios-buster-armhf-lite.img1        8192  532479  524288 256M  c W95 FAT32 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;LBA&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+2020-12-02-raspios-buster-armhf-lite.img2      532480 3629055 3096576 1.5G 83 Linux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Mount the second partition. Because the file has 2 partitions, we need
+to set the offset where the second starts: the start sector number
+multiplied by the size of each sector in bytes.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;mount &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$((&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;532480&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;512&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; ext4 2020-12-02-raspios-buster-armhf-lite.img ~/mnt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-041d94432f6bed87af4cb4909d1213cf&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-041d94432f6bed87af4cb4909d1213cf&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Why we need to do this? No idea. May be is related with
+&lt;a href=&quot;https://stackoverflow.com/questions/45253755/why-is-the-stack-segment-executable-on-raspberry-pi&quot;&gt;this&lt;/a&gt;
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Comment out any entry of &lt;code class=&quot;highlighter-rouge&quot;&gt;ld.so.preload&lt;/code&gt; adding a &lt;code class=&quot;highlighter-rouge&quot;&gt;#&lt;/code&gt; at the begin of
+each line.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; ~/mnt/etc/ld.so.preload
+/usr/lib/arm-linux-gnueabihf/libarmmem-&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PLATFORM&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;.so
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'s/^.*$/#\0/'&lt;/span&gt; ~/mnt/etc/ld.so.preload
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Check the &lt;code class=&quot;highlighter-rouge&quot;&gt;fstab&lt;/code&gt;. Replace &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/mmcblk0p1&lt;/code&gt; and
+&lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/mmcblk0p2&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda1&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/sda2&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In my case there are not explicit names like &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/mmcblk0p1&lt;/code&gt;. Instead,
+there are UUIDs so I didn’t touch them.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ cat ~/mnt/etc/fstab
+proc                  /proc    proc    defaults             0   0
+PARTUUID=067e19d7-01  /boot    vfat    defaults             0   2
+PARTUUID=067e19d7-02  /        ext4    defaults,noatime     0   1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We are done.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;umount ~/mnt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now it is show time!&lt;/p&gt;
+
+&lt;h2 id=&quot;running-the-os&quot;&gt;Running the OS&lt;/h2&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;qemu-system-arm                       &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-M&lt;/span&gt; versatilepb                        &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-cpu&lt;/span&gt; arm1176                          &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 256                                &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-drive&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;file=2020-12-02-raspios-buster-armhf-lite.img,if=none,index=0,media=disk,format=raw,id=disk0&quot;&lt;/span&gt;  &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-device&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;virtio-blk-pci,drive=disk0,disable-modern=on,disable-legacy=off&quot;&lt;/span&gt;                              &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-net&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;user,hostfwd=tcp::3022-:22&quot;&lt;/span&gt;     &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-dtb&lt;/span&gt; versatile-pb-buster-5.4.51.dtb   &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-kernel&lt;/span&gt; kernel-qemu-5.4.51-buster     &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-append&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'root=/dev/vda2 panic=1'&lt;/span&gt;      &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-no-reboot&lt;/span&gt;                            &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-net&lt;/span&gt; nic                              &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-nographic&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;hostfwd=tcp::3022-:22&lt;/code&gt; tells QEMU to forward TCP connections to the
+3022 port from the host to the 22 port on the guest side. More forward
+rules can be added.&lt;/p&gt;
+
+&lt;p&gt;Enable ssh (now and on boot); login with &lt;code class=&quot;highlighter-rouge&quot;&gt;pi&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;raspberry&lt;/code&gt;. This will
+allows us to upload/retrieve files to the vm and have additional
+consoles.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-ssh&quot;&gt;$ sudo service ssh start
+$ sudo update-rc.d ssh enable
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, from your host connect to the vm through the port 3022.&lt;/p&gt;
+
+&lt;p&gt;Install &lt;code class=&quot;highlighter-rouge&quot;&gt;gdbserver&lt;/code&gt; for remote debugging:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;gdbserver
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following NEW packages will be installed:
+  gdbserver
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+&amp;lt;...&amp;gt;
+Preparing to unpack .../gdbserver_8.2.1-2_armhf.deb ...
+Unpacking gdbserver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.2.1-2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ...
+Setting up gdbserver &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.2.1-2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;enlarge-the-disk&quot;&gt;Enlarge the disk&lt;/h2&gt;
+
+&lt;p&gt;Optionally, you can expand the disk image to have more room for your
+programs.&lt;/p&gt;
+
+&lt;p&gt;First, with QEMU turned off, expand the disk image&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;qemu-img resize 2020-12-02-raspios-buster-armhf-lite.img +1G
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, turn on the vm and redefine the partition. In my case is the
+partition number 2 (&lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/vda2&lt;/code&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;fdisk /dev/vda
+
+Command &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;m &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: p
+Disk /dev/vda: 2.7 GiB, 2931818496 bytes, 5726208 sectors
+Units: sectors of 1 &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt; 512 &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 512 bytes
+Sector size &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;logical/physical&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: 512 bytes / 512 bytes
+I/O size &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;minimum/optimal&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: 512 bytes / 512 bytes
+Disklabel &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;: dos
+Disk identifier: 0x067e19d7
+
+Device     Boot  Start     End Sectors  Size Id Type
+/dev/vda1         8192  532479  524288  256M  c W95 FAT32 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;LBA&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+/dev/vda2       532480 3629055 3096576  1.5G 83 Linux
+
+Command &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;m &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: d
+Partition number &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1,2, default 2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: 2
+
+Partition 2 has been deleted.
+
+Command &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;m &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: n
+Partition &lt;span class=&quot;nb&quot;&gt;type
+   &lt;/span&gt;p   primary &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1 primary, 0 extended, 3 free&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+   e   extended &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;container &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;logical partitions&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Select &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;default p&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: p
+Partition number &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;2-4, default 2&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: 2
+First sector &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;2048-5726207, default 2048&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: 532480
+Last sector, +/-sectors or +/-size&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;K,M,G,T,P&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;532480-5726207, default 5726207&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;:
+
+Created a new partition 2 of &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Linux'&lt;/span&gt; and of size 2.5 GiB.
+Partition &lt;span class=&quot;c&quot;&gt;#2 contains a ext4 signature.&lt;/span&gt;
+
+Do you want to remove the signature? &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Y]es/[N]o: n
+
+Command &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;m &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;: w
+
+The partition table has been altered.
+Syncing disks.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that &lt;code class=&quot;highlighter-rouge&quot;&gt;fdisk&lt;/code&gt; offered by default the first sector to be 2048. This
+is the space &lt;em&gt;before&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/vda1&lt;/code&gt; and it is too small, only 8kb.&lt;/p&gt;
+
+&lt;p&gt;Instead we want to start &lt;em&gt;after&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/vda1&lt;/code&gt;, in the same sector that
+the original &lt;code class=&quot;highlighter-rouge&quot;&gt;/dev/vda2&lt;/code&gt;: the 532480.&lt;/p&gt;
+
+&lt;p&gt;From there, to the end of the disk: 5726207.&lt;/p&gt;
+
+&lt;p&gt;With the partition expanded, reboot and then update the filesystem:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;resize2fs /dev/vda2
+resize2fs 1.44.5 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;15-Dec-2018&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+Filesystem at /dev/vda2 is mounted on /&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; on-line resizing required
+old_desc_blocks &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1, new_desc_blocks &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
+The filesystem on /dev/vda2 is now 649216 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;4k&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; blocks long.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+
+&lt;p&gt;This tutorial setups a &lt;a href=&quot;https://azeria-labs.com/emulate-raspberry-pi-with-qemu/&quot;&gt;Raspbian Jessie in Qemu&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I adapted the steps to use a modern Raspbian Buster image.&lt;/p&gt;
+
+&lt;p&gt;The tutorial is super complete and includes how to enlarge the disk and
+setup the network.&lt;/p&gt;
+
+&lt;p&gt;But for the enlarge the disk part, this
+&lt;a href=&quot;https://gist.github.com/larsks/3933980&quot;&gt;gist&lt;/a&gt; explains the thing a
+little better.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/bradfitz/embiggen-disk&quot;&gt;embiggen-disk&lt;/a&gt; seems to be a
+tool to facilite the task.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">Quick how-to download and run a Raspbian Buster (ARM) emulating the vm with QEMU.</summary></entry><entry><title type="html">Self-Licensing</title><link href="/book-of-gehn/articles/2020/12/05/Self-Licensing.html" rel="alternate" type="text/html" title="Self-Licensing" /><published>2020-12-05T00:00:00+01:00</published><updated>2020-12-05T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/05/Self-Licensing</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/05/Self-Licensing.html">&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img class=&quot;in-index-only&quot; style=&quot;max-width:60%;&quot; alt=&quot;self-licensing&quot; src=&quot;/book-of-gehn/assets/self-licensing/self-licensing-small.png&quot; /&gt;&lt;/figure&gt;
 &lt;!--more--&gt;
 
 &lt;figure class=&quot;fullwidth&quot;&gt;&lt;img src=&quot;/book-of-gehn/assets/self-licensing/self-licensing-whole.png&quot; /&gt;&lt;figcaption&gt;Doing good things has a &quot;moral boost&quot; on the self-concept, then a person
@@ -2584,50 +2784,4 @@ for DPDK’s &lt;a href=&quot;http://git.dpdk.org/dpdk/tree/lib/librte_ring/rte_
 and my previous post
 &lt;a href=&quot;/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html&quot;&gt;lock-free single-producer single-consumer queue&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;References at March 2020.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">If implementing a lock-free queue for only one producer and consumer is tricky, adding more producers and consumers moves this to the next level. This is the continuation of the lock-free single-producer single-consumer queue</summary></entry><entry><title type="html">Sidenote: Identifiers</title><link href="/book-of-gehn/articles/2020/04/19/Sidenote-Identifiers.html" rel="alternate" type="text/html" title="Sidenote: Identifiers" /><published>2020-04-19T00:00:00+02:00</published><updated>2020-04-19T00:00:00+02:00</updated><id>/book-of-gehn/articles/2020/04/19/Sidenote-Identifiers</id><content type="html" xml:base="/book-of-gehn/articles/2020/04/19/Sidenote-Identifiers.html">&lt;p&gt;What would be a nice identifier for the people in, let’s say, a database?
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;p&gt;We need identifiers to operate the tables, make joins, and all kind
-of crazy data processing.&lt;/p&gt;
-
-&lt;p&gt;What would be a good one?&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-f28bb58496658129a8f44cfa4f67ba84&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-f28bb58496658129a8f44cfa4f67ba84&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;max-width: 70%;&quot; class=&quot;fullwidth&quot; alt=&quot;name-img&quot; src=&quot;/book-of-gehn/assets/2020-04-19-Sidenote-Identifiers/name.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Their names and addresses? Quite old fashion. Collisions are possible
-and can be very frequent. &lt;br /&gt;
-Building an id based on the attributes of the person is not good
-in any case: it is a matter of time that the person change
-in some way (like change her address) to make the id &lt;em&gt;schema&lt;/em&gt; inconsistent.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-8f2adea854f461990d15f6dd398ab87c&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-8f2adea854f461990d15f6dd398ab87c&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;max-width: 70%;&quot; class=&quot;fullwidth&quot; alt=&quot;ssn-img&quot; src=&quot;/book-of-gehn/assets/2020-04-19-Sidenote-Identifiers/ssn.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Their government-level id, like the Social Security Number? Better but no,
-different countries have different
-identifier systems like &lt;a href=&quot;https://en.wikipedia.org/wiki/INSEE_code&quot;&gt;INSEE&lt;/a&gt;
-in France. If you plan to use the software world-wide this
-will not work. &lt;br /&gt;
-And you are still depending on
-&lt;a href=&quot;https://www.ssa.gov/history/ssn/misused.html&quot;&gt;humans&lt;/a&gt; to ensure uniqueness.&lt;/p&gt;
-
-&lt;p&gt;Their email? Everyone has an email, right? Yea… well. It is more
-nation agnostic but &lt;a href=&quot;https://gist.github.com/adamloving/4401361&quot;&gt;still…&lt;/a&gt;&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img style=&quot;max-width: 70%;&quot; src=&quot;/book-of-gehn/assets/2020-04-19-Sidenote-Identifiers/email.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;Their DNA? That’s unique right?&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Keep it simple. Use a plain number.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Just:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;do not allow a human to set the id, make the id unique by software.&lt;/li&gt;
-  &lt;li&gt;do not associate any meaning to it, it is just a number.&lt;/li&gt;
-  &lt;li&gt;be careful, assigning numbers incrementally will allow and attacker
-to guess what will be the next id. This may or may not be a problem.&lt;/li&gt;
-  &lt;li&gt;do not reuse any id, &lt;strong&gt;never&lt;/strong&gt;.&lt;/li&gt;
-  &lt;li&gt;make sure that the space of possible numbers is large enough.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img style=&quot;max-width: 70%;&quot; src=&quot;/book-of-gehn/assets/2020-04-19-Sidenote-Identifiers/sheep.png&quot; /&gt;&lt;/figure&gt;</content><author><name>Gehn</name></author><summary type="html">What would be a nice identifier for the people in, let’s say, a database?</summary></entry></feed>
+&lt;p&gt;References at March 2020.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">If implementing a lock-free queue for only one producer and consumer is tricky, adding more producers and consumers moves this to the next level. This is the continuation of the lock-free single-producer single-consumer queue</summary></entry></feed>
