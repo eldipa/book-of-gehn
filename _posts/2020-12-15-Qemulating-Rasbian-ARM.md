@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "QEMUlating Rasbian ARM"
+title: "QEMUlating a Rasbian (ARM)"
 ---
 
-Quick how-to Download and run a Raspbian Buster (ARM) emulating
+Quick how-to download and run a Raspbian Buster (ARM) emulating
 the vm with QEMU.<!--more-->
 
  - Download [Raspbian lite image (Buster)](https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2020-12-04/)
@@ -23,8 +23,7 @@ Archive:  2020-12-02-raspios-buster-armhf-lite.zip
   inflating: 2020-12-02-raspios-buster-armhf-lite.img
 
 $ sudo fdisk -l 2020-12-02-raspios-buster-armhf-lite.img
-Disk 2020-12-02-raspios-buster-armhf-lite.img: 1.7 GiB, 1858076672
-bytes, 3629056 sectors
+Disk 2020-12-02-raspios-buster-armhf-lite.img: 1.7 GiB, 1858076672 bytes, 3629056 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
@@ -41,13 +40,16 @@ to set the offset where the second starts: the start sector number
 multiplied by the size of each sector in bytes.
 
 ```shell
-$ sudo mount -v -o offset=$((532480* 512)) -t ext4 2020-12-02-raspios-buster-armhf-lite.img ~/mnt
+$ sudo mount -v -o offset=$((532480 * 512)) -t ext4 2020-12-02-raspios-buster-armhf-lite.img ~/mnt
 ```
+
+{% marginnote
+'Why we need to do this? No idea. May be is related with
+[this](https://stackoverflow.com/questions/45253755/why-is-the-stack-segment-executable-on-raspberry-pi)
+' %}
 
 Comment out any entry of `ld.so.preload` adding a `#` at the begin of
 each line.
-Why we need to do this? No idea. May be is related with
-[this](https://stackoverflow.com/questions/45253755/why-is-the-stack-segment-executable-on-raspberry-pi)
 
 ```shell
 $ cat ~/mnt/etc/ld.so.preload
@@ -96,6 +98,9 @@ $ qemu-system-arm                       \
   -nographic
 ```
 
+The `hostfwd=tcp::3022-:22` tells QEMU to forward TCP connections to the
+3022 port from the host to the 22 port on the guest side. More forward
+rules can be added.
 
 Enable ssh (now and on boot); login with `pi`/`raspberry`. This will
 allows us to upload/retrieve files to the vm and have additional
@@ -106,7 +111,7 @@ $ sudo service ssh start
 $ sudo update-rc.d ssh enable
 ```
 
-Now, from your host connect to the vm through the port 3020.
+Now, from your host connect to the vm through the port 3022.
 
 Install `gdbserver` for remote debugging:
 
@@ -140,11 +145,6 @@ partition number 2 (`/dev/vda2`):
 
 ```shell
 pi@raspberrypi:~$ sudo fdisk /dev/vda
-
-Welcome to fdisk (util-linux 2.33.1).
-Changes will remain in memory only, until you decide to write them.
-Be careful before using the write command.
-
 
 Command (m for help): p
 Disk /dev/vda: 2.7 GiB, 2931818496 bytes, 5726208 sectors
@@ -211,5 +211,8 @@ The tutorial is super complete and includes how to enlarge the disk and
 setup the network.
 
 But for the enlarge the disk part, this
-[gist](https://gist.github.com/larsks/3933980) explains a little better.
+[gist](https://gist.github.com/larsks/3933980) explains the thing a
+little better.
 
+[embiggen-disk](https://github.com/bradfitz/embiggen-disk) seems to be a
+tool to facilite the task.
