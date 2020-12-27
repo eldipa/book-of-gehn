@@ -272,5 +272,10 @@ Also [GCC Atomics, gcc.gnu.org](https://gcc.gnu.org/onlinedocs/gcc/_005f_005fato
 and my previous post
 [lock-free single-producer single-consumer queue](/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html).
 
+Also:
+
+ - [C++ and Beyond 2012: Herb Sutter - Atomic Weapons - Part 1](https://www.youtube.com/watch?v=A8eCGOqgvH4)
+ - [C++ and Beyond 2012: Herb Sutter - Atomic Weapons - Part 2](https://www.youtube.com/watch?v=KeLBd2EJLOU)
+
 References at March 2020.
 

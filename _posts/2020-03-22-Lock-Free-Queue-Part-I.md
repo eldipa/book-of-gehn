@@ -437,5 +437,7 @@ Both were used as references along with
  - [Release-Acquire ordering, cppreference.com](https://en.cppreference.com/w/cpp/atomic/memory_order#Release-Acquire_ordering)
  - [GCC Atomics, gcc.gnu.org](https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html)
  - [Ring library, doc.dpdk.org](https://doc.dpdk.org/guides-19.05/prog_guide/ring_lib.html)
+ - [C++ and Beyond 2012: Herb Sutter - Atomic Weapons - Part 1](https://www.youtube.com/watch?v=A8eCGOqgvH4)
+ - [C++ and Beyond 2012: Herb Sutter - Atomic Weapons - Part 2](https://www.youtube.com/watch?v=KeLBd2EJLOU)
 
 References at March 2020.
