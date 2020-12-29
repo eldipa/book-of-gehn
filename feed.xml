@@ -1,4 +1,485 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2020-12-16T03:14:33+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">QEMUlating a Rasbian (ARM)</title><link href="/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html" rel="alternate" type="text/html" title="QEMUlating a Rasbian (ARM)" /><published>2020-12-15T00:00:00+01:00</published><updated>2020-12-15T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html">&lt;p&gt;Quick how-to download and run a Raspbian Buster (ARM) emulating
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2020-12-29T21:51:51+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">TL;DR Quick Overview of Arm</title><link href="/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html" rel="alternate" type="text/html" title="TL;DR Quick Overview of Arm" /><published>2020-12-27T00:00:00+01:00</published><updated>2020-12-27T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html">&lt;p&gt;Speed-reading of
+&lt;a href=&quot;https://www.coranac.com/tonc/text/asm.htm&quot;&gt;Whirlwind Tour of ARM Assembly&lt;/a&gt;.&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;the-arm-instruction-set&quot;&gt;The Arm instruction set&lt;/h1&gt;
+
+&lt;p&gt;Arm is a Reduced Instruction Set Computer (RISC) which have a small set
+of instructions of fixed size in contrast with the Complex Instruction
+Set Computer (CISC).&lt;/p&gt;
+
+&lt;p&gt;In Arm the instructions are of 32 bits and the Thumb version has 16 and
+32 bits instructions.&lt;/p&gt;
+
+&lt;p&gt;ARMv3 to ARMv7 versions has 32 bits addresses, previous version has 26
+bits and ARMv8 introduced the 64 bits addresses.&lt;/p&gt;
+
+&lt;h3 id=&quot;almost-everything-is-conditional&quot;&gt;Almost everything is conditional&lt;/h3&gt;
+
+&lt;p&gt;Instructions can be executed conditionally. This avoids explicit jumps
+which are slower and the overall code size is smaller.&lt;/p&gt;
+
+&lt;p&gt;Use this for small snippets and fallback to traditional branches/jumps
+when the code is too large.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;; r2 = max(r0, r1), traditional impl with branches&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;blt&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lbmax&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; go to Lbmax if r0 &amp;lt; r1&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; r0 is higher ==&amp;gt; r0 &amp;gt; r1&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;       &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lrest&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; finish&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lbmax&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; r1 is higher&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lrest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;                 &lt;span class=&quot;c&quot;&gt;;  rest of code&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;; r2 = max(r0, r1), with conditionals moves&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;movge&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;;  move if r0 &amp;gt;= r1 (r0 is higher)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;movlt&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;;  move if r0 &amp;lt; r1  (r1 is higher)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;                 &lt;span class=&quot;c&quot;&gt;;  rest of code&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Example took from
+&lt;a href=&quot;https://www.coranac.com/tonc/text/asm.htm&quot;&gt;Whirlwind Tour of Arm Assembly&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Other instructions are also conditional. Even the set of the CPSR
+flags is conditional: &lt;code class=&quot;highlighter-rouge&quot;&gt;sub&lt;/code&gt; does not set the status flags while &lt;code class=&quot;highlighter-rouge&quot;&gt;subs&lt;/code&gt;
+it does.&lt;/p&gt;
+
+&lt;h3 id=&quot;immediate-values-and-the-second-operand-shift&quot;&gt;Immediate values and the second operand shift&lt;/h3&gt;
+
+&lt;p&gt;Some instructions allow the second operand to be shifted/rotated in the
+same instruction.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;          &lt;span class=&quot;c&quot;&gt;;  r0 = r1 + r1&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lsl&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;;  r0 = r1 + (r1 &amp;lt;&amp;lt; 4)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lsl&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;;  r0 = r1 + (r1 &amp;lt;&amp;lt; r2)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Five shift/rotation exist, both as part of an instruction like above
+and as independent instructions as well.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The immediate value for shifts is limited to 31.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Logical shift left &lt;code class=&quot;highlighter-rouge&quot;&gt;lsl&lt;/code&gt;, logical shift right &lt;code class=&quot;highlighter-rouge&quot;&gt;lsr&lt;/code&gt;, arithmetic shift
+right &lt;code class=&quot;highlighter-rouge&quot;&gt;asr&lt;/code&gt;, rotate right &lt;code class=&quot;highlighter-rouge&quot;&gt;ror&lt;/code&gt; and rotate right with extend &lt;code class=&quot;highlighter-rouge&quot;&gt;rrx&lt;/code&gt; (the
+32 bits register is extended on the left with the &lt;em&gt;carry&lt;/em&gt; bit: the LSB
+is rotated to the carry bit and the carry bit is shifted to the right
+into the MSB of the register)&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;          10000110
+           \\\\\\\\
+           ||||||| \
+           vvvvvvv  \
+          01000011   -&amp;gt; 0   (logical shift right)
+          11000011   -&amp;gt; 0   (arithmetic shift right)
+
+          10000110
+           \\\\\\\\
+           ||||||| \
+           vvvvvvv  \
+          01000011   |      (rotate shift right)
+          ^---------/
+
+   C=0    10000110
+      \    \\\\\\\\
+       \--\||||||| \
+          vvvvvvvv  \
+   C=0    01000011   |     (rotate right extended)
+     ^---------------/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Having all these nice features in one instruction (shift, conditional,
+flag set) come with a cost: less room for immediate values.&lt;/p&gt;
+
+&lt;p&gt;In Thumb-2 and ARMv6 and above exists &lt;code class=&quot;highlighter-rouge&quot;&gt;mov rd, #&amp;lt;imm16&amp;gt;&lt;/code&gt; to set a 16
+bits number in a register without the possibility of using any of those
+fancy features. It is a plain move.&lt;/p&gt;
+
+&lt;p&gt;But that’s the exception to the rule. Most of the instructions
+including fancy moves only allow 8 bits immediate values.&lt;/p&gt;
+
+&lt;p&gt;Like&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;movs&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;imm8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lsl&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;;  r0 = imm8 &amp;lt;&amp;lt; 4, update condition flags&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Larger than 255 values in &lt;code class=&quot;highlighter-rouge&quot;&gt;#&amp;lt;imm8&amp;gt;&lt;/code&gt; are possible because the instruction
+has 12 bits to store them. Why not just &lt;code class=&quot;highlighter-rouge&quot;&gt;#&amp;lt;imm12&amp;gt;&lt;/code&gt; then?&lt;/p&gt;
+
+&lt;p&gt;The 4 extra bits are used to rotate to the right the &lt;code class=&quot;highlighter-rouge&quot;&gt;#&amp;lt;imm8&amp;gt;&lt;/code&gt; value by
+&lt;em&gt;twice&lt;/em&gt; the number encoded in those 4 bits.&lt;/p&gt;
+
+&lt;p&gt;In other words, the final value is &lt;code class=&quot;highlighter-rouge&quot;&gt;n8 ror (2*r4)&lt;/code&gt;: the 8 bits encoded
+number rotated by twice the 4 bits encoded.&lt;/p&gt;
+
+&lt;p&gt;This allows to set immediate values larger than 12 bits but loosing the
+possibility to encode some numbers. If you try to set one of those you
+will get a &lt;em&gt;invalid constant&lt;/em&gt; error.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;128000&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;;   r2 = 0x1f400&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;127999&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;;   Invalid operand (KS_ERR_ASM_INVALIDOPERAND)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;More instructions are needed to compute an arbitrary 32 bits number or a
+load.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Note: a 32 bit number can be set in two instructions: set the 16 lower
+bits with &lt;code class=&quot;highlighter-rouge&quot;&gt;mov rd, #&amp;lt;imm16&amp;gt;&lt;/code&gt; and set the 16 upper bits with &lt;em&gt;move
+top&lt;/em&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;movt rd, #&amp;lt;imm16&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xccdd&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;;   r2 = 0x0000ccdd&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;movt&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xaabb&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;   r2 = 0xaabbccdd&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;registers&quot;&gt;Registers&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt; are &lt;em&gt;scratch&lt;/em&gt; registers: they are not preserved cross calls
+and it is caller’s responsibility to preserve them if needed.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;r4&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r11&lt;/code&gt; are &lt;em&gt;variable&lt;/em&gt; registers: they must be preserved cross
+calls and it is callee’s responsibility to preserve them if needed.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;r9&lt;/code&gt; may play a different roll (platform dependent, known also as
+&lt;em&gt;static base&lt;/em&gt; register or &lt;code class=&quot;highlighter-rouge&quot;&gt;sb&lt;/code&gt;) and &lt;code class=&quot;highlighter-rouge&quot;&gt;r11&lt;/code&gt;
+may play the roll of &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; so both may not be free for arbitrary usage.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt; instruction saves the next instruction (the &lt;em&gt;return address&lt;/em&gt;)
+in the &lt;em&gt;link&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; register (&lt;code class=&quot;highlighter-rouge&quot;&gt;r14&lt;/code&gt;) and set the destination address
+in the &lt;em&gt;program counter&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; register (&lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;For “long jumps” and inter-operability, the &lt;em&gt;intra-procedure-call&lt;/em&gt;
+registry &lt;code class=&quot;highlighter-rouge&quot;&gt;ip&lt;/code&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;r12&lt;/code&gt;) is used.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;r13&lt;/code&gt; is the &lt;em&gt;stack pointer&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Take a look at the
+&lt;a href=&quot;https://developer.arm.com/documentation/ihi0042/latest/&quot;&gt;Procedure Call Standard for the Arm Architecture&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;data-instructions&quot;&gt;Data instructions&lt;/h2&gt;
+
+&lt;p&gt;The arithmetic and logical instructions fall in this category; they
+manipulate only on registers, never on memory.&lt;/p&gt;
+
+&lt;p&gt;The destination and the first operand are registers while the second can
+be a register, and immediate value or a register shifted by another
+register or immediate value.&lt;/p&gt;
+
+&lt;p&gt;They can be conditionally executed and conditionally set the status
+flags.&lt;/p&gt;
+
+&lt;p&gt;The
+&lt;a href=&quot;https://documentation-service.arm.com/static/5ed66080ca06a95ce53f932d?token=&quot;&gt;ARM and Thumb-2 Instruction Set Quick Reference Card&lt;/a&gt;
+is your friend!&lt;/p&gt;
+
+&lt;p&gt;There are no division instructions except on ARMv7-R and ARMv7-M and multiplication
+operations are more special.&lt;/p&gt;
+
+&lt;p&gt;Because the registers are of 32 bits, the result of a multiplication
+cannot fit there: we need 64 bits!&lt;/p&gt;
+
+&lt;p&gt;There are two sets of multiplications: the one that stores the result in
+a 32 bits register (&lt;code class=&quot;highlighter-rouge&quot;&gt;mul rd, rm, rs&lt;/code&gt;) and the one that stores it in two
+registers (&lt;code class=&quot;highlighter-rouge&quot;&gt;umull rdlo, rdhi, rm rs&lt;/code&gt;) – the extra &lt;code class=&quot;highlighter-rouge&quot;&gt;l&lt;/code&gt; means &lt;code class=&quot;highlighter-rouge&quot;&gt;long&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;memory-instructions-load-and-store&quot;&gt;Memory instructions: load and store&lt;/h2&gt;
+
+&lt;p&gt;Loads and stores are quite similar: they can operate (load/store)
+on 32 bits words, half-words (&lt;code class=&quot;highlighter-rouge&quot;&gt;h&lt;/code&gt;) and bytes (&lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;), zero extended or
+signed extended (&lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;sb&lt;/code&gt; respectively).&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Note: &lt;code class=&quot;highlighter-rouge&quot;&gt;sb&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt; prefixes are not supported for stores.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;indexing&quot;&gt;Indexing&lt;/h3&gt;
+
+&lt;p&gt;In &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn]&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;str rd, [rn]&lt;/code&gt;, the &lt;code class=&quot;highlighter-rouge&quot;&gt;[ ]&lt;/code&gt; denotes dereferencing
+and the &lt;code class=&quot;highlighter-rouge&quot;&gt;rn&lt;/code&gt; register is the &lt;em&gt;base register&lt;/em&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp]&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;; r0 = stack top&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is the &lt;em&gt;register indirect addressing&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;An offset can be added to the base register, useful to iterate over an
+array like &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, rm]&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, #4]&lt;/code&gt;
+or even &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, rm, lsl #4]&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp]&lt;/span&gt;                &lt;span class=&quot;c&quot;&gt;; r0 = stack top&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;            &lt;span class=&quot;c&quot;&gt;; r0 = elem below the top&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;            &lt;span class=&quot;c&quot;&gt;; if r3 == 4, same above (sp + 4)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lsl&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; if r3 == 2, same above (sp + (1 &amp;lt;&amp;lt; 2))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is known as &lt;em&gt;pre-index addressing&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Note the use of squares in &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, rm, lsl #4]&lt;/code&gt;, the instruction
+&lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn], rm, lsl #4&lt;/code&gt; is a pre-index addressing &lt;em&gt;with post
+write-back&lt;/em&gt;: the base address is updated with the final value &lt;em&gt;after&lt;/em&gt;
+the load completed.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; r0 = stack top, sp move 4 down (aka &quot;pop&quot;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; r0 = next stack top, sp move 4 down (aka &quot;pop&quot;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A &lt;em&gt;pre write-back&lt;/em&gt; variant exists: &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, rm, lsl #4]!&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]!&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; r0 = sp move 4 down then load (top was skipped)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Note: &lt;em&gt;pre write-back&lt;/em&gt; makes more sense for stores (aka pushes)
+and &lt;em&gt;post write-back&lt;/em&gt; for loads (aka pops)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;c&quot;&gt;; swap r0, r1 using the stack, really slow!&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]!&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; r0 = sp move 4 up then store (aka push)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]!&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; r1 = sp move 4 up then store (aka push)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; r0 = stack top, sp move 4 down (aka &quot;pop&quot;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; r1 = stack top, sp move 4 down (aka &quot;pop&quot;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;em&gt;PC-relative addressing&lt;/em&gt; allows to load a memory which address is an
+offset of the program counter: &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, &amp;lt;label&amp;gt;&lt;/code&gt;. This works only for
+loads; useful to load numbers that cannot fit in an &lt;code class=&quot;highlighter-rouge&quot;&gt;imm8&lt;/code&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Not all the combinations of sizes and addressing are possible. Check
+the data sheet.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;bulk-loadstore&quot;&gt;Bulk load/store&lt;/h3&gt;
+
+&lt;p&gt;Several registers can be loaded or stored with a single &lt;em&gt;load multiple&lt;/em&gt;
+(&lt;code class=&quot;highlighter-rouge&quot;&gt;ldm&lt;/code&gt;) and &lt;em&gt;store multiple&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;stm&lt;/code&gt;) instructions.&lt;/p&gt;
+
+&lt;p&gt;They have a base address, a &lt;em&gt;set&lt;/em&gt; of registers and an &lt;em&gt;indexing affix&lt;/em&gt;
+which controls how to “iterate the array/memory”.&lt;/p&gt;
+
+&lt;p&gt;Four indexing exists: increment of the base address after/before accessing
+the memory (&lt;code class=&quot;highlighter-rouge&quot;&gt;ia&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;ib&lt;/code&gt;) and decrement of the base address after/before
+(&lt;code class=&quot;highlighter-rouge&quot;&gt;da&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;db&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ia&lt;/code&gt; is the default.&lt;/p&gt;
+
+&lt;p&gt;In short:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;                            &lt;span class=&quot;c&quot;&gt;;              r4, r5, r6, r7&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldmia&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;  *src++    :  0,  1,  2,  3&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldmib&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;  *++src    :  1,  2,  3,  4&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldmda&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;  *src--    : -3, -2, -1,  0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldmdb&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;  *--src    : -4, -3, -2, -1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note the it is a &lt;em&gt;set&lt;/em&gt; of registers, &lt;strong&gt;not a list&lt;/strong&gt; so the order
+is not important. The registers are loaded/stored by their index from
+&lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;For loads the registers are loaded from memory into the registers
+in the natural order: from &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;. For stores, the registers
+are dump into memory in the reverse order.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;            &lt;span class=&quot;o&quot;&gt;&amp;lt;------&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;store&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;direction&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;&amp;lt;------&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stack&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;grows&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;stmdb&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; stack top -&amp;gt; [r0  r1]&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ldmia&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; r2 = r0; r3 = r1&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;load&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;direction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;------&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;stack&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shrinks&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;----&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The additional &lt;code class=&quot;highlighter-rouge&quot;&gt;!&lt;/code&gt; symbol means update the base register &lt;em&gt;before&lt;/em&gt; the
+load or store but it doesn’t change how the load/store works.&lt;/p&gt;
+
+&lt;p&gt;The data sheet says that &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt; have the canonical form of
+&lt;code class=&quot;highlighter-rouge&quot;&gt;stmdb sp!, {regs}&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;ldmia sp!, {regs}&lt;/code&gt; respectively.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Note that &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; points to the last value of the stack and &lt;code class=&quot;highlighter-rouge&quot;&gt;stmdb&lt;/code&gt;
+decrements the base address (&lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt;) before doing the store in a &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt;
+while &lt;code class=&quot;highlighter-rouge&quot;&gt;ldmia&lt;/code&gt; increments after the load in a &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt;.&lt;/p&gt;
+
+  &lt;p&gt;In both cases the &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; is updated &lt;em&gt;before&lt;/em&gt; (&lt;em&gt;pre write-back&lt;/em&gt;) regardless
+of &lt;code class=&quot;highlighter-rouge&quot;&gt;db&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;ia&lt;/code&gt;.&lt;/p&gt;
+
+  &lt;p&gt;Note also that the stack grows decrementing the addresses and shrinks
+incrementing the addresses.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;alignment&quot;&gt;Alignment&lt;/h3&gt;
+
+&lt;p&gt;The assembler can do it for you: &lt;code class=&quot;highlighter-rouge&quot;&gt;.align n&lt;/code&gt; aligns the code or data to 2^n
+bytes.&lt;/p&gt;
+
+&lt;h3 id=&quot;endianess&quot;&gt;Endianess&lt;/h3&gt;
+
+&lt;p&gt;Since version 3, Arm is bi-endian. The instructions are in little
+endian but the data access can be little or big endian controlled by the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;E&lt;/code&gt; flag of CPSR.&lt;/p&gt;
+
+&lt;h2 id=&quot;conditionals-and-branches&quot;&gt;Conditionals and branches&lt;/h2&gt;
+
+&lt;p&gt;Three branches: &lt;em&gt;branch&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;) for &lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;while&lt;/code&gt; constructs,
+&lt;em&gt;branch with link&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt;) for function call and &lt;em&gt;branch with exchange&lt;/em&gt;
+(&lt;code class=&quot;highlighter-rouge&quot;&gt;bx&lt;/code&gt;) for returning from a call or to switch between Arm and Thumb
+modes.&lt;/p&gt;
+
+&lt;p&gt;The first two receive a label while the last one operates with a
+register.&lt;/p&gt;
+
+&lt;p&gt;More branches exist including &lt;em&gt;branch with change to Jazelle&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;bxj&lt;/code&gt;)
+which can switch to a special mode that
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Jazelle&quot;&gt;executes Java bytecode&lt;/a&gt; if
+supported.&lt;/p&gt;
+
+&lt;p&gt;Due instruction size constrains, labels cannot be in arbitrary
+positions. The &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt; requires the destination addresses to be in
+a range relative to &lt;code class=&quot;highlighter-rouge&quot;&gt;PC&lt;/code&gt; of [-32MB;+32MB].&lt;/p&gt;
+
+&lt;p&gt;The range shrinks for other flavours of Arm to [-16MB;+16MB] and to
+[-252,256].&lt;/p&gt;
+
+&lt;p&gt;The branches can, as other instructions, be conditional executed. So
+&lt;code class=&quot;highlighter-rouge&quot;&gt;bne&lt;/code&gt; stands for branch if not equals.&lt;/p&gt;
+
+&lt;p&gt;Two registers have the flags that controls the conditional execution:
+the &lt;em&gt;Current Program Status Register&lt;/em&gt;
+(CPSR) and the &lt;em&gt;Saved Program Status Register&lt;/em&gt; (SPSR), used during the
+interrupt handling.&lt;/p&gt;
+
+&lt;p&gt;The flags are set by special instructions like &lt;em&gt;compare&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;cmp&lt;/code&gt;) or by
+data manipulation instructions if the affix &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; is added like in &lt;code class=&quot;highlighter-rouge&quot;&gt;adds&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Not all the data manipulation instructions alter all the flags. For
+example the &lt;em&gt;overflow&lt;/em&gt; flag (&lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt;) is set by arithmetic operations and
+not by bit operations.&lt;/p&gt;
+
+&lt;h3 id=&quot;branching-and-condition-codes&quot;&gt;Branching and condition codes&lt;/h3&gt;
+
+&lt;p&gt;Current Program Status Register (CPSR):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Z: is zero?&lt;/li&gt;
+  &lt;li&gt;N: is negative? (is MSB set?)&lt;/li&gt;
+  &lt;li&gt;C: is carry bit set? (in a 32 bit register with bits numbered from 0
+(LSB) to 31 (MSB), is the 32 bit set?)&lt;/li&gt;
+  &lt;li&gt;V: was an arithmetic overflow? (like given a&amp;gt;0 &amp;amp; b&amp;gt;0 and then a+b &amp;lt; 0)&lt;/li&gt;
+  &lt;li&gt;E: are we in big endian mode (E==1) or in little endian (E==0)?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;symbols&quot;&gt;Symbols&lt;/h2&gt;
+
+&lt;p&gt;Global labels are defined with &lt;code class=&quot;highlighter-rouge&quot;&gt;.global label&lt;/code&gt; while local labels
+are just &lt;code class=&quot;highlighter-rouge&quot;&gt;.label&lt;/code&gt; (conventionally they begin with &lt;code class=&quot;highlighter-rouge&quot;&gt;L&lt;/code&gt; to denote local
+but it is optional)&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.code n&lt;/code&gt; declares the type of code: Arm (&lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; is 32) or Thumb (&lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; is
+16). Alternative there are &lt;code class=&quot;highlighter-rouge&quot;&gt;.arm&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;.thumb&lt;/code&gt; directives that do the
+same.&lt;/p&gt;
+
+&lt;p&gt;These affect all the code below until another directive change the
+setting.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.thumb_func&lt;/code&gt; on the other side affects only to the next symbol and it
+is required for &lt;em&gt;interworking&lt;/em&gt; Thumb functions.&lt;/p&gt;
+
+&lt;p&gt;Alignment of code and data can be set by &lt;code class=&quot;highlighter-rouge&quot;&gt;.aling n&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;.baling m&lt;/code&gt;
+where the former aligns to &lt;code class=&quot;highlighter-rouge&quot;&gt;2^n&lt;/code&gt; bytes and the latter to &lt;code class=&quot;highlighter-rouge&quot;&gt;m&lt;/code&gt; bytes.&lt;/p&gt;
+
+&lt;p&gt;They apply to the next instruction/data, they are not global.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.type funcname %function&lt;/code&gt; declares a function.&lt;/p&gt;
+
+&lt;h2 id=&quot;definition-of-variables&quot;&gt;Definition of variables&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.byte&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;.hword&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;.word&lt;/code&gt; define data, array of items of 1, 2 and 4
+bytes each.&lt;/p&gt;
+
+&lt;p&gt;This is handy way to define &lt;em&gt;“variables”&lt;/em&gt; in the code:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;align&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;            &lt;span class=&quot;c&quot;&gt;;  mantain the alignment, always!&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;one_word&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;word&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x41424344&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;one_array_u16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hword&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;hello&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;hello world!&quot;&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;;  array of NULL-terminated strings&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;sections&quot;&gt;Sections&lt;/h2&gt;
+
+&lt;p&gt;These are &lt;code class=&quot;highlighter-rouge&quot;&gt;.data&lt;/code&gt; (read-write non-zero initialized data) and &lt;code class=&quot;highlighter-rouge&quot;&gt;.bss&lt;/code&gt;
+(read-write zero initialized data).&lt;/p&gt;
+
+&lt;p&gt;Other sections exist as well and they are denoted with &lt;code class=&quot;highlighter-rouge&quot;&gt;.section&lt;/code&gt; like
+&lt;code class=&quot;highlighter-rouge&quot;&gt;.section .rodata&lt;/code&gt; for read-only data.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;align&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;magic&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;word&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;
+
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bss&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;counter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;space&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Code section is denoted by &lt;code class=&quot;highlighter-rouge&quot;&gt;.text&lt;/code&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;references&quot;&gt;References&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.coranac.com/tonc/text/asm.htm&quot;&gt;Whirlwind Tour of ARM Assembly&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://documentation-service.arm.com/static/5ed66080ca06a95ce53f932d?token=&quot;&gt;ARM and Thumb-2 Instruction Set Quick Reference Card&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://developer.arm.com/documentation/ihi0042/latest/&quot;&gt;Procedure Call Standard for the Arm Architecture&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- stuff --&gt;
+
+&lt;script&gt;
+function fix_asm_syntax(ev) {
+    // pip install selectq
+    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
+    //   div = sQ.select('div', attr('class').contains('language-nasm'))
+    //   xpath = div.select('span', cond)
+
+    // Make some instructions &quot;keywords&quot;
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr')]&quot;;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.add('k'); // keyword
+        el.classList.remove('n'); // noun
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fix_asm_syntax);
+&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">Speed-reading of Whirlwind Tour of ARM Assembly.</summary></entry><entry><title type="html">QEMUlating a Rasbian (ARM)</title><link href="/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html" rel="alternate" type="text/html" title="QEMUlating a Rasbian (ARM)" /><published>2020-12-15T00:00:00+01:00</published><updated>2020-12-15T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html">&lt;p&gt;Quick how-to download and run a Raspbian Buster (ARM) emulating
 the vm with QEMU.&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;ul&gt;
@@ -2521,267 +3002,4 @@ a compiled version with tsan.&lt;/p&gt;
   &lt;li&gt;Shameem Akhter and Jason Roberts’ &lt;a href=&quot;https://www.drdobbs.com/cpp/multithreaded-debugging-techniques/199200938?pgno=1&quot;&gt;multithreading debugging techniques&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;References were taken on May 1st.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">Debugging multithread code is hard and lock free algorithms is harder. What cleaver tricks can we use?</summary></entry><entry><title type="html">Lock Free Queue - Part II</title><link href="/book-of-gehn/articles/2020/04/28/Lock-Free-Queue-Part-II.html" rel="alternate" type="text/html" title="Lock Free Queue - Part II" /><published>2020-04-28T00:00:00+02:00</published><updated>2020-04-28T00:00:00+02:00</updated><id>/book-of-gehn/articles/2020/04/28/Lock-Free-Queue-Part-II</id><content type="html" xml:base="/book-of-gehn/articles/2020/04/28/Lock-Free-Queue-Part-II.html">&lt;p&gt;If implementing a lock-free queue for only one producer and consumer
-is tricky, adding more producers and consumers moves this
-to the next level.&lt;/p&gt;
-
-&lt;p&gt;This is the continuation of the
-&lt;a href=&quot;/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html&quot;&gt;lock-free single-producer single-consumer queue&lt;/a&gt;&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;p&gt;Not only we need to prevent race conditions between the producers and
-the consumers but also between producers and between consumers.&lt;/p&gt;
-
-&lt;h2 id=&quot;race-between-producers&quot;&gt;Race between producers&lt;/h2&gt;
-
-&lt;p&gt;Recall the first part of &lt;code class=&quot;highlighter-rouge&quot;&gt;push()&lt;/code&gt;: we load the producer’s head,
-and calculate if we have enough room for the incoming data and
-if we have, we update the producer’s head to the next position.&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;queue_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;cons_tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__atomic_load_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cons_tail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__ATOMIC_ACQUIRE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;capacity&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cons_tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;errno&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ENOBUFS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;new_prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Consider now what would happen if we have two producers: both will
-compete in a race to put what they &lt;em&gt;think&lt;/em&gt; that it is the new value of head.&lt;/p&gt;
-
-&lt;p&gt;More over the space reserved for both will overlap leading
-to a memory corruption.&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;Two producers racing for reserving the same space.&lt;/span&gt;&lt;/figcaption&gt;&lt;img src=&quot;/book-of-gehn/assets/mpmc-queue/reserve-race-condition.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;What we need is the load, compute and store on &lt;code class=&quot;highlighter-rouge&quot;&gt;q-&amp;gt;prod_head&lt;/code&gt;
-as a &lt;em&gt;single atomic operation&lt;/em&gt;. This is called &lt;em&gt;read-modify-write&lt;/em&gt; operation.&lt;/p&gt;
-
-&lt;p&gt;No builtin atomic exists for that but we can built one with a &lt;em&gt;compare and swap&lt;/em&gt;
-instruction&lt;label for=&quot;mn-557e66b2758a8897f20e4426dee57c2e&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-557e66b2758a8897f20e4426dee57c2e&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Or &lt;em&gt;compare and exchange&lt;/em&gt; &lt;/span&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;move-the-headtail-forward-atomically---cas-loop&quot;&gt;Move the head/tail forward atomically - CAS loop&lt;/h2&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;queue_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__atomic_load_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__ATOMIC_RELAXED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;cons_tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__atomic_load_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cons_tail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__ATOMIC_ACQUIRE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-        &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;capacity&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cons_tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;n&quot;&gt;errno&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ENOBUFS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-        &lt;span class=&quot;n&quot;&gt;new_prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-        &lt;span class=&quot;n&quot;&gt;success&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__atomic_compare_exchange_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-                        &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;      &lt;span class=&quot;c1&quot;&gt;// what we want to update,&lt;/span&gt;
-                        &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;// asumming that still have this value,&lt;/span&gt;
-                        &lt;span class=&quot;n&quot;&gt;new_prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;      &lt;span class=&quot;c1&quot;&gt;// with this value as the new one.&lt;/span&gt;
-                        &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-                        &lt;span class=&quot;n&quot;&gt;__ATOMIC_RELAXED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-                        &lt;span class=&quot;n&quot;&gt;__ATOMIC_RELAXED&lt;/span&gt;
-                    &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-a9943ae19dddd108a19afccbbb809e86&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-a9943ae19dddd108a19afccbbb809e86&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Note that I said “it still has the same value”; I did't say “the value
-did't change”. For our queue it doesn't matter but for other
-structures it is really important and the confusion leads to the
-&lt;a href=&quot;https://en.wikipedia.org/wiki/ABA_problem&quot;&gt;ABA problem&lt;/a&gt;
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The idea is to do an atomic read, do all the modifications and checks
-that we need and then do an atomic write with the new value
-&lt;em&gt;only if&lt;/em&gt; the head is &lt;em&gt;still&lt;/em&gt; pointing to the same position that we read.&lt;/p&gt;
-
-&lt;p&gt;That is what &lt;code class=&quot;highlighter-rouge&quot;&gt;__atomic_compare_exchange_n&lt;/code&gt; is about.&lt;/p&gt;
-
-&lt;p&gt;If it is, it means that no other producer moved the head and we can
-proceed.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-cacb598c79e7dc10a7397be9b1e09e11&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-cacb598c79e7dc10a7397be9b1e09e11&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;There is no need to do an explicit atomic load again,
-&lt;code class=&quot;highlighter-rouge&quot;&gt;__atomic_compare_exchange_n&lt;/code&gt; will do it for us if it fails. &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;If not, we need to retry again until we succeed.&lt;/p&gt;
-
-&lt;p&gt;This loop makes the &lt;code class=&quot;highlighter-rouge&quot;&gt;push()&lt;/code&gt;
-to take an unbound number of steps (loop iterations) until
-it can proceed. The queue is lock-free but no &lt;em&gt;wait-free&lt;/em&gt; anymore.&lt;/p&gt;
-
-&lt;h2 id=&quot;waiting-for-others&quot;&gt;Waiting for others&lt;/h2&gt;
-
-&lt;p&gt;Once a producer finished the write it &lt;em&gt;releases&lt;/em&gt; it updating
-the producer’s tail to the new head.&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(...)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// write the data&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;__atomic_store_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prod_tail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__ATOMIC_RELEASE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;However we have another race condition here.&lt;/p&gt;
-
-&lt;p&gt;It is not about the store of the value, we can use an atomic
-store for that; it is about the &lt;em&gt;order&lt;/em&gt; of the stores.&lt;/p&gt;
-
-&lt;p&gt;Both producers have the correct notion of the next head
-thanks to the CAS loop however this is only truth &lt;strong&gt;if&lt;/strong&gt;
-the first producers updates the tail &lt;strong&gt;before&lt;/strong&gt; the second one.&lt;/p&gt;
-
-&lt;p&gt;Recall that the producer’s tail is the marker for the consumers
-to stop, preventing them to read undefined data.&lt;/p&gt;
-
-&lt;p&gt;If the second producer updates the tail there are not guaranties
-that the first producer finished her writing by then; she
-didn’t &lt;em&gt;released&lt;/em&gt; the memory reserved.&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;Two producers racing for marking the data as ready.
-&lt;br /&gt;
-If the producer 2 updates the tail before the producer 1, the
-consumers may read that the producer 1 may not had written yet.&lt;/span&gt;&lt;/figcaption&gt;&lt;img src=&quot;/book-of-gehn/assets/mpmc-queue/ready-race-condition.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;What we need is to enforce an order: all the previous &lt;code class=&quot;highlighter-rouge&quot;&gt;push()&lt;/code&gt; must
-complete before a producer update the tail.&lt;/p&gt;
-
-&lt;p&gt;We can get this waiting until the tail reaches the old head meaning
-that any reserved space for writing (between the tail and the old head)
-was used and released.&lt;/p&gt;
-
-&lt;p&gt;So the next block reserved begins at the old head/current tail and ends
-at the new head.&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(...)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// write the data&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
-
-    &lt;span class=&quot;c1&quot;&gt;// loop until the tail reaches our original head.&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// ensuring that no other previous push is still in progress&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;volatile&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prod_tail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;// Tell the CPU that this is busy-loop so he can take a rest&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;loki_cpu_relax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;__atomic_store_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prod_tail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__ATOMIC_RELEASE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;multi-producer-multi-consumer-queue-final-version&quot;&gt;Multi-producer multi-consumer queue (final version)&lt;/h2&gt;
-
-&lt;p&gt;The code can be found in &lt;a href=&quot;https://github.com/eldipa/loki&quot;&gt;the loki library&lt;/a&gt;.&lt;/p&gt;
-
-&lt;figure class=&quot;fullwidth&quot;&gt;&lt;img src=&quot;/book-of-gehn/assets/mpmc-queue/relativity-quantic-concurrent-programming.png&quot; /&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;
-
-&lt;h2 id=&quot;future-research-on-the-busy-waits&quot;&gt;Future research on the busy waits&lt;/h2&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;push()&lt;/code&gt;, and analogously the &lt;code class=&quot;highlighter-rouge&quot;&gt;pop()&lt;/code&gt;, has two busy waits: the
-CAS loop for update the head and the wait-for-others for updating
-the tail in order.&lt;/p&gt;
-
-&lt;p&gt;Both loops have an impact on the parallelism depending of different
-factors.&lt;/p&gt;
-
-&lt;p&gt;It is expected to have more contention in the CAS loop as the number
-of producers increase, especially when the data written is small.&lt;/p&gt;
-
-&lt;p&gt;On the other hand, it is expected to have more time wasted on the
-wait-for-others loop when the data is larger as this should dominate
-the time needed to complete one &lt;code class=&quot;highlighter-rouge&quot;&gt;push()&lt;/code&gt; and therefore preventing
-to complete the next ones.&lt;/p&gt;
-
-&lt;p&gt;In a future post I will explore this.&lt;/p&gt;
-
-&lt;p&gt;More readings:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://patches.dpdk.org/patch/40489/&quot;&gt;preemptive nature of ring algorithm (DPDK)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://cbloomrants.blogspot.com/2012/06/06-12-12-another-threading-post-index.html&quot;&gt;cbloomrants’ posts about threading&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.gotw.ca/publications/&quot;&gt;H Sutter’s Effective Concurrency seriers&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://preshing.com/&quot;&gt;Jeff Preshing’s posts&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;other-implementations&quot;&gt;Other implementations&lt;/h2&gt;
-
-&lt;p&gt;I didn’t have the chance to explore this, but the
-&lt;a href=&quot;https://software.intel.com/en-us/forums/intel-moderncode-for-parallel-architectures/topic/295836&quot;&gt;Thomasson’s MPMC queue&lt;/a&gt;
-followed another approach based in a linked list.&lt;/p&gt;
-
-&lt;p&gt;The documentation says that it has lock free &lt;code class=&quot;highlighter-rouge&quot;&gt;pop()&lt;/code&gt; and wait free
-&lt;code class=&quot;highlighter-rouge&quot;&gt;push()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The only downside is that requires a double-word CAS instruction.&lt;/p&gt;
-
-&lt;h2 id=&quot;open-questions&quot;&gt;Open questions&lt;/h2&gt;
-
-&lt;p&gt;The DPDK’s &lt;a href=&quot;http://git.dpdk.org/dpdk/tree/lib/librte_ring/rte_ring_c11_mem.h&quot;&gt;ring buffer&lt;/a&gt;
-adds a &lt;em&gt;fence&lt;/em&gt; between the read of the &lt;em&gt;old&lt;/em&gt; producer’s head and the read
-of the consumer’s tail and I cite:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;“Ensure the head is read before tail”&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;queue_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__atomic_load_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__ATOMIC_RELAXED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;cm&quot;&gt;/* Ensure the head is read before tail */&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;__atomic_thread_fence&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__ATOMIC_ACQUIRE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-        &lt;span class=&quot;n&quot;&gt;cons_tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__atomic_load_n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cons_tail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__ATOMIC_ACQUIRE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-        &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;free_entries&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;capacity&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cons_tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;old_prod_head&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-        &lt;span class=&quot;cm&quot;&gt;/* rest of the CAS loop */&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The &lt;em&gt;thread fence&lt;/em&gt; synchronize with the atomic ensuring that
-the head stored by one producer is visible by the load of another.&lt;/p&gt;
-
-&lt;p&gt;Is it possible for a producer to load a head &lt;em&gt;too&lt;/em&gt; old? By the moment
-of the load another producer had already stored a new value but it is still
-not visible by the former.&lt;/p&gt;
-
-&lt;p&gt;If that is possible the former producer will compute an incorrect &lt;code class=&quot;highlighter-rouge&quot;&gt;free_entries&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;What about the CAS instruction? If the producer didn’t see the updated value
-by the time it does the CAS instruction, it will be setting the &lt;em&gt;wrong&lt;/em&gt; head
-value just as if the CAS loop wasn’t there.&lt;/p&gt;
-
-&lt;p&gt;Am I missing something? – Probably.&lt;/p&gt;
-
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
-
-&lt;p&gt;Kip Macy implemented a &lt;a href=&quot;https://svnweb.freebsd.org/base/release/8.0.0/sys/sys/buf_ring.h?revision=199625&amp;amp;amp&quot;&gt;buffer ring&lt;/a&gt;
-for FreeBSD. It was the base foundation
-for DPDK’s &lt;a href=&quot;http://git.dpdk.org/dpdk/tree/lib/librte_ring/rte_ring_c11_mem.h&quot;&gt;rte_ring&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Also &lt;a href=&quot;https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html&quot;&gt;GCC Atomics, gcc.gnu.org&lt;/a&gt;
-and my previous post
-&lt;a href=&quot;/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html&quot;&gt;lock-free single-producer single-consumer queue&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;References at March 2020.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">If implementing a lock-free queue for only one producer and consumer is tricky, adding more producers and consumers moves this to the next level. This is the continuation of the lock-free single-producer single-consumer queue</summary></entry></feed>
+&lt;p&gt;References were taken on May 1st.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">Debugging multithread code is hard and lock free algorithms is harder. What cleaver tricks can we use?</summary></entry></feed>
