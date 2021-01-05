@@ -518,7 +518,7 @@ function fix_asm_syntax(ev) {
     //   xpath = div.select('span', cond)
 
     // Make some instructions "keywords"
-    var xpath = ".//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr')]";
+    var xpath = ".//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn')]";
     var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
 
     var elems = [];
@@ -560,7 +560,7 @@ document.addEventListener('DOMContentLoaded', fix_asm_syntax);
     <footer>
     <hr class="slender">
     <div class="credits">
-        <span>&copy; 2020
+        <span>&copy; 2021
             
             Gehn</span></br> <br>
         

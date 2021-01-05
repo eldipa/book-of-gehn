@@ -1,4 +1,478 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2020-12-29T21:51:51+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">TL;DR Quick Overview of Arm</title><link href="/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html" rel="alternate" type="text/html" title="TL;DR Quick Overview of Arm" /><published>2020-12-27T00:00:00+01:00</published><updated>2020-12-27T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html">&lt;p&gt;Speed-reading of
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-05T03:19:21+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Review Arm Assembly</title><link href="/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly.html" rel="alternate" type="text/html" title="Review Arm Assembly" /><published>2021-01-04T00:00:00+01:00</published><updated>2021-01-04T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly.html">&lt;p&gt;There is no other way to learn something that playing with it.&lt;/p&gt;
+
+&lt;p&gt;Take assembly code, read it and predice what will do. Then test it.&lt;/p&gt;
+
+&lt;p&gt;Those mistakes, those mismatches between what you think and what it
+really is, those &lt;em&gt;surprises&lt;/em&gt; are what move us forward into learning. Deeper.&lt;/p&gt;
+
+&lt;p&gt;In this post I will dig into Arm, assisted with an
+&lt;a href=&quot;https://github.com/bad-address/iasm&quot;&gt;interactive assembler&lt;/a&gt;.&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;gcc-generated-arm-assembly&quot;&gt;GCC generated Arm assembly&lt;/h2&gt;
+
+&lt;p&gt;We will see the assembly of the following C code compiled as:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gcc &lt;span class=&quot;nt&quot;&gt;-S&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-O0&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; asm1.asm asm1.c
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;raspberrypi&lt;/code&gt; is a QEMU virtual machine for Arm running a Raspbian
+Stretch. The setup is explained in my previous post
+&lt;a href=&quot;/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html&quot;&gt;QEMUlating a Rasbian (ARM)&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The code is quite simple:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x42&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x4041&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x4041&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s dig into the assembly. I will use an
+&lt;a href=&quot;https://github.com/bad-address/iasm&quot;&gt;interactive assembler&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-rand-function&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;rand&lt;/code&gt; function&lt;/h2&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;align&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;global&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arch&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;armv6&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;syntax&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unified&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arm&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fpu&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vfp&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;type&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;function&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;c&quot;&gt;; link register save eliminated.&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]!&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;66&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;bx&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;First, the code is aligned and the symbol is marked as “global”.
+&lt;code class=&quot;highlighter-rouge&quot;&gt;.arm&lt;/code&gt; says that the code is Arm (aka &lt;code class=&quot;highlighter-rouge&quot;&gt;.code 32&lt;/code&gt;).&lt;/p&gt;
+
+&lt;h3 id=&quot;prologue&quot;&gt;Prologue&lt;/h3&gt;
+
+&lt;p&gt;The function begins saving the &lt;em&gt;frame pointer&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; in the stack.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;str fp, [sp, #-4]!&lt;/code&gt; is a &lt;em&gt;pre-index&lt;/em&gt; addressing store: the &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt;
+is saved 4 bytes “up” in the stack (the stack grows towards lower
+addresses).&lt;/p&gt;
+
+&lt;p&gt;And the store is in &lt;em&gt;pre write-back&lt;/em&gt; store (&lt;code class=&quot;highlighter-rouge&quot;&gt;!&lt;/code&gt;): the &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; is
+updated (decremented by 4) &lt;em&gt;before&lt;/em&gt; performing the store.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; points always to the latest &lt;em&gt;valid&lt;/em&gt; value in the stack. That’s
+why &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; is decremented before performing the store.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;add fp, sp, #0&lt;/code&gt; is an alternative to &lt;code class=&quot;highlighter-rouge&quot;&gt;mov fp, sp&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;At the begin of the call:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;----&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r5&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r6&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r8&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r9&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sb&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r10&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r11&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;bbbb&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bbbb&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;r12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ip&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r13&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;2000&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r14&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;----&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;After the &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; update:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;----&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;-----&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r5&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r6&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r8&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r9&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sb&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r10&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r11&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ffc&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;r12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ip&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r13&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ffc&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r14&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;----&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;-----&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-275f0f8b94cfa074405e20db30591048&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-275f0f8b94cfa074405e20db30591048&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;a href=&quot;https://github.com/bad-address/iasm&quot;&gt;iasm&lt;/a&gt;, the interactive assembler,
+allows to explore the memory with the &lt;code class=&quot;highlighter-rouge&quot;&gt;M&lt;/code&gt; object. &lt;code class=&quot;highlighter-rouge&quot;&gt;M[sp:]&lt;/code&gt; means show
+the memory from the address stored in &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; to the last address mapped
+page.
+&lt;br /&gt;
+In other words: show the stack.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;And the state of the stack is:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+       &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+       &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; points always to the latest value of the stack; &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; points to the
+previous &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; value (&lt;code class=&quot;highlighter-rouge&quot;&gt;0xbbbbbbbb&lt;/code&gt; in this case).&lt;/p&gt;
+
+&lt;h3 id=&quot;body&quot;&gt;Body&lt;/h3&gt;
+
+&lt;p&gt;The assembler didn’t optimize the code: it stored in &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt; the immediate
+value of &lt;code class=&quot;highlighter-rouge&quot;&gt;#66&lt;/code&gt; (0x42) to then copy it to &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; (the register used for
+returning values). &lt;code class=&quot;highlighter-rouge&quot;&gt;mov r0, #66&lt;/code&gt; would be shorter.&lt;/p&gt;
+
+&lt;h3 id=&quot;epilogue&quot;&gt;Epilogue&lt;/h3&gt;
+
+&lt;p&gt;Then the &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; is restored to the current &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; is restored
+to the previous &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; value with &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr fp, [sp], #4&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This load is a &lt;em&gt;pre-index&lt;/em&gt; addressing with &lt;em&gt;post write-back&lt;/em&gt;. That’s it,
+the &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; is loaded with the valued pointed by &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; and then &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; is
+added 4 bytes (aka pop).&lt;/p&gt;
+
+&lt;p&gt;The compiler however should optimize this because the stack is not used
+at all so saving and restoring &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; has no value.&lt;/p&gt;
+
+&lt;p&gt;What the compiled did, it didn’t save the &lt;em&gt;link&lt;/em&gt; register &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The register holds the address to where return from a call. Because
+&lt;code class=&quot;highlighter-rouge&quot;&gt;rand&lt;/code&gt; doesn’t call anything, &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; from the caller is preserved so it is
+not needed to save it in the stack.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bx lr&lt;/code&gt; returns to the caller.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-sum-function&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;sum&lt;/code&gt; function&lt;/h2&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]!&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;bx&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;prologue-1&quot;&gt;Prologue&lt;/h3&gt;
+
+&lt;p&gt;In this case the function allocates 12 bytes to hold local variables
+(&lt;code class=&quot;highlighter-rouge&quot;&gt;sub sp, sp, #12&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;The second argument &lt;code class=&quot;highlighter-rouge&quot;&gt;r1&lt;/code&gt; is stored in the top of the stack; the first
+argument &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; is stored below. Arguments are pushed from left (&lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt;) to
+right (&lt;code class=&quot;highlighter-rouge&quot;&gt;r1&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;The call convention says that the arguments are passed via registers (up
+to 4 args). They are set by the caller and, if needed, the callee needs
+to preserve them in the stack.&lt;/p&gt;
+
+&lt;p&gt;No really needed here because &lt;code class=&quot;highlighter-rouge&quot;&gt;sum&lt;/code&gt; does not call other function but
+still the compiler follows the cookbook.&lt;/p&gt;
+
+&lt;p&gt;The function allocated 12 byte to hold 3 variables of 32 bits. We stored
+2, the arguments, but the third element is never set.&lt;/p&gt;
+
+&lt;p&gt;The registers at the begin of the call were:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;cccc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cccc&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;dddd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dddd&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r5&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r6&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r8&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r9&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sb&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r10&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r11&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;bbbb&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bbbb&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;r12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ip&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r13&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;2000&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;r14&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And after the stores, the stack has:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xcc&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xcc&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xcc&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xcc&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+       &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;??&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+       &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I presume that the unused space (??) is for the &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; register.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-main-function&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; function&lt;/h2&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;rand&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;bne&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L6&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;       &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L7&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L6&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L9&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ble&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L8&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L9&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;       &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L7&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mvn&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L7&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;pop&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;align&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;prologue-2&quot;&gt;Prologue&lt;/h3&gt;
+
+&lt;p&gt;The function saves &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; with a single &lt;code class=&quot;highlighter-rouge&quot;&gt;push {fp,lr}&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;{r,r}&lt;/code&gt; notation is a &lt;em&gt;set&lt;/em&gt;, not a &lt;em&gt;list&lt;/em&gt;: registers are pushed in
+the &lt;em&gt;inverse&lt;/em&gt; order of the registers (&lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;)
+regardless of how the &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; is written.&lt;/p&gt;
+
+&lt;p&gt;In our case &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; is &lt;code class=&quot;highlighter-rouge&quot;&gt;r11&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; is &lt;code class=&quot;highlighter-rouge&quot;&gt;r14&lt;/code&gt; so that is the natural order,
+then the inverse order applies: &lt;code class=&quot;highlighter-rouge&quot;&gt;r14&lt;/code&gt; is pushed first, &lt;code class=&quot;highlighter-rouge&quot;&gt;r11&lt;/code&gt; later.&lt;/p&gt;
+
+&lt;p&gt;In short: &lt;code class=&quot;highlighter-rouge&quot;&gt;r14&lt;/code&gt; will be at the bottom of the stack (higher addresses)
+while &lt;code class=&quot;highlighter-rouge&quot;&gt;r11&lt;/code&gt; will be at the top (lower addresses).&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; is then updated to the base of the stack for the current
+function call. The stack frame begins &lt;em&gt;after&lt;/em&gt; storing the previous &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt;
+so the current &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; points to the saved &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; update is done with &lt;code class=&quot;highlighter-rouge&quot;&gt;add fp, sp, #4&lt;/code&gt; (by this moment the &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt;
+is off by 4 due the push of &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;The registers at the begin of the call were:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;cccc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cccc&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;dddd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dddd&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r5&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r6&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r8&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r9&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sb&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r10&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r11&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;bbbb&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bbbb&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;r12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ip&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r13&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;2000&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;r14&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And after the &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt;, the registers were:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;-----&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;cccc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cccc&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;dddd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dddd&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r5&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r6&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;      &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r8&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r9&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sb&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r10&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r11&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ffc&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;r12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ip&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;r13&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ff8&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;r14&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aaaa&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;r15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;-----&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And the stack:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+       &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+       &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is &lt;strong&gt;not&lt;/strong&gt; compatible with what we saw in &lt;code class=&quot;highlighter-rouge&quot;&gt;rand&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;sum&lt;/code&gt;: the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; points to the saved &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; in these functions but points to &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; in
+&lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Also, in &lt;code class=&quot;highlighter-rouge&quot;&gt;sum&lt;/code&gt; we believed that 4 unused bytes were reserved to store
+&lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; but here we see that the space is reserved later with
+&lt;code class=&quot;highlighter-rouge&quot;&gt;sub sp, sp, #8&lt;/code&gt; and does not include space for &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;comparisons&quot;&gt;Comparisons&lt;/h3&gt;
+
+&lt;p&gt;The call to &lt;code class=&quot;highlighter-rouge&quot;&gt;rand&lt;/code&gt; (parameterless) is done with &lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt;, branch and link.&lt;/p&gt;
+
+&lt;p&gt;The return value is in &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; and for some reason it is pushed and popped
+back from the stack into &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;M[fp - 8]&lt;/code&gt; is used as the placeholder for this and for subsequent
+references to the returned value of &lt;code class=&quot;highlighter-rouge&quot;&gt;rand&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Two comparisons are made for the &lt;code class=&quot;highlighter-rouge&quot;&gt;if-else if&lt;/code&gt; statement:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L9&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The first compares &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;rand&lt;/code&gt; returned value) with a immediate value
+of &lt;code class=&quot;highlighter-rouge&quot;&gt;0&lt;/code&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;cmp r3, #0&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;The second compares two registers, &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;r2&lt;/code&gt;, where &lt;code class=&quot;highlighter-rouge&quot;&gt;r2&lt;/code&gt; is also a
+fixed value but it is to large to fit in the &lt;code class=&quot;highlighter-rouge&quot;&gt;cmp&lt;/code&gt; instruction as an
+immediate value.&lt;/p&gt;
+
+&lt;p&gt;In this case the value is loaded in the &lt;code class=&quot;highlighter-rouge&quot;&gt;r2&lt;/code&gt; register from the code
+segment (label &lt;code class=&quot;highlighter-rouge&quot;&gt;.L9&lt;/code&gt;).&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L9&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;word&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;16449&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;function-call&quot;&gt;Function call&lt;/h3&gt;
+
+&lt;p&gt;A function call is done with &lt;em&gt;branch with link&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Arguments are passed via &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt; registers from left to right.
+More than 4 arguments require the stack.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;        &lt;span class=&quot;c&quot;&gt;; call to sum(r, 0x4041)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L9&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;; second arg&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; first arg&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt; saves the next instruction (the &lt;em&gt;return address&lt;/em&gt;) in the &lt;em&gt;link&lt;/em&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; register (&lt;code class=&quot;highlighter-rouge&quot;&gt;r14&lt;/code&gt;) and set the destination address in the &lt;em&gt;program
+counter&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; register (&lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bx lr&lt;/code&gt; (&lt;em&gt;branch and exchange&lt;/em&gt;) is used to return to the caller.&lt;/p&gt;
+
+&lt;h2 id=&quot;arm-directives&quot;&gt;Arm directives&lt;/h2&gt;
+
+&lt;p&gt;Two more fragments remains that are not part of any function.&lt;/p&gt;
+
+&lt;p&gt;These are &lt;a href=&quot;https://sourceware.org/binutils/docs-2.27/as/ARM-Directives.html&quot;&gt;directives for the
+GNU Assembler&lt;/a&gt;,
+see also
+&lt;a href=&quot;https://ftp.gnu.org/old-gnu/Manuals/gas-2.9.1/html_chapter/as_7.html&quot;&gt;this&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arch&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;armv6&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;21&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;23&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;26&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;34&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;eabi_attribute&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;18&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;   &lt;span class=&quot;s&quot;&gt;&quot;asm1.c&quot;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ident&lt;/span&gt;  &lt;span class=&quot;s&quot;&gt;&quot;GCC: (Raspbian 8.3.0-6+rpi1) 8.3.0&quot;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;section&lt;/span&gt;        &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;note&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GNU&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;progbits&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;final-thoughts&quot;&gt;Final thoughts&lt;/h2&gt;
+
+&lt;p&gt;I have being reading &lt;a href=&quot;https://developer.arm.com/documentation/ihi0042/latest/&quot;&gt;documentation&lt;/a&gt;
+and &lt;a href=&quot;https://www.coranac.com/tonc/text/asm.htm&quot;&gt;write ups&lt;/a&gt; about Arm
+during the last weeks.&lt;/p&gt;
+
+&lt;p&gt;When I
+&lt;a href=&quot;/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html&quot;&gt;started&lt;/a&gt;
+ my idea was to use a &lt;a href=&quot;/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html&quot;&gt;QEMU virtual machine for
+testing&lt;/a&gt;:
+code a little of assembly, compile it, debugging it with GDB and seeing
+the effects.&lt;/p&gt;
+
+&lt;p&gt;It turns out to be tedious very quickly.&lt;/p&gt;
+
+&lt;p&gt;I relayed then more in the documentation and the &lt;a href=&quot;https://documentation-service.arm.com/static/5ed66080ca06a95ce53f932d?token=&quot;&gt;instruction set
+reference&lt;/a&gt;
+but when I review real code (like the one in this post) some things made
+no sense.&lt;/p&gt;
+
+&lt;p&gt;Obviously there were errors in my interpretation of the code.&lt;/p&gt;
+
+&lt;p&gt;That’s why I coded an &lt;a href=&quot;https://github.com/bad-address/iasm&quot;&gt;interactive assembler&lt;/a&gt;
+to have a quick feedback of what each instruction does without requiring
+a compile-upload-debug cycle.&lt;/p&gt;
+
+&lt;p&gt;It really help me to “smooth out certain rough edges” and understand
+better the code specially when the indexing flavors and how the things
+are pushed and popped from the stack.&lt;/p&gt;
+
+&lt;!-- stuff --&gt;
+
+&lt;script&gt;
+function fix_asm_syntax(ev) {
+    // pip install selectq
+    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
+    //   div = sQ.select('div', attr('class').contains('language-nasm'))
+    //   xpath = div.select('span', cond)
+
+    // Make some instructions &quot;keywords&quot;
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn')]&quot;;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.add('k'); // keyword
+        el.classList.remove('n'); // noun
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-python')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fix_asm_syntax);
+&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">There is no other way to learn something that playing with it. Take assembly code, read it and predice what will do. Then test it. Those mistakes, those mismatches between what you think and what it really is, those surprises are what move us forward into learning. Deeper. In this post I will dig into Arm, assisted with an interactive assembler.</summary></entry><entry><title type="html">TL;DR Quick Overview of Arm</title><link href="/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html" rel="alternate" type="text/html" title="TL;DR Quick Overview of Arm" /><published>2020-12-27T00:00:00+01:00</published><updated>2020-12-27T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html">&lt;p&gt;Speed-reading of
 &lt;a href=&quot;https://www.coranac.com/tonc/text/asm.htm&quot;&gt;Whirlwind Tour of ARM Assembly&lt;/a&gt;.&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;the-arm-instruction-set&quot;&gt;The Arm instruction set&lt;/h1&gt;
@@ -447,7 +921,7 @@ function fix_asm_syntax(ev) {
     //   xpath = div.select('span', cond)
 
     // Make some instructions &quot;keywords&quot;
-    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr')]&quot;;
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn')]&quot;;
     var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
 
     var elems = [];
@@ -2797,209 +3271,4 @@ other metrics of the system.&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;http://www.brendangregg.com/usemethod.html&quot;&gt;Brendan Gregg’s USE method&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=K9w2cipqfvc&quot;&gt;Performance Analysis: The USE Method&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">Could we design an architecture that allows us to have insight about the performance of the system? When you spend nights debugging searching where is the bottleneck, it is when you blame the you of the past for a so opaque and slow architecture. This is the proposal of a simple architecture that allows introspection and enables – too many times forgotten – basic optimizations.</summary></entry><entry><title type="html">Debugging Lock Free Algorithms</title><link href="/book-of-gehn/articles/2020/05/16/Debugging-Lock-Free-Algorithms.html" rel="alternate" type="text/html" title="Debugging Lock Free Algorithms" /><published>2020-05-16T00:00:00+02:00</published><updated>2020-05-16T00:00:00+02:00</updated><id>/book-of-gehn/articles/2020/05/16/Debugging-Lock-Free-Algorithms</id><content type="html" xml:base="/book-of-gehn/articles/2020/05/16/Debugging-Lock-Free-Algorithms.html">&lt;p&gt;Debugging multithread code is hard and lock free algorithms
-is harder.&lt;/p&gt;
-
-&lt;p&gt;What cleaver tricks can we use?&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;back-to-the-old-good-mutex&quot;&gt;Back to the old good mutex&lt;/h2&gt;
-
-&lt;p&gt;One simple strategy is to use a traditional mutex or other lock
-mechanisms to make our lock free code into something much easier to
-reason about.&lt;/p&gt;
-
-&lt;p&gt;Consider a lock free MPMC queue; making it thread safe with a mutex
-is plain simple:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;mutex_lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;full&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;mutex_unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;mutex_unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;pop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;mutex_lock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;empty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;mutex_unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;mutex_unlock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-d7e5c1aa888416c0537985bcd405f11c&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-d7e5c1aa888416c0537985bcd405f11c&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;em&gt;Most?&lt;/em&gt; A &lt;code class=&quot;highlighter-rouge&quot;&gt;mutex_lock&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;mutex_unlock&lt;/code&gt; pair works
-as an &lt;code class=&quot;highlighter-rouge&quot;&gt;ACQUIRE&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;RELEASE&lt;/code&gt; pair: instructions
-from the critical section (CS) cannot be moved &lt;em&gt;above the lock&lt;/em&gt; nor
-&lt;em&gt;below the unlock&lt;/em&gt; but instructions &lt;em&gt;outside&lt;/em&gt; of the CS can get into the CS
-moving from the upside &lt;em&gt;below the lock&lt;/em&gt; and
-from the downside &lt;em&gt;above the unlock&lt;/em&gt;
-&lt;br /&gt;
-In short, some reorders are &lt;em&gt;still&lt;/em&gt; possible: things before and after the CS
-can get in, things in the CS cannot get out. &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;What did we get? &lt;em&gt;Most&lt;/em&gt; of the possible reorders
-and subtle race conditions are out.&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img src=&quot;/book-of-gehn/assets/mpmc-queue/mutex.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;If you still have a bug then it is more likely to be a &lt;em&gt;classic&lt;/em&gt; bug like
-mistaking &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt; by &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;=&lt;/code&gt; or a missing &lt;code class=&quot;highlighter-rouge&quot;&gt;+1&lt;/code&gt; somewhere –&lt;em&gt;and trust me, you
-will make this kind of errors too&lt;/em&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;lightweight-prints&quot;&gt;Lightweight prints&lt;/h2&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-99114dcac28d017f0e326fed2d887b8e&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-99114dcac28d017f0e326fed2d887b8e&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;
-A buffer of fixed size power of 2 with entries of fixed size
-simplify the implementation making it faster and less intrusive
-than a plain &lt;code class=&quot;highlighter-rouge&quot;&gt;printf&lt;/code&gt;. &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The idea is to have a global shared ring buffer for logs with multiple
-writers in mind.&lt;/p&gt;
-
-&lt;p&gt;To avoid race conditions among the writers, the index is incremented
-atomically before doing each write. This is another example of a
-&lt;em&gt;reserve-and-then&lt;/em&gt; strategy.&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;trace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;seq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__atomic_fetch_add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tpos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;__ATOMIC_RELAXED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;uint32_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;seq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tmask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;tbuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;thread_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;tbuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;seq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;seq&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;tbuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In my &lt;a href=&quot;/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html&quot;&gt;previous post&lt;/a&gt;
-we saw that a write may not be visible to others until we need &lt;em&gt;commit&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;We don’t do this on purpose: if we add a kind of barrier/memory reorder
-we may be affecting the code under test and we may masking the bug.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mmkd-279a024733ed9ead498068a1e44e6e4e&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mmkd-279a024733ed9ead498068a1e44e6e4e&quot; class=&quot;margin-toggle&quot; /&gt;&lt;/p&gt;
-&lt;div id=&quot;mk-mmkd-279a024733ed9ead498068a1e44e6e4e&quot;&gt;&lt;span class=&quot;marginnote marginmarkdowncode&quot;&gt;&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;print pretty on
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; p &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;tpos - 5&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &amp;amp; tmask
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;gdb&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; p tbuf[&lt;span class=&quot;nv&quot;&gt;$]&lt;/span&gt;@5
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;Pretty print the last 5 entries&lt;/span&gt;&lt;/div&gt;
-&lt;div&gt;&lt;script&gt;$(document).ready(function () {$('#mk-mmkd-279a024733ed9ead498068a1e44e6e4e &gt; span').insertAfter($('#mmkd-279a024733ed9ead498068a1e44e6e4e'))});&lt;/script&gt;&lt;/div&gt;
-
-&lt;p&gt;Anyways the buffer is not read ever –it is a multiple-writers zero-readers
-buffer. This idea is to read the buffer from a debugger in a synchronous way
-so we should not have any race condition.&lt;/p&gt;
-
-&lt;h3 id=&quot;what-you-read-is-not-what-it-happen&quot;&gt;What you read is not what it happen&lt;/h3&gt;
-
-&lt;p&gt;Consider the following traced code:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;trace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;foo...&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;You may think that the trace is enough to know when &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; is called.&lt;/p&gt;
-
-&lt;p&gt;You may read&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;thread 1: foo...
-thread 2: foo...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;but what happen actually was that thread 2 called &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; before
-the thread 1:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// thread 1                         // thread 2&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;trace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;foo...&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-                                    &lt;span class=&quot;n&quot;&gt;trace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;foo...&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-                                    &lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Interleaving is possible, and no, you cannot use a mutex there.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mmkd-c4e79dfe919e5ac07386d2372ccb8ad0&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mmkd-c4e79dfe919e5ac07386d2372ccb8ad0&quot; class=&quot;margin-toggle&quot; /&gt;&lt;/p&gt;
-&lt;div id=&quot;mk-mmkd-c4e79dfe919e5ac07386d2372ccb8ad0&quot;&gt;&lt;span class=&quot;marginnote marginmarkdowncode&quot;&gt;&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;thread 1: begin foo...
-thread 2: begin foo...
-thread 2: end foo...
-thread 1: end foo...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;You may read this but...&lt;/span&gt;&lt;/div&gt;
-&lt;div&gt;&lt;script&gt;$(document).ready(function () {$('#mk-mmkd-c4e79dfe919e5ac07386d2372ccb8ad0 &gt; span').insertAfter($('#mmkd-c4e79dfe919e5ac07386d2372ccb8ad0'))});&lt;/script&gt;&lt;/div&gt;
-
-&lt;p&gt;Wrapping the code with two traces is a better alternative:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;trace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;begin foo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;trace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;end foo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;However you still cannot know if thread 1 called &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; before or after
-the thread 2.&lt;/p&gt;
-
-&lt;p&gt;If &lt;code class=&quot;highlighter-rouge&quot;&gt;trace()&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; are inline, the compiler/CPU may see
-this:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;tbuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tpos&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;begin foo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;foo_a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;foo_b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;tbuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tpos&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;end foo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;There is an obvious relationship between the first and the second
-trace instructions so &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;begin foo...&quot;&lt;/code&gt; happens before &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;end foo...&quot;&lt;/code&gt;
-but nothing prevents the compiler or the CPU to reorder the inline
-instructions from &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;So what could happen is:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// thread 1                         // thread 2&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;foo_a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;foo_b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;tbuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tpos&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;begin foo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-                                    &lt;span class=&quot;n&quot;&gt;tbuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tpos&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;begin foo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-                                    &lt;span class=&quot;n&quot;&gt;tbuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tpos&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;end foo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;tbuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tpos&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;end foo&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-                                    &lt;span class=&quot;n&quot;&gt;foo_a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-                                    &lt;span class=&quot;n&quot;&gt;foo_b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So not only thread 1 called &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; &lt;em&gt;before&lt;/em&gt; thread 2 but even after
-the log entry &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;end foo&quot;&lt;/code&gt; the thread 2 &lt;em&gt;didn’t call&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; at all.&lt;/p&gt;
-
-&lt;p&gt;Sorry to say but you don’t have much options and whatever you choose
-it will affect the precision of the log or it will affect the behaviour
-of you code under debug.&lt;/p&gt;
-
-&lt;h2 id=&quot;automated-tools&quot;&gt;Automated tools&lt;/h2&gt;
-
-&lt;p&gt;This would be the holy grial but we are still far from a tool to detect
-race conditions in general.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://clang.llvm.org/docs/ThreadSanitizer.html&quot;&gt;Thread Sanitizer&lt;/a&gt;, also
-known as &lt;em&gt;tsan&lt;/em&gt;, goes in that direction.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://valgrind.org/docs/manual/hg-manual.html&quot;&gt;Helgrind&lt;/a&gt; has been
-for a while too.&lt;/p&gt;
-
-&lt;p&gt;This is a huge area to explore…&lt;/p&gt;
-
-&lt;h2 id=&quot;code&quot;&gt;Code&lt;/h2&gt;
-
-&lt;p&gt;Take at look how &lt;a href=&quot;https://github.com/eldipa/loki&quot;&gt;loki library’s&lt;/a&gt;
-debug facilities are implemented. It humbly supports tracing, mutexes and
-a compiled version with tsan.&lt;/p&gt;
-
-&lt;p&gt;Alternative methods are welcome!!&lt;/p&gt;
-
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Jeff Preshing’s &lt;a href=&quot;https://preshing.com/20120522/lightweight-in-memory-logging/&quot;&gt;lightweight logging&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Shameem Akhter and Jason Roberts’ &lt;a href=&quot;https://www.drdobbs.com/cpp/multithreaded-debugging-techniques/199200938?pgno=1&quot;&gt;multithreading debugging techniques&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;References were taken on May 1st.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">Debugging multithread code is hard and lock free algorithms is harder. What cleaver tricks can we use?</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">Could we design an architecture that allows us to have insight about the performance of the system? When you spend nights debugging searching where is the bottleneck, it is when you blame the you of the past for a so opaque and slow architecture. This is the proposal of a simple architecture that allows introspection and enables – too many times forgotten – basic optimizations.</summary></entry></feed>
