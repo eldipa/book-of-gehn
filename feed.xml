@@ -1,4 +1,291 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-05T03:19:21+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Review Arm Assembly</title><link href="/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly.html" rel="alternate" type="text/html" title="Review Arm Assembly" /><published>2021-01-04T00:00:00+01:00</published><updated>2021-01-04T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly.html">&lt;p&gt;There is no other way to learn something that playing with it.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-10T03:45:59+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">iasm: Interactive Assembler</title><link href="/book-of-gehn/articles/2021/01/09/Interactive-Assembler.html" rel="alternate" type="text/html" title="iasm: Interactive Assembler" /><published>2021-01-09T00:00:00+01:00</published><updated>2021-01-09T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/09/Interactive-Assembler</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/09/Interactive-Assembler.html">&lt;p&gt;I crossed with a series of &lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;Arm challenges&lt;/a&gt;
+by causality and I decided to give it a shoot.&lt;/p&gt;
+
+&lt;p&gt;But I have &lt;strong&gt;0&lt;/strong&gt; knowledge about Arm so the disassembly of the binaries
+were too strange for me.&lt;/p&gt;
+
+&lt;p&gt;I stepped back to plan it better: my idea was to use GDB to debug small snippets of Arm
+code, learn about it before jumping into the challenges.&lt;/p&gt;
+
+&lt;p&gt;I setup a &lt;a href=&quot;/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html&quot;&gt;QEMU virtual machine&lt;/a&gt;
+running Rasbian in an Arm CPU.&lt;/p&gt;
+
+&lt;p&gt;With a GCC and GDB running there I started but the compile-load-debug
+cycle was too inflexible.&lt;/p&gt;
+
+&lt;p&gt;I could not use it to &lt;em&gt;explore&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;If I wanted to see the effect of a particular instruction I needed to write
+it in assembly, compile it and debug it.&lt;/p&gt;
+
+&lt;p&gt;And the time between the “what does X?” and the “X does this” was too
+large, reducing the &lt;em&gt;momentum&lt;/em&gt; that you have when you explore something
+new.&lt;/p&gt;
+
+&lt;p&gt;Too tedious.&lt;/p&gt;
+
+&lt;p&gt;So I decided to shorten the cycle writing an
+&lt;a href=&quot;https://github.com/bad-address/iasm&quot;&gt;&lt;em&gt;interactive&lt;/em&gt; assembler&lt;/a&gt;.&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;first-try-gdb-as-the-engine&quot;&gt;First try: GDB as the engine&lt;/h2&gt;
+
+&lt;p&gt;GDB can manipulate the memory of the debuggee process. In particular we
+could write binary code, jump to it and execute it. Perfect.&lt;/p&gt;
+
+&lt;p&gt;But GDB doesn’t have a compiler for assembly.&lt;/p&gt;
+
+&lt;p&gt;Or has it?&lt;/p&gt;
+
+&lt;h3 id=&quot;keystone-engine&quot;&gt;Keystone engine&lt;/h3&gt;
+
+&lt;p&gt;No, but one can be implemented easily with
+&lt;a href=&quot;https://www.keystone-engine.org/&quot;&gt;keystone-engine&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Keystone takes assembly code and compiles it. Having Python bindings
+we could put this into a GDB plugin and &lt;em&gt;presto!&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;second-try-unicorn-engine&quot;&gt;Second try: Unicorn engine&lt;/h2&gt;
+
+&lt;p&gt;GDB requires a full operative
+system (Rasbian) running in a full emulated QEMU machine.&lt;/p&gt;
+
+&lt;p&gt;Can we make it lighter? – Yes we can.&lt;/p&gt;
+
+&lt;h3 id=&quot;unicorn-engine&quot;&gt;Unicorn engine&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.unicorn-engine.org/&quot;&gt;unicorn-engine&lt;/a&gt; it is a CPU emulator
+based on QEMU.&lt;/p&gt;
+
+&lt;p&gt;The trick is that Unicorn only emulates the CPU and memory and nothing
+else: no devices, disks or network cards.&lt;/p&gt;
+
+&lt;p&gt;Without anything to manage, Unicorn does not need an operative system
+making it a solution much lighter.&lt;/p&gt;
+
+&lt;p&gt;And better, the Python bindings for Unicorn gives us access to the CPU
+registers and memory so we can get rid of GDB.&lt;/p&gt;
+
+&lt;h2 id=&quot;iasm-keystone--unicorn--python&quot;&gt;iasm: keystone + unicorn + python&lt;/h2&gt;
+
+&lt;p&gt;I soon realized that while learning Arm by writing code is the best way
+to do it,
+writing &lt;em&gt;everything&lt;/em&gt; in assembly is hard.&lt;/p&gt;
+
+&lt;p&gt;Simple tasks like initialize the registers or print a chunk
+of stack involves several instructions.&lt;/p&gt;
+
+&lt;p&gt;In Python &lt;code class=&quot;highlighter-rouge&quot;&gt;r0 = 1111127999&lt;/code&gt;. In Arm:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lval&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lval&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;word&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1111127999&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So, &lt;a href=&quot;https://github.com/bad-address/iasm&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt;&lt;/a&gt; has an escape mode.
+Basically I call &lt;code class=&quot;highlighter-rouge&quot;&gt;eval&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt;
+emulating with Python variables like &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;M&lt;/code&gt; registers
+and memory.&lt;/p&gt;
+
+&lt;p&gt;And that’s &lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; an keystone assembler connected with a unicorn
+emulator and some python code to glue them.&lt;/p&gt;
+
+&lt;h2 id=&quot;features&quot;&gt;Features&lt;/h2&gt;
+
+&lt;h3 id=&quot;python-prompt-toolkit&quot;&gt;Python Prompt Toolkit&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://python-prompt-toolkit.readthedocs.io/en/latest/&quot;&gt;python-prompt-toolkit&lt;/a&gt;
+or PPT for short, is a library to build CLI applications.&lt;/p&gt;
+
+&lt;p&gt;It has syntax highlighting as you write (using &lt;a href=&quot;https://pygments.org/&quot;&gt;pygments&lt;/a&gt;),
+autocompletion and command line history.&lt;/p&gt;
+
+&lt;p&gt;An enhanced replacement for Python’s &lt;code class=&quot;highlighter-rouge&quot;&gt;input&lt;/code&gt; for sure.&lt;/p&gt;
+
+&lt;h3 id=&quot;memory&quot;&gt;Memory&lt;/h3&gt;
+
+&lt;p&gt;Unicorn has &lt;code class=&quot;highlighter-rouge&quot;&gt;mem_read&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;mem_write&lt;/code&gt; to change the memory of the
+process but like any other process, the memory pages need to be mapped
+before with &lt;code class=&quot;highlighter-rouge&quot;&gt;mem_map&lt;/code&gt; and released with &lt;code class=&quot;highlighter-rouge&quot;&gt;mem_unmap&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mem_map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mem_write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;A&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mem_read&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mem_unmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; has a more pythonic syntax accessible from the Python shell:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# map and initialize
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Mapping&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1fff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sz&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1050&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1055&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x41&lt;/span&gt;       &lt;span class=&quot;c1&quot;&gt;# write like 'memset'
+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1055&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x105a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'B'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# write like 'memcpy'
+&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1050&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x105a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# read
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AAAAABBBBB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# list mapped pages
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1fff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sz&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x11fffff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sz&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x200000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;del&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# unmap
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;allocate-stack&quot;&gt;Allocate stack&lt;/h3&gt;
+
+&lt;p&gt;To allocate the stack and setup the (Arm) registers just run:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Mapping&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1fff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sz&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, play with it and practice your (Arm) assembly:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And check the stack (was &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; pushed before &lt;code class=&quot;highlighter-rouge&quot;&gt;r1&lt;/code&gt; or not? Check it!)&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# from sp to the end of the mapped page
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x04&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x08&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;initialization-script&quot;&gt;Initialization script&lt;/h3&gt;
+
+&lt;p&gt;Write in a file all the initialization like the stack allocation and
+load it from the command line with &lt;code class=&quot;highlighter-rouge&quot;&gt;-i&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;';! r0 = r1 = r2 = 8'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; init
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;iasm &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; arm &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; arm &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; init
+Mapping memory region &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;0x1000000-0x11fffff] &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sz 0x200000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt;
+    r0  8  r1      8  r2      8  r3      0
+&amp;lt;...&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;inline-documentation&quot;&gt;Inline documentation&lt;/h3&gt;
+
+&lt;p&gt;Following the tradition of Python, &lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; includes documentation for the
+assembly instructions.&lt;/p&gt;
+
+&lt;p&gt;After the mnemonic type &lt;code class=&quot;highlighter-rouge&quot;&gt;?&lt;/code&gt; and enter to show it:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mul&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Basically what I did was to convert to text the manual of reference of
+the ISA (typically it is a PDF file) and then parse the text.&lt;/p&gt;
+
+&lt;p&gt;I only focused in the documentation of the instructions, the rest is up
+to the user to search the complete story in the official documentation
+(only Arm for now)&lt;/p&gt;
+
+&lt;h3 id=&quot;globs-registers&quot;&gt;Globs registers&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; allows to select which registers to show using &lt;em&gt;globs&lt;/em&gt;,
+Unix like pattern expressions defined by
+&lt;a href=&quot;https://docs.python.org/3/library/fnmatch.html&quot;&gt;fnmatch&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;iasm &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; arm &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; arm &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'r[0-9]'&lt;/span&gt;
+Mapping memory region &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;0x1000000-0x11fffff] &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sz 0x200000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -
+r0  0  r1     0  r2  0  r3  0
+r4  0  r5     0  r6  0  r7  0
+r8  0  r9/sb  0
+&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -
+&amp;lt;...&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So the expression &lt;code class=&quot;highlighter-rouge&quot;&gt;r[0-9]&lt;/code&gt; selects all the Arm registers from &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to
+&lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;compressed-hex-values&quot;&gt;Compressed hex values&lt;/h3&gt;
+
+&lt;p&gt;32 bit numbers are too large to display (and 64 bit address are
+worse!).&lt;/p&gt;
+
+&lt;p&gt;Instead, &lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; shows them as &lt;em&gt;compressed&lt;/em&gt; hexadecimal numbers.&lt;/p&gt;
+
+&lt;p&gt;They are like hexadecimals but the number is split into 4-digits groups
+divided by a &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The leading zeros of each group are omitted and if the group is full of
+zeros only a single &lt;code class=&quot;highlighter-rouge&quot;&gt;0&lt;/code&gt; is put and if the group is on the left (more
+significant digits), the whole group is omitted.&lt;/p&gt;
+
+&lt;p&gt;Here are some examples:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0x00000000             0
+0x000000ab            ab
+0x00ab00cd         ab:cd
+0x00ab0000          ab:0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;!-- stuff --&gt;
+
+&lt;script&gt;
+function fix_asm_syntax(ev) {
+    // pip install selectq
+    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
+    //   div = sQ.select('div', attr('class').contains('language-nasm'))
+    //   xpath = div.select('span', cond)
+
+    // Make some instructions &quot;keywords&quot;
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn')]&quot;;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.add('k'); // keyword
+        el.classList.remove('n'); // noun
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-python')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fix_asm_syntax);
+&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">I crossed with a series of Arm challenges by causality and I decided to give it a shoot. But I have 0 knowledge about Arm so the disassembly of the binaries were too strange for me. I stepped back to plan it better: my idea was to use GDB to debug small snippets of Arm code, learn about it before jumping into the challenges. I setup a QEMU virtual machine running Rasbian in an Arm CPU. With a GCC and GDB running there I started but the compile-load-debug cycle was too inflexible. I could not use it to explore. If I wanted to see the effect of a particular instruction I needed to write it in assembly, compile it and debug it. And the time between the “what does X?” and the “X does this” was too large, reducing the momentum that you have when you explore something new. Too tedious. So I decided to shorten the cycle writing an interactive assembler.</summary></entry><entry><title type="html">Review Arm Assembly</title><link href="/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly.html" rel="alternate" type="text/html" title="Review Arm Assembly" /><published>2021-01-04T00:00:00+01:00</published><updated>2021-01-04T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly.html">&lt;p&gt;There is no other way to learn something that playing with it.&lt;/p&gt;
 
 &lt;p&gt;Take assembly code, read it and predice what will do. Then test it.&lt;/p&gt;
 
@@ -3062,213 +3349,4 @@ more than tools to solve the puzzle.&lt;/p&gt;
 
 &lt;p&gt;But do not relay in google/stackoverflow only: without searching a little
 from your side generic queries like &lt;em&gt;“ruby program consumes 100% CPU”&lt;/em&gt;
-will lead you to nowhere.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">executor.rb is a little program that starts and finishes other programs based on the needs of the system. It is expected to have one and only one executor.rb process running with little overhead. In one of the machines in the lab I found the opposite: two executor.rb instances and one of them running at top speed, consuming 100% of CPU. For the rest, the system was working properly so one of the executor.rb was doing its job. But what was the “twin evil” process doing with the CPU?</summary></entry><entry><title type="html">Reds and Blues Architecture</title><link href="/book-of-gehn/articles/2020/09/09/Reds-and-Blues-Architecture.html" rel="alternate" type="text/html" title="Reds and Blues Architecture" /><published>2020-09-09T00:00:00+02:00</published><updated>2020-09-09T00:00:00+02:00</updated><id>/book-of-gehn/articles/2020/09/09/Reds-and-Blues-Architecture</id><content type="html" xml:base="/book-of-gehn/articles/2020/09/09/Reds-and-Blues-Architecture.html">&lt;p&gt;Could we design an architecture that allows us to have insight about the
-performance of the system?&lt;/p&gt;
-
-&lt;p&gt;When you spend nights debugging searching where is the bottleneck, it is
-when you blame the you of the past for a so &lt;em&gt;opaque&lt;/em&gt; and slow architecture.&lt;/p&gt;
-
-&lt;p&gt;This is the proposal of a simple architecture that allows
-introspection and enables – too many times forgotten – basic
-optimizations.&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;a-case-of-study&quot;&gt;A case of study&lt;/h2&gt;
-
-&lt;p&gt;Imagine that we need to accept requests from a client and forward them
-to a server.&lt;/p&gt;
-
-&lt;p&gt;The server will do the real job and it will return us the result of the
-operation which we will store in a database.&lt;/p&gt;
-
-&lt;p&gt;But the server is stateful and processing the same request twice will
-corrupt the server.&lt;/p&gt;
-
-&lt;p&gt;It is our job to filter the duplicates out.&lt;/p&gt;
-
-&lt;p&gt;For that we use the same database to query if the given task was already
-seen or if it is a novel one.&lt;/p&gt;
-
-&lt;p&gt;The following pseudo-code shows the proposed solution:&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-c517aba0e777644668f87b82062240e3&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-c517aba0e777644668f87b82062240e3&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;max-width: 100%;&quot; class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/design/reds-and-blues-original.png&quot; /&gt;  &lt;br /&gt;Original design: a little messy with IO mixed with CPU bounded code.&lt;/span&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;req&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;receive_request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;h&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculate_hash&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;database&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;is_present&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# nothing else, drop duplicated
-&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;database&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create_new_request&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process_request_and_get_result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;database&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;save_result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;When we stress the code we found that it is just not fast enough.&lt;/p&gt;
-
-&lt;p&gt;The code uses different resources and all of them need to be up to the
-task.&lt;/p&gt;
-
-&lt;p&gt;Because there is no separation between them, it is hard to know where is
-the bottleneck.&lt;/p&gt;
-
-&lt;h2 id=&quot;reds-and-blues&quot;&gt;Reds and Blues&lt;/h2&gt;
-
-&lt;p&gt;We can refactor the code into several threads allowing each to interact
-with a single resource.&lt;/p&gt;
-
-&lt;p&gt;In particular we want to distinguish which threads do IO operations and which
-don’t.&lt;/p&gt;
-
-&lt;p&gt;The threads will communicate each other with queues.&lt;/p&gt;
-
-&lt;p&gt;The objective is &lt;em&gt;not&lt;/em&gt; to run code concurrently to booster the speed but
-to &lt;em&gt;make explicit the implicit&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;And the queues will provide us that insight.&lt;/p&gt;
-
-&lt;p&gt;But first, this is the diagram of the refactored code:&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;Split the code into 5 threads connected with queues. From left to right,
-up to down: R, H, N, P and S.
-&lt;br /&gt;
-Each thread and arrow is colored: reds for IO code and blues for CPU
-code.&lt;/span&gt;&lt;/figcaption&gt;&lt;img src=&quot;/book-of-gehn/assets/design/reds-and-blues-redesigned.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;Consider the queue between the thread that receives the requests (R) and
-the thread that calculates the hash of it (H).&lt;/p&gt;
-
-&lt;p&gt;If the queue starts to fill up that would mean that or we are receiving
-too many requests or that the hash is taking more than than expected.&lt;/p&gt;
-
-&lt;p&gt;The queue does not tell exactly where is the problem but &lt;em&gt;cuts and
-reduces&lt;/em&gt; the search area.&lt;/p&gt;
-
-&lt;p&gt;Some other examples:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;if the threads N’s and S’s queues are getting full, that may indicate
-a problem with the database. Slow queries? Slow disk?&lt;/li&gt;
-  &lt;li&gt;if instead the thread P is the bottleneck, then the server is the
-problem. Slow network? Too chatty protocol? A server-side problem?&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;the-queues&quot;&gt;The queues&lt;/h2&gt;
-
-&lt;p&gt;To make any insight the queues must track:&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-281f20833cb43e4fcb40920dfa571ba5&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-281f20833cb43e4fcb40920dfa571ba5&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;max-width: 60%;&quot; class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/design/comm/queues-stats.png&quot; /&gt;  &lt;br /&gt;Metrics: in and out over time, plus drops and queue's length. When
-two queues are connected, one of the metrics can be deduced from the
-other.&lt;/span&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;items pushed into the queue over time (throughput of the producer)&lt;/li&gt;
-  &lt;li&gt;items popped from the queue over time (throughput of the consumer)&lt;/li&gt;
-  &lt;li&gt;the occupancy of the queue (also known as the length of the queue)&lt;/li&gt;
-  &lt;li&gt;items dropped due the queue was full&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In a architecture where there are multiple queues, it is generally
-redundant to have a count of the items pushed and the items popped.&lt;/p&gt;
-
-&lt;p&gt;We could track only the items pushed and use that metric for the exit
-queue to estimate the items popped from the enter queue.&lt;/p&gt;
-
-&lt;p&gt;For example, if the thread H is pushing 10k items per second in the exit
-queue (that connects H with N), we can conclude that H is popping 10k items
-per seconds from its enter queue (that connects R with H).&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-7ab23d6394645fa9e0949d9dc148e056&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-7ab23d6394645fa9e0949d9dc148e056&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;max-width: 40%;&quot; class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/stuff/reallycoolstuff.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;For analyzing the performance
-&lt;a href=&quot;http://www.brendangregg.com/usemethod.html&quot;&gt;Brendan Gregg’s USE method&lt;/a&gt;
-states that every resource must be characterized by three metrics:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;utilization: average time that the resource was busy&lt;/li&gt;
-  &lt;li&gt;saturation: degree of extra work that the resource didn’t handle,
-often queued&lt;/li&gt;
-  &lt;li&gt;errors: well, that, errors, like drops.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;There are two categories of resources which differ in the definition of
-&lt;em&gt;utilization&lt;/em&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;IO resources, like network, disk: the utilization is the amount of
-time that the resource was busy.&lt;/li&gt;
-  &lt;li&gt;Capacity resources, like the memory: the utilization in this case is
-the amount of memory in use.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This is more generic way to analysis the performance of a system: using
-queues for statistics is a particular case.&lt;/p&gt;
-
-&lt;p&gt;But there is more…&lt;/p&gt;
-
-&lt;h2 id=&quot;batchbulk-for-free&quot;&gt;Batch/Bulk for free&lt;/h2&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-e52f0d894e8b298f95ffdd338fa34654&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-e52f0d894e8b298f95ffdd338fa34654&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;max-width: 60%;&quot; class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/design/comm/chatty.png&quot; /&gt;  &lt;br /&gt;Each message requires an encapsulation header and a &lt;em&gt;syscall&lt;/em&gt; to send it.
-Costs that you may per message; more messages means more you pay.&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The explicit queues allows to delay the processing but in exchange they
-allow to process the items in batch or bulk operations.&lt;/p&gt;
-
-&lt;p&gt;A classic example would be the database: instead of querying each time
-we could query every 1k items doing a single bulk operation.&lt;/p&gt;
-
-&lt;p&gt;For example, we could save 1k results in a single operation.&lt;/p&gt;
-
-&lt;p&gt;This not only save bandwidth with the database but also IO operations.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-5d01a65f89c4de875e29e386764cc57e&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-5d01a65f89c4de875e29e386764cc57e&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;max-width: 60%;&quot; class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/design/comm/less-chatty.png&quot; /&gt;  &lt;br /&gt;Less is more. Also it enables specific per-bundle compression.&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The communication with the server could be also improved. Instead of
-sending a request per work item, we could send them in packs: less
-messages going back and forward through the network it is always a good
-deal.&lt;/p&gt;
-
-&lt;p&gt;Less chatty communication means more time and space for the real data,
-a better channel utilization.&lt;/p&gt;
-
-&lt;h2 id=&quot;asynchronous-for-free&quot;&gt;Asynchronous for free&lt;/h2&gt;
-
-&lt;p&gt;And talking about network, sending a request and &lt;em&gt;waiting&lt;/em&gt; for the
-response is incredible slow.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-9d739157461ce1da740357d1ae16d884&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-9d739157461ce1da740357d1ae16d884&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;max-width: 60%;&quot; class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/design/comm/async.png&quot; /&gt;  &lt;br /&gt;While a bulk calls amortize the cost per message, asynchronous
-calls make more use of the capacity of the network so you can send
-more in the same time.&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;We can send the requests &lt;em&gt;asynchronously&lt;/em&gt; to the server without waiting
-for the responses, and receive them later.&lt;/p&gt;
-
-&lt;p&gt;This is perfectly possible because we put queues between who trigger the
-request (N) and who do something with the response (S).&lt;/p&gt;
-
-&lt;p&gt;The architecture supports asynchronous mechanisms out of the box.&lt;/p&gt;
-
-&lt;h2 id=&quot;everything-is-violet&quot;&gt;Everything is violet&lt;/h2&gt;
-
-&lt;p&gt;We categorized the threads in threads with high IO and threads with high
-CPU but it is important to highlight the fact that all the threads are
-running in the same machine with &lt;strong&gt;shared&lt;/strong&gt; resources.&lt;/p&gt;
-
-&lt;p&gt;A CPU thread could end up doing a lot of IO because the system ran out
-of memory and it is swapping.&lt;/p&gt;
-
-&lt;p&gt;A IO thread that sends requests to the network may use a lot of CPU because
-the serialization of the request is expensive.&lt;/p&gt;
-
-&lt;p&gt;The queues provide insight but they must be taken as a complement of
-other metrics of the system.&lt;/p&gt;
-
-&lt;p&gt;At the end, everything is tainted with reds &lt;em&gt;and&lt;/em&gt; blues.&lt;/p&gt;
-
-&lt;h2 id=&quot;further-readings&quot;&gt;Further readings&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.brendangregg.com/usemethod.html&quot;&gt;Brendan Gregg’s USE method&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=K9w2cipqfvc&quot;&gt;Performance Analysis: The USE Method&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">Could we design an architecture that allows us to have insight about the performance of the system? When you spend nights debugging searching where is the bottleneck, it is when you blame the you of the past for a so opaque and slow architecture. This is the proposal of a simple architecture that allows introspection and enables – too many times forgotten – basic optimizations.</summary></entry></feed>
+will lead you to nowhere.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">executor.rb is a little program that starts and finishes other programs based on the needs of the system. It is expected to have one and only one executor.rb process running with little overhead. In one of the machines in the lab I found the opposite: two executor.rb instances and one of them running at top speed, consuming 100% of CPU. For the rest, the system was working properly so one of the executor.rb was doing its job. But what was the “twin evil” process doing with the CPU?</summary></entry></feed>

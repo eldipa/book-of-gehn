@@ -72,6 +72,42 @@
     
        <span class="index-single-post">
           <hr class="slender post-layout">
+          <a href="/book-of-gehn/articles/2021/01/09/Interactive-Assembler.html"><h2 class="larger">iasm: Interactive Assembler</h2></a>
+          <br><span class="smaller">January 9, 2021</span>  <br/>
+          <div><p>I crossed with a series of <a href="https://github.com/azeria-labs/ARM-challenges">Arm challenges</a>
+by causality and I decided to give it a shoot.</p>
+
+<p>But I have <strong>0</strong> knowledge about Arm so the disassembly of the binaries
+were too strange for me.</p>
+
+<p>I stepped back to plan it better: my idea was to use GDB to debug small snippets of Arm
+code, learn about it before jumping into the challenges.</p>
+
+<p>I setup a <a href="/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html">QEMU virtual machine</a>
+running Rasbian in an Arm CPU.</p>
+
+<p>With a GCC and GDB running there I started but the compile-load-debug
+cycle was too inflexible.</p>
+
+<p>I could not use it to <em>explore</em>.</p>
+
+<p>If I wanted to see the effect of a particular instruction I needed to write
+it in assembly, compile it and debug it.</p>
+
+<p>And the time between the “what does X?” and the “X does this” was too
+large, reducing the <em>momentum</em> that you have when you explore something
+new.</p>
+
+<p>Too tedious.</p>
+
+<p>So I decided to shorten the cycle writing an
+<a href="https://github.com/bad-address/iasm"><em>interactive</em> assembler</a>.</p>
+
+</div>
+       </span>
+    
+       <span class="index-single-post">
+          <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2021/01/04/Review-Arm-Assembly.html"><h2 class="larger">Review Arm Assembly</h2></a>
           <br><span class="smaller">January 4, 2021</span>  <br/>
           <div><p>There is no other way to learn something that playing with it.</p>
