@@ -1,4 +1,252 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-15T22:54:52+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing-ARM-Stack-for-Fun - Part I</title><link href="/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html" rel="alternate" type="text/html" title="Smashing-ARM-Stack-for-Fun - Part I" /><published>2021-01-14T00:00:00+01:00</published><updated>2021-01-14T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html">&lt;p&gt;This is the first of a serie of posts about exploiting 32 bits Arm
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-18T03:11:26+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part II</title><link href="/book-of-gehn/articles/2021/01/17/Smashing-ARM-Stack-for-Fun-Part-II.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part II" /><published>2021-01-17T00:00:00+01:00</published><updated>2021-01-17T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/17/Smashing-ARM-Stack-for-Fun-Part-II</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/17/Smashing-ARM-Stack-for-Fun-Part-II.html">&lt;p&gt;This is going to be a fast moving post, directly to the details,
+about exploiting the &lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;second Arm challenge&lt;/a&gt;&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;распределение-стека&quot;&gt;Распределение стека&lt;/h2&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x104b0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104b4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104b8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104bc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104c0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x54&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;0x58 bytes are allocated where 0x54 bytes belong to the current stack
+frame.&lt;/p&gt;
+
+&lt;p&gt;The first two words are allocated by &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and the rest by &lt;code class=&quot;highlighter-rouge&quot;&gt;sub&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;00&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# &amp;lt;-- from sp to the end of the mapped page
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;
+  &lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;more&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rows&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;full&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;zeros&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cookie&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-|--&amp;gt;&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x8&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;----|--&amp;gt;&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;--&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;base&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stack&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;проверка-аргументов&quot;&gt;Проверка аргументов&lt;/h2&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-5f1b73cfdf736e197a64538d2da896f0&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-5f1b73cfdf736e197a64538d2da896f0&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;errx&lt;/code&gt; prints a message to the standard error output and then makes
+the program exit.
+&lt;br /&gt;
+See &lt;a href=&quot;https://linux.die.net/man/3/errx&quot;&gt;man errx&lt;/a&gt;
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;argc&lt;/code&gt; is expected to be 1 otherwise the program will &lt;strong&gt;not&lt;/strong&gt; jump
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;errx&lt;/code&gt; will be called.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;mh&quot;&gt;0x104c4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104c8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104cc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bne&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;44&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;44&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x104d0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104d4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x5c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104d8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;errx&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;errx&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x104dc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;44&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-795a8969e99a4639da80888a1ab5197e&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-795a8969e99a4639da80888a1ab5197e&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;As mentioned in a &lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html&quot;&gt;previous post&lt;/a&gt;,
+when &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; is used for indexing
+the &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; is the address of the current about-to-be-executed instruction
+&lt;em&gt;plus&lt;/em&gt; 8 bytes.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Let’s see  &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr r1, [pc, #0x5c]&lt;/code&gt; which translates to 0x104d4 + 0x5c + 0x8:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10538&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x10538&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;136&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x000105bc&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bs&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x000105bc&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x105bc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;        &lt;span class=&quot;s&quot;&gt;&quot;please specify an argument&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;переполнение-буфера&quot;&gt;Переполнение буфера&lt;/h2&gt;
+
+&lt;p&gt;A cookie is stored in the stack with a value of zero. Then &lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt;
+is loaded into &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;amp;argv[0]&lt;/code&gt; if you want.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; instruction moves &lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt; pointer 4 bytes forward. In other
+words, &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt; &lt;em&gt;points&lt;/em&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;argv[1]&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Finally the pointer is dereferenced and &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt; &lt;em&gt;has&lt;/em&gt; the &lt;code class=&quot;highlighter-rouge&quot;&gt;argv[1]&lt;/code&gt;
+pointer.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x104dc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;44&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104e0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;48&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104e4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x54&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104e8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;56&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104ec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[r3]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Like in the &lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html&quot;&gt;previous challenge&lt;/a&gt;,
+begin of the buffer for &lt;code class=&quot;highlighter-rouge&quot;&gt;strcpy&lt;/code&gt;
+is 4 bytes below the pushed arguments and has a size of 64 bytes
+(0x48 bytes minus 4 bytes for the pushed &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; and 4 bytes for the
+cookie)&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;mh&quot;&gt;0x104f0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x48&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;
+  &lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;----|--&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AAAA&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;BBBB&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;CCCC&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;13&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;more&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rows&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;full&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;zeros&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cookie&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-|--&amp;gt;&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x8&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;----|--&amp;gt;&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally the call to &lt;code class=&quot;highlighter-rouge&quot;&gt;strcpy&lt;/code&gt; is made:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;mh&quot;&gt;0x104f4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;68&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104f8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;72&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104fc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strcpy&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strcpy&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;сравнение&quot;&gt;Сравнение&lt;/h2&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10500&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10504&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;84&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x30&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10508&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;88&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1050c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;92&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;bne&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;108&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;108&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The cookie is loaded from the stack and compared with the value
+stored in the code segment at 0x10504 + 0x30 + 0x8:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1053c&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x1053c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;140&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x61626364&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The good old &lt;code class=&quot;highlighter-rouge&quot;&gt;'abcd'&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;'dcba'&lt;/code&gt; to be more precise due the endianess
+of the machine.&lt;/p&gt;
+
+&lt;p&gt;A byte by byte inspection may make this more explicit:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1053c&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x1053c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;140&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x64&lt;/span&gt;    &lt;span class=&quot;mh&quot;&gt;0x63&lt;/span&gt;    &lt;span class=&quot;mh&quot;&gt;0x62&lt;/span&gt;    &lt;span class=&quot;mh&quot;&gt;0x61&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;наша-цель-branch-at-0x1050c-not-taken&quot;&gt;Наша цель (branch at 0x1050c &lt;strong&gt;not&lt;/strong&gt; taken):&lt;/h2&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10510&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10510&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;96&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x28&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10514&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x10518&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;      &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;124&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;124&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10540&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x10540&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;144&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x000105d8&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bs&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x000105d8&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x105d8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;        &lt;span class=&quot;s&quot;&gt;&quot;you have correctly got the variable to the right value&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;неудача-branch-at-0x1050c-is-taken&quot;&gt;Неудача (branch at 0x1050c &lt;strong&gt;is&lt;/strong&gt; taken):&lt;/h2&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;108&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1051c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;108&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10520&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;112&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10524&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;116&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10528&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10544&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x10544&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;148&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x00010610&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bs&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x00010610&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x10610&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;        &lt;span class=&quot;s&quot;&gt;&quot;Try again, you got 0x%08x&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;эпилог&quot;&gt;Эпилог&lt;/h2&gt;
+
+&lt;p&gt;We reach here regardless of which path the branch at 0x1050c jumped to:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;124&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1052c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;124&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10530&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10534&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;132&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;pop&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;атака&quot;&gt;Атака&lt;/h2&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./stack1 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdcba
+you have correctly got the variable to the right value
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;!-- stuff --&gt;
+
+&lt;script&gt;
+function fix_asm_syntax(ev) {
+    // pip install selectq
+    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
+    //   div = sQ.select('div', attr('class').contains('language-nasm'))
+    //   xpath = div.select('span', cond)
+
+    // Make some instructions &quot;keywords&quot;
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn')]&quot;;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.add('k'); // keyword
+        el.classList.remove('n'); // noun
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-python')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fix_asm_syntax);
+&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">This is going to be a fast moving post, directly to the details, about exploiting the second Arm challenge</summary></entry><entry><title type="html">Smashing ARM Stack for Fun - Part I</title><link href="/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part I" /><published>2021-01-14T00:00:00+01:00</published><updated>2021-01-14T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html">&lt;p&gt;This is the first of a serie of posts about exploiting 32 bits Arm
 binaries.&lt;/p&gt;
 
 &lt;p&gt;These &lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;challenges&lt;/a&gt; were
@@ -3103,356 +3351,4 @@ and n-gram sorting, and markedness subcategorizing”&lt;/em&gt;.&lt;/p&gt;
 &lt;blockquote&gt;
   &lt;p&gt;n-gram is used to denote the sequence of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; elements like words or
 POS tags while n-graph denotes sequences of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; characters.&lt;/p&gt;
-&lt;/blockquote&gt;</content><author><name>Gehn</name></author><summary type="html">A ghost writer is a person that writes a document, essay or paper but the work is presented by other person who claims to be the author. Detecting deterring ghostwritten papers is an article written by a (ex)ghost writer and explains what happens behind the scene when a student pays for this dark service. Would be possible to detect this in an automated way? Given a set of documents, could we determine of they were written or not by the person or people who claim to be the authors? This problem is known as authorship attribution and I will show a few papers that I read about this, in particular around the concept of stylometric, fingerprints that the real author leaves when he or she writes.</summary></entry><entry><title type="html">Kasiski Test - Part I</title><link href="/book-of-gehn/articles/2020/10/11/Kasiski-Test-Part-I.html" rel="alternate" type="text/html" title="Kasiski Test - Part I" /><published>2020-10-11T00:00:00+02:00</published><updated>2020-10-11T00:00:00+02:00</updated><id>/book-of-gehn/articles/2020/10/11/Kasiski-Test-Part-I</id><content type="html" xml:base="/book-of-gehn/articles/2020/10/11/Kasiski-Test-Part-I.html">&lt;p&gt;The tricky part of breaking the
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher&quot;&gt;Vigenere cipher&lt;/a&gt;
-consists in finding the length of the key.&lt;/p&gt;
-
-&lt;p&gt;We discussed this in the
-&lt;a href=&quot;/book-of-gehn/articles/2018/05/01/Breaking-Vigenere.html&quot;&gt;breaking Vigenere&lt;/a&gt;
-post.&lt;/p&gt;
-
-&lt;p&gt;In that occasion we used the
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Hamming_distance&quot;&gt;Hamming distance&lt;/a&gt; and
-the &lt;a href=&quot;/book-of-gehn/articles/2019/10/04/Index-of-Coincidence.html&quot;&gt;Index of Coincidence&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;But another method existed much before the development of the IC around 1922.&lt;/p&gt;
-
-&lt;p&gt;In 1863, Kasiski published a method to guess the length of the secret
-key, method that we know today as the
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Kasiski_examination&quot;&gt;Kasiski test&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Let’s explore a &lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert)&lt;/script&gt; solution with a worst case of
-&lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert^2)&lt;/script&gt;&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;the-naive-solution&quot;&gt;The naive solution&lt;/h2&gt;
-
-&lt;p&gt;The Kasiski test consists in finding repeated ngrams in the ciphertext
-and measure the distance between them.&lt;/p&gt;
-
-&lt;p&gt;If there are repeated ngram in the plaintext that were &lt;em&gt;leaked&lt;/em&gt; in the
-ciphertext, that means that the secret key was also repeated exactly in
-that part.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;                     repeated ngrams
-                /----------/-----------/
-    ptext:      69 63 65 20 69 63 65 20 62 61 62 79
-    kstream:    73 6F 6E 67 73 6F 6E 67 73 6F 6E 67  (key = 73 6F 6E 67)
-    ctext:      1A 0C 0B 47 1A 0C 0B 47 11 0E 0C 1E
-                \----------\-----------\
-                     repeated ngrams
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-7aa1bda5b4adf142e467684892c97b5d&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-7aa1bda5b4adf142e467684892c97b5d&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;It is perfectly possible to find repeated ngrams randomly,
-just by luck. Those are the “exceptions”.
-&lt;br /&gt;
-I will talk about that in the second-part post.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;With some exceptions, the distance between two repeated ngrams in
-the ciphertext must be then a multiple of the length of the key.&lt;/p&gt;
-
-&lt;p&gt;But for a particular ngram of length &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt;, finding all the repeated
-ngrams requires scan the whole string, an effort of
-&lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert)&lt;/script&gt;, proportional to the size of the input string.&lt;/p&gt;
-
-&lt;p&gt;Repeating the process for all the ngrams of length &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; yields
-&lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert^2)&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;And that’s only for &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt;. Repeating everything again for
-the ngrams of length &lt;code class=&quot;highlighter-rouge&quot;&gt;n+1&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;n+2&lt;/code&gt; and so
-on blows up quickly to &lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert^3)&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;No no, we can improve this.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-strategy&quot;&gt;The strategy&lt;/h2&gt;
-
-&lt;h3 id=&quot;as_ngram_repeated_positions-algorithm&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;as_ngram_repeated_positions&lt;/code&gt; algorithm&lt;/h3&gt;
-
-&lt;p&gt;We build the list of &lt;em&gt;all&lt;/em&gt; repeated ngrams of length &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; using
-hashing in &lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert)&lt;/script&gt; and not &lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert^2)&lt;/script&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;merge_overlaping-algorithm&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;merge_overlaping&lt;/code&gt; algorithm&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-b1a4c559712afcfe68a3cc14a228a82b&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-b1a4c559712afcfe68a3cc14a228a82b&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;This is an example of
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Dynamic_programming&quot;&gt;dynamic
-programming&lt;/a&gt;.
-Take a look of
-&lt;a href=&quot;assets/kasiski/MatthewBerntsenBUThesis.7z&quot;&gt;Automating the Cracking of Simple Ciphers, by Matthew C. Berntsen&lt;/a&gt;
-for a similar idea.
- &lt;a href=&quot;assets/kasiski/perf_kasiski.py&quot;&gt;&lt;i class=&quot;fab fa-github&quot;&gt;&lt;/i&gt; code&lt;/a&gt;
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Then, we build the list of the repeated ngrams of length &lt;code class=&quot;highlighter-rouge&quot;&gt;n+1&lt;/code&gt;
-&lt;em&gt;reusing&lt;/em&gt; the finding of the previous step.&lt;/p&gt;
-
-&lt;p&gt;This will require &lt;script type=&quot;math/tex&quot;&gt;O(g)&lt;/script&gt; where &lt;script type=&quot;math/tex&quot;&gt;g&lt;/script&gt; is the size of the list built in the
-previous step.&lt;/p&gt;
-
-&lt;p&gt;While &lt;script type=&quot;math/tex&quot;&gt;O(g) = O(\vert s \vert)&lt;/script&gt; in the worst case, it is expected to
-find &lt;em&gt;very few&lt;/em&gt; repeated ngrams of length &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; so in the practice
-&lt;script type=&quot;math/tex&quot;&gt;O(g) \ll O(\vert s \vert)&lt;/script&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;deltas_from_positions-algorithm&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;deltas_from_positions&lt;/code&gt; algorithm&lt;/h3&gt;
-
-&lt;p&gt;The distances between the ngrams found can also be found in &lt;script type=&quot;math/tex&quot;&gt;O(g)&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;The naive implementation would require &lt;script type=&quot;math/tex&quot;&gt;O(g^2)&lt;/script&gt; but we can improve it
-a little.&lt;/p&gt;
-
-&lt;h3 id=&quot;frequency_of_deltas-algorithm-aka-the-main&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;frequency_of_deltas&lt;/code&gt; algorithm (aka the main)&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;frequency_of_deltas&lt;/code&gt; will combine all the previous algorithms.&lt;/p&gt;
-
-&lt;p&gt;It can be done roughly in
-&lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert) + O(g^m)&lt;/script&gt; where &lt;script type=&quot;math/tex&quot;&gt;m&lt;/script&gt; is the count of iterations that we
-repeat &lt;code class=&quot;highlighter-rouge&quot;&gt;merge_overlaping&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;In the worst case, &lt;script type=&quot;math/tex&quot;&gt;O(g^m)&lt;/script&gt; behaves as &lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert^2)&lt;/script&gt; and
-&lt;code class=&quot;highlighter-rouge&quot;&gt;frequency_of_deltas&lt;/code&gt; will be quadratic.&lt;/p&gt;
-
-&lt;p&gt;But as we said, we don’t expect to find many repeated ngrams so the term
-&lt;script type=&quot;math/tex&quot;&gt;O(g^m)&lt;/script&gt; will be negligible and &lt;code class=&quot;highlighter-rouge&quot;&gt;frequency_of_deltas&lt;/code&gt; will remain linear.&lt;/p&gt;
-
-&lt;p&gt;We have the strategy, now we need the correct tools.&lt;/p&gt;
-
-&lt;h2 id=&quot;data-structures&quot;&gt;Data structures&lt;/h2&gt;
-
-&lt;p&gt;We will use the following data structures:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;dictionaries: with &lt;script type=&quot;math/tex&quot;&gt;O(1)&lt;/script&gt; for insertion or update of a key.&lt;/li&gt;
-  &lt;li&gt;lists: with &lt;script type=&quot;math/tex&quot;&gt;O(1)&lt;/script&gt; for append and &lt;script type=&quot;math/tex&quot;&gt;O(n)&lt;/script&gt; for iteration.&lt;/li&gt;
-  &lt;li&gt;default-dictionaries: like the dictionaries but with the handy
-shortcut to create and add an entry in the dictionary if the key
-requested is not present.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Python is not the fastest language but it has all the tools needed.&lt;/p&gt;
-
-&lt;p&gt;Let’s start!&lt;/p&gt;
-
-&lt;h2 id=&quot;repeating-ngram-list---as_ngram_repeated_positions-algorithm&quot;&gt;Repeating ngram list - &lt;code class=&quot;highlighter-rouge&quot;&gt;as_ngram_repeated_positions&lt;/code&gt; algorithm&lt;/h2&gt;
-
-&lt;p&gt;We are interested in to find all the positions of every single repeated
-ngram in the text.&lt;/p&gt;
-
-&lt;p&gt;Focus only on the ngrams of 2 characters for now.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-8c277780c7574cdaab2a355d0f29039e&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-8c277780c7574cdaab2a355d0f29039e&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/kasiski/kasiski_scan_count.png&quot; /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;We need to count how many instances of the same ngram are, so we can
-know which are unique; and we need to track their position, so
-we can later know the distance between them.&lt;/p&gt;
-
-&lt;p&gt;Storing every ngram instance in memory is expensive (for a 2 characters
-ngram you will have to store twice the source string).&lt;/p&gt;
-
-&lt;p&gt;A simple solution is to use an id: different ngrams will have different
-ids while the instances of the &lt;em&gt;same&lt;/em&gt; ngram will have the same id.&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img style=&quot;max-width:45%;&quot; src=&quot;/book-of-gehn/assets/kasiski/kasiski_scan_positions.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;The following Python fragment summarizes the above:&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# input: s, the original text
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id_of_ngram&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ngram_cnt_by_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defaultdict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ngram_cnt_by_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# id==0 is reserved for deletions, see later
-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ngram&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;enumerate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ngrams&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
-    &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id_of_ngram&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setdefault&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ngram&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id_of_ngram&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ngram_cnt_by_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-3dfbcfb6f6d4f6825eea9bcbb994fbfe&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-3dfbcfb6f6d4f6825eea9bcbb994fbfe&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/kasiski/as_ngram_repeated_positions.png&quot; /&gt;  &lt;br /&gt;Input-size/time-taken relationship of &lt;code class=&quot;highlighter-rouge&quot;&gt;as_ngram_repeated_positions&lt;/code&gt;.
- &lt;a href=&quot;assets/kasiski/perf_kasiski.py&quot;&gt;&lt;i class=&quot;fab fa-github&quot;&gt;&lt;/i&gt; code&lt;/a&gt;
-&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;For a string of &lt;script type=&quot;math/tex&quot;&gt;\vert s \vert&lt;/script&gt; characters the algorithm generates
-a list of &lt;script type=&quot;math/tex&quot;&gt;\vert s \vert&lt;/script&gt;
-tuples. If chosen the data structures correctly, the algorithm runs
-in &lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert)&lt;/script&gt; (linear time and space).&lt;/p&gt;
-
-&lt;p&gt;One final step remains: once we have the list we need to filter out
-any unique ngram (those that have a counter of less than 2).&lt;/p&gt;
-
-&lt;p&gt;This is also linear.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;
-                      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ngram_cnt_by_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img style=&quot;max-width:60%;&quot; src=&quot;/book-of-gehn/assets/kasiski/kasiski_scan_count_filter.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;The final result is a list of tuples &lt;code class=&quot;highlighter-rouge&quot;&gt;(position, id)&lt;/code&gt; with the
-positions of the ngrams and their identifiers &lt;em&gt;sorted&lt;/em&gt; by their
-position.&lt;/p&gt;
-
-&lt;p&gt;The algorithm can be generalized to find all the non-unique ngrams of
-length &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; changing &lt;code class=&quot;highlighter-rouge&quot;&gt;s.ngrams(2)&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;s.ngrams(n)&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The trick is how to build the list of ngrams of &lt;code class=&quot;highlighter-rouge&quot;&gt;n+1&lt;/code&gt;
-length &lt;em&gt;reusing&lt;/em&gt; the ngrams of length &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; found by the above algorithm.&lt;/p&gt;
-
-&lt;h2 id=&quot;superior-ngram-order---merge_overlaping-algorithm&quot;&gt;Superior ngram order - &lt;code class=&quot;highlighter-rouge&quot;&gt;merge_overlaping&lt;/code&gt; algorithm&lt;/h2&gt;
-
-&lt;p&gt;The idea is that two ngrams &lt;code class=&quot;highlighter-rouge&quot;&gt;g_1&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;g_2&lt;/code&gt; of &lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; characters
-at positions &lt;code class=&quot;highlighter-rouge&quot;&gt;p_1&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;p_2&lt;/code&gt; in the original string can be &lt;em&gt;merged&lt;/em&gt;
-and build a ngram of &lt;code class=&quot;highlighter-rouge&quot;&gt;n+1&lt;/code&gt; bytes at &lt;code class=&quot;highlighter-rouge&quot;&gt;p_1&lt;/code&gt; if and only if
-&lt;code class=&quot;highlighter-rouge&quot;&gt;p_1 + 1 == p_2&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;In other words, they are consecutive.&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img style=&quot;max-width:60%;&quot; src=&quot;/book-of-gehn/assets/kasiski/kasiski_merge.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;A merged ngram not necessary means that it is a repeated ngram but
-we know that any repeated ngram will be a merged one.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;id_of_ngram&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ngram_cnt_by_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defaultdict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ngram_cnt_by_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cur&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;enumerate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;zip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:])):&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;pcur&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cur&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;pnex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;nex&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pcur&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pnex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# delete later (index 0 is special)
-&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;# the id of the merged ngram is formed by the ids of the
-&lt;/span&gt;        &lt;span class=&quot;c1&quot;&gt;# original pair of ngrams.
-&lt;/span&gt;        &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id_of_ngram&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setdefault&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id_of_ngram&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-        &lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pcur&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# new ngram
-&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ngram_cnt_by_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# the last position P1 always is &quot;deleted&quot; because there is
-# not P2 such P1 + 1 == P2 *and* P1 &amp;lt; P2 (basically because there
-# are no more positions after P1)
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;During the scan we also count how many ngrams we built: unique
-ngrams are filtered later in linear time removing the false positives.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-0466b2ac93c53d43876c9893ceda0d57&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-0466b2ac93c53d43876c9893ceda0d57&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/kasiski/merge_overlaping.png&quot; /&gt;  &lt;br /&gt;Input-size/time-taken relationship of &lt;code class=&quot;highlighter-rouge&quot;&gt;merge_overlaping&lt;/code&gt;.
- &lt;a href=&quot;assets/kasiski/perf_kasiski.py&quot;&gt;&lt;i class=&quot;fab fa-github&quot;&gt;&lt;/i&gt; code&lt;/a&gt;
-&lt;/span&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;
-                      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ngram_cnt_by_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;merge_overlaping&lt;/code&gt; is a linear operation in terms of the initial &lt;code class=&quot;highlighter-rouge&quot;&gt;pos_sorted&lt;/code&gt;
-list not in terms of the length of the input strings.&lt;/p&gt;
-
-&lt;p&gt;In the practice this means that &lt;code class=&quot;highlighter-rouge&quot;&gt;merge_overlaping&lt;/code&gt; – &lt;script type=&quot;math/tex&quot;&gt;O(g)&lt;/script&gt; – will be
-faster than &lt;code class=&quot;highlighter-rouge&quot;&gt;as_ngram_repeated_positions&lt;/code&gt; – &lt;script type=&quot;math/tex&quot;&gt;O(\vert s \vert)&lt;/script&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;computing-the-gaps---deltas_from_positions-algorithm&quot;&gt;Computing the gaps - &lt;code class=&quot;highlighter-rouge&quot;&gt;deltas_from_positions&lt;/code&gt; algorithm&lt;/h2&gt;
-
-&lt;p&gt;Now that we have the position of each repeated ngram we want to
-calculate the distance between them.&lt;/p&gt;
-
-&lt;p&gt;We are interested in the distance between the &lt;em&gt;same&lt;/em&gt; ngrams.&lt;/p&gt;
-
-&lt;p&gt;This is because we assume that the same repeated ngram in a ciphertext
-is due the encryption of the same plaintext &lt;em&gt;and&lt;/em&gt; the repeating key of
-Vigenere was aligned.&lt;/p&gt;
-
-&lt;p&gt;The distance should be then a multiple of the length of the key.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-2c67b39cb16460c7f5e089e831cf95e4&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-2c67b39cb16460c7f5e089e831cf95e4&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/kasiski/kasiski_pos_grouped.png&quot; /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# group first
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos_grouped&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defaultdict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;pos_grouped&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# compute the gaps later
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delta_stats&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;positions&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos_grouped&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;zip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;positions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;positions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]))&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;delta_stats&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-46e954f537e253f23e73044c8610e9aa&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-46e954f537e253f23e73044c8610e9aa&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img class=&quot;fullwidth&quot; alt=&quot;&quot; src=&quot;/book-of-gehn/assets/kasiski/kasiski_distances.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;We simplify the maths and calculate then the difference
-between &lt;em&gt;consecutive&lt;/em&gt; positions for a given ngram.&lt;/p&gt;
-
-&lt;p&gt;We assume that difference between non-consecutive values will yield a
-multiple of the previous shorter difference hence it will be also a
-multiple of the key length.&lt;/p&gt;
-
-&lt;p&gt;In other words, calculating the “multiple of the multiple” does not add any
-new information.&lt;/p&gt;
-
-&lt;h2 id=&quot;frequency-of-deltas---frequency_of_deltas-algorithm&quot;&gt;Frequency of deltas - &lt;code class=&quot;highlighter-rouge&quot;&gt;frequency_of_deltas&lt;/code&gt; algorithm&lt;/h2&gt;
-
-&lt;p&gt;Basically we put all the algorithms to work together:&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as_ngram_repeated_positions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;delta_stats&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;deltas_from_positions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delta_stats&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;merge_overlaping&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos_sorted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Here are some examples using
-&lt;a href=&quot;https://pypi.org/project/cryptonita/&quot;&gt;cryptonita&lt;/a&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;cryptonita&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;cryptonita.stats.kasiski&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;frequency_of_deltas&lt;/span&gt;
-
-&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'ABCDBCDABCDBC'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;frequency_of_deltas&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})]&lt;/span&gt;
-
-&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'1A0C0B471A0C0B47110E0C1E'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;encoding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;frequency_of_deltas&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In the last example the first &lt;code class=&quot;highlighter-rouge&quot;&gt;Counter&lt;/code&gt; is for the ngrams
-&lt;code class=&quot;highlighter-rouge&quot;&gt;1A 0C 0B&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;0C 0B 47&lt;/code&gt; where found repeated at a distance of 4 once
-each one (2 in total). The second &lt;code class=&quot;highlighter-rouge&quot;&gt;Counter&lt;/code&gt; is for &lt;code class=&quot;highlighter-rouge&quot;&gt;1A 0C 0B 47&lt;/code&gt;
-repeated once at a distance of 4.&lt;/p&gt;
-
-&lt;p&gt;As predicted the expected effort is linear while the worst case is
-quadratic.&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;br /&gt;
-Expected case. &lt;code class=&quot;highlighter-rouge&quot;&gt;frequency_of_deltas&lt;/code&gt; has a linear response when
-the size of the input increase linearly.
- &lt;a href=&quot;assets/kasiski/perf_kasiski.py&quot;&gt;&lt;i class=&quot;fab fa-github&quot;&gt;&lt;/i&gt; code&lt;/a&gt;
-&lt;/span&gt;&lt;/figcaption&gt;&lt;img src=&quot;/book-of-gehn/assets/kasiski/frequency_of_deltas.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;br /&gt;
-Worst case. &lt;code class=&quot;highlighter-rouge&quot;&gt;frequency_of_deltas&lt;/code&gt; has a quadratic response when
-the size of the input increase linearly. Even with this result,
-it is better than cubic the naive implementation.
- &lt;a href=&quot;assets/kasiski/perf_kasiski.py&quot;&gt;&lt;i class=&quot;fab fa-github&quot;&gt;&lt;/i&gt; code&lt;/a&gt;
-&lt;/span&gt;&lt;/figcaption&gt;&lt;img src=&quot;/book-of-gehn/assets/kasiski/frequency_of_deltas_worst_case.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;h2 id=&quot;final-thoughts&quot;&gt;Final thoughts&lt;/h2&gt;
-
-&lt;p&gt;With &lt;code class=&quot;highlighter-rouge&quot;&gt;frequency_of_deltas&lt;/code&gt; we have the most likely difference or gap,
-gap that it should be a multiple of the length of the key.&lt;/p&gt;
-
-&lt;p&gt;But what if a repeated ngram happen just by luck?&lt;/p&gt;
-
-&lt;p&gt;That’s for the Part II.&lt;/p&gt;
-
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;/book-of-gehn/articles/2018/05/01/Breaking-Vigenere.html&quot;&gt;Breaking Vigenere&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;/book-of-gehn/articles/2019/10/04/Index-of-Coincidence.html&quot;&gt;Index of Coincidence&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://wiki.python.org/moin/TimeComplexity&quot;&gt;Python Time Complexity&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Dynamic_programming&quot;&gt;Dynamic Programming&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;assets/kasiski/MatthewBerntsenBUThesis.7z&quot;&gt;Automating the Cracking of Simple Ciphers, by Matthew C. Berntsen&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">The tricky part of breaking the Vigenere cipher consists in finding the length of the key. We discussed this in the breaking Vigenere post. In that occasion we used the Hamming distance and the Index of Coincidence. But another method existed much before the development of the IC around 1922. In 1863, Kasiski published a method to guess the length of the secret key, method that we know today as the Kasiski test. Let’s explore a solution with a worst case of</summary></entry></feed>
+&lt;/blockquote&gt;</content><author><name>Gehn</name></author><summary type="html">A ghost writer is a person that writes a document, essay or paper but the work is presented by other person who claims to be the author. Detecting deterring ghostwritten papers is an article written by a (ex)ghost writer and explains what happens behind the scene when a student pays for this dark service. Would be possible to detect this in an automated way? Given a set of documents, could we determine of they were written or not by the person or people who claim to be the authors? This problem is known as authorship attribution and I will show a few papers that I read about this, in particular around the concept of stylometric, fingerprints that the real author leaves when he or she writes.</summary></entry></feed>
