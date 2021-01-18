@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Smashing-ARM-Stack-for-Fun - Part I"
+title: "Smashing ARM Stack for Fun - Part I"
 ---
 
 This is the first of a serie of posts about exploiting 32 bits Arm
