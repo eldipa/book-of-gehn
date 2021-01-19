@@ -1,4 +1,166 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-18T03:11:26+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part II</title><link href="/book-of-gehn/articles/2021/01/17/Smashing-ARM-Stack-for-Fun-Part-II.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part II" /><published>2021-01-17T00:00:00+01:00</published><updated>2021-01-17T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/17/Smashing-ARM-Stack-for-Fun-Part-II</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/17/Smashing-ARM-Stack-for-Fun-Part-II.html">&lt;p&gt;This is going to be a fast moving post, directly to the details,
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-19T03:42:19+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part III</title><link href="/book-of-gehn/articles/2021/01/18/Smashing-ARM-Stack-for-Fun-Part-III.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part III" /><published>2021-01-18T00:00:00+01:00</published><updated>2021-01-18T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/18/Smashing-ARM-Stack-for-Fun-Part-III</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/18/Smashing-ARM-Stack-for-Fun-Part-III.html">&lt;p&gt;Another fast moving post
+about exploiting the &lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;third Arm challenge&lt;/a&gt;&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;setup&quot;&gt;Setup&lt;/h2&gt;
+
+&lt;p&gt;Stack allocation, not changes respect &lt;code class=&quot;highlighter-rouge&quot;&gt;stack0&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;stack1&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x104e4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104e8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104ec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104f0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104f4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x54&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Read of an environment variable named &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;GREENIE&quot;&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;mh&quot;&gt;0x104f8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x6c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104fc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getenv&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getenv&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1056c&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x1056c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;136&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x000105f4&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sb&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x000105f4&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x105f4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;        &lt;span class=&quot;s&quot;&gt;&quot;GREENIE&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The value is stored in the stack, loaded from it and
+then compared with 0. In other words the program checks if &lt;code class=&quot;highlighter-rouge&quot;&gt;getenv&lt;/code&gt;
+returned &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt; or not.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;mh&quot;&gt;0x10500&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10504&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10508&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1050c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bne&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;56&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;56&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;the-vulnerability&quot;&gt;The vulnerability&lt;/h2&gt;
+
+&lt;p&gt;Following the &lt;em&gt;taken&lt;/em&gt; branch we find the vulnerable &lt;code class=&quot;highlighter-rouge&quot;&gt;strcpy&lt;/code&gt; call
+that copies the content of the environment variable into a buffer in the
+stack.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1051c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;56&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10520&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0xc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10524&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x4c&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10528&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;68&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1052c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;72&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10530&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strcpy&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strcpy&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is the memory layout of the stack before the call to &lt;code class=&quot;highlighter-rouge&quot;&gt;strcpy&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xee&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xdd&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argc&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;----|--&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AAAA&lt;/span&gt;
+  &lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;BBBB&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;CCCC&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;13&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;more&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rows&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;full&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;garbage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cookie&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-----&amp;gt;&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;explicit&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-|--&amp;gt;&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xcc&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xcc&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xcc&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xcc&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;env_var&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x8&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;   \&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xbb&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;----|--&amp;gt;&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;xaa&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;After the call the cookie is checked against 0x0d0a0d0a:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;mh&quot;&gt;0x10534&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0xc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10538&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;84&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x34&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1053c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;88&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10540&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;92&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bne&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;108&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;108&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10574&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x10574&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;144&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x0d0a0d0a&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Following the path if the branch is &lt;strong&gt;not&lt;/strong&gt; taken:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;96&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10544&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;96&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x2c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10548&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x1054c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;      &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;124&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;124&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10578&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x10578&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;148&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x0001062c&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sb&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x0001062c&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x1062c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;        &lt;span class=&quot;s&quot;&gt;&quot;you have correctly modified the variable&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;the-solution&quot;&gt;The solution&lt;/h2&gt;
+
+&lt;p&gt;To win we need 0x40 bytes for padding and the cookie &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;\n\r\n\r&quot;&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ GREENIE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-en&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\r\n\r'&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; ./stack2
+you have correctly modified the variable
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;!-- stuff --&gt;
+
+&lt;script&gt;
+function fix_asm_syntax(ev) {
+    // pip install selectq
+    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
+    //   div = sQ.select('div', attr('class').contains('language-nasm'))
+    //   xpath = div.select('span', cond)
+
+    // Make some instructions &quot;keywords&quot;
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn')]&quot;;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.add('k'); // keyword
+        el.classList.remove('n'); // noun
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-python')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fix_asm_syntax);
+&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">Another fast moving post about exploiting the third Arm challenge</summary></entry><entry><title type="html">Smashing ARM Stack for Fun - Part II</title><link href="/book-of-gehn/articles/2021/01/17/Smashing-ARM-Stack-for-Fun-Part-II.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part II" /><published>2021-01-17T00:00:00+01:00</published><updated>2021-01-17T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/17/Smashing-ARM-Stack-for-Fun-Part-II</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/17/Smashing-ARM-Stack-for-Fun-Part-II.html">&lt;p&gt;This is going to be a fast moving post, directly to the details,
 about exploiting the &lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;second Arm challenge&lt;/a&gt;&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;распределение-стека&quot;&gt;Распределение стека&lt;/h2&gt;
@@ -2756,599 +2918,4 @@ configured:&lt;/p&gt;
   &lt;li&gt;&lt;a href=&quot;http://linux-ip.net/linux-ip/&quot;&gt;Linux IP&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.linuxjournal.com/content/linux-advanced-routing-tutorial&quot;&gt;Linux Advanced Routing Tutorial&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://theinvisiblethings.blogspot.com/2011/09/playing-with-qubes-networking-for-fun.html&quot;&gt;Playing with Qubes networking for fun&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">Qubes OS has an interesting network system to isolate more-or-less trusted application virtual machines (App) from absolute untrusted network VMs (Net). ⊕ These last ones have the drivers required to handle ethernet and wifi cards which expose them to a potentially deathly bug lurking in the drivers. An additional VM is put in the middle between App VMs and Net VMs. This absolute trusted proxy VM serves as a safe firewall (Proxy). In this post will explore how these VMs connect and how the packets are forwarded up and down along this chain of VMs.</summary></entry><entry><title type="html">TL;DR Stylometrics</title><link href="/book-of-gehn/articles/2020/11/12/TLDR-Stylometrics.html" rel="alternate" type="text/html" title="TL;DR Stylometrics" /><published>2020-11-12T00:00:00+01:00</published><updated>2020-11-12T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/11/12/TLDR-Stylometrics</id><content type="html" xml:base="/book-of-gehn/articles/2020/11/12/TLDR-Stylometrics.html">&lt;p&gt;A ghost writer is a person that writes a document, essay or paper but
-the work is presented by other person who &lt;em&gt;claims&lt;/em&gt; to be the author.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://thebestschools.org/resources/detecting-deterring-ghostwritten-papers-best-practices/&quot;&gt;Detecting deterring ghostwritten papers&lt;/a&gt;
-is an article written by a (ex)ghost writer and explains what happens
-behind the scene when a student pays for this &lt;em&gt;dark&lt;/em&gt; service.&lt;/p&gt;
-
-&lt;p&gt;Would be possible to detect this in an automated way?&lt;/p&gt;
-
-&lt;p&gt;Given a set of documents, could we determine of they were written or not
-by the person or people who claim to be the authors?&lt;/p&gt;
-
-&lt;p&gt;This problem is known as &lt;em&gt;authorship attribution&lt;/em&gt; and I will show a few
-papers that I read about this, in particular around the concept of
-&lt;em&gt;stylometric&lt;/em&gt;, fingerprints that the real author leaves when he or she
-writes.&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;application-papers&quot;&gt;Application papers&lt;/h2&gt;
-
-&lt;h3 id=&quot;who-wrote-the-15th-book-of-oz-an-application-of-multivariate-analysis-to-authorship-attribution&quot;&gt;&lt;em&gt;Who Wrote the 15th Book of Oz? An Application of Multivariate Analysis to Authorship Attribution&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-cb67d3fc3ea8c7900e2c19c6455b3c87&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-cb67d3fc3ea8c7900e2c19c6455b3c87&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-José Nilo G. Binongo
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;An application case for authorship attribution called also &lt;em&gt;a
-non-traditional method of attibuting authorship&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;The author categories several writings of the universe of Oz to
-determine the author of “The Royal Book of Oz” among two options: Lyman
-Frank Baum, the creator of the Oz universe and Ruth Plumly Thompson,
-a children’s writer that continued the work of Baum.&lt;/p&gt;
-
-&lt;p&gt;The feature selected was the frequency of the &lt;em&gt;functional words&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“Among the parts of speech, function words are made up of pronouns,
-auxiliary verbs, prepositions, conjunctions, determiners, and degree
-adverbs. These parts of speech have a more grammatical than
-lexical function.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Some functional words are more specific and inherent has more meaning
-(content). Depending of the book these may appear more or less.&lt;/p&gt;
-
-&lt;p&gt;Because the frequency depends of the content and not on the author,
-these “more specific” functional words are removed.&lt;/p&gt;
-
-&lt;p&gt;The author of the paper takes the top 50 of the most frequency
-functional words to remove these “too specific” words.&lt;/p&gt;
-
-&lt;p&gt;The 50 dimensionality is then mapped (reduced) to 2 using principal
-component analysis (PCA).&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;A very good paper.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;delta-for-middle-dutchauthor-and-copyist-distinction-in-walewein&quot;&gt;&lt;em&gt;Delta for Middle DutchAuthor and Copyist Distinction in Walewein&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-47b5c192238a83b00d58d7e388fd5e25&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-47b5c192238a83b00d58d7e388fd5e25&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-Karina van Dalen-Oskam and Joris van Zundert&lt;br /&gt;
-Huygens Instituut, The Hague, The Netherlands
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The Walewein text is known to be written by one author and then
-continued by a second author.&lt;/p&gt;
-
-&lt;p&gt;The authors of the paper used stylometric to determine where one author
-picked and continued the work of the former.&lt;/p&gt;
-
-&lt;p&gt;The authors decided to lemmatize the text.&lt;/p&gt;
-
-&lt;p&gt;Lemmatize a text means to take the words and rewrite them in a
-normalized way. For example words like “play, playing, played” are
-mapped to a single “play” verb.&lt;/p&gt;
-
-&lt;p&gt;Then they used Yule’s K and Burrows’ Delta metrics over a rolling window
-of 2000 lines of text.&lt;/p&gt;
-
-&lt;p&gt;Yule’s Characteristic K is a estimation of the richness of a text:
-text with a lot of repeated words are said to be less rich while the
-text with less repeated words &lt;em&gt;has more vocabulary&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;K is defines as:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;K = 10^4 \left( -\frac{1}{N} + \sum_{i = 1}^{N} V_i \left( \frac{i}{N} \right)^2 \right)&lt;/script&gt;
-
-&lt;p&gt;where &lt;script type=&quot;math/tex&quot;&gt;N&lt;/script&gt; is the count of words in a text and &lt;script type=&quot;math/tex&quot;&gt;V_i&lt;/script&gt; the number of words that
-appeared &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt; times.&lt;/p&gt;
-
-&lt;p&gt;Burrows’ Delta models a set of documents as a matrix.&lt;/p&gt;
-
-&lt;p&gt;Each document is modeled as a algebraic vector where each position
-represent a word and contains the frequency of that word.&lt;/p&gt;
-
-&lt;p&gt;The frequencies per document are normalizes so they sum up 1.&lt;/p&gt;
-
-&lt;p&gt;The vectors are then stacked forming a matrix having in each column the
-frequencies of a particular word in all the documents.&lt;/p&gt;
-
-&lt;p&gt;Each column is normalized such the mean or average of them is 0 and the
-standard deviation is 1. A procedure common in ML.&lt;/p&gt;
-
-&lt;p&gt;The Delta between to documents is then the Manhattan distance between
-their two vectors.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Interesting reading.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;survey-papers&quot;&gt;Survey Papers&lt;/h2&gt;
-
-&lt;h3 id=&quot;a-framework-for-authorship-identification-of-online-messages-writing-style-features-and-classification-techniques&quot;&gt;&lt;em&gt;A Framework for Authorship Identification of Online Messages: Writing-Style Features and Classification Techniques&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-b48ce9474da8f40658f5b76ff772b623&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-b48ce9474da8f40658f5b76ff772b623&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-Rong Zheng, Jiexun Li, Hsinchun Chen, and Zan Huang
-&lt;br /&gt;
-New York University, University of Arizona
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“key-word-based features are widely
-accepted to be ineffective in author identification in multiple-
-topic corpora”&lt;/em&gt; But there are exception if the content-words denotes a
-particular knowledge about a topic that could be correlated with the
-author.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;An example of this is the “Walewein” paper where the 100-150 most common words
-which are principally composed of content-words were able to
-distinguish the two authors of a text while the 1-50 most common
-words, principally function-words, were able to detect the scribes
-that also modified the text.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The paper summarizes the features used by several papers (2006):&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;lexical: average word/sentence length, vocabulary richness&lt;/li&gt;
-  &lt;li&gt;syntactic: freq of words, use of punctuation&lt;/li&gt;
-  &lt;li&gt;structural: paragraph length, indentation, greeting/farewell
-statements&lt;/li&gt;
-  &lt;li&gt;content-specific: freq of keywords&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The structural seems very interesting. Opening phrases (like
-“In my opinion I …”) could be very characteristic of the author.
-The use of listing (the ones that begin with &lt;code class=&quot;highlighter-rouge&quot;&gt;'-'&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;'*'&lt;/code&gt;) also.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Table 3 describes more of these in details.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“Structural features and
-content-specific features showed particular discriminating
-capabilities for authorship identification on online messages.
-SVM and neural networks outperformed C4.5 and neural
-networks significantly for the authorship-identification task.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Most of the cited papers analyze very small set of documents (~80)
-and a very small set of authors (~4).&lt;/p&gt;
-
-&lt;p&gt;Some exceptions have 300 or even 1200 documents and 7, 10 and 45
-authors.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Quite small&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;em&gt;“Content-specific features
-improved the performance of the three classifiers signifi-
-cantly for the English datasets […] e.g., some people preferred check
-as a payment method; some people mostly sell Microsoft products).”&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;I don’t think that this is true in general (like a characteristic of
-the author). The dataset used in the paper has a very broad topic so
-it is possible that some people wrote only about a sub topic and other
-people about another hence having the discriminant.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Very good paper to read it again.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;a-prototype-for-authorship-attribution-studies&quot;&gt;&lt;em&gt;A Prototype for Authorship Attribution Studies&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-a6f31899fcb4cbffa5658e393bd7c6d3&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-a6f31899fcb4cbffa5658e393bd7c6d3&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-Patrick Juola, John Sofko, Patrick Brennan
-&lt;br /&gt;
-Duquesne University
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;A survey of the current state of the art. It points to some other
-resources and shows some results but nothing concrete.&lt;/p&gt;
-
-&lt;p&gt;The authors proposes a three-phases “framework” to develop/research
-stylometrics: canonization, determination of the event set and
-statistical inference.&lt;/p&gt;
-
-&lt;p&gt;In short: extract text from the media, remove spurious noise and apply
-other kind of filtering/normalization (canonization); from there select
-the features to analyze and possible eliminate uninteresting events
-(determination) and finally perform a machine learning technique
-(inference).&lt;/p&gt;
-
-&lt;p&gt;A current practice these days.&lt;/p&gt;
-
-&lt;p&gt;The &lt;em&gt;Java Graphical Authorship Attribution Program&lt;/em&gt; or JGAAP program is
-mentioned.&lt;/p&gt;
-
-&lt;p&gt;A substantial part of the paper focus in uninteresting parts of JGAAP
-like the Graphical User Interface (GUI), saving/loading files and high
-level code description.&lt;/p&gt;
-
-&lt;h2 id=&quot;more-theoretical-like-papers&quot;&gt;More Theoretical-like Papers&lt;/h2&gt;
-
-&lt;h3 id=&quot;computational-constancy-measures-of-textsyules-k-and-rényis-entropy&quot;&gt;&lt;em&gt;Computational Constancy Measures of TextsYule’s K and Rényi’s Entropy&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-9a4c931ad2e89915322e8fd7ea82c154&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-9a4c931ad2e89915322e8fd7ea82c154&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-Kumiko Tanaka-Ishii, Shunsuke Aihara
-&lt;br /&gt;
-Kyushu University, JST-PRESTO, Gunosy Inc.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“A constancy measure for a natural language text is […] a computational
-measure that converges to a value for a certain amount of text and remains
-invariant for any larger size […], its value could be considered as a
-text characteristic.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Yule’s K is defined as&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;K = C \left( -\frac{1}{N} + \sum_{i = 1}^{imax} V(i,N) \left( \frac{i}{N} \right)^2 \right)&lt;/script&gt;
-
-&lt;!-- _a --&gt;
-
-&lt;p&gt;where &lt;script type=&quot;math/tex&quot;&gt;N&lt;/script&gt; is the total number of words in the text, &lt;script type=&quot;math/tex&quot;&gt;V(N)&lt;/script&gt; the number of
-distinct words, &lt;script type=&quot;math/tex&quot;&gt;V(i,N)&lt;/script&gt; the number of words that appear &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt; times and &lt;script type=&quot;math/tex&quot;&gt;imax&lt;/script&gt;
-the largest frequency of a word.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;We could use &lt;script type=&quot;math/tex&quot;&gt;N&lt;/script&gt; as &lt;script type=&quot;math/tex&quot;&gt;imax&lt;/script&gt; because for the &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt; that &lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
-imax &lt; i &lt;= N %]]&gt;&lt;/script&gt; the
-value of &lt;script type=&quot;math/tex&quot;&gt;V(i,N)&lt;/script&gt; is zero but using &lt;script type=&quot;math/tex&quot;&gt;imax&lt;/script&gt; directly is faster.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The constant &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt; was defined by Yule to &lt;script type=&quot;math/tex&quot;&gt;10^4&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;Golcher’s V is defines as &lt;script type=&quot;math/tex&quot;&gt;k/N&lt;/script&gt; where &lt;script type=&quot;math/tex&quot;&gt;N&lt;/script&gt; is the length of the string and &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt;
-the number of inner nodes of a Patricia suffix tree of the text.&lt;/p&gt;
-
-&lt;p&gt;The paper describes other metrics including &lt;script type=&quot;math/tex&quot;&gt;H_a&lt;/script&gt;, the
-Renyi Entropy, a generalization of the Shannon entropy defined as:&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;H_a(X) = \frac{1}{1-a} \textrm{log} \left( \sum_{\forall X} P(X)^a \right)&lt;/script&gt;
-
-&lt;!-- _a --&gt;
-
-&lt;p&gt;Where &lt;script type=&quot;math/tex&quot;&gt;a &gt;= 0&lt;/script&gt;, &lt;script type=&quot;math/tex&quot;&gt;a != 1&lt;/script&gt;, &lt;script type=&quot;math/tex&quot;&gt;P(X)&lt;/script&gt; the probability function of &lt;script type=&quot;math/tex&quot;&gt;X&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;When &lt;script type=&quot;math/tex&quot;&gt;a == 0&lt;/script&gt;, it reduces to &lt;script type=&quot;math/tex&quot;&gt;H_0(X) = 1 \textrm{log} \left( \sum_{\forall X} 1 \right)&lt;/script&gt; &lt;!-- _a --&gt;
-&lt;script type=&quot;math/tex&quot;&gt;H_0(X) = \textrm{log} ( |X| )&lt;/script&gt;  (aka indicates the number of distinct occurrences
-of &lt;script type=&quot;math/tex&quot;&gt;X&lt;/script&gt;)&lt;/p&gt;
-
-&lt;p&gt;When a approximates to 1 (limit), &lt;script type=&quot;math/tex&quot;&gt;H&lt;/script&gt; reduces to Shannon entropy.&lt;/p&gt;
-
-&lt;p&gt;For &lt;script type=&quot;math/tex&quot;&gt;H_2(X)&lt;/script&gt; the authors shown that &lt;em&gt;”[&lt;script type=&quot;math/tex&quot;&gt;H_2&lt;/script&gt;] immediately shows the
-essential equivalence to Yule’s K&lt;/em&gt;”&lt;/p&gt;
-
-&lt;p&gt;The authors shown empirically that &lt;script type=&quot;math/tex&quot;&gt;H_2&lt;/script&gt; converges to a value for texts of
-between &lt;script type=&quot;math/tex&quot;&gt;10^2&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;10^4&lt;/script&gt; words/characters depending of &lt;script type=&quot;math/tex&quot;&gt;H_2&lt;/script&gt; was defined for
-words or characters respectively.&lt;/p&gt;
-
-&lt;p&gt;The authors also shown that &lt;script type=&quot;math/tex&quot;&gt;H_2&lt;/script&gt; is not a good discriminant for
-authorship: &lt;em&gt;“Examining the nature of the convergent values
-revealed that K does not possess the discriminatory power
-of author identification as Yule had hoped.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;H_2&lt;/script&gt; or Yule’s Y converges fast so it could be applied to short
-terms. Defined as it was in the paper (for words and characters) it will
-not work for authorship attribution but it may work under a different
-feature set (input) instead of words/characters.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;cross-entropy-and-linguistic-typology&quot;&gt;&lt;em&gt;Cross-entropy and linguistic typology&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-1b94b4105603fbc0c879e45143c4bae1&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-1b94b4105603fbc0c879e45143c4bae1&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-Patrick Juola
-&lt;br /&gt;
-University of Oxford
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Describes briefly the application of the &lt;em&gt;cross-entroy&lt;/em&gt; for language
-categorization.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“Cross-entropy appears to be a meaningful and easy to measure method of
-determining “linguistic distance” that is more sensitive
-to variances in lexical choice, word usage, style, and syntax than
-conventional methods.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;understanding-and-explaining-delta-measures-for-authorship-attribution&quot;&gt;&lt;em&gt;Understanding and explaining Delta measures for authorship attribution&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-664d528323819d10d626a3b18d01af37&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-664d528323819d10d626a3b18d01af37&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-Stefan Evert, Thomas Proisl, Fotis Jannidis, Isabella Reger, Steffen Pielström, Christof Schöch and Thorsten Vitt
-&lt;br /&gt;
-Friedrich-Alexander-Universität Erlangen-Nürnberg and Julius-Maximilians-Universität Würzburg
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Describes and analyzes Burrows’ Delta distance based on the Manhattan
-distance and different variations of it including Euclidean, Linear and
-Cosine distances.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;A paper to review later if required.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;good-but-no-so-good-papers&quot;&gt;Good but no so good papers&lt;/h2&gt;
-
-&lt;h3 id=&quot;whos-at-the-keyboard-authorship-attribution-in-digital-evidence-investigations&quot;&gt;&lt;em&gt;Who’s At The Keyboard? Authorship Attribution in Digital Evidence Investigations&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-7f2d5b81fd11d24979a2de1ad87a167c&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-7f2d5b81fd11d24979a2de1ad87a167c&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-Carole E. Chaski.
-&lt;br /&gt;
-Institute for Linguistic Evidence, Inc
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The paper presents the results of some other researches. The one that
-scored the highest authorship attribution was:&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“counting particular errors or idiosyncrasies and inputting this into a
-statistical classification procedure &lt;a href=&quot;using&quot;&gt;…&lt;/a&gt; supported vector machines
-(SVM) and C4.5 analysis”&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;The paper names these as &lt;em&gt;“stylemarkers”&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;For stylometrics, the paper mentions references to other papers where
-they used
-&lt;em&gt;“word length, phrase length, sentence length, vocabulary frequency,
-distribution of words of different lengths”&lt;/em&gt; as features and SVM (with
-accuracy that oscillated between 46% and 100%), discriminant function analysis
-(accuracy between 87% and 89%) and using neural networks (accuracy 84%).&lt;/p&gt;
-
-&lt;p&gt;The dataset for the paper consisted on several writings from several
-authors about 10 different topics.&lt;/p&gt;
-
-&lt;p&gt;While the paper takes into consideration some biases like age and gender
-the 10 topics are to my opinion biased to “personal topics”.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“Describe a traumatic or terrifying event in your life and how you
-overcame it.”&lt;/em&gt; is an example.&lt;/p&gt;
-
-&lt;p&gt;The paper uses the ALIAS software and restricts the analysis of the
-samples to only &lt;em&gt;“punctuation, syntactic and lexical”&lt;/em&gt; features.&lt;/p&gt;
-
-&lt;p&gt;The punctuation consists of counting the &lt;em&gt;placement&lt;/em&gt; of the punctuation
-marks: at the end of clause (EOC), at the end of phrase (EOP) and in the
-middle of a word (like the dash in “re-invent” or the apostrophe in
-“don’”)&lt;/p&gt;
-
-&lt;p&gt;The author claims that this is &lt;em&gt;“slighter better performance”&lt;/em&gt; than the
-counting of the punctuation mark alone where the placement is ignored.&lt;/p&gt;
-
-&lt;p&gt;The syntactic structures refers to the way that a “common” construction
-deviates to an “uncommon” construction.&lt;/p&gt;
-
-&lt;p&gt;The “common/uncommon” are named “unmarked/marked” constructions. This is
-the technical name and “common/uncommon” are the names that I gave them
-due my lack of expertise in the topic.&lt;/p&gt;
-
-&lt;p&gt;A “common” (unmarked) construction could be “how old are you?”. In
-English we could say “old” and “young” but it is very common to use
-“old” for some reason. The “uncommon” (marked) would be “how young are
-you?”.&lt;/p&gt;
-
-&lt;p&gt;The “common/uncommon” does not limit to words but to phrases as well, no
-only in literal phrases but in the &lt;em&gt;syntax&lt;/em&gt; of these.&lt;/p&gt;
-
-&lt;p&gt;“the white house” follows the &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;adjetive&amp;gt; &amp;lt;noun&amp;gt;&lt;/code&gt; “common” pattern.&lt;/p&gt;
-
-&lt;p&gt;While it is clear that these “common/uncommon” feature could spot
-non-native writers, it is not very clear to me how to use it for
-authorship attribution in general.&lt;/p&gt;
-
-&lt;p&gt;Perhaps seeing repetitive patterns in the “uncommon” parts of a phrase?
-Like “the big white house” and “the white big house”: the order of the
-adjetives may leave a fingerprint of the author.&lt;/p&gt;
-
-&lt;p&gt;The last feature is lexical features (word lengths, and stuff like
-that). The paper distinguishes between functional and content
-words but use both.&lt;/p&gt;
-
-&lt;p&gt;These features (punctuation, syntactic and lexical) are extracted using
-ALIAS. Sadly it is a paid, closed source software (done by the author of
-the paper) and the dataset seems to be closed too.&lt;/p&gt;
-
-&lt;p&gt;For the “machine learning” part, the paper used linear
-discriminant function analysis (DFA).&lt;/p&gt;
-
-&lt;h3 id=&quot;determination-of-writing-styles-to-detect-similarities-in-digital-documents&quot;&gt;&lt;em&gt;Determination of writing styles to detect similarities in digital documents&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-9ccc45f89ad680ed51e1d714e206d0eb&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-9ccc45f89ad680ed51e1d714e206d0eb&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-Yohandri Ril Gil, Yuniet del Carmen Toll Palma, Eddy Fonseca Lahens
-&lt;br /&gt;
-University of Information Sciences, Havana
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The paper describes a stylometric mathematical model:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;frequency of stop words: articles, prepositions, adverbs and conjunctions.&lt;/li&gt;
-  &lt;li&gt;level of difficulty: what’s the &lt;em&gt;education level&lt;/em&gt; required to understand
-the text. It uses the Flesch-Kincaid index (English only).&lt;/li&gt;
-  &lt;li&gt;richness of vocabulary&lt;/li&gt;
-  &lt;li&gt;mean sentence length&lt;/li&gt;
-  &lt;li&gt;mean word length&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The authors claim that
-&lt;em&gt;“The proposed method for determining writing styles can be used in a
-scenario where it is necessary to describe documents whose authorship
-has been validated.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;But the “discussion and conclusions” section talks more about the
-underlying motivation for a person to do plagiarism than about the
-model.&lt;/p&gt;
-
-&lt;p&gt;They also claim&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“The extraction of the style vector marks the
-difference between authors, whether or not they cover the same topic. By
-applying the proposed mathematical model to a considerable set of documents,
-it was found that trends really do exist when it comes to drafting, and
-that such trends put a stamp of authenticity onto a document.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;In a personal opinion, I’m have my doubts about these statements based
-on the few numbers shown in the paper.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;stylometry-based-approach-for-detecting-writing-style-changes-in-literary-texts&quot;&gt;&lt;em&gt;Stylometry-based Approach for Detecting Writing Style Changes in Literary Texts&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-f8e1942b92f3abedb3baf092d6bf26b5&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-f8e1942b92f3abedb3baf092d6bf26b5&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-Helena Gómez-Adorno, Juan-Pablo Posadas-Duran, Germán Rios-Toledo, Grigori Sidorov, Gerardo Sierra
-&lt;br /&gt;
-Instituto Politécnico Nacional, Mexico; Universidad Nacional Autónoma de México, Mexico; Instituto Politécnico Nacional (IPN), Mexico; Centro Nacional de Investigación y Desarrollo Tecnológico, Mexico
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The paper compares the performance of different algorithms (Logistic Regression
-and two implementation of Support Vector Machine) and different sets of
-features (statistics like mean, average of word length, sentences
-length, punctuation and stop words among others) to classify
-writings of different authors.&lt;/p&gt;
-
-&lt;p&gt;The Figure 1 of the paper shows that&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;using SVM over punctuation feature only yields a very good results.&lt;/li&gt;
-  &lt;li&gt;using Logistic Regression as default for other combination of
-features yields very good results.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;While those are interesting facts, there is no clear evidence of it (a
-very small corpus was used).&lt;/p&gt;
-
-&lt;p&gt;The paper shows that some authors’ styles are more sensible to some
-features and algorithms than others.&lt;/p&gt;
-
-&lt;p&gt;From a total of 6 authors:&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“[Punctuation-based models] classified
-the writing stage of a work above 70% of the times
-for two authors […], [in the case of other two authors] 
-the combination
-of phraseology-and punctuation-based features obtained the best
-performance. The combination
-of all types of features obtained the best
-performance for [the remaining two authors]”&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;It doesn’t look solid.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;what-kicked-everything&quot;&gt;What kicked everything&lt;/h2&gt;
-
-&lt;h3 id=&quot;detecting-deterring-ghostwritten-papers-best-practices&quot;&gt;&lt;em&gt;Detecting deterring ghostwritten papers, best practices&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-3a83cf25a5fc5d5c304eb2a1b6131218&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-3a83cf25a5fc5d5c304eb2a1b6131218&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Authors:
-David A. Tomar (Ed Dante)
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://thebestschools.org/resources/detecting-deterring-ghostwritten-papers-best-practices/&quot;&gt;It is what started this.&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Classify the students paying for a ghost writer in three categories:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Non native language: students that they need to write an essay in a
-foreign language, let’s say English. The student knows that he/she will have
-more opportunities to succeed if the essay is written by a native
-English speaker.&lt;/li&gt;
-  &lt;li&gt;Composition/Research deficient students: students that, while they
-can speak and write in the target language, they have hard time to
-write an essay or doing the homework.&lt;/li&gt;
-  &lt;li&gt;Lazy students: they prefer to pay for a service instead of doing the
-work.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Detecting a ghost writer is hard and having solid proof of it is harder.&lt;/p&gt;
-
-&lt;p&gt;The best strategy is to disallow the possibility from the begin making
-the decision of hiring a ghost writer much expensive, riskier.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;In-class writing: the students write during the class so it is hard
-for a ghost writer to be there&lt;/li&gt;
-  &lt;li&gt;Multi-draft process: have a periodic review with the students and
-check the evolution of the essay/work.&lt;/li&gt;
-  &lt;li&gt;Personalization of the subject matter: use topics that are more
-personal and can be bind to the author. That part is important, the
-subject must be bound to the student in some verificable way
-otherwise a ghost writer could just write a personal subject about
-him/her!&lt;/li&gt;
-  &lt;li&gt;Original course materials: make the topic have something very unique.
-Don’t repeat yourself.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;These should be combined and adapted to the particular class.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Having 1o1 meetings with the students randomly chosen to discuss the
-implementation details of a work makes the “multi-draft process”
-scalable.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Exit interviews (interviews that happen when the student does a
-final submission) are an example of that.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;A very nice article to read.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;resources&quot;&gt;Resources&lt;/h2&gt;
-
-&lt;p&gt;NLTK’s &lt;a href=&quot;https://www.nltk.org/_modules/nltk/tokenize/punkt.html&quot;&gt;punkt&lt;/a&gt; module: Punkt Sentence Tokenizer&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“This tokenizer divides a text into a list of sentences
-by using an unsupervised algorithm to build a model for abbreviation
-words, collocations, and words that start sentences.  It must be
-trained on a large collection of plaintext in the target language
-before it can be used.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;“The NLTK data package includes a pre-trained Punkt tokenizer for
-English.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;It is used to determine when a period marks the end of a sentence and
-when it doesn’t and things like that.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://github.com/euske/pdfminer/&quot;&gt;PDFMiner&lt;/a&gt; (community): parser for PDF files&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://cligs.hypotheses.org/577&quot;&gt;Blog post&lt;/a&gt; that explains how to call R code from Python using the &lt;code class=&quot;highlighter-rouge&quot;&gt;rpy2&lt;/code&gt;
-module. In particular how to call the R package &lt;code class=&quot;highlighter-rouge&quot;&gt;stylo&lt;/code&gt; from Python&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://github.com/computationalstylistics/stylo&quot;&gt;Stylo&lt;/a&gt;: R package for stylometric analyses&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://github.com/evllabs/JGAAP&quot;&gt;JGAAP&lt;/a&gt;: Java Graphical Authorship Attribution Program is a tool to allow
-nonexperts to use cutting edge machine learning techniques on text
-attribution problems&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.nltk.org/&quot;&gt;NTLK&lt;/a&gt;: Natural Language Toolkit for Python&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://stanfordnlp.github.io/stanza/index.html&quot;&gt;Stanza&lt;/a&gt;: A Python NLP Package for Many Human Languages&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://github.com/chrisspen/weka&quot;&gt;Weka&lt;/a&gt;: a toolset/framework for ML like skilearn but with a GUI. It is
-very interesting.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://cschoel.github.io/nolds/nolds.html&quot;&gt;Nolds&lt;/a&gt;: Python package with algorithms to analyze random sequences (signals,
-market time series, text perhaps?)&lt;/p&gt;
-
-&lt;h2 id=&quot;some-other-resources&quot;&gt;Some other resources&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://github.com/Hassaan-Elahi/Writing-Styles-Classification-Using-Stylometric-Analysis&quot;&gt;Identifying Different Writing Styles in a Document Intrinsically Using Stylometric Analysis&lt;/a&gt;
-It is a single Python file with several metrics poorly documented.
-It could be useful to see the code for some cases because it has a lot
-of metrics, most of them mentioned in the paper of Zheng.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.turnitin.com/&quot;&gt;Turnitin&lt;/a&gt;: among other stuff, it has a plagiarism detection.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://aliastechnology.com&quot;&gt;ALIAS&lt;/a&gt; is program developed by Carole E.
-Chaski for &lt;em&gt;“lemmatizing, computing
-lexical frequency ranking, calculating lexical, sentential and text lengths,
-punctuation-edge counting, Part-Of-Speech-tagging (POS-tagging) , n-graph
-and n-gram sorting, and markedness subcategorizing”&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Sadly it is a paid, closed source software.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;n-gram is used to denote the sequence of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; elements like words or
-POS tags while n-graph denotes sequences of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; characters.&lt;/p&gt;
-&lt;/blockquote&gt;</content><author><name>Gehn</name></author><summary type="html">A ghost writer is a person that writes a document, essay or paper but the work is presented by other person who claims to be the author. Detecting deterring ghostwritten papers is an article written by a (ex)ghost writer and explains what happens behind the scene when a student pays for this dark service. Would be possible to detect this in an automated way? Given a set of documents, could we determine of they were written or not by the person or people who claim to be the authors? This problem is known as authorship attribution and I will show a few papers that I read about this, in particular around the concept of stylometric, fingerprints that the real author leaves when he or she writes.</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">Qubes OS has an interesting network system to isolate more-or-less trusted application virtual machines (App) from absolute untrusted network VMs (Net). ⊕ These last ones have the drivers required to handle ethernet and wifi cards which expose them to a potentially deathly bug lurking in the drivers. An additional VM is put in the middle between App VMs and Net VMs. This absolute trusted proxy VM serves as a safe firewall (Proxy). In this post will explore how these VMs connect and how the packets are forwarded up and down along this chain of VMs.</summary></entry></feed>
