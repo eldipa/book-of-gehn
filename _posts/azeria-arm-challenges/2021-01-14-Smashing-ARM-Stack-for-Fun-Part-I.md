@@ -43,7 +43,7 @@ of `gdb`.
 
 ```shell
 $ gdb-multiarch -q -x ~/scripts/pwndbg.gdbinit
-pwndbg> target extended-remote 9999
+pwndbg> target extended-remote :9999
 Remote debugging using <...>
 Reading /home/pi/stack0 from remote target...
 ```
