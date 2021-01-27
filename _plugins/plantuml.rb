@@ -44,8 +44,22 @@ module Jekyll
       conf = site.config['plantuml'] || {}
 
       jar = conf['jar'] || './plantuml.jar'
+      ditaajar = conf['ditaa-jar'] || './ditaa.jar'
+
       umlpath = conf['umlpath'] || 'uml'
       img_format = conf['format'] || 'svg'
+
+      unless ['svg'].include? img_format
+        puts "Invalid format for PlantumlBlock diagram #{img_format}"
+        raise "Error"
+      end
+
+      engine = @attributes['engine'] || 'plantuml'
+
+      unless ['plantuml', 'ditaa'].include? engine
+        puts "Invalid engine for PlantumlBlock diagram #{engine}"
+        raise "Error"
+      end
 
       name = Digest::MD5.hexdigest(text)
 
@@ -59,16 +73,12 @@ module Jekyll
           puts "File #{dst} already exists (#{File.size(dst)} bytes)"
         else
           FileUtils.mkdir_p(File.dirname(src))
-          File.open(src, 'w') { |f|
-            f.write("@startuml\n")
-            f.write(text)
-            f.write("\n@enduml")
-          }
-          r = system("java -Djava.awt.headless=true -jar #{jar} -tsvg #{src}")
-          if r.nil? || !r
-            puts "Plantuml ('#{jar}') failed (exit code #{$?})"
-            puts "Bogus snippet:"
-            puts text
+          if engine == 'plantuml'
+            process_input_with_plantuml(src, text, jar, img_format, dst)
+          elsif engine == 'ditaa'
+            process_input_with_ditaa(src, text, ditaajar, img_format, dst)
+          else
+            raise 'Error'
           end
           site.static_files << Jekyll::StaticFile.new(
             site, site.source, umlpath, fname
@@ -76,10 +86,75 @@ module Jekyll
           puts "File #{dst} created (#{File.size(dst)} bytes)"
         end
       end
+
       html = "<object align='middle' data='#{site.baseurl}/#{umlpath}/#{fname}' type='image/#{img_format}+xml'></object>"
       return [site, umlpath, fname, img_format, html]
     end
+
+    def process_input_with_plantuml(src, text, jar, img_format, dst)
+      File.open(src, 'w') { |f|
+        f.write("@startuml\n")
+        f.write(text)
+        f.write("\n@enduml")
+      }
+      args = "#{@attributes['args'] || ''}"
+      cmd = "java -Djava.awt.headless=true -jar #{jar} -t#{img_format} #{src} #{args}"
+      r = system(cmd)
+      if r.nil? || !r
+        puts "Plantuml ('#{jar}') failed (exit code #{$?})"
+        puts "Command: #{cmd}"
+        puts "Bogus snippet:"
+        puts text
+      end
+    end
+
+    def process_input_with_ditaa(src, text, jar, img_format, dst)
+      if img_format != 'svg'
+        raise "Error"
+      end
+
+      File.open(src, 'w') { |f|
+        f.write(text)
+      }
+
+      args = "#{@attributes['args'] || ''}"
+      cmd = "java -Djava.awt.headless=true -jar #{jar} --overwrite --transparent --svg #{src} #{args}"
+      r = system(cmd)
+      if r.nil? || !r
+        puts "Ditaa ('#{jar}') failed (exit code #{$?})"
+        puts "Command: #{cmd}"
+        puts "Bogus snippet:"
+        puts text
+      end
+      style = <<EOF
+        <style type='text/css'>
+            /* <![CDATA[ */
+                text {
+                      fill: black !important;
+                      font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace !important;
+                }
+                path {
+                      stroke-width: 1.5 !important;
+                }
+            /* ]]> */
+        </style>
+EOF
+
+      svg = File.read(dst)
+
+      r = / width='([0-9]*)'.*?height='([0-9]*)'.*?shape-rendering=/m
+      m = r.match(svg)
+      m = [m[1].to_i, m[2].to_i]
+
+      # fix at the moment of the load
+      fixbox = " viewBox='0 0 #{m[0]} #{m[1]}' shape-rendering="
+      svg.sub!(r, fixbox)
+
+      svg.sub!('<defs>', style + '<defs>')
+      File.write(dst, svg, mode: 'w')
+    end
   end
+  # https://css-tricks.com/scale-svg/
 
   class FullWidthPlantumlBlock < PlantumlBlock
     def render(context)

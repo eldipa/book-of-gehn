@@ -27,6 +27,8 @@ To an *external resource*:
 To a *local post*
 [Other implementations](/book-of-gehn/articles/2018/09/16/Ouroboros-Circular-Buffer.html)
 
+Link to a Asset
+For this [we can create a small C program](/book-of-gehn/assets/azeria-arm-challenges-assets/test-egg.c)
 
 ## Math / Latex
 
@@ -139,6 +141,9 @@ Highlight/Take home message
 
 State machine diagrams `marginplantuml` and `maincolumnplantuml`
 
+Use http://www.plantuml.com/plantuml/uml/ for testing online.
+
+
 {% marginplantuml caption:'Caption $$sm_1$$ and $$sm_2$$ (``ab``).' %}
 `
 @startuml
@@ -154,3 +159,19 @@ sm2 -> [*] : <math>\epsilon</math>
 @enduml
 `
 {% endmarginplantuml %}
+
+"Ditaa" diagrams **must** be explicitly set
+
+{% maincolumnplantuml engine: 'ditaa' args: '--no-shadows --no-separation' %}
+
+sp             sp+4           sp+8           sp+12
+ |              |              |              |
+ +--------------+--------------+--------------+--------------+
+ |    &argv0    |    &argv1    |    &argv2    |    &argv3    |  < stack
+ +-------+------+-------+------+-------+------+----(zero)----+
+         |              |              |
+   /-----/            /-/      /-------/
+   |                  |        |
+   V                  v        v
+   /bin/bash\x00      -c       echo 'pwn!'...
+{% endmaincolumnplantuml %}
