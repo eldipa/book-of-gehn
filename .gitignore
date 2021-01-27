@@ -7,3 +7,6 @@ assets/matasano/__pycache__/
 *.swp
 *.pyc
 uml
+
+# already in _posts folder
+assets/azeria-arm-challenges-assets
