@@ -34,7 +34,7 @@ stop:
 
 publish:
 	@sudo docker stop GehnPages || true
-	@sudo rm -Rf _site
+	@sudo rm -Rf _site uml/*
 	#@sudo docker run --rm -v `pwd`:/srv/jekyll ${DOCKERIMG} bundle exec jekyll build
 	@sudo docker run --rm -v `pwd`:/srv/jekyll ${DOCKERIMG} jekyll build
 	@[ -d _site ] || ( echo "Missing _site (source), aborting" && exit 1 )
@@ -42,6 +42,9 @@ publish:
 	@[ -d _public/.git ] || ( echo "Missing _public/.git (git repository), aborting" && exit 1 )
 	rm -Rf _public/*
 	cp -R _site/* _public
+	@grep -R '[0-9a-f]\{32\}\.svg' _public/articles/ | sed 's/^.*\([0-9a-z]\{32\}\.svg\).*$$/_public\/uml\/\1/g' - | sort -u > _tmp_uml_svg_in_articles
+	@find _public/uml/ -name '*.svg' | sort -u > _tmp_uml_svg_in_folder
+	@diff _tmp_uml_svg_in_articles _tmp_uml_svg_in_folder || ( echo "Mismatch in the uml/.svg files used in the articles and the ones stored in the _public/uml folder. Aborting" && exit 1 )
 	@grep -q -v -R 'OI/tb2g5khoRa5v3srldjQiPFqlbcFlnYpk99k0wEwE=' _public/ || ( echo "Draft are beign published. Aborting" && exit 1 )
 	@git diff --quiet _config.yml css/ fonts/ _includes/ js/ _layouts/ _plugins/ _sass/ ||  ( echo "Some 'root' folders are not commited. Commit them first before publishing. Aborting" && exit 1 )
 	( cd _public && git status )

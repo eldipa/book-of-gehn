@@ -140,6 +140,21 @@ module Jekyll
         </style>
 EOF
 
+      script = <<EOF
+      <script type="text/javascript">
+        <![CDATA[
+        // make all the "white" closed shapes transparent.
+        var paths = document.getElementsByTagName('path');
+        for (var i = 0; i < paths.length; i++) {
+            var path = paths[i];
+            if (path.getAttribute("fill") == "white") {
+                path.setAttribute("fill", "#ffffff00"); // transparent
+            }
+        }
+        ]]>
+    </script>
+EOF
+
       svg = File.read(dst)
 
       r = / width='([0-9]*)'.*?height='([0-9]*)'.*?shape-rendering=/m
@@ -150,7 +165,7 @@ EOF
       fixbox = " viewBox='0 0 #{m[0]} #{m[1]}' shape-rendering="
       svg.sub!(r, fixbox)
 
-      svg.sub!('<defs>', style + '<defs>')
+      svg.sub!('<defs>', script + style + '<defs>')
       File.write(dst, svg, mode: 'w')
     end
   end
