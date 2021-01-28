@@ -3,7 +3,19 @@
     xmlns='http://www.w3.org/2000/svg'
     viewBox='0 0 750 224' shape-rendering='geometricPrecision'
     version='1.0'>
-          <style type='text/css'>
+        <script type="text/javascript">
+        <![CDATA[
+        // make all the "white" closed shapes transparent.
+        var paths = document.getElementsByTagName('path');
+        for (var i = 0; i < paths.length; i++) {
+            var path = paths[i];
+            if (path.getAttribute("fill") == "white") {
+                path.setAttribute("fill", "#ffffff00"); // transparent
+            }
+        }
+        ]]>
+    </script>
+        <style type='text/css'>
             /* <![CDATA[ */
                 text {
                       fill: black !important;

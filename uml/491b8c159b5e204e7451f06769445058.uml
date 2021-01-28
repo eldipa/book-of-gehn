@@ -1,9 +1,0 @@
-
-                 sp points here
-                 |
-                 v                  ||
---- main --------+------ start --   ||
-AAAAAAAAA  addr1 | XXXXXXX      ... || bottom
---- ^ ----- ^ ---+--- ^ ---------   ||
-    |       |         |             ||
- padding    sp       egg
