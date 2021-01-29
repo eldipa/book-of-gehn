@@ -114,8 +114,8 @@ sp             sp+4           sp+8           sp+12
          |              |              |
    /-----/            /-/      /-------/
    |                  |        |
-   V                  v        v
-   /bin/bash\x00      -c       echo 'pwn!'...
+   v                  v        v
+  /bin/bash\x00       -c      echo 'pwn!'...
 {% endmaincolumnplantuml %}
 
 

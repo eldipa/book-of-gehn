@@ -42,7 +42,7 @@ publish:
 	@[ -d _public/.git ] || ( echo "Missing _public/.git (git repository), aborting" && exit 1 )
 	rm -Rf _public/*
 	cp -R _site/* _public
-	@grep -R '[0-9a-f]\{32\}\.svg' _public/articles/ | sed 's/^.*\([0-9a-z]\{32\}\.svg\).*$$/_public\/uml\/\1/g' - | sort -u > _tmp_uml_svg_in_articles
+	@grep -R '[0-9a-f]\{40\}\.svg' _public/articles/ | sed 's/^.*\([0-9a-z]\{40\}\.svg\).*$$/_public\/uml\/\1/g' - | sort -u > _tmp_uml_svg_in_articles
 	@find _public/uml/ -name '*.svg' | sort -u > _tmp_uml_svg_in_folder
 	@diff _tmp_uml_svg_in_articles _tmp_uml_svg_in_folder || ( echo "Mismatch in the uml/.svg files used in the articles and the ones stored in the _public/uml folder. Aborting" && exit 1 )
 	@grep -q -v -R 'OI/tb2g5khoRa5v3srldjQiPFqlbcFlnYpk99k0wEwE=' _public/ || ( echo "Draft are beign published. Aborting" && exit 1 )

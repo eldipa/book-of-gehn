@@ -62,6 +62,13 @@ module Jekyll
       end
 
       name = Digest::MD5.hexdigest(text)
+      pluginame = Digest::MD5.hexdigest(File.expand_path(File.dirname(__FILE__)))[0, 8] # first 8
+
+      # note: if this size changes, you need to change the Makefile
+      name = name + pluginame
+      if name.length != 40
+        raise "Error"
+      end
 
       fname = "#{name}.#{img_format}"
       src = File.join(site.source, umlpath, "#{name}.uml")
@@ -143,14 +150,16 @@ EOF
       script = <<EOF
       <script type="text/javascript">
         <![CDATA[
-        // make all the "white" closed shapes transparent.
-        var paths = document.getElementsByTagName('path');
-        for (var i = 0; i < paths.length; i++) {
-            var path = paths[i];
-            if (path.getAttribute("fill") == "white") {
-                path.setAttribute("fill", "#ffffff00"); // transparent
+        setTimeout(function() {
+            // make all the "white" closed shapes transparent.
+            var paths = document.getElementsByTagName('path');
+            for (var i = 0; i < paths.length; i++) {
+                var path = paths[i];
+                if (path.getAttribute("fill") == "white") {
+                    path.setAttribute("fill", "#ffffff00"); // transparent
+                }
             }
-        }
+        }, 1000);
         ]]>
     </script>
 EOF
