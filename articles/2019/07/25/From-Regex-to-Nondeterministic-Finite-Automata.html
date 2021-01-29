@@ -106,7 +106,7 @@ with the same <em>character</em> that was read.</p>
 <p>We represent this with a simple arrow connecting the two states
 labeled with the particular character.</p>
 
-<figure><figcaption><span></span></figcaption><object align="middle" data="/book-of-gehn/uml/85140f4b33a395426d5e9ae04871fcf9.svg" type="image/svg+xml"></object></figure>
+<figure><figcaption><span></span></figcaption><object align="middle" data="/book-of-gehn/uml/85140f4b33a395426d5e9ae04871fcf91c7ac9aa.svg" type="image/svg+xml"></object></figure>
 
 <p>A NFA allows the use of <em>epsilon</em> transitions or <script type="math/tex">\epsilon</script>-transitions
 for short.</p>
@@ -114,23 +114,23 @@ for short.</p>
 <p>A NFA moves from one state to another through a <script type="math/tex">\epsilon</script>-transition
 <em>without</em> reading any character: it represents the empty string match.</p>
 
-<figure><figcaption><span>We are going to drop the label in some cases for clarity in the following diagrams.</span></figcaption><object align="middle" data="/book-of-gehn/uml/468fccb5c5c3fb0b9858c8c7dfe2fe6d.svg" type="image/svg+xml"></object></figure>
+<figure><figcaption><span>We are going to drop the label in some cases for clarity in the following diagrams.</span></figcaption><object align="middle" data="/book-of-gehn/uml/468fccb5c5c3fb0b9858c8c7dfe2fe6d1c7ac9aa.svg" type="image/svg+xml"></object></figure>
 
 <h2 id="optional-match">Optional match</h2>
 
 <p>We this two simple definitions we can build an <em>optional match</em> represented
 in regex syntax as <code class="highlighter-rouge">a?</code></p>
 
-<figure><figcaption><span></span></figcaption><object align="middle" data="/book-of-gehn/uml/e56989c0413e9c751dd65be36f3d1c92.svg" type="image/svg+xml"></object></figure>
+<figure><figcaption><span></span></figcaption><object align="middle" data="/book-of-gehn/uml/e56989c0413e9c751dd65be36f3d1c921c7ac9aa.svg" type="image/svg+xml"></object></figure>
 
 <p>The optional part can be as complex as we want like another NFA, no necessary must
 be a simple <em>literal</em>.</p>
 
-<figure><figcaption><span>We represent any arbitrary complex construction as state machine (<script type="math/tex">sm_1</script>) defined elsewhere. We plug it using <script type="math/tex">\epsilon</script>-transitions and we make it <em>optional</em> using a third <script type="math/tex">\epsilon</script>-transition to <em>bypass</em> <script type="math/tex">sm_1</script>.</span></figcaption><object align="middle" data="/book-of-gehn/uml/66ea21dd221ffc4edd6b1e6b38bdc043.svg" type="image/svg+xml"></object></figure>
+<figure><figcaption><span>We represent any arbitrary complex construction as state machine (<script type="math/tex">sm_1</script>) defined elsewhere. We plug it using <script type="math/tex">\epsilon</script>-transitions and we make it <em>optional</em> using a third <script type="math/tex">\epsilon</script>-transition to <em>bypass</em> <script type="math/tex">sm_1</script>.</span></figcaption><object align="middle" data="/book-of-gehn/uml/66ea21dd221ffc4edd6b1e6b38bdc0431c7ac9aa.svg" type="image/svg+xml"></object></figure>
 
 <h2 id="concatenation-and-repetition-of-nfas">Concatenation and repetition of NFAs</h2>
 
-<p><label for="mf-1ea7e5fb62ccaeb5a03d2e05b8d46e62" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-1ea7e5fb62ccaeb5a03d2e05b8d46e62" class="margin-toggle " /><span class="marginnote "><object align="middle" data="/book-of-gehn/uml/9b612d3832cb1e6080081e4c404d4cb9.svg" type="image/svg+xml"></object>  <br />Concatenation of two state machines <script type="math/tex">sm_1</script> and <script type="math/tex">sm_2</script> (<code class="highlighter-rouge">ab</code> in regex syntax).</span></p>
+<p><label for="mf-7953ce294018b783e79fc8b87a818387" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-7953ce294018b783e79fc8b87a818387" class="margin-toggle " /><span class="marginnote "><object align="middle" data="/book-of-gehn/uml/9b612d3832cb1e6080081e4c404d4cb91c7ac9aa.svg" type="image/svg+xml"></object>  <br />Concatenation of two state machines <script type="math/tex">sm_1</script> and <script type="math/tex">sm_2</script> (<code class="highlighter-rouge">ab</code> in regex syntax).</span></p>
 
 <p>Two or more NFAs can be concatenated to match a <em>sequence</em> of submatches
 being linked one to the other using <script type="math/tex">\epsilon</script>-transitions.</p>
@@ -144,7 +144,7 @@ is made obvious in the diagrams:
 <p>As a extension, a NFA can be <em>link to a clone of itself</em>
 to match a sequence of <em>repeated</em> submatches. In regex syntax, <code class="highlighter-rouge">a{n}</code>.</p>
 
-<p><label for="mf-76d1091934e54c01dd071b61e269b557" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-76d1091934e54c01dd071b61e269b557" class="margin-toggle " /><span class="marginnote "><object align="middle" data="/book-of-gehn/uml/cc0ddf105fcc304d647ccf2a90bd7e35.svg" type="image/svg+xml"></object>  <br />Repetition of <script type="math/tex">sm_1</script> three times  (<code class="highlighter-rouge">a{3}</code> in regex syntax).</span></p>
+<p><label for="mf-009f3b16467f9a74363e2e04df78fdc7" class="margin-toggle ">⊕</label><input type="checkbox" id="mf-009f3b16467f9a74363e2e04df78fdc7" class="margin-toggle " /><span class="marginnote "><object align="middle" data="/book-of-gehn/uml/cc0ddf105fcc304d647ccf2a90bd7e351c7ac9aa.svg" type="image/svg+xml"></object>  <br />Repetition of <script type="math/tex">sm_1</script> three times  (<code class="highlighter-rouge">a{3}</code> in regex syntax).</span></p>
 
 <p>We say that the link is to a clone because technically a link to itself would
 end up in an <em>unbounded</em> loop and what we want instead is a <em>sequence</em> of
@@ -153,20 +153,20 @@ a <em>fixed size</em>.</p>
 <p>When the NFA links to itself, the loop matches an <em>unbounded</em> repetition,
 a <em>zero or more</em> or <em>klee</em> construction, the famous <code class="highlighter-rouge">a*</code>:</p>
 
-<figure><figcaption><span><em>Klee</em> construction of <script type="math/tex">sm_1</script> that accepts zero or more items. Notice the difference between this (link to itself) and the fixed repetition above (link to a clone).</span></figcaption><object align="middle" data="/book-of-gehn/uml/ea8cc4e1426452d6622c096c6ff4489c.svg" type="image/svg+xml"></object></figure>
+<figure><figcaption><span><em>Klee</em> construction of <script type="math/tex">sm_1</script> that accepts zero or more items. Notice the difference between this (link to itself) and the fixed repetition above (link to a clone).</span></figcaption><object align="middle" data="/book-of-gehn/uml/ea8cc4e1426452d6622c096c6ff4489c1c7ac9aa.svg" type="image/svg+xml"></object></figure>
 
 <p>The repetition can have different finite lower and higher bounds to form
 a <em>range</em> with a minimum and a maximum of repetitions <code class="highlighter-rouge">a{,2}</code> <code class="highlighter-rouge">a{2,4}</code>
 or with the higher limit unbounded <code class="highlighter-rouge">a{2,}</code> <code class="highlighter-rouge">a+</code>.</p>
 
-<figure><figcaption><span>Repeated at least 2 times, up to 4 times: is the combination of a fixed <code class="highlighter-rouge">a{2}</code> followed by an <em>up to</em> <code class="highlighter-rouge">a{,2}</code>.</span></figcaption><object align="middle" data="/book-of-gehn/uml/8c281cd7fb37e26e6bd52cd0d5733d64.svg" type="image/svg+xml"></object></figure>
+<figure><figcaption><span>Repeated at least 2 times, up to 4 times: is the combination of a fixed <code class="highlighter-rouge">a{2}</code> followed by an <em>up to</em> <code class="highlighter-rouge">a{,2}</code>.</span></figcaption><object align="middle" data="/book-of-gehn/uml/8c281cd7fb37e26e6bd52cd0d5733d641c7ac9aa.svg" type="image/svg+xml"></object></figure>
 
 <h2 id="union">Union</h2>
 
 <p>Finally, the <code class="highlighter-rouge">a|b</code> regex. As you may guessed, we stick two or
 more state machines using <script type="math/tex">\epsilon</script>-transitions.</p>
 
-<figure><figcaption><span>Disjunction/union of two state machines <script type="math/tex">sm_1</script> and <script type="math/tex">sm_2</script>.</span></figcaption><object align="middle" data="/book-of-gehn/uml/4f45cac08547b5cc6a65e75bb83f1de0.svg" type="image/svg+xml"></object></figure>
+<figure><figcaption><span>Disjunction/union of two state machines <script type="math/tex">sm_1</script> and <script type="math/tex">sm_2</script>.</span></figcaption><object align="middle" data="/book-of-gehn/uml/4f45cac08547b5cc6a65e75bb83f1de01c7ac9aa.svg" type="image/svg+xml"></object></figure>
 
 <h2 id="further-readings">Further readings</h2>
 

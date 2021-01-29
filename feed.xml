@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-28T23:21:23+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part VI</title><link href="/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part VI" /><published>2021-01-26T00:00:00+01:00</published><updated>2021-01-26T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html">&lt;p&gt;We have the same vulnerability than we have in
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-01-29T12:36:40+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part VI</title><link href="/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part VI" /><published>2021-01-26T00:00:00+01:00</published><updated>2021-01-26T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html">&lt;p&gt;We have the same vulnerability than we have in
 &lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-V.html&quot;&gt;stack4&lt;/a&gt;
 but this time we will make our own egg/shellcode.&lt;!--more--&gt;&lt;/p&gt;
 
@@ -96,7 +96,7 @@ other UNIX systems treat the &lt;code class=&quot;highlighter-rouge&quot;&gt;env
 
 &lt;p&gt;No problem! We can design a single array in the stack to fulfill both:&lt;/p&gt;
 
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/2f07df8e6afcd7cdcd72a2760a5ca3fb.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
+&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/ed64ad6ce4e7162edd7dbf8ce8e80e471c7ac9aa.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
 
 &lt;p&gt;In assembly this translates to:&lt;/p&gt;
 
@@ -286,7 +286,7 @@ inspect what syscalls are being called and with which parameters:&lt;/p&gt;
 &lt;p&gt;We can write the egg in the stack and then jump to it. The content
 of the stack should be:&lt;/p&gt;
 
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/491b8c159b5e204e7451f06769445058.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
+&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/491b8c159b5e204e7451f067694450581c7ac9aa.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;addr1&lt;/code&gt; is &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt;. But what value is?&lt;/p&gt;
 
