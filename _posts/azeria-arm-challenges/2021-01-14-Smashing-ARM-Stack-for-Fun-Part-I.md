@@ -12,6 +12,27 @@ from [Azeria Labs](https://azeria-labs.com).<!--more-->
 
 ## Setup
 
+{% marginmarkdowncode
+'
+For the records:
+```cpp
+qemu-system-arm
+  -M versatilepb
+  -cpu arm1176
+  -m 256
+  -drive "file=2020-12-02-raspios-buster-armhf-lite.img,if=none,index=0,media=disk,format=raw,id=disk0"
+  -device "virtio-blk-pci,drive=disk0,disable-modern=on,disable-legacy=off"
+  -net "user,hostfwd=tcp::3022-:22,hostfwd=tcp::9999-:9999"
+  -dtb versatile-pb-buster-5.4.51.dtb
+  -kernel kernel-qemu-5.4.51-buster
+  -append "root=/dev/vda2 panic=1"
+  -no-reboot
+  -net nic
+  -nographic
+```
+'
+'' %}
+
 Let's [spin a Rasbian](/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html)
 first. Make your to forward a port for the `ssh` and another for the
 `gdbserver` so we can connect to them from the host machine.
@@ -25,7 +46,8 @@ We will focus on `stack0` for now.
 $ file stack0
 stack0: ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV),
 dynamically linked, interpreter /lib/ld-linux-armhf.so.3,
-for GNU/Linux 2.6.32, BuildID[sha1]=1171fa6db1d5176af44d6d462427f8d244bd82c8,
+for GNU/Linux 2.6.32,
+BuildID[sha1]=1171fa6db1d5176af44d6d462427f8d244bd82c8,
 not stripped
 ```
 
