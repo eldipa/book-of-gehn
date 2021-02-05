@@ -78,6 +78,24 @@ from <a href="https://azeria-labs.com">Azeria Labs</a>.<!--more--></p>
 
 <h2 id="setup">Setup</h2>
 
+<p><label for="mmkd-689a865b48c7391b8cd07cb60dfc30a9" class="margin-toggle"> ⊕</label><input type="checkbox" id="mmkd-689a865b48c7391b8cd07cb60dfc30a9" class="margin-toggle" /></p>
+<div id="mk-mmkd-689a865b48c7391b8cd07cb60dfc30a9"><span class="marginnote marginmarkdowncode"><p>For the records:</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">qemu</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">arm</span>
+  <span class="o">-</span><span class="n">M</span> <span class="n">versatilepb</span>
+  <span class="o">-</span><span class="n">cpu</span> <span class="n">arm1176</span>
+  <span class="o">-</span><span class="n">m</span> <span class="mi">256</span>
+  <span class="o">-</span><span class="n">drive</span> <span class="s">"file=2020-12-02-raspios-buster-armhf-lite.img,if=none,index=0,media=disk,format=raw,id=disk0"</span>
+  <span class="o">-</span><span class="n">device</span> <span class="s">"virtio-blk-pci,drive=disk0,disable-modern=on,disable-legacy=off"</span>
+  <span class="o">-</span><span class="n">net</span> <span class="s">"user,hostfwd=tcp::3022-:22,hostfwd=tcp::9999-:9999"</span>
+  <span class="o">-</span><span class="n">dtb</span> <span class="n">versatile</span><span class="o">-</span><span class="n">pb</span><span class="o">-</span><span class="n">buster</span><span class="o">-</span><span class="mf">5.4.51</span><span class="p">.</span><span class="n">dtb</span>
+  <span class="o">-</span><span class="n">kernel</span> <span class="n">kernel</span><span class="o">-</span><span class="n">qemu</span><span class="o">-</span><span class="mf">5.4.51</span><span class="o">-</span><span class="n">buster</span>
+  <span class="o">-</span><span class="n">append</span> <span class="s">"root=/dev/vda2 panic=1"</span>
+  <span class="o">-</span><span class="n">no</span><span class="o">-</span><span class="n">reboot</span>
+  <span class="o">-</span><span class="n">net</span> <span class="n">nic</span>
+  <span class="o">-</span><span class="n">nographic</span>
+</code></pre></div></div></span></div>
+<div><script>$(document).ready(function () {$('#mk-mmkd-689a865b48c7391b8cd07cb60dfc30a9 > span').insertAfter($('#mmkd-689a865b48c7391b8cd07cb60dfc30a9'))});</script></div>
+
 <p>Let’s <a href="/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html">spin a Rasbian</a>
 first. Make your to forward a port for the <code class="highlighter-rouge">ssh</code> and another for the
 <code class="highlighter-rouge">gdbserver</code> so we can connect to them from the host machine.</p>
@@ -90,7 +108,8 @@ compiled for ARM for 32 bits, not stripped and dynamically linked.</p>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>file stack0
 stack0: ELF 32-bit LSB executable, ARM, EABI5 version 1 <span class="o">(</span>SYSV<span class="o">)</span>,
 dynamically linked, interpreter /lib/ld-linux-armhf.so.3,
-<span class="k">for </span>GNU/Linux 2.6.32, BuildID[sha1]<span class="o">=</span>1171fa6db1d5176af44d6d462427f8d244bd82c8,
+<span class="k">for </span>GNU/Linux 2.6.32,
+BuildID[sha1]<span class="o">=</span>1171fa6db1d5176af44d6d462427f8d244bd82c8,
 not stripped
 </code></pre></div></div>
 
