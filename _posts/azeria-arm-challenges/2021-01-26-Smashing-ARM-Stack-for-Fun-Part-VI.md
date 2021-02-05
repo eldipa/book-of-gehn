@@ -325,7 +325,7 @@ We can write the egg in the stack and then jump to it. The content
 of the stack should be:
 
 {% maincolumnplantuml engine: 'ditaa' args: '--no-shadows --no-separation' %}
-                 sp points here
+                 sp points here after func returned
                  |
                  v                  ||
 --- main --------+------ start --   ||
