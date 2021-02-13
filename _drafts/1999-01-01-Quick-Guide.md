@@ -175,3 +175,44 @@ sp             sp+4           sp+8           sp+12
    V                  v        v
    /bin/bash\x00      -c       echo 'pwn!'...
 {% endmaincolumnplantuml %}
+
+
+## Venn diagrams
+
+Draw overlapping circles. The keys are the labels and the values
+can be the size of the circle or an object that defines:
+ - the size of the circle or intersection   (mandatory)
+ - which other sets (labels) is the intersection of
+ - the colour (only applies to circles)
+
+<div id="venn"></div>
+<script>
+var setdefs = {
+    "Information": 12,
+    "Overlap":  12,
+    "Circles":  12,
+    "Redundancy": {sz: 4, sets: ["Information", "Overlap"]},
+    "Pie Charts": {sz: 4, sets: ["Information", "Circles"]},
+    "Eclipses":   {sz: 4, sets: ["Overlap", "Circles"]},
+    "Venn Diagrams": {sz: 2, sets: ["Information", "Overlap", "Circles"]},
+    "Mathematics": 8,
+    "Physics": {sz: 8},
+    "Music": {sz: 8, c: "#00ff00"},
+    "Cool Stuff": {sz: 2, sets: ["Mathematics", "Physics"]},
+};
+venn_diagram("#venn", setdefs);
+</script>
+
+`venn_diagram` receives a third argument that is a `VennDiagram` object
+so you can pre configure it. See
+[venn.js](https://github.com/benfred/venn.js/)
+
+The passed object will be modified by `venn_diagram` and it must **not**
+be reused for other `venn_diagram` calls.
+
+See examples of how to use a custom style with CSS and/or JS:
+
+[CSS example](https://github.com/benfred/venn.js/blob/master/examples/css_styled.html)
+[JS example](https://benfred.github.io/venn.js/examples/styled.html)
+
+**NOTE:** probably we could improve this in a future.
