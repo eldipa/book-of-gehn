@@ -46,6 +46,7 @@ module Jekyll
 
       plantumljar = conf['plantuml-jar'] || './plantuml.jar'
       ditaajar = conf['ditaa-jar'] || './ditaa.jar'
+      dotbin = conf['dot-bin'] || 'dot'
 
       umlpath = conf['umlpath'] || 'uml'
       img_format = conf['format'] || 'svg'
@@ -57,7 +58,7 @@ module Jekyll
 
       engine = get_engine
 
-      unless ['plantuml', 'ditaa'].include? engine
+      unless ['plantuml', 'ditaa', 'dot'].include? engine
         puts "Invalid engine for DiagramBlock diagram #{engine}"
         raise "Error"
       end
@@ -85,6 +86,8 @@ module Jekyll
             process_input_with_plantuml(src, text, plantumljar, img_format, dst)
           elsif engine == 'ditaa'
             process_input_with_ditaa(src, text, ditaajar, img_format, dst)
+          elsif engine == 'dot'
+            process_input_with_dot(src, text, dotbin, img_format, dst)
           else
             raise 'Error'
           end
@@ -178,6 +181,24 @@ EOF
       svg.sub!('<defs>', script + style + '<defs>')
       File.write(dst, svg, mode: 'w')
     end
+
+    def process_input_with_dot(src, text, bin, img_format, dst)
+      if img_format != 'svg'
+        raise "Error"
+      end
+
+      File.open(src, 'w') { |f|
+        f.write(text)
+      }
+      cmd = "#{bin} -Tsvg -o#{dst} #{src}"
+      r = system(cmd)
+      if r.nil? || !r
+        puts "Dot('#{bin}') failed (exit code #{$?})"
+        puts "Command: #{cmd}"
+        puts "Bogus snippet:"
+        puts text
+      end
+    end
   end
   # https://css-tricks.com/scale-svg/
 
@@ -249,6 +270,24 @@ EOF
       'ditaa'
     end
   end
+
+
+  # Specialization classes for Dot
+  class FullWidthDotBlock < FullWidthDiagramBlock
+    def get_engine
+      'dot'
+    end
+  end
+  class MainColumnDotBlock < MainColumnDiagramBlock
+    def get_engine
+      'dot'
+    end
+  end
+  class MarginDotBlock < MarginDiagramBlock
+    def get_engine
+      'dot'
+    end
+  end
 end
 
 # {% fullwidthplantuml caption:'a caption here' %}
@@ -268,3 +307,9 @@ Liquid::Template.register_tag('marginplantuml', Jekyll::MarginPlantUMLBlock)
 Liquid::Template.register_tag('fullwidthditaa', Jekyll::FullWidthDitaaBlock)
 Liquid::Template.register_tag('maincolumnditaa', Jekyll::MainColumnDitaaBlock)
 Liquid::Template.register_tag('marginditaa', Jekyll::MarginDitaaBlock)
+
+
+# Dot diagrams
+Liquid::Template.register_tag('fullwidthdot', Jekyll::FullWidthDotBlock)
+Liquid::Template.register_tag('maincolumndot', Jekyll::MainColumnDotBlock)
+Liquid::Template.register_tag('margindot', Jekyll::MarginDotBlock)

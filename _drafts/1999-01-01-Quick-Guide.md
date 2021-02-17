@@ -190,6 +190,17 @@ sp             sp+4           sp+8           sp+12
 {% endmaincolumnditaa %}
 
 
+Dot
+
+{% maincolumndot %}
+digraph G {
+  layout = dot;
+  rankdir="LR";
+  00 -> 01 [label=" 1"];
+  00 -> 00 [label=" 0"];
+}
+{% endmaincolumndot %}
+
 ## Venn diagrams
 
 Draw overlapping circles. The keys are the labels and the values
