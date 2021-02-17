@@ -73,4 +73,7 @@ test-crypto:
 test-tiburoncin:
 	byexample @_tests/tiburoncin
 
+test-debruijn:
+	byexample @_tests/debruijn
+
 test: test-shellshock test-matasano test-tiburoncin test-crypto

@@ -1,0 +1,5 @@
+-l=python
+--timeout=4
+--ff
+-j=1
+_posts/debruijn/debruijn.py
