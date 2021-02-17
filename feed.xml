@@ -1,4 +1,329 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-02-05T13:51:34+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Smashing ARM Stack for Fun - Part VII</title><link href="/book-of-gehn/articles/2021/02/04/Smashing-ARM-Stack-for-Fun-Part-VII.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part VII" /><published>2021-02-04T00:00:00+01:00</published><updated>2021-02-04T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/02/04/Smashing-ARM-Stack-for-Fun-Part-VII</id><content type="html" xml:base="/book-of-gehn/articles/2021/02/04/Smashing-ARM-Stack-for-Fun-Part-VII.html">&lt;p&gt;It’s time to solve the last challenge of this 7 part serie.&lt;!--more--&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-02-17T05:26:14+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Necklaces, Lyndon words and De Bruijn Sequences</title><link href="/book-of-gehn/articles/2021/02/15/Necklaces-Lyndon-Words-and-De-Bruijn-Sequences.html" rel="alternate" type="text/html" title="Necklaces, Lyndon words and De Bruijn Sequences" /><published>2021-02-15T00:00:00+01:00</published><updated>2021-02-15T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/02/15/Necklaces-Lyndon-Words-and-De-Bruijn-Sequences</id><content type="html" xml:base="/book-of-gehn/articles/2021/02/15/Necklaces-Lyndon-Words-and-De-Bruijn-Sequences.html">&lt;p&gt;What have in common a dense arrays for mapping numbers power of 2
+to some objects, DNA sequencing and brute-forcing the lock pad
+of your neighbor?&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;substrings&quot;&gt;Substrings&lt;/h2&gt;
+
+&lt;p&gt;Given an alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; symbols, you can build strings
+of length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; from it.&lt;/p&gt;
+
+&lt;p&gt;For a binary alphabet &lt;script type=&quot;math/tex&quot;&gt;{0,1}&lt;/script&gt; these are the strings of length 4:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000    0100    1000    1100
+0001    0101    1001    1101
+0010    0110    1010    1110
+0011    0111    1011    1111
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A set of elements like the strings above can be &lt;em&gt;classified&lt;/em&gt;: choose
+a &lt;em&gt;relationship&lt;/em&gt; among the elements and build a class where all the
+elements of the class have the same relation.&lt;/p&gt;
+
+&lt;p&gt;Mathematically, each class is defined as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;C = { x \in X \vert a \sim x }&lt;/script&gt;
+
+&lt;p&gt;Where &lt;script type=&quot;math/tex&quot;&gt;a&lt;/script&gt; is one element of the set &lt;script type=&quot;math/tex&quot;&gt;X&lt;/script&gt; that is used as a reference.&lt;/p&gt;
+
+&lt;p&gt;For example, we can classify the binary strings in two classes: the
+ones that have its last bit equal to 0 and the ones which don’t.&lt;/p&gt;
+
+&lt;p&gt;In other words: the even and the odd numbers.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000    0100    |    0001    0101
+0010    0110    |    0011    0111
+1000    1100    |    1001    1101
+1010    1110    |    1011    1111
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In mathematics jargon, each class is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Equivalence_class&quot;&gt;equivalence
+class&lt;/a&gt; and the relation
+used to group them is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Equivalence_relation&quot;&gt;equivalence
+relation&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;necklaces&quot;&gt;Necklaces&lt;/h2&gt;
+
+&lt;p&gt;The relation &lt;script type=&quot;math/tex&quot;&gt;x \sim a&lt;/script&gt; is quite arbitrary; another relation could
+be the strings of length 4 that are a &lt;em&gt;rotation&lt;/em&gt; of another string.&lt;/p&gt;
+
+&lt;p&gt;This generates 6 classes:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000  |  0001  |  0011  |  0101  |  0111  |  1111
+      |  0010  |  0110  |  1010  |  1101  |
+      |  0100  |  1100  |        |  1011  |
+      |  1000  |  1001  |        |  1110  |
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Each &lt;a href=&quot;https://en.wikipedia.org/wiki/Equivalence_class&quot;&gt;equivalence class&lt;/a&gt;
+generated from strings of length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; from an alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; elements
+which &lt;a href=&quot;https://en.wikipedia.org/wiki/Equivalence_relation&quot;&gt;equivalence
+relation&lt;/a&gt; is the
+rotation has the special names of
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Necklace_(combinatorics)&quot;&gt;necklaces&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The above 6 classes are 6 necklaces for &lt;script type=&quot;math/tex&quot;&gt;k=2&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;n=4&lt;/script&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;aperiodic-necklaces&quot;&gt;Aperiodic necklaces&lt;/h2&gt;
+
+&lt;p&gt;As you notice how many elements a necklace has varies. The necklace
+generated from all the rotations of 0000 has only one element: {0000};
+while the necklace generated from 0001 has 4 elements: {0001, 0010,
+0100 and 1000}.&lt;/p&gt;
+
+&lt;p&gt;These are two extremes. A middle point is the necklace {0101, 1010}.&lt;/p&gt;
+
+&lt;p&gt;You see, if you pick a string and you start rotating it you may
+find yourself with the same initial string &lt;strong&gt;before&lt;/strong&gt; doing
+a complete wrap-around.&lt;/p&gt;
+
+&lt;p&gt;Pick 0101, rotate it once and you get 1010, and once more and you
+get the original 0101.&lt;/p&gt;
+
+&lt;p&gt;If you do the same with 0001 you will find that you need to perform
+4 rotations to get the initial string.&lt;/p&gt;
+
+&lt;p&gt;An &lt;em&gt;aperiodic&lt;/em&gt; sequence respect the rotation are the strings of
+length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; that you need to perform exactly &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; rotations to get the
+initial strings.&lt;/p&gt;
+
+&lt;p&gt;Therefore the necklace that contains them has exactly &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; elements
+and it is known as &lt;em&gt;aperiodic necklace&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-679a720680e4ccdf07926fb2d4db4e2b&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-679a720680e4ccdf07926fb2d4db4e2b&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;You may find multiple substrings that repeated form the same
+string. For example 01010101 can be formed repeating 0101 twice
+or 01 four times.
+&lt;br /&gt;
+The fact is that 0101 is in turn periodic. The substring which it
+is &lt;em&gt;aperiodic&lt;/em&gt; is called the &lt;em&gt;aperiodic reduction&lt;/em&gt; of the original
+string.
+&lt;br /&gt;
+In our case, 01 is the aperiodic reduction of 0101 and of 01010101.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;In contrast, a &lt;em&gt;periodic&lt;/em&gt; sequence is a string that is the
+repetition of a substring that repeats so less rotations are required to
+get the initial string and therefore the necklace has less than $$n$
+elements.&lt;/p&gt;
+
+&lt;p&gt;The 0101 is formed by the substring 01 repeated twice.&lt;/p&gt;
+
+&lt;p&gt;The analysis of the periodicity of the 6 necklaces follows with the
+substrings between parenthesis:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(0)   |    aperiodic   |  (01)  |  aperiodic |  (1)
+0000  |  0001  |  0011 |  0101  |    0111    |  1111
+      |  0010  |  0110 |  1010  |    1101    |
+      |  0100  |  1100 |        |    1011    |
+      |  1000  |  1001 |        |    1110    |
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;lyndon-words&quot;&gt;Lyndon words&lt;/h2&gt;
+
+&lt;p&gt;We focus now in only the aperiodic necklaces:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0001  |  0011  |  0111
+0010  |  0110  |  1101
+0100  |  1100  |  1011
+1000  |  1001  |  1110
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If the alphabet supports a total order, more specifically
+a &lt;a href=&quot;https://en.wikipedia.org/wiki/Lexicographic_order&quot;&gt;lexicographic order&lt;/a&gt;,
+we can sort the elements of each necklace.&lt;/p&gt;
+
+&lt;p&gt;Basically we get &lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+0001 &lt; 0010 &lt; 0100 &lt; 1000 %]]&gt;&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;For each aperiodic necklace we keep only the &lt;em&gt;smallest&lt;/em&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0001  |  0011  |  0111
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;These strings define the &lt;a href=&quot;https://en.wikipedia.org/wiki/Lyndon_word&quot;&gt;Lyndon
+words&lt;/a&gt; of length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;
+for the alphabet &lt;script type=&quot;math/tex&quot;&gt;{0,1}&lt;/script&gt; (&lt;script type=&quot;math/tex&quot;&gt;k=2&lt;/script&gt;).&lt;/p&gt;
+
+&lt;p&gt;More generally the &lt;a href=&quot;https://en.wikipedia.org/wiki/Lyndon_word&quot;&gt;Lyndon
+words&lt;/a&gt; are the smallest strings of the
+aperiodic necklaces for &lt;em&gt;all&lt;/em&gt; the strings of &lt;em&gt;any&lt;/em&gt; length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; for an
+alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; elements.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0, 1, 01, 001, 011, 0001, 0011, 0111, 00001, 00011, 00101, ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;de-bruijn-sequence&quot;&gt;De Bruijn sequence&lt;/h2&gt;
+
+&lt;p&gt;Choose a natural number &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;. Select the Lyndon words that have a
+length that &lt;em&gt;divides&lt;/em&gt; &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;For the binary alphabet {0,1}, and choosing &lt;script type=&quot;math/tex&quot;&gt;n=4&lt;/script&gt; we have the
+following set of strings of length 1, 2 and 4:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0, 1, 01, 0001, 0011, 0111
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Sorted lexicographically:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0, 0001, 0011, 01, 0111, 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If we concatenate them we obtain a &lt;a href=&quot;https://en.wikipedia.org/wiki/De_Bruijn_sequence&quot;&gt;De
+Bruijn sequence&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000100110101111
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A &lt;a href=&quot;https://en.wikipedia.org/wiki/De_Bruijn_sequence&quot;&gt;De Bruijn sequence&lt;/a&gt;
+of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; has the property than all the substrings of length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;
+that are possible are contained in the De Bruijn sequence if is seen
+as a cyclic sequence:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000100110101111
+0000............
+.0001...........
+..0010..........
+...0100.........
+....1001........
+.....0011.......
+......0110......
+.......1101.....
+........1010....
+.........0101...
+..........1011..
+...........0111.
+............1111
+0............111  =  1110
+00............11  =  1100
+000............1  =  1000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A &lt;a href=&quot;https://en.wikipedia.org/wiki/De_Bruijn_sequence&quot;&gt;De Bruijn sequence&lt;/a&gt;
+is the smallest sequence that has this property but it is not unique.&lt;/p&gt;
+
+&lt;p&gt;The count of distinct De Bruijn sequences for an alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; elements
+and an order of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; is&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\frac{(k!)^{k^{n-1}}}{k^n}&lt;/script&gt;
+
+&lt;h2 id=&quot;de-bruijn-graphs&quot;&gt;De Bruijn graphs&lt;/h2&gt;
+
+&lt;p&gt;Given an alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; symbols and the strings of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; symbols
+we can build &lt;script type=&quot;math/tex&quot;&gt;k^n&lt;/script&gt; different strings.&lt;/p&gt;
+
+&lt;p&gt;Consider these strings now nodes of a directed graph.&lt;/p&gt;
+
+&lt;p&gt;In this graph the node &lt;script type=&quot;math/tex&quot;&gt;u&lt;/script&gt; connects to &lt;script type=&quot;math/tex&quot;&gt;v&lt;/script&gt; if we drop the left most
+symbol of &lt;script type=&quot;math/tex&quot;&gt;u&lt;/script&gt; and append on the right one symbol and the result is
+&lt;script type=&quot;math/tex&quot;&gt;v&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;In Python terms: &lt;code class=&quot;highlighter-rouge&quot;&gt;u[1:] + sym == v&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The resulting edge is labeled with the appended symbol.&lt;/p&gt;
+
+&lt;p&gt;For instance, for the given binary strings 00 and 01 we have:&lt;/p&gt;
+
+&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/4e7ff72eb8c4bac604f61910944f34f51c7ac9aa.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
+
+&lt;p&gt;In general for the alphabet &lt;script type=&quot;math/tex&quot;&gt;{0,1}&lt;/script&gt; and the strings of length &lt;script type=&quot;math/tex&quot;&gt;n=2&lt;/script&gt;
+we have:&lt;/p&gt;
+
+&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/e90a47ce7db53454142582242792fa721c7ac9aa.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
+
+&lt;p&gt;These are the &lt;a href=&quot;https://en.wikipedia.org/wiki/De_Bruijn_graph&quot;&gt;De Bruijn
+graphs&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;A &lt;a href=&quot;https://en.wikipedia.org/wiki/Hamiltonian_path&quot;&gt;Hamiltonian path&lt;/a&gt;
+over the graph generates a De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;That’s it, visit all the &lt;em&gt;nodes&lt;/em&gt; of the graph without visiting a node
+twice and collect the labels of the traversed edges.&lt;/p&gt;
+
+&lt;p&gt;This forms the De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; for the given &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;If instead of a Hamiltonian path we build an &lt;a href=&quot;https://en.wikipedia.org/wiki/Eulerian_path&quot;&gt;Euclidean
+path&lt;/a&gt;, the path
+generates a De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n+1&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;That’s it, visit all the &lt;em&gt;edges&lt;/em&gt; of the graph without traveling for the
+same edge twice and collect the labels along the path.&lt;/p&gt;
+
+&lt;p&gt;This forms the De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n+1&lt;/script&gt; for the given &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;de-bruijn-sequence-construction&quot;&gt;De Bruijn sequence construction&lt;/h2&gt;
+
+&lt;p&gt;As mentioned before we can build a De Bruijn graph and then through a
+Hamiltonian or Euclidean path we can build a De Bruijn sequence.&lt;/p&gt;
+
+&lt;p&gt;But we can skip that and create the sequence directly with the &lt;a href=&quot;/book-of-gehn/assets/debruijn-assets/debruijn.py&quot;&gt;FMK
+algorithm&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;FMK comes from the name of its authors: Fredricksen, Maiorana and Kessler.&lt;/p&gt;
+
+&lt;p&gt;A recursive version of the algorithm is shown by Frank Ruskey in his
+&lt;em&gt;“Combinatorial Generation”&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;The algorithm can generate necklaces, Lyndon words, pre-necklaces and De
+Bruijn sequences. Four in one.&lt;/p&gt;
+
+&lt;p&gt;A Python implementation can be found
+&lt;a href=&quot;/book-of-gehn/assets/debruijn-assets/debruijn.py&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;applications&quot;&gt;Applications&lt;/h2&gt;
+
+&lt;h3 id=&quot;unlook-a-door&quot;&gt;Unlook a door&lt;/h3&gt;
+
+&lt;p&gt;Imagine that you have a register of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; bits that if it is set
+to the correct value &lt;em&gt;unlocks&lt;/em&gt; a door.&lt;/p&gt;
+
+&lt;p&gt;You have &lt;script type=&quot;math/tex&quot;&gt;2^n&lt;/script&gt; possible combinations.&lt;/p&gt;
+
+&lt;p&gt;Typing &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; bits &lt;script type=&quot;math/tex&quot;&gt;2^n&lt;/script&gt; times is is going to take a while
+but imagine that the register allows you to &lt;em&gt;reuse&lt;/em&gt; some of those bits.&lt;/p&gt;
+
+&lt;p&gt;On a new input the register shifts its content one bit to the left and
+the new bit is put on the right.&lt;/p&gt;
+
+&lt;p&gt;Does this ring any bells?&lt;/p&gt;
+
+&lt;p&gt;You can use a De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; and reading it bit by
+bit you can &lt;em&gt;feed&lt;/em&gt; the register.&lt;/p&gt;
+
+&lt;p&gt;You will end up testing &lt;script type=&quot;math/tex&quot;&gt;2^n&lt;/script&gt; combinations but you will have to type
+&lt;strong&gt;only 1 bit&lt;/strong&gt; per test.&lt;/p&gt;
+
+&lt;h3 id=&quot;power-of-2-mapping&quot;&gt;Power of 2 mapping&lt;/h3&gt;
+
+&lt;p&gt;You want to map a value to each power of 2. You could use an dictionary
+for this like &lt;code class=&quot;highlighter-rouge&quot;&gt;{2**i : vals[i] for i in range(32)}&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;A dictionary or a &lt;em&gt;sparse&lt;/em&gt; array is needed because you cannot use a
+dense array for this.&lt;/p&gt;
+
+&lt;p&gt;Or can we?&lt;/p&gt;
+
+&lt;p&gt;If we are limiting ourselves to power of two up to &lt;script type=&quot;math/tex&quot;&gt;2^{32}&lt;/script&gt;, we only
+have 32 numbers.&lt;/p&gt;
+
+&lt;p&gt;We can then generate a De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; where &lt;script type=&quot;math/tex&quot;&gt;n=5&lt;/script&gt;
+(because &lt;script type=&quot;math/tex&quot;&gt;2^5=32&lt;/script&gt;).&lt;/p&gt;
+
+&lt;p&gt;This sequence will contain &lt;script type=&quot;math/tex&quot;&gt;2^5=32&lt;/script&gt; different substrings.&lt;/p&gt;
+
+&lt;p&gt;Now, remember that multiplying a number by &lt;script type=&quot;math/tex&quot;&gt;2^i&lt;/script&gt; is the same than
+shifting the number by &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;If we read the &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; most significant bits of the shifted sequence we
+will have a substring that is unique for the given shift &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt; and
+therefore for &lt;script type=&quot;math/tex&quot;&gt;2^i&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; most significant bits forms the index of our dense array.&lt;/p&gt;
+
+&lt;p&gt;With &lt;script type=&quot;math/tex&quot;&gt;n=5&lt;/script&gt; we only need an array of &lt;script type=&quot;math/tex&quot;&gt;32&lt;/script&gt; elements.&lt;/p&gt;
+
+&lt;h2 id=&quot;dna-reading&quot;&gt;DNA reading&lt;/h2&gt;
+
+&lt;p&gt;And yes, this is used in &lt;a href=&quot;https://en.wikipedia.org/wiki/DNA_read_errors&quot;&gt;DNA
+reading&lt;/a&gt; too.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">What have in common a dense arrays for mapping numbers power of 2 to some objects, DNA sequencing and brute-forcing the lock pad of your neighbor?</summary></entry><entry><title type="html">Smashing ARM Stack for Fun - Part VII</title><link href="/book-of-gehn/articles/2021/02/04/Smashing-ARM-Stack-for-Fun-Part-VII.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part VII" /><published>2021-02-04T00:00:00+01:00</published><updated>2021-02-04T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/02/04/Smashing-ARM-Stack-for-Fun-Part-VII</id><content type="html" xml:base="/book-of-gehn/articles/2021/02/04/Smashing-ARM-Stack-for-Fun-Part-VII.html">&lt;p&gt;It’s time to solve the last challenge of this 7 part serie.&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;the-vuln&quot;&gt;The vuln&lt;/h2&gt;
 
@@ -2534,485 +2859,4 @@ function fix_asm_syntax(ev) {
 }
 
 document.addEventListener('DOMContentLoaded', fix_asm_syntax);
-&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">There is no other way to learn something that playing with it. Take assembly code, read it and predice what will do. Then test it. Those mistakes, those mismatches between what you think and what it really is, those surprises are what move us forward into learning. Deeper. In this post I will dig into Arm, assisted with an interactive assembler.</summary></entry><entry><title type="html">TL;DR Quick Overview of Arm</title><link href="/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html" rel="alternate" type="text/html" title="TL;DR Quick Overview of Arm" /><published>2020-12-27T00:00:00+01:00</published><updated>2020-12-27T00:00:00+01:00</updated><id>/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm</id><content type="html" xml:base="/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html">&lt;p&gt;Speed-reading of
-&lt;a href=&quot;https://www.coranac.com/tonc/text/asm.htm&quot;&gt;Whirlwind Tour of ARM Assembly&lt;/a&gt;.&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;the-arm-instruction-set&quot;&gt;The Arm instruction set&lt;/h1&gt;
-
-&lt;p&gt;Arm is a Reduced Instruction Set Computer (RISC) which have a small set
-of instructions of fixed size in contrast with the Complex Instruction
-Set Computer (CISC).&lt;/p&gt;
-
-&lt;p&gt;In Arm the instructions are of 32 bits and the Thumb version has 16 and
-32 bits instructions.&lt;/p&gt;
-
-&lt;p&gt;ARMv3 to ARMv7 versions has 32 bits addresses, previous version has 26
-bits and ARMv8 introduced the 64 bits addresses.&lt;/p&gt;
-
-&lt;h3 id=&quot;almost-everything-is-conditional&quot;&gt;Almost everything is conditional&lt;/h3&gt;
-
-&lt;p&gt;Instructions can be executed conditionally. This avoids explicit jumps
-which are slower and the overall code size is smaller.&lt;/p&gt;
-
-&lt;p&gt;Use this for small snippets and fallback to traditional branches/jumps
-when the code is too large.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;; r2 = max(r0, r1), traditional impl with branches&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;blt&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lbmax&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; go to Lbmax if r0 &amp;lt; r1&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; r0 is higher ==&amp;gt; r0 &amp;gt; r1&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;       &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lrest&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; finish&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lbmax&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; r1 is higher&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lrest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;                 &lt;span class=&quot;c&quot;&gt;;  rest of code&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;; r2 = max(r0, r1), with conditionals moves&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;movge&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;;  move if r0 &amp;gt;= r1 (r0 is higher)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;movlt&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;;  move if r0 &amp;lt; r1  (r1 is higher)&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;                 &lt;span class=&quot;c&quot;&gt;;  rest of code&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Example took from
-&lt;a href=&quot;https://www.coranac.com/tonc/text/asm.htm&quot;&gt;Whirlwind Tour of Arm Assembly&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Other instructions are also conditional. Even the set of the CPSR
-flags is conditional: &lt;code class=&quot;highlighter-rouge&quot;&gt;sub&lt;/code&gt; does not set the status flags while &lt;code class=&quot;highlighter-rouge&quot;&gt;subs&lt;/code&gt;
-it does.&lt;/p&gt;
-
-&lt;h3 id=&quot;immediate-values-and-the-second-operand-shift&quot;&gt;Immediate values and the second operand shift&lt;/h3&gt;
-
-&lt;p&gt;Some instructions allow the second operand to be shifted/rotated in the
-same instruction.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;          &lt;span class=&quot;c&quot;&gt;;  r0 = r1 + r1&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lsl&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;;  r0 = r1 + (r1 &amp;lt;&amp;lt; 4)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lsl&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;;  r0 = r1 + (r1 &amp;lt;&amp;lt; r2)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Five shift/rotation exist, both as part of an instruction like above
-and as independent instructions as well.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The immediate value for shifts is limited to 31.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Logical shift left &lt;code class=&quot;highlighter-rouge&quot;&gt;lsl&lt;/code&gt;, logical shift right &lt;code class=&quot;highlighter-rouge&quot;&gt;lsr&lt;/code&gt;, arithmetic shift
-right &lt;code class=&quot;highlighter-rouge&quot;&gt;asr&lt;/code&gt;, rotate right &lt;code class=&quot;highlighter-rouge&quot;&gt;ror&lt;/code&gt; and rotate right with extend &lt;code class=&quot;highlighter-rouge&quot;&gt;rrx&lt;/code&gt; (the
-32 bits register is extended on the left with the &lt;em&gt;carry&lt;/em&gt; bit: the LSB
-is rotated to the carry bit and the carry bit is shifted to the right
-into the MSB of the register)&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;          10000110
-           \\\\\\\\
-           ||||||| \
-           vvvvvvv  \
-          01000011   -&amp;gt; 0   (logical shift right)
-          11000011   -&amp;gt; 0   (arithmetic shift right)
-
-          10000110
-           \\\\\\\\
-           ||||||| \
-           vvvvvvv  \
-          01000011   |      (rotate shift right)
-          ^---------/
-
-   C=0    10000110
-      \    \\\\\\\\
-       \--\||||||| \
-          vvvvvvvv  \
-   C=0    01000011   |     (rotate right extended)
-     ^---------------/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Having all these nice features in one instruction (shift, conditional,
-flag set) come with a cost: less room for immediate values.&lt;/p&gt;
-
-&lt;p&gt;In Thumb-2 and ARMv6 and above exists &lt;code class=&quot;highlighter-rouge&quot;&gt;mov rd, #&amp;lt;imm16&amp;gt;&lt;/code&gt; to set a 16
-bits number in a register without the possibility of using any of those
-fancy features. It is a plain move.&lt;/p&gt;
-
-&lt;p&gt;But that’s the exception to the rule. Most of the instructions
-including fancy moves only allow 8 bits immediate values.&lt;/p&gt;
-
-&lt;p&gt;Like&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;movs&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;imm8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lsl&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;;  r0 = imm8 &amp;lt;&amp;lt; 4, update condition flags&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Larger than 255 values in &lt;code class=&quot;highlighter-rouge&quot;&gt;#&amp;lt;imm8&amp;gt;&lt;/code&gt; are possible because the instruction
-has 12 bits to store them. Why not just &lt;code class=&quot;highlighter-rouge&quot;&gt;#&amp;lt;imm12&amp;gt;&lt;/code&gt; then?&lt;/p&gt;
-
-&lt;p&gt;The 4 extra bits are used to rotate to the right the &lt;code class=&quot;highlighter-rouge&quot;&gt;#&amp;lt;imm8&amp;gt;&lt;/code&gt; value by
-&lt;em&gt;twice&lt;/em&gt; the number encoded in those 4 bits.&lt;/p&gt;
-
-&lt;p&gt;In other words, the final value is &lt;code class=&quot;highlighter-rouge&quot;&gt;n8 ror (2*r4)&lt;/code&gt;: the 8 bits encoded
-number rotated by twice the 4 bits encoded.&lt;/p&gt;
-
-&lt;p&gt;This allows to set immediate values larger than 12 bits but loosing the
-possibility to encode some numbers. If you try to set one of those you
-will get a &lt;em&gt;invalid constant&lt;/em&gt; error.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;128000&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;;   r2 = 0x1f400&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;127999&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;;   Invalid operand (KS_ERR_ASM_INVALIDOPERAND)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;More instructions are needed to compute an arbitrary 32 bits number or a
-load.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Note: a 32 bit number can be set in two instructions: set the 16 lower
-bits with &lt;code class=&quot;highlighter-rouge&quot;&gt;mov rd, #&amp;lt;imm16&amp;gt;&lt;/code&gt; and set the 16 upper bits with &lt;em&gt;move
-top&lt;/em&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;movt rd, #&amp;lt;imm16&amp;gt;&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xccdd&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;;   r2 = 0x0000ccdd&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;movt&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xaabb&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;   r2 = 0xaabbccdd&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;registers&quot;&gt;Registers&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r3&lt;/code&gt; are &lt;em&gt;scratch&lt;/em&gt; registers: they are not preserved cross calls
-and it is caller’s responsibility to preserve them if needed.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;r4&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r11&lt;/code&gt; are &lt;em&gt;variable&lt;/em&gt; registers: they must be preserved cross
-calls and it is callee’s responsibility to preserve them if needed.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;r9&lt;/code&gt; may play a different roll (platform dependent, known also as
-&lt;em&gt;static base&lt;/em&gt; register or &lt;code class=&quot;highlighter-rouge&quot;&gt;sb&lt;/code&gt;) and &lt;code class=&quot;highlighter-rouge&quot;&gt;r11&lt;/code&gt;
-may play the roll of &lt;code class=&quot;highlighter-rouge&quot;&gt;fp&lt;/code&gt; so both may not be free for arbitrary usage.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt; instruction saves the next instruction (the &lt;em&gt;return address&lt;/em&gt;)
-in the &lt;em&gt;link&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;lr&lt;/code&gt; register (&lt;code class=&quot;highlighter-rouge&quot;&gt;r14&lt;/code&gt;) and set the destination address
-in the &lt;em&gt;program counter&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; register (&lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;).&lt;/p&gt;
-
-&lt;p&gt;For “long jumps” and inter-operability, the &lt;em&gt;intra-procedure-call&lt;/em&gt;
-registry &lt;code class=&quot;highlighter-rouge&quot;&gt;ip&lt;/code&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;r12&lt;/code&gt;) is used.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;r13&lt;/code&gt; is the &lt;em&gt;stack pointer&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Take a look at the
-&lt;a href=&quot;https://developer.arm.com/documentation/ihi0042/latest/&quot;&gt;Procedure Call Standard for the Arm Architecture&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;data-instructions&quot;&gt;Data instructions&lt;/h2&gt;
-
-&lt;p&gt;The arithmetic and logical instructions fall in this category; they
-manipulate only on registers, never on memory.&lt;/p&gt;
-
-&lt;p&gt;The destination and the first operand are registers while the second can
-be a register, and immediate value or a register shifted by another
-register or immediate value.&lt;/p&gt;
-
-&lt;p&gt;They can be conditionally executed and conditionally set the status
-flags.&lt;/p&gt;
-
-&lt;p&gt;The
-&lt;a href=&quot;https://documentation-service.arm.com/static/5ed66080ca06a95ce53f932d?token=&quot;&gt;ARM and Thumb-2 Instruction Set Quick Reference Card&lt;/a&gt;
-is your friend!&lt;/p&gt;
-
-&lt;p&gt;There are no division instructions except on ARMv7-R and ARMv7-M and multiplication
-operations are more special.&lt;/p&gt;
-
-&lt;p&gt;Because the registers are of 32 bits, the result of a multiplication
-cannot fit there: we need 64 bits!&lt;/p&gt;
-
-&lt;p&gt;There are two sets of multiplications: the one that stores the result in
-a 32 bits register (&lt;code class=&quot;highlighter-rouge&quot;&gt;mul rd, rm, rs&lt;/code&gt;) and the one that stores it in two
-registers (&lt;code class=&quot;highlighter-rouge&quot;&gt;umull rdlo, rdhi, rm rs&lt;/code&gt;) – the extra &lt;code class=&quot;highlighter-rouge&quot;&gt;l&lt;/code&gt; means &lt;code class=&quot;highlighter-rouge&quot;&gt;long&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;memory-instructions-load-and-store&quot;&gt;Memory instructions: load and store&lt;/h2&gt;
-
-&lt;p&gt;Loads and stores are quite similar: they can operate (load/store)
-on 32 bits words, half-words (&lt;code class=&quot;highlighter-rouge&quot;&gt;h&lt;/code&gt;) and bytes (&lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;), zero extended or
-signed extended (&lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;sb&lt;/code&gt; respectively).&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Note: &lt;code class=&quot;highlighter-rouge&quot;&gt;sb&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;sh&lt;/code&gt; prefixes are not supported for stores.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;indexing&quot;&gt;Indexing&lt;/h3&gt;
-
-&lt;p&gt;In &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn]&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;str rd, [rn]&lt;/code&gt;, the &lt;code class=&quot;highlighter-rouge&quot;&gt;[ ]&lt;/code&gt; denotes dereferencing
-and the &lt;code class=&quot;highlighter-rouge&quot;&gt;rn&lt;/code&gt; register is the &lt;em&gt;base register&lt;/em&gt;.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp]&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;; r0 = stack top&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This is the &lt;em&gt;register indirect addressing&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;An offset can be added to the base register, useful to iterate over an
-array like &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, rm]&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, #4]&lt;/code&gt;
-or even &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, rm, lsl #4]&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp]&lt;/span&gt;                &lt;span class=&quot;c&quot;&gt;; r0 = stack top&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;            &lt;span class=&quot;c&quot;&gt;; r0 = elem below the top&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;            &lt;span class=&quot;c&quot;&gt;; if r3 == 4, same above (sp + 4)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lsl&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; if r3 == 2, same above (sp + (1 &amp;lt;&amp;lt; 2))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This is known as &lt;em&gt;pre-index addressing&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Note the use of squares in &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, rm, lsl #4]&lt;/code&gt;, the instruction
-&lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn], rm, lsl #4&lt;/code&gt; is a pre-index addressing &lt;em&gt;with post
-write-back&lt;/em&gt;: the base address is updated with the final value &lt;em&gt;after&lt;/em&gt;
-the load completed.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; r0 = stack top, sp move 4 down (aka &quot;pop&quot;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; r0 = next stack top, sp move 4 down (aka &quot;pop&quot;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;A &lt;em&gt;pre write-back&lt;/em&gt; variant exists: &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, [rn, rm, lsl #4]!&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]!&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; r0 = sp move 4 down then load (top was skipped)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Note: &lt;em&gt;pre write-back&lt;/em&gt; makes more sense for stores (aka pushes)
-and &lt;em&gt;post write-back&lt;/em&gt; for loads (aka pops)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;c&quot;&gt;; swap r0, r1 using the stack, really slow!&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]!&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; r0 = sp move 4 up then store (aka push)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]!&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; r1 = sp move 4 up then store (aka push)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; r0 = stack top, sp move 4 down (aka &quot;pop&quot;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[sp],&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;; r1 = stack top, sp move 4 down (aka &quot;pop&quot;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;PC-relative addressing&lt;/em&gt; allows to load a memory which address is an
-offset of the program counter: &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr rd, &amp;lt;label&amp;gt;&lt;/code&gt;. This works only for
-loads; useful to load numbers that cannot fit in an &lt;code class=&quot;highlighter-rouge&quot;&gt;imm8&lt;/code&gt;.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Not all the combinations of sizes and addressing are possible. Check
-the data sheet.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;bulk-loadstore&quot;&gt;Bulk load/store&lt;/h3&gt;
-
-&lt;p&gt;Several registers can be loaded or stored with a single &lt;em&gt;load multiple&lt;/em&gt;
-(&lt;code class=&quot;highlighter-rouge&quot;&gt;ldm&lt;/code&gt;) and &lt;em&gt;store multiple&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;stm&lt;/code&gt;) instructions.&lt;/p&gt;
-
-&lt;p&gt;They have a base address, a &lt;em&gt;set&lt;/em&gt; of registers and an &lt;em&gt;indexing affix&lt;/em&gt;
-which controls how to “iterate the array/memory”.&lt;/p&gt;
-
-&lt;p&gt;Four indexing exists: increment of the base address after/before accessing
-the memory (&lt;code class=&quot;highlighter-rouge&quot;&gt;ia&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;ib&lt;/code&gt;) and decrement of the base address after/before
-(&lt;code class=&quot;highlighter-rouge&quot;&gt;da&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;db&lt;/code&gt;).&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ia&lt;/code&gt; is the default.&lt;/p&gt;
-
-&lt;p&gt;In short:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;                            &lt;span class=&quot;c&quot;&gt;;              r4, r5, r6, r7&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldmia&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;  *src++    :  0,  1,  2,  3&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldmib&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;  *++src    :  1,  2,  3,  4&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldmda&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;  *src--    : -3, -2, -1,  0&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldmdb&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;;  *--src    : -4, -3, -2, -1&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Note the it is a &lt;em&gt;set&lt;/em&gt; of registers, &lt;strong&gt;not a list&lt;/strong&gt; so the order
-is not important. The registers are loaded/stored by their index from
-&lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;For loads the registers are loaded from memory into the registers
-in the natural order: from &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;. For stores, the registers
-are dump into memory in the reverse order.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;            &lt;span class=&quot;o&quot;&gt;&amp;lt;------&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;store&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;direction&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;&amp;lt;------&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stack&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;grows&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;stmdb&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; stack top -&amp;gt; [r0  r1]&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;ldmia&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; r2 = r0; r3 = r1&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;load&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;direction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;------&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;stack&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shrinks&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;----&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The additional &lt;code class=&quot;highlighter-rouge&quot;&gt;!&lt;/code&gt; symbol means update the base register &lt;em&gt;before&lt;/em&gt; the
-load or store but it doesn’t change how the load/store works.&lt;/p&gt;
-
-&lt;p&gt;The data sheet says that &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt; have the canonical form of
-&lt;code class=&quot;highlighter-rouge&quot;&gt;stmdb sp!, {regs}&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;ldmia sp!, {regs}&lt;/code&gt; respectively.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Note that &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; points to the last value of the stack and &lt;code class=&quot;highlighter-rouge&quot;&gt;stmdb&lt;/code&gt;
-decrements the base address (&lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt;) before doing the store in a &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt;
-while &lt;code class=&quot;highlighter-rouge&quot;&gt;ldmia&lt;/code&gt; increments after the load in a &lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt;.&lt;/p&gt;
-
-  &lt;p&gt;In both cases the &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt; is updated &lt;em&gt;before&lt;/em&gt; (&lt;em&gt;pre write-back&lt;/em&gt;) regardless
-of &lt;code class=&quot;highlighter-rouge&quot;&gt;db&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;ia&lt;/code&gt;.&lt;/p&gt;
-
-  &lt;p&gt;Note also that the stack grows decrementing the addresses and shrinks
-incrementing the addresses.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;alignment&quot;&gt;Alignment&lt;/h3&gt;
-
-&lt;p&gt;The assembler can do it for you: &lt;code class=&quot;highlighter-rouge&quot;&gt;.align n&lt;/code&gt; aligns the code or data to 2^n
-bytes.&lt;/p&gt;
-
-&lt;h3 id=&quot;endianess&quot;&gt;Endianess&lt;/h3&gt;
-
-&lt;p&gt;Since version 3, Arm is bi-endian. The instructions are in little
-endian but the data access can be little or big endian controlled by the
-&lt;code class=&quot;highlighter-rouge&quot;&gt;E&lt;/code&gt; flag of CPSR.&lt;/p&gt;
-
-&lt;h2 id=&quot;conditionals-and-branches&quot;&gt;Conditionals and branches&lt;/h2&gt;
-
-&lt;p&gt;Three branches: &lt;em&gt;branch&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;) for &lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;while&lt;/code&gt; constructs,
-&lt;em&gt;branch with link&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt;) for function call and &lt;em&gt;branch with exchange&lt;/em&gt;
-(&lt;code class=&quot;highlighter-rouge&quot;&gt;bx&lt;/code&gt;) for returning from a call or to switch between Arm and Thumb
-modes.&lt;/p&gt;
-
-&lt;p&gt;The first two receive a label while the last one operates with a
-register.&lt;/p&gt;
-
-&lt;p&gt;More branches exist including &lt;em&gt;branch with change to Jazelle&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;bxj&lt;/code&gt;)
-which can switch to a special mode that
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Jazelle&quot;&gt;executes Java bytecode&lt;/a&gt; if
-supported.&lt;/p&gt;
-
-&lt;p&gt;Due instruction size constrains, labels cannot be in arbitrary
-positions. The &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;bl&lt;/code&gt; requires the destination addresses to be in
-a range relative to &lt;code class=&quot;highlighter-rouge&quot;&gt;PC&lt;/code&gt; of [-32MB;+32MB].&lt;/p&gt;
-
-&lt;p&gt;The range shrinks for other flavours of Arm to [-16MB;+16MB] and to
-[-252,256].&lt;/p&gt;
-
-&lt;p&gt;The branches can, as other instructions, be conditional executed. So
-&lt;code class=&quot;highlighter-rouge&quot;&gt;bne&lt;/code&gt; stands for branch if not equals.&lt;/p&gt;
-
-&lt;p&gt;Two registers have the flags that controls the conditional execution:
-the &lt;em&gt;Current Program Status Register&lt;/em&gt;
-(CPSR) and the &lt;em&gt;Saved Program Status Register&lt;/em&gt; (SPSR), used during the
-interrupt handling.&lt;/p&gt;
-
-&lt;p&gt;The flags are set by special instructions like &lt;em&gt;compare&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;cmp&lt;/code&gt;) or by
-data manipulation instructions if the affix &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; is added like in &lt;code class=&quot;highlighter-rouge&quot;&gt;adds&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Not all the data manipulation instructions alter all the flags. For
-example the &lt;em&gt;overflow&lt;/em&gt; flag (&lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt;) is set by arithmetic operations and
-not by bit operations.&lt;/p&gt;
-
-&lt;h3 id=&quot;branching-and-condition-codes&quot;&gt;Branching and condition codes&lt;/h3&gt;
-
-&lt;p&gt;Current Program Status Register (CPSR):&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Z: is zero?&lt;/li&gt;
-  &lt;li&gt;N: is negative? (is MSB set?)&lt;/li&gt;
-  &lt;li&gt;C: is carry bit set? (in a 32 bit register with bits numbered from 0
-(LSB) to 31 (MSB), is the 32 bit set?)&lt;/li&gt;
-  &lt;li&gt;V: was an arithmetic overflow? (like given a&amp;gt;0 &amp;amp; b&amp;gt;0 and then a+b &amp;lt; 0)&lt;/li&gt;
-  &lt;li&gt;E: are we in big endian mode (E==1) or in little endian (E==0)?&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;symbols&quot;&gt;Symbols&lt;/h2&gt;
-
-&lt;p&gt;Global labels are defined with &lt;code class=&quot;highlighter-rouge&quot;&gt;.global label&lt;/code&gt; while local labels
-are just &lt;code class=&quot;highlighter-rouge&quot;&gt;.label&lt;/code&gt; (conventionally they begin with &lt;code class=&quot;highlighter-rouge&quot;&gt;L&lt;/code&gt; to denote local
-but it is optional)&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.code n&lt;/code&gt; declares the type of code: Arm (&lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; is 32) or Thumb (&lt;code class=&quot;highlighter-rouge&quot;&gt;n&lt;/code&gt; is
-16). Alternative there are &lt;code class=&quot;highlighter-rouge&quot;&gt;.arm&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;.thumb&lt;/code&gt; directives that do the
-same.&lt;/p&gt;
-
-&lt;p&gt;These affect all the code below until another directive change the
-setting.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.thumb_func&lt;/code&gt; on the other side affects only to the next symbol and it
-is required for &lt;em&gt;interworking&lt;/em&gt; Thumb functions.&lt;/p&gt;
-
-&lt;p&gt;Alignment of code and data can be set by &lt;code class=&quot;highlighter-rouge&quot;&gt;.aling n&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;.baling m&lt;/code&gt;
-where the former aligns to &lt;code class=&quot;highlighter-rouge&quot;&gt;2^n&lt;/code&gt; bytes and the latter to &lt;code class=&quot;highlighter-rouge&quot;&gt;m&lt;/code&gt; bytes.&lt;/p&gt;
-
-&lt;p&gt;They apply to the next instruction/data, they are not global.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.type funcname %function&lt;/code&gt; declares a function.&lt;/p&gt;
-
-&lt;h2 id=&quot;definition-of-variables&quot;&gt;Definition of variables&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;.byte&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;.hword&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;.word&lt;/code&gt; define data, array of items of 1, 2 and 4
-bytes each.&lt;/p&gt;
-
-&lt;p&gt;This is handy way to define &lt;em&gt;“variables”&lt;/em&gt; in the code:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;align&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;            &lt;span class=&quot;c&quot;&gt;;  mantain the alignment, always!&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;one_word&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;word&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x41424344&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;one_array_u16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hword&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;hello&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;hello world!&quot;&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;;  array of NULL-terminated strings&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;sections&quot;&gt;Sections&lt;/h2&gt;
-
-&lt;p&gt;These are &lt;code class=&quot;highlighter-rouge&quot;&gt;.data&lt;/code&gt; (read-write non-zero initialized data) and &lt;code class=&quot;highlighter-rouge&quot;&gt;.bss&lt;/code&gt;
-(read-write zero initialized data).&lt;/p&gt;
-
-&lt;p&gt;Other sections exist as well and they are denoted with &lt;code class=&quot;highlighter-rouge&quot;&gt;.section&lt;/code&gt; like
-&lt;code class=&quot;highlighter-rouge&quot;&gt;.section .rodata&lt;/code&gt; for read-only data.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;align&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;magic&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;word&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;
-
-    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bss&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;counter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;space&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Code section is denoted by &lt;code class=&quot;highlighter-rouge&quot;&gt;.text&lt;/code&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;references&quot;&gt;References&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.coranac.com/tonc/text/asm.htm&quot;&gt;Whirlwind Tour of ARM Assembly&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://documentation-service.arm.com/static/5ed66080ca06a95ce53f932d?token=&quot;&gt;ARM and Thumb-2 Instruction Set Quick Reference Card&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://developer.arm.com/documentation/ihi0042/latest/&quot;&gt;Procedure Call Standard for the Arm Architecture&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;!-- stuff --&gt;
-
-&lt;script&gt;
-function fix_asm_syntax(ev) {
-    // pip install selectq
-    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
-    //   div = sQ.select('div', attr('class').contains('language-nasm'))
-    //   xpath = div.select('span', cond)
-
-    // Make some instructions &quot;keywords&quot;
-    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn')]&quot;;
-    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
-
-    var elems = [];
-    var el = elems_iter.iterateNext();
-    while (el) {
-        elems.push(el);
-        el = elems_iter.iterateNext();
-    }
-    for (var i = 0; i &lt; elems.length; i++) {
-        var el = elems[i];
-        el.classList.add('k'); // keyword
-        el.classList.remove('n'); // noun
-    }
-
-    // Remove the 'err' class
-    var xpath = &quot;.//div[contains(@class,'language-nasm')]//span[@class='err']&quot;
-    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
-
-    var elems = [];
-    var el = elems_iter.iterateNext();
-    while (el) {
-        elems.push(el);
-        el = elems_iter.iterateNext();
-    }
-    for (var i = 0; i &lt; elems.length; i++) {
-        var el = elems[i];
-        el.classList.remove('err'); // syntax error
-    }
-}
-
-document.addEventListener('DOMContentLoaded', fix_asm_syntax);
-&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">Speed-reading of Whirlwind Tour of ARM Assembly.</summary></entry></feed>
+&lt;/script&gt;</content><author><name>Gehn</name></author><summary type="html">There is no other way to learn something that playing with it. Take assembly code, read it and predice what will do. Then test it. Those mistakes, those mismatches between what you think and what it really is, those surprises are what move us forward into learning. Deeper. In this post I will dig into Arm, assisted with an interactive assembler.</summary></entry></feed>
