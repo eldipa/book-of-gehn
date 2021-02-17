@@ -20,9 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# {% plantuml %}
-# [First] - [Second]
-# {% endplantuml %}
 
 # See original code in
 # https://github.com/yegor256/jekyll-plantuml/blob/master/lib/jekyll-plantuml.rb
@@ -30,7 +27,7 @@ require 'digest'
 require 'fileutils'
 
 module Jekyll
-  class PlantumlBlock < Liquid::Block
+  class DiagramBlock < Liquid::Block
     def initialize(tag_name, markup, tokens)
       super
       @attributes = {}
@@ -39,25 +36,29 @@ module Jekyll
       end
     end
 
+    def get_engine
+      raise "No Diagram Engine was defined!"
+    end
+
     def generate_diagram(context, text)
       site = context.registers[:site]
-      conf = site.config['plantuml'] || {}
+      conf = site.config['diagrams'] || {}
 
-      jar = conf['jar'] || './plantuml.jar'
+      plantumljar = conf['plantuml-jar'] || './plantuml.jar'
       ditaajar = conf['ditaa-jar'] || './ditaa.jar'
 
       umlpath = conf['umlpath'] || 'uml'
       img_format = conf['format'] || 'svg'
 
       unless ['svg'].include? img_format
-        puts "Invalid format for PlantumlBlock diagram #{img_format}"
+        puts "Invalid format for DiagramBlock diagram #{img_format}"
         raise "Error"
       end
 
-      engine = @attributes['engine'] || 'plantuml'
+      engine = get_engine
 
       unless ['plantuml', 'ditaa'].include? engine
-        puts "Invalid engine for PlantumlBlock diagram #{engine}"
+        puts "Invalid engine for DiagramBlock diagram #{engine}"
         raise "Error"
       end
 
@@ -81,7 +82,7 @@ module Jekyll
         else
           FileUtils.mkdir_p(File.dirname(src))
           if engine == 'plantuml'
-            process_input_with_plantuml(src, text, jar, img_format, dst)
+            process_input_with_plantuml(src, text, plantumljar, img_format, dst)
           elsif engine == 'ditaa'
             process_input_with_ditaa(src, text, ditaajar, img_format, dst)
           else
@@ -124,7 +125,7 @@ module Jekyll
         f.write(text)
       }
 
-      args = "#{@attributes['args'] || ''}"
+      args = "#{@attributes['args'] || '--no-shadows --no-separation'}"
       cmd = "java -Djava.awt.headless=true -jar #{jar} --overwrite --transparent --svg #{src} #{args}"
       r = system(cmd)
       if r.nil? || !r
@@ -180,7 +181,7 @@ EOF
   end
   # https://css-tricks.com/scale-svg/
 
-  class FullWidthPlantumlBlock < PlantumlBlock
+  class FullWidthDiagramBlock < DiagramBlock
     def render(context)
       site, umlpath, fname, img_format, html = generate_diagram(context, super)
 
@@ -191,7 +192,7 @@ EOF
     end
   end
 
-  class MainColumnPlantumlBlock < PlantumlBlock
+  class MainColumnDiagramBlock < DiagramBlock
     def render(context)
       site, umlpath, fname, img_format, html = generate_diagram(context, super)
 
@@ -202,7 +203,7 @@ EOF
     end
   end
 
-  class MarginPlantumlBlock < PlantumlBlock
+  class MarginDiagramBlock < DiagramBlock
     def render(context)
       site, umlpath, fname, img_format, html = generate_diagram(context, super)
 
@@ -212,16 +213,58 @@ EOF
       Liquid::Template.parse(tag).render(context)
     end
   end
+
+
+  # Specialization classes for PlantUML
+  class FullWidthPlantUMLBlock < FullWidthDiagramBlock
+    def get_engine
+      'plantuml'
+    end
+  end
+  class MainColumnPlantUMLBlock < MainColumnDiagramBlock
+    def get_engine
+      'plantuml'
+    end
+  end
+  class MarginPlantUMLBlock < MarginDiagramBlock
+    def get_engine
+      'plantuml'
+    end
+  end
+
+
+  # Specialization classes for Ditaa
+  class FullWidthDitaaBlock < FullWidthDiagramBlock
+    def get_engine
+      'ditaa'
+    end
+  end
+  class MainColumnDitaaBlock < MainColumnDiagramBlock
+    def get_engine
+      'ditaa'
+    end
+  end
+  class MarginDitaaBlock < MarginDiagramBlock
+    def get_engine
+      'ditaa'
+    end
+  end
 end
 
 # {% fullwidthplantuml caption:'a caption here' %}
 # diagram code here
 # {% endfullwidthplantuml %}
-Liquid::Template.register_tag('fullwidthplantuml', Jekyll::FullWidthPlantumlBlock)
+Liquid::Template.register_tag('fullwidthplantuml', Jekyll::FullWidthPlantUMLBlock)
 
 # {% maincolumnplantuml caption:'a caption here' %}
 # diagram code here
 # {% endmaincolumnplantuml %}
-Liquid::Template.register_tag('maincolumnplantuml', Jekyll::MainColumnPlantumlBlock)
+Liquid::Template.register_tag('maincolumnplantuml', Jekyll::MainColumnPlantUMLBlock)
 
-Liquid::Template.register_tag('marginplantuml', Jekyll::MarginPlantumlBlock)
+Liquid::Template.register_tag('marginplantuml', Jekyll::MarginPlantUMLBlock)
+
+
+# Ditaa diagrams
+Liquid::Template.register_tag('fullwidthditaa', Jekyll::FullWidthDitaaBlock)
+Liquid::Template.register_tag('maincolumnditaa', Jekyll::MainColumnDitaaBlock)
+Liquid::Template.register_tag('marginditaa', Jekyll::MarginDitaaBlock)

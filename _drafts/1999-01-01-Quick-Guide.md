@@ -32,6 +32,11 @@ For this [we can create a small C program](/book-of-gehn/assets/azeria-arm-chall
 
 ## Math / Latex
 
+[Symbols](https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols)
+
+Is member of:  $$ x \in X $$
+Is simular to: $$ x \sim a $$
+
 **beware:** vertical bars `|` may be interpreted as Markdown tables.
 Use `\vert`
 
@@ -137,12 +142,20 @@ Highlight/Take home message
 
 >>> "This is important"
 
-## Diagrams
+## Diagrams (PlantUML, Ditaa)
 
-State machine diagrams `marginplantuml` and `maincolumnplantuml`
+PlantUML diagrams:
+ - `marginplantuml` (at the margin, for small diagrams)
+ - `maincolumnplantuml` (at the main column, for main diagrams)
+ - `fullwidthplantuml` (at the main column, full width, for main diagrams)
+
+Ditaa diagrams: same like the above Liquid Blocks but replacing
+"plantuml" by "ditaa" (`marginplantuml` -> `marginditaa`)
 
 Use http://www.plantuml.com/plantuml/uml/ for testing online.
 
+
+### Examples
 
 {% marginplantuml caption:'Caption $$sm_1$$ and $$sm_2$$ (``ab``).' %}
 `
@@ -160,9 +173,9 @@ sm2 -> [*] : <math>\epsilon</math>
 `
 {% endmarginplantuml %}
 
-"Ditaa" diagrams **must** be explicitly set
 
-{% maincolumnplantuml engine: 'ditaa' args: '--no-shadows --no-separation' %}
+
+{% maincolumnditaa %}
 
 sp             sp+4           sp+8           sp+12
  |              |              |              |
@@ -174,7 +187,7 @@ sp             sp+4           sp+8           sp+12
    |                  |        |
    V                  v        v
    /bin/bash\x00      -c       echo 'pwn!'...
-{% endmaincolumnplantuml %}
+{% endmaincolumnditaa %}
 
 
 ## Venn diagrams

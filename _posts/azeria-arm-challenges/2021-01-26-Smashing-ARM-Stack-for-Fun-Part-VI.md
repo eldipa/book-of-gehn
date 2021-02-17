@@ -104,7 +104,7 @@ However:
 
 No problem! We can design a single array in the stack to fulfill both:
 
-{% maincolumnplantuml engine: 'ditaa' args: '--no-shadows --no-separation' %}
+{% maincolumnditaa %}
 
 sp             sp+4           sp+8           sp+12
  |              |              |              |
@@ -116,7 +116,7 @@ sp             sp+4           sp+8           sp+12
    |                  |        |
    v                  v        v
   /bin/bash\x00       -c      echo 'pwn!'...
-{% endmaincolumnplantuml %}
+{% endmaincolumnditaa %}
 
 
 In assembly this translates to:
@@ -324,7 +324,7 @@ pwndbg> vmmap
 We can write the egg in the stack and then jump to it. The content
 of the stack should be:
 
-{% maincolumnplantuml engine: 'ditaa' args: '--no-shadows --no-separation' %}
+{% maincolumnditaa %}
                  sp points here after func returned
                  |
                  v                  ||
@@ -333,7 +333,7 @@ AAAAAAAAA  addr1 | XXXXXXX      ... || bottom
 --- ^ ----- ^ ---+--- ^ ---------   ||
     |       |         |             ||
  padding    sp       egg
-{% endmaincolumnplantuml %}
+{% endmaincolumnditaa %}
 
 `addr1` is `sp`. But what value is?
 

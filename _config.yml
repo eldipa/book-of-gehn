@@ -21,8 +21,8 @@ git:
   branch: src
 lato_font_load: true
 mathjax: true
-plantuml:
-    jar: /usr/local/share/java/plantuml.jar
+diagrams:
+    plantuml-jar: /usr/local/share/java/plantuml.jar
     ditaa-jar: /usr/local/share/java/ditaa.jar
 phaser: false
 offline: false

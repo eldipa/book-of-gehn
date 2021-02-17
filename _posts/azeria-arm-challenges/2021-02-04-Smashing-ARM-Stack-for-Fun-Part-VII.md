@@ -98,7 +98,7 @@ writing the *ret* address: 0x4 more bytes and we are done.
    0x10508 <getpath+48>     bl     #gets@plt <gets@plt>
 ```
 
-{% maincolumnplantuml engine: 'ditaa' args: '--no-shadows --no-separation' %}
+{% maincolumnditaa %}
  fp + 0x50            fp points here
    |                   |
    v                   v                      ||
@@ -107,7 +107,7 @@ writing the *ret* address: 0x4 more bytes and we are done.
 ----- ^ ----- ^ -- ^ --+-- ^ -+-------------  ||
       |       |    |       |                  ||
    buffer    saved registers
-{% endmaincolumnplantuml %}
+{% endmaincolumnditaa %}
 
 
 The stack pointer `sp` after `getpath`
@@ -122,7 +122,7 @@ returns will be at *4 bytes more*  than `fp` *before* the return:
 #1  0x00010578 in main ()
 ```
 
-{% maincolumnplantuml engine: 'ditaa' args: '--no-shadows --no-separation' %}
+{% maincolumnditaa %}
                              sp points here
                               |
                               v               ||
@@ -131,7 +131,7 @@ returns will be at *4 bytes more*  than `fp` *before* the return:
 ----- ^ ----- ^ -- ^ ----- ^ -+- ^ ---------  ||
       |       |    |       |     |            ||
       \-- padding -/   befffb88  egg
-{% endmaincolumnplantuml %}
+{% endmaincolumnditaa %}
 
 ## The attack (without DEP and ASLR)
 
