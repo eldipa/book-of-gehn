@@ -50,6 +50,7 @@
     <script src='/book-of-gehn/js/venn/venn.min.js'></script>
     <script src='/book-of-gehn/js/venn/helper.js'></script>
 
+    <script src='/book-of-gehn/js/fix_syntax_highlight.js'></script>
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/tufte.css">
   <link rel="stylesheet" type="text/css" href="/book-of-gehn/css/latex.css">
 
@@ -244,65 +245,6 @@ was 31 as expected.</p>
 –known as gadget– that sets <code class="highlighter-rouge">r0</code> to zero and then jump to <code class="highlighter-rouge">_exit</code>.</p>
 
 <p>But that’s for another post.</p>
-
-<!-- stuff -->
-
-<script>
-function fix_asm_syntax(ev) {
-    // pip install selectq
-    //   cond = (val('text()') == 'blt') | (val('text()') == 'b') | (val('text()').startswith('mov')) | ...
-    //   div = sQ.select('div', attr('class').contains('language-nasm'))
-    //   xpath = div.select('span', cond)
-
-    // Make some instructions "keywords"
-    var xpath = ".//div[contains(@class,'language-nasm')]//span[(((text() = 'blt') or (text() = 'b')) or starts-with(text(), 'mov')) or starts-with(text(), 'ldm') or starts-with(text(), 'stm') or starts-with(text(), 'ldr') or starts-with(text(), 'bx') or starts-with(text(), 'bl') or starts-with(text(), 'bne') or starts-with(text(), 'mvn') or starts-with(text(), 'beq') or starts-with(text(), 'svc') or starts-with(text(), 'cmn') or starts-with(text(), 'bhi')]";
-    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
-
-    var elems = [];
-    var el = elems_iter.iterateNext();
-    while (el) {
-        elems.push(el);
-        el = elems_iter.iterateNext();
-    }
-    for (var i = 0; i < elems.length; i++) {
-        var el = elems[i];
-        el.classList.add('k'); // keyword
-        el.classList.remove('n'); // noun
-    }
-
-    // Remove the 'err' class
-    var xpath = ".//div[contains(@class,'language-nasm')]//span[@class='err']"
-    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
-
-    var elems = [];
-    var el = elems_iter.iterateNext();
-    while (el) {
-        elems.push(el);
-        el = elems_iter.iterateNext();
-    }
-    for (var i = 0; i < elems.length; i++) {
-        var el = elems[i];
-        el.classList.remove('err'); // syntax error
-    }
-
-    // Remove the 'err' class
-    var xpath = ".//div[contains(@class,'language-python')]//span[@class='err']"
-    var elems_iter = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null);
-
-    var elems = [];
-    var el = elems_iter.iterateNext();
-    while (el) {
-        elems.push(el);
-        el = elems_iter.iterateNext();
-    }
-    for (var i = 0; i < elems.length; i++) {
-        var el = elems[i];
-        el.classList.remove('err'); // syntax error
-    }
-}
-
-document.addEventListener('DOMContentLoaded', fix_asm_syntax);
-</script>
 
 
 
