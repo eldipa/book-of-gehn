@@ -81,6 +81,26 @@
     
        <span class="index-single-post">
           <hr class="slender post-layout">
+          <a href="/book-of-gehn/articles/2021/02/18/Ksplice-Pointer-Challenge.html"><h2 class="larger">Ksplice-Pointer-Challenge</h2></a>
+          <br><span class="smaller">February 18, 2021</span>  <br/>
+          <div><p>What does the following code?</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+</div>
+       </span>
+    
+       <span class="index-single-post">
+          <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2021/02/15/Necklaces-Lyndon-Words-and-De-Bruijn-Sequences.html"><h2 class="larger">Necklaces, Lyndon words and De Bruijn Sequences</h2></a>
           <br><span class="smaller">February 15, 2021</span>  <br/>
           <div><p>What have in common a dense arrays for mapping numbers power of 2
@@ -424,26 +444,6 @@ is <em>more challenging</em>.</p>
 single-consumer queue. A multi-producer multi-consumer queue is
 described in the
 <a href="/book-of-gehn/articles/2020/04/28/Lock-Free-Queue-Part-II.html">second part</a>.</p>
-
-</div>
-       </span>
-    
-       <span class="index-single-post">
-          <hr class="slender post-layout">
-          <a href="/book-of-gehn/articles/2020/02/18/Ksplice-Pointer-Challenge.html"><h2 class="larger">Ksplice-Pointer-Challenge</h2></a>
-          <br><span class="smaller">February 18, 2020</span>  <br/>
-          <div><p>What does the following code?</p>
-
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
-</span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-  <span class="kt">int</span> <span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
-  <span class="n">printf</span><span class="p">(</span><span class="s">"%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-  <span class="n">printf</span><span class="p">(</span><span class="s">"%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
-  <span class="n">printf</span><span class="p">(</span><span class="s">"%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">);</span>
-  <span class="n">printf</span><span class="p">(</span><span class="s">"%p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
-  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
 
 </div>
        </span>
