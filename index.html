@@ -81,6 +81,27 @@
     
        <span class="index-single-post">
           <hr class="slender post-layout">
+          <a href="/book-of-gehn/articles/2021/02/27/High-Precision-Timers.html"><h2 class="larger">High Precision Timers (userspace)</h2></a>
+          <br><span class="smaller">February 27, 2021</span>  <br/>
+          <div><p>You want to measure the time that it takes <code class="highlighter-rouge">foo()</code> to run so
+you do the following:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">experiment</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">uint64_t</span> <span class="n">begin</span> <span class="o">=</span> <span class="n">now</span><span class="p">();</span>
+    <span class="n">foo</span><span class="p">();</span>
+    <span class="kt">uint64_t</span> <span class="n">end</span> <span class="o">=</span> <span class="n">now</span><span class="p">();</span>
+
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Elapsed: %lu</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">end</span> <span class="o">-</span> <span class="n">begin</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The question is, what <code class="highlighter-rouge">now()</code> function you would use?</p>
+
+</div>
+       </span>
+    
+       <span class="index-single-post">
+          <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2021/02/18/Ksplice-Pointer-Challenge.html"><h2 class="larger">Ksplice-Pointer-Challenge</h2></a>
           <br><span class="smaller">February 18, 2021</span>  <br/>
           <div><p>What does the following code?</p>

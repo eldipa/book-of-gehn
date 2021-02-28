@@ -1,4 +1,260 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-02-20T03:53:23+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Ksplice-Pointer-Challenge</title><link href="/book-of-gehn/articles/2021/02/18/Ksplice-Pointer-Challenge.html" rel="alternate" type="text/html" title="Ksplice-Pointer-Challenge" /><published>2021-02-18T00:00:00+01:00</published><updated>2021-02-18T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/02/18/Ksplice-Pointer-Challenge</id><content type="html" xml:base="/book-of-gehn/articles/2021/02/18/Ksplice-Pointer-Challenge.html">&lt;p&gt;What does the following code?&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-02-28T21:00:02+01:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">High Precision Timers (userspace)</title><link href="/book-of-gehn/articles/2021/02/27/High-Precision-Timers.html" rel="alternate" type="text/html" title="High Precision Timers (userspace)" /><published>2021-02-27T00:00:00+01:00</published><updated>2021-02-27T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/02/27/High-Precision-Timers</id><content type="html" xml:base="/book-of-gehn/articles/2021/02/27/High-Precision-Timers.html">&lt;p&gt;You want to measure the time that it takes &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; to run so
+you do the following:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;experiment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;uint64_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;begin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;uint64_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;end&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Elapsed: %lu&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;end&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;begin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The question is, what &lt;code class=&quot;highlighter-rouge&quot;&gt;now()&lt;/code&gt; function you would use?&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-03b214c87fc91b9696d0ed47afaae3a2&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-03b214c87fc91b9696d0ed47afaae3a2&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;You could read a CPU register that implements the clock in hardware.
+Beware, however, that the read may not be cheap and the clock
+may not have the precision that you need.
+&lt;br /&gt;
+Also, the register may be per CPU: to make it work you need to
+ensure that &lt;code class=&quot;highlighter-rouge&quot;&gt;experiment()&lt;/code&gt; does not migrate to another CPU.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;There are some options available:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;time.h&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;sys/time.h&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;getrusage()&lt;/code&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;sys/time.h&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;sys/resource.h&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;time.h&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;However not all of them are as suitable for the task as they may seem.&lt;/p&gt;
+
+&lt;h2 id=&quot;test-escenario&quot;&gt;Test escenario&lt;/h2&gt;
+
+&lt;p&gt;The idea is to call a particular clock several times in a tight loop.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;atoi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timespec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;malloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;clock_gettime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CLOCK_MONOTONIC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;print_nsec_resolution&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;mono&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-cb27feb9f66d3ce8a8f57233b20f789c&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-cb27feb9f66d3ce8a8f57233b20f789c&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;If the clock jumps &lt;em&gt;backwards&lt;/em&gt;, this function will print a &lt;em&gt;huge&lt;/em&gt;
+number and not a negative value.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;print_*&lt;/code&gt; functions will print the measurements normalized: no
+matter the clock’s resolution, the printed value will be in nanoseconds
+and to get comparable results the values are respect the first
+measurement.&lt;/p&gt;
+
+&lt;p&gt;In other words:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;uint64_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ref&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tv_sec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000000000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// seconds as nanoseconds&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;ref&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tv_nsec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// plus the nanoseconds&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;uint64_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tv_sec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000000000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tv_nsec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%s %lu&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;category&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ref&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The full code can be found
+&lt;a href=&quot;/book-of-gehn/assets/timing-assets/clocks.c&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;evaluation&quot;&gt;Evaluation&lt;/h2&gt;
+
+&lt;p&gt;Compiled and executed with 10000 rounds each clock, it generated 70000
+lines.&lt;/p&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-f54216808c493c3f80dc6392ed4cbef4&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-f54216808c493c3f80dc6392ed4cbef4&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;The use of &lt;code class=&quot;highlighter-rouge&quot;&gt;dtype={&quot;clock type&quot;: &quot;category&quot;}&lt;/code&gt; is important. Pandas
+will load these strings and it will create a category for each distinct
+label which internally is represented as an integer.
+&lt;br /&gt;
+This reduces by two orders of magnitud the memory usage
+(&lt;code class=&quot;highlighter-rouge&quot;&gt;d.memory_usage(True, True)&lt;/code&gt; to compare them).
+&lt;a href=&quot;https://pandas.pydata.org/pandas-docs/stable/user_guide/scale.html&quot;&gt;Pandas
+reference&lt;/a&gt;
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;Each line is prefixed with a string that labels the clock type.&lt;/p&gt;
+
+&lt;p&gt;The output can be loaded with &lt;code class=&quot;highlighter-rouge&quot;&gt;pandas&lt;/code&gt; as follows:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;fname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;sep&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;' '&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;header&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;names&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'clock type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'tval'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'clock type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'category'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It makes sense to analyze not the time returned by each call but the
+difference between two consecutive calls. This highlights how much
+stable is the clock and how much delay adds the call.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'clock type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;categories&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;selected_rows&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'clock type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;differences&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;selected_rows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'tval'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;selected_rows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'tval'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;differences&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The full code can be found
+&lt;a href=&quot;/book-of-gehn/assets/timing-assets/analyze.py&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let’s review what we’ve got.&lt;/p&gt;
+
+&lt;h3 id=&quot;time&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt; has a resolution of a second, so it is a &lt;em&gt;no-go&lt;/em&gt; to measure things
+of the order of the microsecond or less.&lt;/p&gt;
+
+&lt;p&gt;But for completeness I tested &lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt; anyways and what I found
+it was a surprise:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Clock type: time
+         tval
+count  9999.0
+mean      0.0
+std       0.0
+min       0.0
+25%       0.0
+50%       0.0
+75%       0.0
+max       0.0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If I run &lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt; in tight &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop, it returns always the same value,
+no matter how many times the loop iterates.&lt;/p&gt;
+
+&lt;p&gt;I thought that it was a bug but nope, when I run it with &lt;code class=&quot;highlighter-rouge&quot;&gt;gdb&lt;/code&gt; it works as
+expected.&lt;/p&gt;
+
+&lt;p&gt;Weird.&lt;/p&gt;
+
+&lt;h3 id=&quot;gettimeofday&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-dc0b3eefb4998a6ca1169da11ae5af81&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-dc0b3eefb4998a6ca1169da11ae5af81&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;This can be explained due its implementation: instead of doing a
+syscall, a call to &lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; calls a snippet of code in user
+space.
+&lt;br /&gt;
+See more about &lt;a href=&quot;https://0xax.gitbooks.io/linux-insides/content/SysCall/linux-syscall-3.html&quot;&gt;vsyscall and vDSO here&lt;/a&gt;
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; shown the best performance: the worst time measured
+between two consecutive calls is just 2 microseconds, which it is twice
+the minimum resolution of the function.&lt;/p&gt;
+
+&lt;p&gt;Fast but it is also super imprecise.&lt;/p&gt;
+
+&lt;p&gt;More than 75% of the differences between two consecutive measurements
+are zero which means that &lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; returns a cached value and it
+is updated very infrequently.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;clock type: tofd
+              tval
+count  9999.000000
+mean     27.102710
+std     166.646544
+min       0.000000
+25%       0.000000
+50%       0.000000
+75%       0.000000
+max    2000.000000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In addition to its intrinsic imprecision, &lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; is &lt;strong&gt;not
+guaranteed to be monotonically increasing&lt;/strong&gt;. So you can see &lt;em&gt;jumps&lt;/em&gt; to
+the future or event to the past.&lt;/p&gt;
+
+&lt;p&gt;This is because &lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; is in sync with external sources of
+time like NTP. The user may even change it running &lt;code class=&quot;highlighter-rouge&quot;&gt;date&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Fast but not useful to measure differences of time.&lt;/p&gt;
+
+&lt;h3 id=&quot;getrusage&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;getrusage()&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;Something similar happens with &lt;code class=&quot;highlighter-rouge&quot;&gt;getrusage()&lt;/code&gt;: it is slightly slower than
+&lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; but it is still super fast (7 microseconds) but returns
+cached values (at least half of the times).&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Clock type: ruse
+              tval
+count  9999.000000
+mean    524.152415
+std     656.260508
+min       0.000000
+25%       0.000000
+50%       0.000000
+75%    1000.000000
+max    7000.000000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;clock_gettime&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-76401935f6d8c10a405345e8f13e5b88&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-76401935f6d8c10a405345e8f13e5b88&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;See also the &lt;a href=&quot;https://www.python.org/dev/peps/pep-0418/#time-monotonic&quot;&gt;PEP 418&lt;/a&gt;.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;The manpage describes four kind of clocks that may work:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt;: monotonic time but it may be affected by
+incremental changes done by &lt;code class=&quot;highlighter-rouge&quot;&gt;adjtime&lt;/code&gt; or NTP.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC_RAW&lt;/code&gt;: like &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt; but it is not affected by
+&lt;code class=&quot;highlighter-rouge&quot;&gt;adjtime&lt;/code&gt; or NTP. Uses hardware-specific.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_PROCESS_CPUTIME_ID&lt;/code&gt;: per process clock that measures the
+CPU time for the process (among all the threads).&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_THREAD_CPUTIME_ID&lt;/code&gt;: per thread clock that measures the
+CPU time for that particular thread.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; is the only that returned values that make sense
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt; is the winner.&lt;/p&gt;
+
+&lt;p&gt;It has the smallest elapsed time (80 nanoseconds) and it has a
+dispersion of the values of few nanoseconds.&lt;/p&gt;
+
+&lt;p&gt;This can be seen in the percentiles 80, 84, 85, 86 nanoseconds.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_PROCESS_CPUTIME_ID&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_THREAD_CPUTIME_ID&lt;/code&gt; are in the
+second place.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;         MONOTONIC    MONOTONIC_RAW   PROCESS_CPUTIME    THREAD_CPUTIME
+              tval             tval              tval              tval
+count  9999.000000      9999.000000       9999.000000       9999.000000
+mean    102.900290       773.215422        387.565257        379.232923
+std     295.741321       200.428225        216.037233        210.391130
+min      80.000000       709.000000        366.000000        358.000000
+25%      84.000000       719.000000        374.000000        367.000000
+50%      85.000000       723.000000        377.000000        370.000000
+75%      86.000000       728.000000        401.000000        391.000000
+max    8019.000000     13532.000000      17392.000000      17572.000000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In all the cases the clocks are quite stable and the outliers are
+probably due noise in the system.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusions&quot;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt; is the winner, at least in my
+4.19 kernel, with a minimum delta of 80 to 86 nanoseconds.&lt;/p&gt;
+
+&lt;p&gt;In second place &lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_PROCESS_CPUTIME_ID&lt;/code&gt; or
+&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_THREAD_CPUTIME_ID&lt;/code&gt;. Good performance, roughly 4 or 5 times slower
+than &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC_RAW&lt;/code&gt; is not bad but it is at
+least 8 times slower than &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The rest of the clocks are &lt;strong&gt;not&lt;/strong&gt; useful.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">You want to measure the time that it takes foo() to run so you do the following: void experiment() { uint64_t begin = now(); foo(); uint64_t end = now(); printf(&quot;Elapsed: %lu\n&quot;, end - begin); } The question is, what now() function you would use?</summary></entry><entry><title type="html">Ksplice-Pointer-Challenge</title><link href="/book-of-gehn/articles/2021/02/18/Ksplice-Pointer-Challenge.html" rel="alternate" type="text/html" title="Ksplice-Pointer-Challenge" /><published>2021-02-18T00:00:00+01:00</published><updated>2021-02-18T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/02/18/Ksplice-Pointer-Challenge</id><content type="html" xml:base="/book-of-gehn/articles/2021/02/18/Ksplice-Pointer-Challenge.html">&lt;p&gt;What does the following code?&lt;/p&gt;
 
 &lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;stdio.h&amp;gt;
 &lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -1856,232 +2112,4 @@ in the stack but without corrupting the stack further.&lt;/p&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'&lt;/span&gt; | ./stack0
 you have changed the &lt;span class=&quot;s1&quot;&gt;'modified'&lt;/span&gt; variable
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Gehn</name></author><summary type="html">This is the first of a serie of posts about exploiting 32 bits Arm binaries. These challenges were taken from Azeria Labs.</summary></entry><entry><title type="html">iasm: Interactive Assembler</title><link href="/book-of-gehn/articles/2021/01/09/Interactive-Assembler.html" rel="alternate" type="text/html" title="iasm: Interactive Assembler" /><published>2021-01-09T00:00:00+01:00</published><updated>2021-01-09T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/09/Interactive-Assembler</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/09/Interactive-Assembler.html">&lt;p&gt;I crossed with a series of &lt;a href=&quot;https://github.com/azeria-labs/ARM-challenges&quot;&gt;Arm challenges&lt;/a&gt;
-by causality and I decided to give it a shoot.&lt;/p&gt;
-
-&lt;p&gt;But I have &lt;strong&gt;0&lt;/strong&gt; knowledge about Arm so the disassembly of the binaries
-were too strange for me.&lt;/p&gt;
-
-&lt;p&gt;I stepped back to plan it better: my idea was to use GDB to debug small snippets of Arm
-code, learn about it before jumping into the challenges.&lt;/p&gt;
-
-&lt;p&gt;I setup a &lt;a href=&quot;/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html&quot;&gt;QEMU virtual machine&lt;/a&gt;
-running Rasbian in an Arm CPU.&lt;/p&gt;
-
-&lt;p&gt;With a GCC and GDB running there I started but the compile-load-debug
-cycle was too inflexible.&lt;/p&gt;
-
-&lt;p&gt;I could not use it to &lt;em&gt;explore&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;If I wanted to see the effect of a particular instruction I needed to write
-it in assembly, compile it and debug it.&lt;/p&gt;
-
-&lt;p&gt;And the time between the “what does X?” and the “X does this” was too
-large, reducing the &lt;em&gt;momentum&lt;/em&gt; that you have when you explore something
-new.&lt;/p&gt;
-
-&lt;p&gt;Too tedious.&lt;/p&gt;
-
-&lt;p&gt;So I decided to shorten the cycle writing an
-&lt;a href=&quot;https://github.com/bad-address/iasm&quot;&gt;&lt;em&gt;interactive&lt;/em&gt; assembler&lt;/a&gt;.&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;first-try-gdb-as-the-engine&quot;&gt;First try: GDB as the engine&lt;/h2&gt;
-
-&lt;p&gt;GDB can manipulate the memory of the debuggee process. In particular we
-could write binary code, jump to it and execute it. Perfect.&lt;/p&gt;
-
-&lt;p&gt;But GDB doesn’t have a compiler for assembly.&lt;/p&gt;
-
-&lt;p&gt;Or has it?&lt;/p&gt;
-
-&lt;h3 id=&quot;keystone-engine&quot;&gt;Keystone engine&lt;/h3&gt;
-
-&lt;p&gt;No, but one can be implemented easily with
-&lt;a href=&quot;https://www.keystone-engine.org/&quot;&gt;keystone-engine&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Keystone takes assembly code and compiles it. Having Python bindings
-we could put this into a GDB plugin and &lt;em&gt;presto!&lt;/em&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;second-try-unicorn-engine&quot;&gt;Second try: Unicorn engine&lt;/h2&gt;
-
-&lt;p&gt;GDB requires a full operative
-system (Rasbian) running in a full emulated QEMU machine.&lt;/p&gt;
-
-&lt;p&gt;Can we make it lighter? – Yes we can.&lt;/p&gt;
-
-&lt;h3 id=&quot;unicorn-engine&quot;&gt;Unicorn engine&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.unicorn-engine.org/&quot;&gt;unicorn-engine&lt;/a&gt; it is a CPU emulator
-based on QEMU.&lt;/p&gt;
-
-&lt;p&gt;The trick is that Unicorn only emulates the CPU and memory and nothing
-else: no devices, disks or network cards.&lt;/p&gt;
-
-&lt;p&gt;Without anything to manage, Unicorn does not need an operative system
-making it a solution much lighter.&lt;/p&gt;
-
-&lt;p&gt;And better, the Python bindings for Unicorn gives us access to the CPU
-registers and memory so we can get rid of GDB.&lt;/p&gt;
-
-&lt;h2 id=&quot;iasm-keystone--unicorn--python&quot;&gt;iasm: keystone + unicorn + python&lt;/h2&gt;
-
-&lt;p&gt;I soon realized that while learning Arm by writing code is the best way
-to do it,
-writing &lt;em&gt;everything&lt;/em&gt; in assembly is hard.&lt;/p&gt;
-
-&lt;p&gt;Simple tasks like initialize the registers or print a chunk
-of stack involves several instructions.&lt;/p&gt;
-
-&lt;p&gt;In Python &lt;code class=&quot;highlighter-rouge&quot;&gt;r0 = 1111127999&lt;/code&gt;. In Arm:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lval&lt;/span&gt;
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lval&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;word&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1111127999&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So, &lt;a href=&quot;https://github.com/bad-address/iasm&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt;&lt;/a&gt; has an escape mode.
-Basically I call &lt;code class=&quot;highlighter-rouge&quot;&gt;eval&lt;/code&gt;/&lt;code class=&quot;highlighter-rouge&quot;&gt;exec&lt;/code&gt;
-emulating with Python variables like &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;M&lt;/code&gt; registers
-and memory.&lt;/p&gt;
-
-&lt;p&gt;And that’s &lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; an keystone assembler connected with a unicorn
-emulator and some python code to glue them.&lt;/p&gt;
-
-&lt;h2 id=&quot;features&quot;&gt;Features&lt;/h2&gt;
-
-&lt;h3 id=&quot;python-prompt-toolkit&quot;&gt;Python Prompt Toolkit&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://python-prompt-toolkit.readthedocs.io/en/latest/&quot;&gt;python-prompt-toolkit&lt;/a&gt;
-or PPT for short, is a library to build CLI applications.&lt;/p&gt;
-
-&lt;p&gt;It has syntax highlighting as you write (using &lt;a href=&quot;https://pygments.org/&quot;&gt;pygments&lt;/a&gt;),
-autocompletion and command line history.&lt;/p&gt;
-
-&lt;p&gt;An enhanced replacement for Python’s &lt;code class=&quot;highlighter-rouge&quot;&gt;input&lt;/code&gt; for sure.&lt;/p&gt;
-
-&lt;h3 id=&quot;memory&quot;&gt;Memory&lt;/h3&gt;
-
-&lt;p&gt;Unicorn has &lt;code class=&quot;highlighter-rouge&quot;&gt;mem_read&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;mem_write&lt;/code&gt; to change the memory of the
-process but like any other process, the memory pages need to be mapped
-before with &lt;code class=&quot;highlighter-rouge&quot;&gt;mem_map&lt;/code&gt; and released with &lt;code class=&quot;highlighter-rouge&quot;&gt;mem_unmap&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mem_map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mem_write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;A&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mem_read&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;mu&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mem_unmap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; has a more pythonic syntax accessible from the Python shell:&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# map and initialize
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Mapping&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1fff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sz&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1050&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1055&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x41&lt;/span&gt;       &lt;span class=&quot;c1&quot;&gt;# write like 'memset'
-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1055&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x105a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'B'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# write like 'memcpy'
-&lt;/span&gt;
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1050&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x105a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# read
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AAAAABBBBB&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# list mapped pages
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1fff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sz&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x11fffff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sz&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x200000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;del&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# unmap
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;allocate-stack&quot;&gt;Allocate stack&lt;/h3&gt;
-
-&lt;p&gt;To allocate the stack and setup the (Arm) registers just run:&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Mapping&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;memory&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x1fff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sz&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2000&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Now, play with it and practice your (Arm) assembly:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
-&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And check the stack (was &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; pushed before &lt;code class=&quot;highlighter-rouge&quot;&gt;r1&lt;/code&gt; or not? Check it!)&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;M&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# from sp to the end of the mapped page
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x04&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x08&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;\&lt;span class=&quot;n&quot;&gt;x00&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;initialization-script&quot;&gt;Initialization script&lt;/h3&gt;
-
-&lt;p&gt;Write in a file all the initialization like the stack allocation and
-load it from the command line with &lt;code class=&quot;highlighter-rouge&quot;&gt;-i&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;';! r0 = r1 = r2 = 8'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; init
-
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;iasm &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; arm &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; arm &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; init
-Mapping memory region &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;0x1000000-0x11fffff] &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sz 0x200000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;  &lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt;
-    r0  8  r1      8  r2      8  r3      0
-&amp;lt;...&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;inline-documentation&quot;&gt;Inline documentation&lt;/h3&gt;
-
-&lt;p&gt;Following the tradition of Python, &lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; includes documentation for the
-assembly instructions.&lt;/p&gt;
-
-&lt;p&gt;After the mnemonic type &lt;code class=&quot;highlighter-rouge&quot;&gt;?&lt;/code&gt; and enter to show it:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mul&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Basically what I did was to convert to text the manual of reference of
-the ISA (typically it is a PDF file) and then parse the text.&lt;/p&gt;
-
-&lt;p&gt;I only focused in the documentation of the instructions, the rest is up
-to the user to search the complete story in the official documentation
-(only Arm for now)&lt;/p&gt;
-
-&lt;h3 id=&quot;globs-registers&quot;&gt;Globs registers&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; allows to select which registers to show using &lt;em&gt;globs&lt;/em&gt;,
-Unix like pattern expressions defined by
-&lt;a href=&quot;https://docs.python.org/3/library/fnmatch.html&quot;&gt;fnmatch&lt;/a&gt;.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;iasm &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt; arm &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; arm &lt;span class=&quot;nt&quot;&gt;-r&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'r[0-9]'&lt;/span&gt;
-Mapping memory region &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;0x1000000-0x11fffff] &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sz 0x200000&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -
-r0  0  r1     0  r2  0  r3  0
-r4  0  r5     0  r6  0  r7  0
-r8  0  r9/sb  0
-&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -  &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;  -
-&amp;lt;...&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So the expression &lt;code class=&quot;highlighter-rouge&quot;&gt;r[0-9]&lt;/code&gt; selects all the Arm registers from &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to
-&lt;code class=&quot;highlighter-rouge&quot;&gt;r15&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;compressed-hex-values&quot;&gt;Compressed hex values&lt;/h3&gt;
-
-&lt;p&gt;32 bit numbers are too large to display (and 64 bit address are
-worse!).&lt;/p&gt;
-
-&lt;p&gt;Instead, &lt;code class=&quot;highlighter-rouge&quot;&gt;iasm&lt;/code&gt; shows them as &lt;em&gt;compressed&lt;/em&gt; hexadecimal numbers.&lt;/p&gt;
-
-&lt;p&gt;They are like hexadecimals but the number is split into 4-digits groups
-divided by a &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The leading zeros of each group are omitted and if the group is full of
-zeros only a single &lt;code class=&quot;highlighter-rouge&quot;&gt;0&lt;/code&gt; is put and if the group is on the left (more
-significant digits), the whole group is omitted.&lt;/p&gt;
-
-&lt;p&gt;Here are some examples:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0x00000000             0
-0x000000ab            ab
-0x00ab00cd         ab:cd
-0x00ab0000          ab:0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Gehn</name></author><summary type="html">I crossed with a series of Arm challenges by causality and I decided to give it a shoot. But I have 0 knowledge about Arm so the disassembly of the binaries were too strange for me. I stepped back to plan it better: my idea was to use GDB to debug small snippets of Arm code, learn about it before jumping into the challenges. I setup a QEMU virtual machine running Rasbian in an Arm CPU. With a GCC and GDB running there I started but the compile-load-debug cycle was too inflexible. I could not use it to explore. If I wanted to see the effect of a particular instruction I needed to write it in assembly, compile it and debug it. And the time between the “what does X?” and the “X does this” was too large, reducing the momentum that you have when you explore something new. Too tedious. So I decided to shorten the cycle writing an interactive assembler.</summary></entry></feed>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Gehn</name></author><summary type="html">This is the first of a serie of posts about exploiting 32 bits Arm binaries. These challenges were taken from Azeria Labs.</summary></entry></feed>
