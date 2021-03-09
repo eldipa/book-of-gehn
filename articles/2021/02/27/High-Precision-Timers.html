@@ -92,12 +92,14 @@ you do the following:</p>
 
 <p>The question is, what <code class="highlighter-rouge">now()</code> function you would use?<!--more--></p>
 
-<p><label for="mn-03b214c87fc91b9696d0ed47afaae3a2" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-03b214c87fc91b9696d0ed47afaae3a2" class="margin-toggle" /><span class="marginnote">You could read a CPU register that implements the clock in hardware.
+<p><label for="mn-eb29b55ad6d0f41601d1d47bf7527f71" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-eb29b55ad6d0f41601d1d47bf7527f71" class="margin-toggle" /><span class="marginnote">You could read a CPU register that implements the clock in hardware.
 Beware, however, that the read may not be cheap and the clock
 may not have the precision that you need.
 <br />
 Also, the register may be per CPU: to make it work you need to
 ensure that <code class="highlighter-rouge">experiment()</code> does not migrate to another CPU.
+<br />
+See <a href="https://github.com/wcohen/libpfm4">libpfm4</a>.
  </span></p>
 
 <p>There are some options available:</p>
