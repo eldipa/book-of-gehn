@@ -26,6 +26,8 @@ may not have the precision that you need.
 <br />
 Also, the register may be per CPU: to make it work you need to
 ensure that `experiment()` does not migrate to another CPU.
+<br />
+See [libpfm4](https://github.com/wcohen/libpfm4).
 ' %}
 
 There are some options available:
