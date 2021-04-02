@@ -63,7 +63,7 @@ stored and the profile is "created".
 ...     return parse_qs(msg, strict_parsing=True)
 
 >>> create_profile(c)
-{'email': ['honest-email@example.com'], 'role': ['user'], 'uid': ['10']}
+{b'email': [b'honest-email@example.com'], b'role': [b'user'], b'uid': [b'10']}
 ```
 
 ## Forgery
@@ -196,6 +196,8 @@ get a admin profile.
 
 ```python
 >>> create_profile(B(forged))
-{'email': ['me-AAAAAAAAAAAAAAAAA@evil.com'], 'role': ['admin'], 'uid': ['10']}
+{b'email': [b'me-AAAAAAAAAAAAAAAAA@evil.com'],
+ b'role': [b'admin'],
+ b'uid': [b'10']}
 ```
 

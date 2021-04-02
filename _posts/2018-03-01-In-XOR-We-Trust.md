@@ -35,7 +35,7 @@ in base 16 or 64 into bytes.
 ...       '706f69736f6e6f7573206d757368726f6f6d', encoding=16)
 
 >>> b.encode(64)
-'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'
+b'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'
 ```
 
 But ``bytestring`` is a little more than a decoder: it has a convenient
@@ -50,7 +50,7 @@ one instruction:
 
 >>> c = a ^ b
 >>> c.encode(16)
-'746865206B696420646F6E277420706C6179'
+b'746865206B696420646F6E277420706C6179'
 ```
 
 {% marginnote 'These last two examples solve the challenges

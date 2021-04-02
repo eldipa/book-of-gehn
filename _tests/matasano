@@ -1,11 +1,12 @@
 -l=python
 --timeout=4
 -j=2
+--ff
 _posts/2018-03-01-In-XOR-We-Trust.md
 _posts/2018-04-01-A-string-of-coincidences-is-not-a-coincidence.md
 _posts/2018-05-01-Breaking-Vigenere.md
 _posts/2018-05-20-Detecting-Penguins.md
-_posts/2018-06-10-ECB-CBC-Oracle.md
+_posts/2018-06-09-ECB-CBC-Oracle.md
 _posts/2018-06-10-Breaking-ECB.md
 _posts/2018-07-01-Cut-and-Paste-ECB-Blocks.md
 _posts/2018-07-03-CBC-Bitflipping.md
