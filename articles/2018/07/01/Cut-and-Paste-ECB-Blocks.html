@@ -135,7 +135,7 @@ stored and the profile is “created”.</p>
 <span class="o">...</span>     <span class="k">return</span> <span class="n">parse_qs</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">strict_parsing</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">create_profile</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-<span class="p">{</span><span class="s">'email'</span><span class="p">:</span> <span class="p">[</span><span class="s">'honest-email@example.com'</span><span class="p">],</span> <span class="s">'role'</span><span class="p">:</span> <span class="p">[</span><span class="s">'user'</span><span class="p">],</span> <span class="s">'uid'</span><span class="p">:</span> <span class="p">[</span><span class="s">'10'</span><span class="p">]}</span>
+<span class="p">{</span><span class="n">b</span><span class="s">'email'</span><span class="p">:</span> <span class="p">[</span><span class="n">b</span><span class="s">'honest-email@example.com'</span><span class="p">],</span> <span class="n">b</span><span class="s">'role'</span><span class="p">:</span> <span class="p">[</span><span class="n">b</span><span class="s">'user'</span><span class="p">],</span> <span class="n">b</span><span class="s">'uid'</span><span class="p">:</span> <span class="p">[</span><span class="n">b</span><span class="s">'10'</span><span class="p">]}</span>
 </code></pre></div></div>
 
 <h2 id="forgery">Forgery</h2>
@@ -258,7 +258,9 @@ last <em>boundary</em> matched with the <code class="highlighter-rouge">role=|us
 get a admin profile.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">create_profile</span><span class="p">(</span><span class="n">B</span><span class="p">(</span><span class="n">forged</span><span class="p">))</span>
-<span class="p">{</span><span class="s">'email'</span><span class="p">:</span> <span class="p">[</span><span class="s">'me-AAAAAAAAAAAAAAAAA@evil.com'</span><span class="p">],</span> <span class="s">'role'</span><span class="p">:</span> <span class="p">[</span><span class="s">'admin'</span><span class="p">],</span> <span class="s">'uid'</span><span class="p">:</span> <span class="p">[</span><span class="s">'10'</span><span class="p">]}</span>
+<span class="p">{</span><span class="n">b</span><span class="s">'email'</span><span class="p">:</span> <span class="p">[</span><span class="n">b</span><span class="s">'me-AAAAAAAAAAAAAAAAA@evil.com'</span><span class="p">],</span>
+ <span class="n">b</span><span class="s">'role'</span><span class="p">:</span> <span class="p">[</span><span class="n">b</span><span class="s">'admin'</span><span class="p">],</span>
+ <span class="n">b</span><span class="s">'uid'</span><span class="p">:</span> <span class="p">[</span><span class="n">b</span><span class="s">'10'</span><span class="p">]}</span>
 </code></pre></div></div>
 
 

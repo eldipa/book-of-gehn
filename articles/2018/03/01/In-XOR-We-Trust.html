@@ -109,7 +109,7 @@ in base 16 or 64 into bytes.</p>
 <span class="o">...</span>       <span class="s">'706f69736f6e6f7573206d757368726f6f6d'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
-<span class="s">'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'</span>
+<span class="n">b</span><span class="s">'SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t'</span>
 </code></pre></div></div>
 
 <p>But <code class="highlighter-rouge">bytestring</code> is a little more than a decoder: it has a convenient
@@ -123,7 +123,7 @@ one instruction:</p>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">^</span> <span class="n">b</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
-<span class="s">'746865206B696420646F6E277420706C6179'</span>
+<span class="n">b</span><span class="s">'746865206B696420646F6E277420706C6179'</span>
 </code></pre></div></div>
 
 <p><label for="mn-10519915d378dfe67b28e42bec65755c" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-10519915d378dfe67b28e42bec65755c" class="margin-toggle" /><span class="marginnote">These last two examples solve the challenges
