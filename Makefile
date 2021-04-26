@@ -67,6 +67,9 @@ test-shellshock:
 test-matasano:
 	byexample @_tests/matasano
 
+test-z3:
+	byexample @_tests/z3
+
 test-crypto:
 	byexample @_tests/crypto
 
