@@ -250,10 +250,15 @@ tiny amounts like 0.0001 grams of chocolate makes no sense.</p>
 they can be modeled as real numbers – that’s why call it <strong>real</strong> linear
 programming in opposition to the <strong>integer</strong> linear programming.</p>
 
-<p>The former can be solved in polinomial time (Z3 uses the <a href="https://en.wikipedia.org/wiki/Simplex_algorithm">Simplex
-algorithm</a>) while the
+<p>The former can be solved in polinomial time. while the
 latter is NP-complete.</p>
 
+<p>Z3 uses the <a href="https://en.wikipedia.org/wiki/Simplex_algorithm">Simplex
+algorithm</a> which has
+exponential time in the worst case but polinomial time in the practice.
+Other solvers can do it better and it had been proved that when we use
+real numbers the algorithm has polinomial time, like the ones based on
+<a href="https://en.wikipedia.org/wiki/Interior-point_method">the interior-point method</a>.</p>
 
 
 
