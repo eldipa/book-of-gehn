@@ -32,7 +32,10 @@ start-attach:
 stop:
 	sudo docker stop GehnPages
 
-publish:
+index:
+	@node ./_docker/build_search_index.js ./_posts/ > js/search_index.js
+
+publish: index
 	@sudo docker stop GehnPages || true
 	@sudo rm -Rf _site uml/*
 	#@sudo docker run --rm -v `pwd`:/srv/jekyll ${DOCKERIMG} bundle exec jekyll build
