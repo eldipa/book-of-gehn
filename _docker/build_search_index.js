@@ -119,7 +119,9 @@ function prune_index (index) {
 
 
 const idx_str = JSON.stringify(idx)
+process.stdout.write('const blog_search_index = ');
 process.stdout.write(idx_str);
+process.stdout.write(';');
 
 const idx2 = JSON.parse(idx_str);
 idx2.lunr_idx = lunr.Index.load(idx2.lunr_idx);
