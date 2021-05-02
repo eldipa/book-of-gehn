@@ -23,9 +23,74 @@ function to_url_name(fname) {
     return fname.replace(/[.]md$/, ".html");
 }
 
+// Things like:
+//  123
+//  0.1
+//  2*3
+//  1..
+//  1**
+const num_like_regex = /\d[\d*.]+/;
+const max_token_len = 40;
+
+// Things like:
+//  123
+//  _foo
+//  ___
+//  _@.
+//  f@b
+const word_like_regex = /^[\w_.@:]*$/;
+
+const split_token_regex = /[_.@:]/;
+function filter_spurious_token(token, pos, all_tokens) {
+    const str = token.str;
+
+    // reject
+    if (str.length >= max_token_len)
+        return null;
+
+    const substrs = str.split(split_token_regex);
+    const filtered_tokens = [];
+    substrs.forEach((substr) => {
+        // reject
+        if (substr.length <= 1)
+            return
+
+        // reject
+        if (num_like_regex.test(substr))
+            return;
+
+        // allow
+        if (!word_like_regex.test(substr))
+            return;
+
+        filtered_tokens.push(new lunr.Token(substr, token.metadata));
+    });
+
+    // Note: we can return 'null' to remove the token;
+    // we can return an array of tokens (to replace 1 by N);
+    // or we can return a string for a simple replacement (1 by 1).
+    return filtered_tokens;
+}
+
+function remove_spurious_tokens_plugin(builder) {
+    // We *don't* register the pipeline function: this will give us
+    // a warning because the function will not be unserialized properly.
+    // It is okay because we want (and *must*) remove this function
+    // from the pipeline *after* building the index (we want to apply
+    // the filter during the index creation, not during the query time)
+    // lunr.Pipeline.registerFunction(filter_spurious_token, 'filter_spurious_token');
+
+    // Apply this filter after doing the stop-words phase
+    builder.pipeline.after(lunr.stopWordFilter, filter_spurious_token);
+}
+
 var ref2path = {};
 var id = 0;
+var doc_count = 0;
 const lunr_idx = lunr(function () {
+    // Enable the plugin to remove any token that is just garbage
+    this.use(remove_spurious_tokens_plugin);
+
     this.ref('id');
     this.field('content');
 
@@ -44,8 +109,24 @@ const lunr_idx = lunr(function () {
         ref2path[id] = to_url_name(fname);
 
         id++;
+        doc_count++;
     }, this);
 });
+
+// We don't want to use this filter during the query time
+lunr_idx.pipeline.remove(filter_spurious_token);
+
+/*
+const inv = lunr_idx.invertedIndex;
+for (const term of Object.keys(inv)) {
+    const doc_indexed_by_this_term = Object.keys(inv[term]).length * 1.0;
+    if (doc_indexed_by_this_term / doc_count > 0.0001) {
+        process.stderr.write(term + "\n");
+    }
+}
+process.stderr.write(JSON.stringify(lunr_idx.invertedIndex['arm'], null, 2) + "\n");
+process.stderr.write(`----> ${Object.keys(inv).length}\n`);
+*/
 
 const idx = {
     // Map lunr documents' ids to URL paths
