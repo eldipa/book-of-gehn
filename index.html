@@ -81,6 +81,100 @@
     
        <span class="index-single-post">
           <hr class="slender post-layout">
+          <a href="/book-of-gehn/articles/2021/05/02/Planning-Space-Missions.html"><h2 class="larger">Planning Space Missions with Z3</h2></a>
+          <br><span class="smaller">May 2, 2021</span>  <br/>
+          <div><p>A space company is planning the next 4 years. It has several projects,
+each one with its own budget requirement per year, but the company has a
+limited budget to invest.</p>
+
+<p>Moreover, some projects <em>depends</em> on others to make them feasible and
+some projects <em>cannot be done</em> if other projects due unbreakable restrictions.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Project</th>
+      <th>1st</th>
+      <th>2nd</th>
+      <th>3rd</th>
+      <th>4th</th>
+      <th>Depends</th>
+      <th>Not</th>
+      <th>Profit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1 Cube-1 nano-sat</td>
+      <td>1.1</td>
+      <td>2</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td>2 Cube-2 nano-sat</td>
+      <td> </td>
+      <td>2.5</td>
+      <td>2</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td>3 Infrared sat</td>
+      <td> </td>
+      <td> </td>
+      <td>1</td>
+      <td>4.1</td>
+      <td>on 6</td>
+      <td>with 4</td>
+      <td>18</td>
+    </tr>
+    <tr>
+      <td>4 Colored img sat</td>
+      <td> </td>
+      <td> </td>
+      <td>2</td>
+      <td>8</td>
+      <td> </td>
+      <td>with 3</td>
+      <td>15</td>
+    </tr>
+    <tr>
+      <td>5 Mars probe</td>
+      <td> </td>
+      <td>2</td>
+      <td>8</td>
+      <td>4.4</td>
+      <td>on 1 &amp; 2</td>
+      <td> </td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td>6 Microwave tech</td>
+      <td>4</td>
+      <td>2.3</td>
+      <td>2</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Under an incredible amount of assumptions and good luck, what is the
+best strategy to maximize the profit?</p>
+
+</div>
+       </span>
+    
+       <span class="index-single-post">
+          <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2021/04/29/Blending-Whisky.html"><h2 class="larger">Blending Whisky with Z3</h2></a>
           <br><span class="smaller">April 29, 2021</span>  <br/>
           <div><p>A whisky producer uses three kind of licor to make their whisky: <script type="math/tex">A</script>,
