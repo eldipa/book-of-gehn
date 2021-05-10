@@ -75,6 +75,18 @@ Usage:
 
 $$ \R  \s{foo} $$
 
+Tiny underscores with `\R` (the `s` is a hack, not used):
+
+```
+latex_macros: "R: '{\\\\tiny{\\\\_}}', s: '{_}'"
+```
+
+## Symbols (that are hard to write)
+
+∧   And
+∨   Or
+
+
 ## Apostrophe
 
 In the macros/Liquid tags the `'` is used to delimit the parameters.
