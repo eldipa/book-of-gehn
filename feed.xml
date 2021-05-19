@@ -1,4 +1,564 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-05-10T03:19:20+02:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Solving a Murder Case with Z3</title><link href="/book-of-gehn/articles/2021/05/09/Solving-a-Murder-Case-with-Z3.html" rel="alternate" type="text/html" title="Solving a Murder Case with Z3" /><published>2021-05-09T00:00:00+02:00</published><updated>2021-05-09T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/05/09/Solving-a-Murder-Case-with-Z3</id><content type="html" xml:base="/book-of-gehn/articles/2021/05/09/Solving-a-Murder-Case-with-Z3.html">&lt;p&gt;Victor has been murdered!&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-05-19T04:40:24+02:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Verifying some bithacks</title><link href="/book-of-gehn/articles/2021/05/17/Verifying-Some-Bithacks.html" rel="alternate" type="text/html" title="Verifying some bithacks" /><published>2021-05-17T00:00:00+02:00</published><updated>2021-05-17T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/05/17/Verifying-Some-Bithacks</id><content type="html" xml:base="/book-of-gehn/articles/2021/05/17/Verifying-Some-Bithacks.html">&lt;p&gt;We are going to verify some of the &lt;a href=&quot;https://graphics.stanford.edu/~seander/bithacks.html&quot;&gt;bit twiddling
+hacks&lt;/a&gt; made and
+collected by Sean Eron Anderson and other authors.&lt;/p&gt;
+
+&lt;p&gt;This is &lt;em&gt;the&lt;/em&gt; classical scenario to put on test your Z3 skills.&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;p&gt;The plan is to pick 4 &lt;em&gt;bithacks&lt;/em&gt; and verify them with Z3. Who knows, we
+may find a bug.&lt;/p&gt;
+
+&lt;h2 id=&quot;detect-if-two-integers-have-opposite-signs&quot;&gt;Detect if two integers have opposite signs&lt;/h2&gt;
+
+&lt;p&gt;This is a simple
+&lt;a href=&quot;https://graphics.stanford.edu/~seander/bithacks.html#DetectOppositeSigns&quot;&gt;bithack&lt;/a&gt;
+suggested by Manfred Weis.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;               &lt;span class=&quot;c1&quot;&gt;// input values to compare signs&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// true iff x and y have opposite signs&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It has an immediate translation to Z3 using &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVecs&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;z3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Solver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Or&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'x y'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To verify this we will set an &lt;em&gt;assumption&lt;/em&gt; that contradicts the expected
+(and correct) value: if we find it satisfiable it means that the model
+found by Z3 is a &lt;em&gt;counterexample&lt;/em&gt; and then a bug.&lt;/p&gt;
+
+&lt;p&gt;An unsatisfiable means that the code is correct.&lt;/p&gt;
+
+&lt;p&gt;In this case the assumption is simple:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;we say that &lt;code class=&quot;highlighter-rouge&quot;&gt;f&lt;/code&gt; is true (the inputs have &lt;em&gt;opposite&lt;/em&gt; signs) &lt;strong&gt;and&lt;/strong&gt;
+the inputs have the &lt;em&gt;same&lt;/em&gt; signs;&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;and&lt;/em&gt; we say that &lt;code class=&quot;highlighter-rouge&quot;&gt;f&lt;/code&gt; is false &lt;strong&gt;and&lt;/strong&gt; the inputs have the &lt;em&gt;opposite&lt;/em&gt;
+signs.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;same_sign&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Or&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Solver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;same_sign&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;unsat&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Verified.&lt;/p&gt;
+
+&lt;h2 id=&quot;conditionally-negate-a-value-without-branching&quot;&gt;Conditionally negate a value without branching&lt;/h2&gt;
+
+&lt;p&gt;The following
+&lt;a href=&quot;https://graphics.stanford.edu/~seander/bithacks.html#ConditionalNegate&quot;&gt;bithack&lt;/a&gt;
+suggested by Avraham Plotnitzky.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fDontNegate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Flag indicating we should not negate v.&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;             &lt;span class=&quot;c1&quot;&gt;// Input value to negate if fDontNegate is false.&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;             &lt;span class=&quot;c1&quot;&gt;// result = fDontNegate ? v : -v;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fDontNegate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fDontNegate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Its translation to Z3 is &lt;em&gt;almost&lt;/em&gt; immediate:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;z3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Solver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Or&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fDontNegate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'fDontNegate'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'v'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fDontNegate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fDontNegate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The C code uses a &lt;code class=&quot;highlighter-rouge&quot;&gt;bool&lt;/code&gt; for the &lt;code class=&quot;highlighter-rouge&quot;&gt;fDontNegate&lt;/code&gt; variable but in Z3 we use
+a &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVec&lt;/code&gt; of the same width than the input.&lt;/p&gt;
+
+&lt;p&gt;Z3 does not know how to &lt;em&gt;upcast&lt;/em&gt; a &lt;code class=&quot;highlighter-rouge&quot;&gt;bool&lt;/code&gt; to a &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVec&lt;/code&gt; and mixing
+variables of &lt;em&gt;different sort&lt;/em&gt; leads to error.&lt;/p&gt;
+
+&lt;p&gt;Instead we just see the boolean as an &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVec&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The C99 and C++11 specifications say that a boolean can be seen as a &lt;code class=&quot;highlighter-rouge&quot;&gt;0&lt;/code&gt;
+(&lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt;) or as a &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;true&lt;/code&gt;).&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Solver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Or&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fDontNegate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fDontNegate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# force a boolean value
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, we assume the contradiction.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fDontNegate&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;unsat&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And nope, no counterexample was found: the bithack is correct.&lt;/p&gt;
+
+&lt;h2 id=&quot;merge-bits-from-two-values-according-to-a-mask&quot;&gt;Merge bits from two values according to a mask&lt;/h2&gt;
+
+&lt;p&gt;This
+&lt;a href=&quot;https://graphics.stanford.edu/~seander/bithacks.html#MaskedMerge&quot;&gt;bithack&lt;/a&gt;
+was suggested by Ron Jeffery.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;// value to merge in non-masked bits&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;// value to merge in masked bits&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 1 where bits from b should be selected; 0 where from a.&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;// result of (a &amp;amp; ~mask) | (b &amp;amp; mask) goes here&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The verification steps are the same, nothing new around here.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;z3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Solver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Or&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bools&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mask&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'a b mask'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;^&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Solver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;unsat&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;select-the-bit-position-from-the-most-significant-bit-with-the-given-count-rank&quot;&gt;Select the bit position (from the most-significant bit) with the given count (rank)&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;This is a long one.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;This
+&lt;a href=&quot;https://graphics.stanford.edu/~seander/bithacks.html#SelectPosFromMSBRank&quot;&gt;bithack&lt;/a&gt;
+was suggested by Juha Järvi and it is much more complex than the others
+bithacks.&lt;/p&gt;
+
+&lt;p&gt;Given an &lt;code class=&quot;highlighter-rouge&quot;&gt;uint64_t&lt;/code&gt; number &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; and a rank &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; (a number
+between 1 and 64), the bithack returns the &lt;em&gt;position&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; of the bit that it
+is the &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt;th &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bit counting from the left.&lt;/p&gt;
+
+&lt;p&gt;The following 64-bit code selects the position of the &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt;th &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bit
+when counting from the left.&lt;/p&gt;
+
+&lt;p&gt;The C code is quite large so we are going to go to the Z3 code directly,
+step by step.&lt;/p&gt;
+
+&lt;p&gt;The bithack uses &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;c&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;d&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;t&lt;/code&gt; as intermediate and temporal
+values. These are not &lt;em&gt;variables&lt;/em&gt; of the model so we don’t need to
+create a &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVec&lt;/code&gt; for them.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; are. In the C code &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; is 32 bits
+integer and &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; is 64 bits but in the following setup both will have
+the same width of 64 bits.&lt;/p&gt;
+
+&lt;p&gt;This is required because Z3 does not know how to &lt;em&gt;upper cast&lt;/em&gt; or
+&lt;em&gt;promote&lt;/em&gt; a 32 bits integer to 64 bits.&lt;/p&gt;
+
+&lt;p&gt;It is easier to use 64 bits and &lt;em&gt;constraint&lt;/em&gt; its range.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;z3&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Solver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Or&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ULT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Not&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Solver&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'v r'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# rank valid range [1-64]
+&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x5555555555555555&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x3333333333333333&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL11&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xf0f0f0f0f0f0f0f&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL101&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xff00ff00ff00ff&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is the first setup. Notice how &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; and others are just
+&lt;em&gt;expressions&lt;/em&gt; and not Z3’s variables.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL11&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL101&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;48&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In C &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; is a &lt;em&gt;variable&lt;/em&gt;: a piece of memory which value can change.&lt;/p&gt;
+
+&lt;p&gt;But in Z3 we want to preserve the variables and &lt;strong&gt;don’t change them&lt;/strong&gt;.
+Their should be &lt;em&gt;constants&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Instead we will use
+a simple Python variable &lt;code class=&quot;highlighter-rouge&quot;&gt;q&lt;/code&gt; to hold the intermediate expressions.&lt;/p&gt;
+
+&lt;p&gt;In C we have:&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// note the -= modifier&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;But in Python we introduce &lt;code class=&quot;highlighter-rouge&quot;&gt;q&lt;/code&gt; instead&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# changed from -= to a plain =
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now &lt;code class=&quot;highlighter-rouge&quot;&gt;q&lt;/code&gt; is a Z3 expression and we can replace it by another like in C we
+replace one value by other for the &lt;em&gt;same&lt;/em&gt; variable.&lt;/p&gt;
+
+&lt;p&gt;The rest are just a copy-and-paste from the bithack.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xff&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xf&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x7&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x3&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x1&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;65&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;verification---when-s--64&quot;&gt;Verification - when &lt;code class=&quot;highlighter-rouge&quot;&gt;s != 64&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;Now, the funny part. How to verify this?&lt;/p&gt;
+
+&lt;p&gt;First a sanity check:  &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; must always to be between 1 and 64 – it is
+the position of a bit in a 64 bits width number after all.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Or&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# check out of range for selected bit
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unsat&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Ok, let’s see what &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; value we have for some values of &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# The 60th bit is the first 1 counting from the left (rank 1)
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mb&quot;&gt;0b00010001&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sat&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# The 64th bit is the second 1 counting from the left (rank 2)
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mb&quot;&gt;0b00010001&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sat&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Verifying that &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; is correct for &lt;em&gt;every&lt;/em&gt; possible value of &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt;
+&lt;strong&gt;by enumerating each possible case is not feasible&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;It’s just too expensive, in time, memory and brain power.&lt;/p&gt;
+
+&lt;p&gt;So the plan is build a set of constraints that lead to a
+contradiction against &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt;: if it is satisfiable, the model (solution)
+found will be a counterexample and we’ll know that &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; is wrong.&lt;/p&gt;
+
+&lt;p&gt;Assume that we fix &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;s = 60&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;r = 2&lt;/code&gt;. What we know
+about &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt;?&lt;/p&gt;
+
+&lt;p&gt;We know that &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; has one &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bit set at position 60 (reading from left), which
+it is the &lt;em&gt;rank bit&lt;/em&gt; and on the left of it it has one and only one &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bit
+more.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; could be one of these to name a few:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;MSB  rank bit  LSB
+   \     V    /
+    ::10010000      (the :: means a bunch of zero
+    ::01010000       to fill the 64 bits bit vector)
+    ::00110011
+ /------|
+one and only one
+    1 bit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;From the picture we can think, what value &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; is the &lt;em&gt;lowest&lt;/em&gt; of all the
+possible &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; values that satisfy &lt;code class=&quot;highlighter-rouge&quot;&gt;s = 60&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;r = 2&lt;/code&gt;?&lt;/p&gt;
+
+&lt;p&gt;A number is lower than other than another if it has fewer &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bits and
+those are in the right side (lesser significant bits).&lt;/p&gt;
+
+&lt;p&gt;We cannot reduce the count of &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bits on the left side of the rank bit:
+we are forced to have &lt;code class=&quot;highlighter-rouge&quot;&gt;r - 1&lt;/code&gt; bits otherwise we would violate the &lt;code class=&quot;highlighter-rouge&quot;&gt;r =
+2&lt;/code&gt; condition. But we have no restriction on the right side.&lt;/p&gt;
+
+&lt;p&gt;The &lt;em&gt;minimum&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; value has all zeros on the right and it has all the &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt;
+bits &lt;em&gt;“pushed”&lt;/em&gt; to the left of the rank bit as possible.&lt;/p&gt;
+
+&lt;p&gt;In short:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;     rank bit
+         V
+    ::00110000 ← the minimum
+    ::10010000
+    ::01010000
+    ::00110011
+ /------|
+a single 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Given &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; we can write the &lt;code class=&quot;highlighter-rouge&quot;&gt;minimum&lt;/code&gt; value in two steps:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;build the &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bits sequence including the rank bit&lt;/li&gt;
+  &lt;li&gt;shift the sequence to the left filling the right bits with 0s&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;minimum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The next question is, what are the &lt;em&gt;greatest&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; of all the possible
+&lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; that satisfy &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt;?&lt;/p&gt;
+
+&lt;p&gt;The &lt;em&gt;maximum&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; value has all the &lt;code class=&quot;highlighter-rouge&quot;&gt;r - 1&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bits on the left (most
+significant bits) and the bits on the right of the rank bits are all &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;It is basically the same reasoning for the minimum but in the opposite
+direction.&lt;/p&gt;
+
+&lt;p&gt;In short:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;     rank bit
+         V
+    ::00110000 ← the minimum
+    ::10010000
+    ::01010000
+    ::00110011
+   1::00011111 ← the maximum
+ /------|
+a single 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The maximum has two parts.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the high part which are the &lt;code class=&quot;highlighter-rouge&quot;&gt;r - 1&lt;/code&gt; bits pushed to the left&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;highpart&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;and the lower part which it is the rank bit and all the bits on its
+right being &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lowerpart&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Trivially, the maximum is:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maximum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;highpart&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lowerpart&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, let’s try to find a counterexample: a number &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; that does &lt;strong&gt;not&lt;/strong&gt;
+satisfy the minimum/maximum range for &lt;em&gt;some valid&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVecs&lt;/code&gt; are &lt;strong&gt;signed&lt;/strong&gt; integers and they use &lt;strong&gt;signed&lt;/strong&gt; comparisons.
+In our definition of &lt;code class=&quot;highlighter-rouge&quot;&gt;minimum&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;maximum&lt;/code&gt; we though them as
+&lt;strong&gt;unsigned&lt;/strong&gt; so we need to use Z3’s &lt;code class=&quot;highlighter-rouge&quot;&gt;ULT&lt;/code&gt; functions (unsigned less
+than).&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;not_in_range&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Or&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ULT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;minimum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ULT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maximum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;not_in_range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# byexample: +timeout=120 +skip
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unsat&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The extra assumption &lt;code class=&quot;highlighter-rouge&quot;&gt;s != 64&lt;/code&gt; is because while 64 is a valid position,
+it is &lt;em&gt;also&lt;/em&gt; used as an error.&lt;/p&gt;
+
+&lt;p&gt;A trivial error settings which &lt;em&gt;violates&lt;/em&gt; the minimum/maximum range
+could be:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;not_in_range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sat&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;verification---when-s--64-first-try&quot;&gt;Verification - when &lt;code class=&quot;highlighter-rouge&quot;&gt;s == 64&lt;/code&gt; (first try)&lt;/h3&gt;
+
+&lt;p&gt;Because &lt;code class=&quot;highlighter-rouge&quot;&gt;s = 64&lt;/code&gt; means that the rank bit is the LSB, we know that we
+must have &lt;code class=&quot;highlighter-rouge&quot;&gt;r - 1&lt;/code&gt; bits in the rest of the bit vector.&lt;/p&gt;
+
+&lt;p&gt;In particular we must have exactly &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bits in &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; – no more, no
+less.&lt;/p&gt;
+
+&lt;p&gt;So we have two scenarios:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;when we have &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; with its LSB set to &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; &lt;em&gt;and&lt;/em&gt; with exactly &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bits
+in total&lt;/li&gt;
+  &lt;li&gt;when &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; has less than &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bits and therefore it is an expected error
+case&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For the bit-count we can use a &lt;a href=&quot;https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetNaive&quot;&gt;naive
+bithack&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bit_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# we can override v here 'cause it won't affect the outer v
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;good_cases&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bit_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bad_cases&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bit_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally we check the negation of it. Sadly the check takes &lt;strong&gt;too much
+time&lt;/strong&gt; and I don’t know the result&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Not&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;good_cases&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Not&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bad_cases&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# byexample: +skip
+&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;i don't know bro&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;verification---when-s--64-second-try&quot;&gt;Verification - when &lt;code class=&quot;highlighter-rouge&quot;&gt;s == 64&lt;/code&gt; (second try)&lt;/h3&gt;
+
+&lt;p&gt;The naive approach iterates 64 times, perhaps we could use the
+&lt;a href=&quot;https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan&quot;&gt;Kernighan’s way&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In C, it goes through as many iterations as &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt; bits are in &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// count the number of bits set in v&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// c accumulates the total bits set in v&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// clear the least significant bit set&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;However in Z3 we must go through all the 64 iterations because in the
+Kernighan’s code, the loops ends when the variable &lt;code class=&quot;highlighter-rouge&quot;&gt;v&lt;/code&gt; is zero.&lt;/p&gt;
+
+&lt;p&gt;In C, you are &lt;em&gt;evaluating&lt;/em&gt; the code in each instruction; in Z3 you are
+&lt;em&gt;defining&lt;/em&gt; code but &lt;strong&gt;no evaluation is taking place&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;This makes an iteration dependent of the previous one: when &lt;em&gt;checking&lt;/em&gt;
+(evaluation) the model yields &lt;code class=&quot;highlighter-rouge&quot;&gt;v = 0&lt;/code&gt; for some iteration, &lt;em&gt;then&lt;/em&gt; the
+rest of the iteration should be no-ops.&lt;/p&gt;
+
+&lt;p&gt;So we &lt;em&gt;must&lt;/em&gt; express this in Z3, we must stablish the relation between
+one iteration and the next one for all the 64 iterations:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bit_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;# Create a &quot;new generation&quot; expression for 'c'
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;# based if v != 0 or not
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;# Only the last instruction can &quot;update&quot; 'v'
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;If&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In the code above I introduced an auxiliary &lt;code class=&quot;highlighter-rouge&quot;&gt;c&lt;/code&gt; variable. This is
+because the C variable &lt;code class=&quot;highlighter-rouge&quot;&gt;c = 0&lt;/code&gt; will be interpreted by Z3’s &lt;code class=&quot;highlighter-rouge&quot;&gt;If&lt;/code&gt; as a
+boolean (&lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt;) which cannot be promoted later to a &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVec&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To make it easier, I just defined this auxiliary variable and enforced
+to be 0.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BitVecs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'c'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;good_cases&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bit_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bad_cases&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bit_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Not&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;good_cases&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Not&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bad_cases&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# byexample: +skip
+&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;i don't know bro&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Unfortunately, it didn’t work either.&lt;/p&gt;
+
+&lt;h3 id=&quot;verification---when-s--64-third-try---the-good-one&quot;&gt;Verification - when &lt;code class=&quot;highlighter-rouge&quot;&gt;s == 64&lt;/code&gt; (third try - the good one)&lt;/h3&gt;
+
+&lt;p&gt;In both cases, the naive and the Kernighan’s way of counting bits
+created 64 restrictions.&lt;/p&gt;
+
+&lt;p&gt;In particular they are &lt;em&gt;nested&lt;/em&gt; or &lt;em&gt;entangled&lt;/em&gt; restrictions: one
+restriction depends on a previous one.&lt;/p&gt;
+
+&lt;p&gt;Moreover, we use arithmetic addition (&lt;code class=&quot;highlighter-rouge&quot;&gt;+&lt;/code&gt;). When we perform a bit
+operation like &lt;em&gt;and&lt;/em&gt; (&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;amp;&lt;/code&gt;), each output bit is calculated based on its
+two input bits and &lt;em&gt;independently&lt;/em&gt; from the rest.&lt;/p&gt;
+
+&lt;p&gt;But when we add two bit vectors, the &lt;em&gt;carry bit&lt;/em&gt; is propagated from the
+LSB to the MSB making the output bit &lt;strong&gt;dependant&lt;/strong&gt; of the input bits on
+its right (LSBs).&lt;/p&gt;
+
+&lt;p&gt;The arithmetic addition &lt;em&gt;entangles&lt;/em&gt; the bits.&lt;/p&gt;
+
+&lt;p&gt;Long story short: it will be slow.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;The key is to operate in parallel.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;And this
+&lt;a href=&quot;https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel&quot;&gt;bithack&lt;/a&gt;
+suggested by Andrew Shapira, improved later by Charlie Gordon and Don
+Clugston, Eric Cole, Al Williams and Sean Eron Anderson will do the
+trick.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bit_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;UL3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x5555555555555555&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;UL15&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x3333333333333333&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;UL255a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xf0f0f0f0f0f0f0f&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;UL255b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0x101010101010101&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;S&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;            &lt;span class=&quot;c1&quot;&gt;# temp
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL15&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# temp
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL255a&lt;/span&gt;         &lt;span class=&quot;c1&quot;&gt;# temp
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;UL255b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;               &lt;span class=&quot;c1&quot;&gt;# count
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bit_count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# compute this once
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;good_cases&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;z&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bad_cases&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;solver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;And&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Not&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;good_cases&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Not&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bad_cases&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# byexample: +timeout=600
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unsat&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;em&gt;Victory!&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;the-hidden-bug&quot;&gt;The hidden bug&lt;/h2&gt;
+
+&lt;p&gt;The link in the index to the last bithack is broken.&lt;/p&gt;
+
+&lt;p&gt;Not very exciting bug though.&lt;/p&gt;
+
+&lt;h2 id=&quot;final-thoughts&quot;&gt;Final thoughts&lt;/h2&gt;
+
+&lt;p&gt;Verification is hard.&lt;/p&gt;
+
+&lt;p&gt;Thinking in a way to build a set of restrictions and assumptions that
+could lead to a contradiction &lt;strong&gt;without&lt;/strong&gt; leading to an exponential
+search is not trivial.&lt;/p&gt;
+
+&lt;p&gt;Working with shifts, masks and binary operations is not a problem but
+when we do arithmetics the bits not longer are independent.&lt;/p&gt;
+
+&lt;p&gt;Arithmetic operations &lt;em&gt;entangle&lt;/em&gt; the bits.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt;-loops are also another way to entangle the bits when the loop
+condition depends on the value of a Z3 variable.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt;-loops like those forces us to model &lt;strong&gt;all&lt;/strong&gt; the iterations.&lt;/p&gt;
+
+&lt;p&gt;With respect to Z3, &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVec&lt;/code&gt; works pretty well but it lacks of a way to
+&lt;em&gt;promote&lt;/em&gt; or &lt;em&gt;upcast&lt;/em&gt; to wider &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVecs&lt;/code&gt;. This needs to be done by hand.&lt;/p&gt;
+
+&lt;p&gt;And don’t forget that &lt;code class=&quot;highlighter-rouge&quot;&gt;BitVec&lt;/code&gt; is a &lt;strong&gt;signed integer&lt;/strong&gt; so &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt; are signed
+by default.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">We are going to verify some of the bit twiddling hacks made and collected by Sean Eron Anderson and other authors. This is the classical scenario to put on test your Z3 skills.</summary></entry><entry><title type="html">Solving a Murder Case with Z3</title><link href="/book-of-gehn/articles/2021/05/09/Solving-a-Murder-Case-with-Z3.html" rel="alternate" type="text/html" title="Solving a Murder Case with Z3" /><published>2021-05-09T00:00:00+02:00</published><updated>2021-05-09T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/05/09/Solving-a-Murder-Case-with-Z3</id><content type="html" xml:base="/book-of-gehn/articles/2021/05/09/Solving-a-Murder-Case-with-Z3.html">&lt;p&gt;Victor has been murdered!&lt;/p&gt;
 
 &lt;p&gt;There are strong evidences that point that Victor was murdered by
 a single person. The investigation led to three suspects:
@@ -1933,329 +2493,4 @@ void &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&
 
 &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;cdecl explain &lt;span class=&quot;s1&quot;&gt;'char *(*fptab[])()'&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# byexample:  +if=cdecl-installed&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;declare &lt;/span&gt;fptab as array of pointer to &lt;span class=&quot;k&quot;&gt;function &lt;/span&gt;returning pointer to char
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Gehn</name></author><summary type="html">What does the following code? #include &amp;lt;stdio.h&amp;gt; int main() { int x[5]; printf(&quot;%p\n&quot;, x); printf(&quot;%p\n&quot;, x+1); printf(&quot;%p\n&quot;, &amp;amp;x); printf(&quot;%p\n&quot;, &amp;amp;x+1); return 0; }</summary></entry><entry><title type="html">Necklaces, Lyndon words and De Bruijn Sequences</title><link href="/book-of-gehn/articles/2021/02/15/Necklaces-Lyndon-Words-and-De-Bruijn-Sequences.html" rel="alternate" type="text/html" title="Necklaces, Lyndon words and De Bruijn Sequences" /><published>2021-02-15T00:00:00+01:00</published><updated>2021-02-15T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/02/15/Necklaces-Lyndon-Words-and-De-Bruijn-Sequences</id><content type="html" xml:base="/book-of-gehn/articles/2021/02/15/Necklaces-Lyndon-Words-and-De-Bruijn-Sequences.html">&lt;p&gt;What have in common a dense arrays for mapping numbers power of 2
-to some objects, DNA sequencing and brute-forcing the lock pad
-of your neighbor?&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;substrings&quot;&gt;Substrings&lt;/h2&gt;
-
-&lt;p&gt;Given an alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; symbols, you can build strings
-of length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; from it.&lt;/p&gt;
-
-&lt;p&gt;For a binary alphabet &lt;script type=&quot;math/tex&quot;&gt;{0,1}&lt;/script&gt; these are the strings of length 4:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000    0100    1000    1100
-0001    0101    1001    1101
-0010    0110    1010    1110
-0011    0111    1011    1111
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;A set of elements like the strings above can be &lt;em&gt;classified&lt;/em&gt;: choose
-a &lt;em&gt;relationship&lt;/em&gt; among the elements and build a class where all the
-elements of the class have the same relation.&lt;/p&gt;
-
-&lt;p&gt;Mathematically, each class is defined as&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;C = { x \in X \vert a \sim x }&lt;/script&gt;
-
-&lt;p&gt;Where &lt;script type=&quot;math/tex&quot;&gt;a&lt;/script&gt; is one element of the set &lt;script type=&quot;math/tex&quot;&gt;X&lt;/script&gt; that is used as a reference.&lt;/p&gt;
-
-&lt;p&gt;For example, we can classify the binary strings in two classes: the
-ones that have its last bit equal to 0 and the ones which don’t.&lt;/p&gt;
-
-&lt;p&gt;In other words: the even and the odd numbers.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000    0100    |    0001    0101
-0010    0110    |    0011    0111
-1000    1100    |    1001    1101
-1010    1110    |    1011    1111
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In mathematics jargon, each class is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Equivalence_class&quot;&gt;equivalence
-class&lt;/a&gt; and the relation
-used to group them is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Equivalence_relation&quot;&gt;equivalence
-relation&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;necklaces&quot;&gt;Necklaces&lt;/h2&gt;
-
-&lt;p&gt;The relation &lt;script type=&quot;math/tex&quot;&gt;x \sim a&lt;/script&gt; is quite arbitrary; another relation could
-be the strings of length 4 that are a &lt;em&gt;rotation&lt;/em&gt; of another string.&lt;/p&gt;
-
-&lt;p&gt;This generates 6 classes:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000  |  0001  |  0011  |  0101  |  0111  |  1111
-      |  0010  |  0110  |  1010  |  1101  |
-      |  0100  |  1100  |        |  1011  |
-      |  1000  |  1001  |        |  1110  |
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Each &lt;a href=&quot;https://en.wikipedia.org/wiki/Equivalence_class&quot;&gt;equivalence class&lt;/a&gt;
-generated from strings of length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; from an alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; elements
-which &lt;a href=&quot;https://en.wikipedia.org/wiki/Equivalence_relation&quot;&gt;equivalence
-relation&lt;/a&gt; is the
-rotation has the special names of
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Necklace_(combinatorics)&quot;&gt;necklaces&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;The above 6 classes are 6 necklaces for &lt;script type=&quot;math/tex&quot;&gt;k=2&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;n=4&lt;/script&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;aperiodic-necklaces&quot;&gt;Aperiodic necklaces&lt;/h2&gt;
-
-&lt;p&gt;As you notice how many elements a necklace has varies. The necklace
-generated from all the rotations of 0000 has only one element: {0000};
-while the necklace generated from 0001 has 4 elements: {0001, 0010,
-0100 and 1000}.&lt;/p&gt;
-
-&lt;p&gt;These are two extremes. A middle point is the necklace {0101, 1010}.&lt;/p&gt;
-
-&lt;p&gt;You see, if you pick a string and you start rotating it you may
-find yourself with the same initial string &lt;strong&gt;before&lt;/strong&gt; doing
-a complete wrap-around.&lt;/p&gt;
-
-&lt;p&gt;Pick 0101, rotate it once and you get 1010, and once more and you
-get the original 0101.&lt;/p&gt;
-
-&lt;p&gt;If you do the same with 0001 you will find that you need to perform
-4 rotations to get the initial string.&lt;/p&gt;
-
-&lt;p&gt;An &lt;em&gt;aperiodic&lt;/em&gt; sequence respect the rotation are the strings of
-length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; that you need to perform exactly &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; rotations to get the
-initial strings.&lt;/p&gt;
-
-&lt;p&gt;Therefore the necklace that contains them has exactly &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; elements
-and it is known as &lt;em&gt;aperiodic necklace&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-679a720680e4ccdf07926fb2d4db4e2b&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-679a720680e4ccdf07926fb2d4db4e2b&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;You may find multiple substrings that repeated form the same
-string. For example 01010101 can be formed repeating 0101 twice
-or 01 four times.
-&lt;br /&gt;
-The fact is that 0101 is in turn periodic. The substring which it
-is &lt;em&gt;aperiodic&lt;/em&gt; is called the &lt;em&gt;aperiodic reduction&lt;/em&gt; of the original
-string.
-&lt;br /&gt;
-In our case, 01 is the aperiodic reduction of 0101 and of 01010101.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;In contrast, a &lt;em&gt;periodic&lt;/em&gt; sequence is a string that is the
-repetition of a substring that repeats so less rotations are required to
-get the initial string and therefore the necklace has less than $$n$
-elements.&lt;/p&gt;
-
-&lt;p&gt;The 0101 is formed by the substring 01 repeated twice.&lt;/p&gt;
-
-&lt;p&gt;The analysis of the periodicity of the 6 necklaces follows with the
-substrings between parenthesis:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(0)   |    aperiodic   |  (01)  |  aperiodic |  (1)
-0000  |  0001  |  0011 |  0101  |    0111    |  1111
-      |  0010  |  0110 |  1010  |    1101    |
-      |  0100  |  1100 |        |    1011    |
-      |  1000  |  1001 |        |    1110    |
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;lyndon-words&quot;&gt;Lyndon words&lt;/h2&gt;
-
-&lt;p&gt;We focus now in only the aperiodic necklaces:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0001  |  0011  |  0111
-0010  |  0110  |  1101
-0100  |  1100  |  1011
-1000  |  1001  |  1110
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;If the alphabet supports a total order, more specifically
-a &lt;a href=&quot;https://en.wikipedia.org/wiki/Lexicographic_order&quot;&gt;lexicographic order&lt;/a&gt;,
-we can sort the elements of each necklace.&lt;/p&gt;
-
-&lt;p&gt;Basically we get &lt;script type=&quot;math/tex&quot;&gt;% &lt;![CDATA[
-0001 &lt; 0010 &lt; 0100 &lt; 1000 %]]&gt;&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;For each aperiodic necklace we keep only the &lt;em&gt;smallest&lt;/em&gt;:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0001  |  0011  |  0111
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;These strings define the &lt;a href=&quot;https://en.wikipedia.org/wiki/Lyndon_word&quot;&gt;Lyndon
-words&lt;/a&gt; of length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;
-for the alphabet &lt;script type=&quot;math/tex&quot;&gt;{0,1}&lt;/script&gt; (&lt;script type=&quot;math/tex&quot;&gt;k=2&lt;/script&gt;).&lt;/p&gt;
-
-&lt;p&gt;More generally the &lt;a href=&quot;https://en.wikipedia.org/wiki/Lyndon_word&quot;&gt;Lyndon
-words&lt;/a&gt; are the smallest strings of the
-aperiodic necklaces for &lt;em&gt;all&lt;/em&gt; the strings of &lt;em&gt;any&lt;/em&gt; length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; for an
-alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; elements.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0, 1, 01, 001, 011, 0001, 0011, 0111, 00001, 00011, 00101, ...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;de-bruijn-sequence&quot;&gt;De Bruijn sequence&lt;/h2&gt;
-
-&lt;p&gt;Choose a natural number &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;. Select the Lyndon words that have a
-length that &lt;em&gt;divides&lt;/em&gt; &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;For the binary alphabet {0,1}, and choosing &lt;script type=&quot;math/tex&quot;&gt;n=4&lt;/script&gt; we have the
-following set of strings of length 1, 2 and 4:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0, 1, 01, 0001, 0011, 0111
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Sorted lexicographically:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0, 0001, 0011, 01, 0111, 1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;If we concatenate them we obtain a &lt;a href=&quot;https://en.wikipedia.org/wiki/De_Bruijn_sequence&quot;&gt;De
-Bruijn sequence&lt;/a&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000100110101111
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;A &lt;a href=&quot;https://en.wikipedia.org/wiki/De_Bruijn_sequence&quot;&gt;De Bruijn sequence&lt;/a&gt;
-of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; has the property than all the substrings of length &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;
-that are possible are contained in the De Bruijn sequence if is seen
-as a cyclic sequence:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0000100110101111
-0000............
-.0001...........
-..0010..........
-...0100.........
-....1001........
-.....0011.......
-......0110......
-.......1101.....
-........1010....
-.........0101...
-..........1011..
-...........0111.
-............1111
-0............111  =  1110
-00............11  =  1100
-000............1  =  1000
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;A &lt;a href=&quot;https://en.wikipedia.org/wiki/De_Bruijn_sequence&quot;&gt;De Bruijn sequence&lt;/a&gt;
-is the smallest sequence that has this property but it is not unique.&lt;/p&gt;
-
-&lt;p&gt;The count of distinct De Bruijn sequences for an alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; elements
-and an order of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; is&lt;/p&gt;
-
-&lt;script type=&quot;math/tex; mode=display&quot;&gt;\frac{(k!)^{k^{n-1}}}{k^n}&lt;/script&gt;
-
-&lt;h2 id=&quot;de-bruijn-graphs&quot;&gt;De Bruijn graphs&lt;/h2&gt;
-
-&lt;p&gt;Given an alphabet of &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; symbols and the strings of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; symbols
-we can build &lt;script type=&quot;math/tex&quot;&gt;k^n&lt;/script&gt; different strings.&lt;/p&gt;
-
-&lt;p&gt;Consider these strings now nodes of a directed graph.&lt;/p&gt;
-
-&lt;p&gt;In this graph the node &lt;script type=&quot;math/tex&quot;&gt;u&lt;/script&gt; connects to &lt;script type=&quot;math/tex&quot;&gt;v&lt;/script&gt; if we drop the left most
-symbol of &lt;script type=&quot;math/tex&quot;&gt;u&lt;/script&gt; and append on the right one symbol and the result is
-&lt;script type=&quot;math/tex&quot;&gt;v&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;In Python terms: &lt;code class=&quot;highlighter-rouge&quot;&gt;u[1:] + sym == v&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The resulting edge is labeled with the appended symbol.&lt;/p&gt;
-
-&lt;p&gt;For instance, for the given binary strings 00 and 01 we have:&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/4e7ff72eb8c4bac604f61910944f34f51c7ac9aa.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
-
-&lt;p&gt;In general for the alphabet &lt;script type=&quot;math/tex&quot;&gt;{0,1}&lt;/script&gt; and the strings of length &lt;script type=&quot;math/tex&quot;&gt;n=2&lt;/script&gt;
-we have:&lt;/p&gt;
-
-&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;object align=&quot;middle&quot; data=&quot;/book-of-gehn/uml/e90a47ce7db53454142582242792fa721c7ac9aa.svg&quot; type=&quot;image/svg+xml&quot;&gt;&lt;/object&gt;&lt;/figure&gt;
-
-&lt;p&gt;These are the &lt;a href=&quot;https://en.wikipedia.org/wiki/De_Bruijn_graph&quot;&gt;De Bruijn
-graphs&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;A &lt;a href=&quot;https://en.wikipedia.org/wiki/Hamiltonian_path&quot;&gt;Hamiltonian path&lt;/a&gt;
-over the graph generates a De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;That’s it, visit all the &lt;em&gt;nodes&lt;/em&gt; of the graph without visiting a node
-twice and collect the labels of the traversed edges.&lt;/p&gt;
-
-&lt;p&gt;This forms the De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; for the given &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;If instead of a Hamiltonian path we build an &lt;a href=&quot;https://en.wikipedia.org/wiki/Eulerian_path&quot;&gt;Euclidean
-path&lt;/a&gt;, the path
-generates a De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n+1&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;That’s it, visit all the &lt;em&gt;edges&lt;/em&gt; of the graph without traveling for the
-same edge twice and collect the labels along the path.&lt;/p&gt;
-
-&lt;p&gt;This forms the De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n+1&lt;/script&gt; for the given &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;de-bruijn-sequence-construction&quot;&gt;De Bruijn sequence construction&lt;/h2&gt;
-
-&lt;p&gt;As mentioned before we can build a De Bruijn graph and then through a
-Hamiltonian or Euclidean path we can build a De Bruijn sequence.&lt;/p&gt;
-
-&lt;p&gt;But we can skip that and create the sequence directly with the &lt;a href=&quot;/book-of-gehn/assets/debruijn-assets/debruijn.py&quot;&gt;FMK
-algorithm&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;FMK comes from the name of its authors: Fredricksen, Maiorana and Kessler.&lt;/p&gt;
-
-&lt;p&gt;A recursive version of the algorithm is shown by Frank Ruskey in his
-&lt;em&gt;“Combinatorial Generation”&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;The algorithm can generate necklaces, Lyndon words, pre-necklaces and De
-Bruijn sequences. Four in one.&lt;/p&gt;
-
-&lt;p&gt;A Python implementation can be found
-&lt;a href=&quot;/book-of-gehn/assets/debruijn-assets/debruijn.py&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;applications&quot;&gt;Applications&lt;/h2&gt;
-
-&lt;h3 id=&quot;unlook-a-door&quot;&gt;Unlook a door&lt;/h3&gt;
-
-&lt;p&gt;Imagine that you have a register of &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; bits that if it is set
-to the correct value &lt;em&gt;unlocks&lt;/em&gt; a door.&lt;/p&gt;
-
-&lt;p&gt;You have &lt;script type=&quot;math/tex&quot;&gt;2^n&lt;/script&gt; possible combinations.&lt;/p&gt;
-
-&lt;p&gt;Typing &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; bits &lt;script type=&quot;math/tex&quot;&gt;2^n&lt;/script&gt; times is is going to take a while
-but imagine that the register allows you to &lt;em&gt;reuse&lt;/em&gt; some of those bits.&lt;/p&gt;
-
-&lt;p&gt;On a new input the register shifts its content one bit to the left and
-the new bit is put on the right.&lt;/p&gt;
-
-&lt;p&gt;Does this ring any bells?&lt;/p&gt;
-
-&lt;p&gt;You can use a De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; and reading it bit by
-bit you can &lt;em&gt;feed&lt;/em&gt; the register.&lt;/p&gt;
-
-&lt;p&gt;You will end up testing &lt;script type=&quot;math/tex&quot;&gt;2^n&lt;/script&gt; combinations but you will have to type
-&lt;strong&gt;only 1 bit&lt;/strong&gt; per test.&lt;/p&gt;
-
-&lt;h3 id=&quot;power-of-2-mapping&quot;&gt;Power of 2 mapping&lt;/h3&gt;
-
-&lt;p&gt;You want to map a value to each power of 2. You could use an dictionary
-for this like &lt;code class=&quot;highlighter-rouge&quot;&gt;{2**i : vals[i] for i in range(32)}&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;A dictionary or a &lt;em&gt;sparse&lt;/em&gt; array is needed because you cannot use a
-dense array for this.&lt;/p&gt;
-
-&lt;p&gt;Or can we?&lt;/p&gt;
-
-&lt;p&gt;If we are limiting ourselves to power of two up to &lt;script type=&quot;math/tex&quot;&gt;2^{32}&lt;/script&gt;, we only
-have 32 numbers.&lt;/p&gt;
-
-&lt;p&gt;We can then generate a De Bruijn sequence of order &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; where &lt;script type=&quot;math/tex&quot;&gt;n=5&lt;/script&gt;
-(because &lt;script type=&quot;math/tex&quot;&gt;2^5=32&lt;/script&gt;).&lt;/p&gt;
-
-&lt;p&gt;This sequence will contain &lt;script type=&quot;math/tex&quot;&gt;2^5=32&lt;/script&gt; different substrings.&lt;/p&gt;
-
-&lt;p&gt;Now, remember that multiplying a number by &lt;script type=&quot;math/tex&quot;&gt;2^i&lt;/script&gt; is the same than
-shifting the number by &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;If we read the &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; most significant bits of the shifted sequence we
-will have a substring that is unique for the given shift &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt; and
-therefore for &lt;script type=&quot;math/tex&quot;&gt;2^i&lt;/script&gt;.&lt;/p&gt;
-
-&lt;p&gt;The &lt;script type=&quot;math/tex&quot;&gt;n&lt;/script&gt; most significant bits forms the index of our dense array.&lt;/p&gt;
-
-&lt;p&gt;With &lt;script type=&quot;math/tex&quot;&gt;n=5&lt;/script&gt; we only need an array of &lt;script type=&quot;math/tex&quot;&gt;32&lt;/script&gt; elements.&lt;/p&gt;
-
-&lt;h2 id=&quot;dna-reading&quot;&gt;DNA reading&lt;/h2&gt;
-
-&lt;p&gt;And yes, this is used in &lt;a href=&quot;https://en.wikipedia.org/wiki/DNA_read_errors&quot;&gt;DNA
-reading&lt;/a&gt; too.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">What have in common a dense arrays for mapping numbers power of 2 to some objects, DNA sequencing and brute-forcing the lock pad of your neighbor?</summary></entry></feed>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Gehn</name></author><summary type="html">What does the following code? #include &amp;lt;stdio.h&amp;gt; int main() { int x[5]; printf(&quot;%p\n&quot;, x); printf(&quot;%p\n&quot;, x+1); printf(&quot;%p\n&quot;, &amp;amp;x); printf(&quot;%p\n&quot;, &amp;amp;x+1); return 0; }</summary></entry></feed>
