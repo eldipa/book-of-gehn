@@ -476,7 +476,9 @@ So we *must* express this in Z3, we must stablish the relation between
 one iteration and the next one for all the 64 iterations:
 
 ```python
->>> def bit_count(v, c):
+>>> from z3 import BitVecVal
+>>> def bit_count(v):
+...     c = BitVecVal(0, 64)
 ...     for i in range(64):
 ...         # Create a "new generation" expression for 'c'
 ...         # based if v != 0 or not
@@ -492,15 +494,14 @@ In the code above I introduced an auxiliary `c` variable. This is
 because the C variable `c = 0` will be interpreted by Z3's `If` as a
 boolean (`false`) which cannot be promoted later to a `BitVec`.
 
-To make it easier, I just defined this auxiliary variable and enforced
-to be 0.
+To enforce the correct type, we use a `BitVecVal` value initialized to
+0.
 
 ```python
->>> c, = BitVecs('c', 64)
->>> good_cases = And(bit_count(v, c) == r, (v & 1) == 1)
->>> bad_cases = bit_count(v, c) < r
+>>> good_cases = And(bit_count(v) == r, (v & 1) == 1)
+>>> bad_cases = bit_count(v) < r
 
->>> solver.check(s == 64, c == 0, And(Not(good_cases), Not(bad_cases)))     # byexample: +skip
+>>> solver.check(s == 64, And(Not(good_cases), Not(bad_cases)))     # byexample: +skip
 "i don't know bro"
 ```
 
