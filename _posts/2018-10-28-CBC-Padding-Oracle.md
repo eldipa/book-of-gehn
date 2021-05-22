@@ -14,7 +14,7 @@ has a valid pad or not.
 Armed with this *padding oracle* we can break CBC
 one byte at time.
 
-Ready?{% sidenote '**-- Spoiler Alert! --**' %} *Go!*<!--more-->
+Ready?{% marginnote '**-- Spoiler Alert! --**' %} *Go!*<!--more-->
 
 ## Padding oracle
 

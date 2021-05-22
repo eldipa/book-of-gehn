@@ -7,7 +7,7 @@ In the previous post we built
 [an ECB/CBC oracle](/book-of-gehn/articles/2018/06/09/ECB-CBC-Oracle.html);
 now it's time to take this to the next level and
 break ECB [one byte at time](https://cryptopals.com/sets/2/challenges/14).
-{% sidenote '**-- Spoiler Alert! --**' %}.<!--more-->
+{% marginnote '**-- Spoiler Alert! --**' %}.<!--more-->
 
 
 ### Generating secrets

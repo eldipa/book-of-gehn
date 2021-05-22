@@ -3,6 +3,9 @@ layout: post
 title: "Compiler Optimizations under a Race Condition"
 ---
 
+{% marginfigure '' 'assets/memory/rc/rcO0-busy-loop.png'
+'' '' 'in-index-only' %}
+
 When two or more concurrent tasks perform non-atomic read/write operations
 over the same data we have a *race condition* and
 the system will be in an undefined state.

@@ -7,6 +7,9 @@ The tricky part of breaking the
 [Vigenere cipher](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher)
 consists in finding the length of the key.
 
+{% marginfigure '' '<img src="/book-of-gehn/assets/kasiski/kasiski_scan_positions.png">'
+'' '' 'in-index-only' %}
+
 We discussed this in the
 [breaking Vigenere](/book-of-gehn/articles/2018/05/01/Breaking-Vigenere.html)
 post.

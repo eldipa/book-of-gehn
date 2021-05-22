@@ -13,7 +13,7 @@ The idea is to initialize the PRG with a different *seed* each time
 but if this does not happen, all the plaintexts will be encrypted
 with the *same* pseudo random key stream -- totally insecure.
 
-Ready to break it?{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
+Ready to break it?{% marginnote '**-- Spoiler Alert! --**' %}<!--more-->
 
 ## Warming up
 

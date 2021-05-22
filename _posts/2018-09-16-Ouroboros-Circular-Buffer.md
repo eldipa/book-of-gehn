@@ -10,6 +10,9 @@ The name [Ouroboros](https://en.wikipedia.org/wiki/Ouroboros) comes from the
 Ancient Greek and symbolize a snake eating
 its own tail -- a convenient image for a circular buffer.
 
+{% maincolumn 'assets/circular_buffer/buffer_0_10.png' '' ''
+'in-index-only' %}
+
 Source code can be found in the
 [tiburoncin project](https://github.com/eldipa/tiburoncin). Enjoy it!<!--more-->
 

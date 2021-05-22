@@ -3,6 +3,8 @@ layout: post
 title: Forensics 911 - recovering a thesis of one year work
 ---
 
+{% marginfigure 'Trimming and Scraping' 'assets/trimming_scraping_ddrescue.png' 'Trimming and Scraping' '' 'in-index-only' %}
+
 A friend of mine called me: a girl friend of him was hopeless trying to recover her thesis from a corrupted usb stick *three days* before her presentation.
 
 She was working in her thesis for almost a year, saving all the progresses in that usb stick. But what she didn't know was that an usb memory has a limited number of writes and with more writes eventually the file system gets corrupted.

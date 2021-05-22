@@ -3,13 +3,13 @@ layout: post
 title: "Cape Encryption"
 ---
 
-The Cape library{% sidenote
+The Cape library{% marginnote
 'https://github.com/gioblu/Cape/tree/294f810ac4831af26832e70e4ba5d073908232e2' %}
 offers a symmetric stream cipher implemented in
 ``cape_decrypt`` and ``cape_encrypt``.
 
 In addition, it offers another symmetric stream cipher, a slightly different
-of the first one, implemented in ``cape_hash``{% sidenote
+of the first one, implemented in ``cape_hash``{% marginnote
 '``cape_hash`` is an unfortunately name for a cipher.'
 %}
 

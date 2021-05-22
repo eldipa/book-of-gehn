@@ -20,7 +20,7 @@ that is the ``xor`` encryption of a plaintext using a single-byte key.
 ```
 
 This is obviously a poor and not secure encryption mechanism; let's find
-the ciphertext then!{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
+the ciphertext then!{% marginnote '**-- Spoiler Alert! --**' %}<!--more-->
 
 ## Distinguish a ciphertext
 

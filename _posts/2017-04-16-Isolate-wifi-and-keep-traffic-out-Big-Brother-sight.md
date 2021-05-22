@@ -3,6 +3,8 @@ layout: post
 title: Isolate a wifi card and keep your traffic out of the Big Brother sight
 ---
 
+{% marginfigure 'Big Brother sight' 'assets/isolate_wifi/isolate_wifi_big_brother_sight.png' '' '' 'in-index-only' %}
+
 HTTP Proxies blacklisting evil domains, firewalls blocking weird traffic
 and IDSs looking for someone that shouldn't be there are reasonable and
 understandable policies for a corporate environment.

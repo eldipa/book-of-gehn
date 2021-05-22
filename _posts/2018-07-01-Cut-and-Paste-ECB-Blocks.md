@@ -9,7 +9,7 @@ under ECB mode with a secret key.
 This time the idea is not to reveal the key but to *forge* a plaintext.
 
 Welcome to the [ECB cut-and-paste](https://cryptopals.com/sets/2/challenges/13)
-challenge!{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
+challenge!{% marginnote '**-- Spoiler Alert! --**' %}<!--more-->
 
 ### Prelude: profile creation
 

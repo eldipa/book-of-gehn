@@ -13,7 +13,7 @@ This is also known as the
 It is 101 cipher, which it is easy to break in theory, but it has more than
 one challenge hidden to be resolve in the practice.
 
-Shall we?{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
+Shall we?{% marginnote '**-- Spoiler Alert! --**' %}<!--more-->
 
 ## Guessing the length of the key
 

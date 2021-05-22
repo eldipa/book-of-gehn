@@ -3,13 +3,14 @@ layout: post
 title: "Detecting Penguins"
 ---
 
-Can you see the penguin?{% sidenote '**-- Spoiler Alert! --**' %}
-<!--more-->
 
-{% marginfigure '' 'assets/matasano/tux.png' 'The ECB encrypted image on the right
+{% maincolumn 'assets/matasano/tux.png' 'The ECB encrypted image on the right
 and its plaintext original version on the left. Image taken from
 [wikipedia](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation).' %}
 
+Can you see the penguin?{% marginnote '**-- Spoiler Alert! --**' %}
+
+<!--more-->
 
 ## Warming up
 

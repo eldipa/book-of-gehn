@@ -10,7 +10,7 @@ the Cryptopals Challenge)
 It starts from the very begin, really easy, but it goes up to more
 challenging exercises quickly.
 
-Ready?{% sidenote '**-- Spoiler Alert! --**' %} *Go!*<!--more-->
+Ready?{% marginnote '**-- Spoiler Alert! --**' %} *Go!*<!--more-->
 
 ## Warming up
 

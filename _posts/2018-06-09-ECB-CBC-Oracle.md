@@ -10,7 +10,7 @@ to distinguish ECB from CBC using
 [cryptonita](https://pypi.org/project/cryptonita/)
 
 This will be the bases for [breaking ECB](/book-of-gehn/articles/2018/06/10/Breaking-ECB.html)
-in a later post.{% sidenote '**-- Spoiler Alert! --**' %}.<!--more-->
+in a later post.{% marginnote '**-- Spoiler Alert! --**' %}.<!--more-->
 
 ### ``PKCS#7`` padding
 

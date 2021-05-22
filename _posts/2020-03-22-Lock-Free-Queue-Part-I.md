@@ -8,6 +8,9 @@ universe is relatively easy, doing the same when you have
 two threads, the implementation of a lock-free queue
 is *more challenging*.
 
+{% maincolumn 'assets/mpmc-queue/queue-sp-sc.png'
+'' '' 'in-index-only' %}
+
 In this first part will analyse and implement a lock-free single-producer
 single-consumer queue. A multi-producer multi-consumer queue is
 described in the

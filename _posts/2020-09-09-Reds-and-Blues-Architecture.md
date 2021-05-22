@@ -3,6 +3,10 @@ layout: post
 title: Reds and Blues Architecture
 ---
 
+{% marginfigure '' 'assets/design/reds-and-blues-original.png'
+'Original design: a little messy with IO mixed with CPU bounded code.'
+'max-width: 100%;' '' 'in-index-only' %}
+
 Could we design an architecture that allows us to have insight about the
 performance of the system?
 

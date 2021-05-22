@@ -80,6 +80,7 @@ module Jekyll
       if !File.exists?(dst_site)
         if File.exists?(dst)
           puts "File #{dst} already exists (#{File.size(dst)} bytes)"
+          `touch #{dst}`
         else
           FileUtils.mkdir_p(File.dirname(src))
           if engine == 'plantuml'
@@ -96,6 +97,9 @@ module Jekyll
           )
           puts "File #{dst} created (#{File.size(dst)} bytes)"
         end
+      else
+        `touch #{dst}`
+        `touch #{dst_site}`
       end
 
       html = "<object align='middle' data='#{site.baseurl}/#{umlpath}/#{fname}' type='image/#{img_format}+xml'></object>"

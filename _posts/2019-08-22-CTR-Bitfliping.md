@@ -8,7 +8,7 @@ protection against forgery.
 
 We saw this in the [CBC Bitflipping post](/book-of-gehn/articles/2018/07/03/CBC-Bitflipping.html)
 and we will see it again here but this time it will be
-the CTR encryption mode our victim.{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
+the CTR encryption mode our victim.{% marginnote '**-- Spoiler Alert! --**' %}<!--more-->
 
 <!--
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10

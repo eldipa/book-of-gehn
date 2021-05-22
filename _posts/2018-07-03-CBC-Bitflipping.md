@@ -3,6 +3,8 @@ layout: post
 title: "CBC Bitflipping"
 ---
 
+{% marginfigure '' '<img style="max-width:60%;" alt="CBC Dec" src="/book-of-gehn/assets/matasano/cbc-dec.png">' '' '' 'in-index-only'%}
+
 CBC does not offer any protection against an active attacker.
 
 Flipping some bits in a ciphertext block totally scrambles its
@@ -10,7 +12,7 @@ plaintext but it has a very specific effect in the *next* plaintext
 block.
 
 Without any message integrity, a CBC ciphertext can be patched
-to modify the plaintext at will.{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
+to modify the plaintext at will.{% marginnote '**-- Spoiler Alert! --**' %}<!--more-->
 
 ### Warming up
 

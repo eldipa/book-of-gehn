@@ -4,6 +4,10 @@ title: "Sidenote: Identifiers"
 ---
 
 What would be a nice identifier for the people in, let's say, a database?
+
+{% maincolumn 'assets/2020-04-19-Sidenote-Identifiers/email.png'
+'' 'max-width: 70%;' 'in-index-only' %}
+
 <!--more-->
 
 We need identifiers to operate the tables, make joins, and all kind

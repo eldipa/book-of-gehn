@@ -3,6 +3,20 @@ layout: post
 title: Constant Rate Loop
 ---
 
+{% marginfigure 'Bite' 'assets/distributing/constant_rate/examples/bite.gif'
+'Same animation that last 1 second in a loop. From top to down, the first
+is an animation without any frame lost, the second had lost some frames
+but ``draw()`` is still in sync, the last one lost the same amount
+of frames but ``draw()`` used its own notion of time an got out of sync.
+ [<i class="fab fa-github"></i> code](https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/examples/drop_iterations.py)'
+'' 'in-index-only' %}
+
+{% maincolumn 'assets/distributing/constant_rate/examples/rest-nodrop.png'
+'' '' 'in-index-only' %}
+
+{% maincolumn 'assets/distributing/constant_rate/examples/rest-drop.png'
+'' '' 'in-index-only' %}
+
 <!--more-->
 
 ## Motivation

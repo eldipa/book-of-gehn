@@ -3,6 +3,10 @@ layout: post
 title: "Effects of CPU Cache Coherence"
 ---
 
+{% marginfigure '' 'assets/memory/rc/cnt-cpu-2ndcpu-heatmap.png'
+'' '' ''
+'in-index-only' %}
+
 Most modern cpus see a single *shared* main memory seeing
 the same thing, *eventually*.
 

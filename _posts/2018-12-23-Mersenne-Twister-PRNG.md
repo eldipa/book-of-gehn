@@ -9,7 +9,7 @@ and with a nice random quality.
 
 However it was not designed to be used for crypto.
 
-But some folks may not know this...{% sidenote '**-- Spoiler Alert! --**' %}<!--more-->
+But some folks may not know this...{% marginnote '**-- Spoiler Alert! --**' %}<!--more-->
 
 ## Warming up
 
