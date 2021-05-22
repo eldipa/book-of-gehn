@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Constant Rate Loop</title>
-  <meta name="description" content="">
+  <meta name="description" content="⊕  Same animation that last 1 second in a loop. From top to down, the firstis an animation without any frame lost, the second had lost some framesbut draw() ...">
 
   
     <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
@@ -77,6 +77,16 @@
     <article class="group">
       <h1>Constant Rate Loop</h1>
 <p class="subtitle">October 23, 2019</p>
+
+<p><label for="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle  in-index-only">⊕</label><input type="checkbox" id="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle  in-index-only" /><span class="marginnote  in-index-only"><img style="" class="fullwidth" alt="Bite" src="/book-of-gehn/assets/distributing/constant_rate/examples/bite.gif" />  <br />Same animation that last 1 second in a loop. From top to down, the first
+is an animation without any frame lost, the second had lost some frames
+but <code class="highlighter-rouge">draw()</code> is still in sync, the last one lost the same amount
+of frames but <code class="highlighter-rouge">draw()</code> used its own notion of time an got out of sync.
+ <a href="https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/examples/drop_iterations.py"><i class="fab fa-github"></i> code</a></span></p>
+
+<figure><figcaption><span></span></figcaption><img style="" src="/book-of-gehn/assets/distributing/constant_rate/examples/rest-nodrop.png" /></figure>
+
+<figure><figcaption><span></span></figcaption><img style="" src="/book-of-gehn/assets/distributing/constant_rate/examples/rest-drop.png" /></figure>
 
 <!--more-->
 

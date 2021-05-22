@@ -531,7 +531,9 @@ rest of the iteration should be no-ops.</p>
 <p>So we <em>must</em> express this in Z3, we must stablish the relation between
 one iteration and the next one for all the 64 iterations:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">bit_count</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">z3</span> <span class="kn">import</span> <span class="n">BitVecVal</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">bit_count</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<span class="o">...</span>     <span class="n">c</span> <span class="o">=</span> <span class="n">BitVecVal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
 <span class="o">...</span>     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">):</span>
 <span class="o">...</span>         <span class="c1"># Create a "new generation" expression for 'c'
 </span><span class="o">...</span>         <span class="c1"># based if v != 0 or not
@@ -547,14 +549,13 @@ one iteration and the next one for all the 64 iterations:</p>
 because the C variable <code class="highlighter-rouge">c = 0</code> will be interpreted by Z3’s <code class="highlighter-rouge">If</code> as a
 boolean (<code class="highlighter-rouge">false</code>) which cannot be promoted later to a <code class="highlighter-rouge">BitVec</code>.</p>
 
-<p>To make it easier, I just defined this auxiliary variable and enforced
-to be 0.</p>
+<p>To enforce the correct type, we use a <code class="highlighter-rouge">BitVecVal</code> value initialized to
+0.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="p">,</span> <span class="o">=</span> <span class="n">BitVecs</span><span class="p">(</span><span class="s">'c'</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">good_cases</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span><span class="n">bit_count</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="n">v</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">bad_cases</span> <span class="o">=</span> <span class="n">bit_count</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">r</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">good_cases</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span><span class="n">bit_count</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="n">v</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">bad_cases</span> <span class="o">=</span> <span class="n">bit_count</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">r</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">solver</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="mi">64</span><span class="p">,</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">And</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">good_cases</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">bad_cases</span><span class="p">)))</span>     <span class="c1"># byexample: +skip
+<span class="o">&gt;&gt;&gt;</span> <span class="n">solver</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="mi">64</span><span class="p">,</span> <span class="n">And</span><span class="p">(</span><span class="n">Not</span><span class="p">(</span><span class="n">good_cases</span><span class="p">),</span> <span class="n">Not</span><span class="p">(</span><span class="n">bad_cases</span><span class="p">)))</span>     <span class="c1"># byexample: +skip
 </span><span class="s">"i don't know bro"</span>
 </code></pre></div></div>
 

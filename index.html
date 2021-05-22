@@ -626,6 +626,8 @@ writes.</p>
 <a href="https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher">Vigenere cipher</a>
 consists in finding the length of the key.</p>
 
+<p><label for="mf-d8d9b4cce50aee3ec67346ab92c66548" class="margin-toggle  in-index-only">⊕</label><input type="checkbox" id="mf-d8d9b4cce50aee3ec67346ab92c66548" class="margin-toggle  in-index-only" /><span class="marginnote  in-index-only"><img src="/book-of-gehn/assets/kasiski/kasiski_scan_positions.png" />  <br /></span></p>
+
 <p>We discussed this in the
 <a href="/book-of-gehn/articles/2018/05/01/Breaking-Vigenere.html">breaking Vigenere</a>
 post.</p>
@@ -671,7 +673,9 @@ the <code class="highlighter-rouge">executor.rb</code> was doing its job.</p>
           <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2020/09/09/Reds-and-Blues-Architecture.html"><h2 class="larger">Reds and Blues Architecture</h2></a>
           <br><span class="smaller">September 9, 2020</span>  <br/>
-          <div><p>Could we design an architecture that allows us to have insight about the
+          <div><p><label for="mf-c517aba0e777644668f87b82062240e3" class="margin-toggle  ">⊕</label><input type="checkbox" id="mf-c517aba0e777644668f87b82062240e3" class="margin-toggle  " /><span class="marginnote  "><img style="max-width: 100%;" class="fullwidth" alt="" src="/book-of-gehn/assets/design/reds-and-blues-original.png" />  <br />Original design: a little messy with IO mixed with CPU bounded code.</span></p>
+
+<p>Could we design an architecture that allows us to have insight about the
 performance of the system?</p>
 
 <p>When you spend nights debugging searching where is the bottleneck, it is
@@ -716,6 +720,8 @@ to the next level.</p>
           <br><span class="smaller">April 19, 2020</span>  <br/>
           <div><p>What would be a nice identifier for the people in, let’s say, a database?</p>
 
+<figure><figcaption><span></span></figcaption><img style="max-width: 70%;" src="/book-of-gehn/assets/2020-04-19-Sidenote-Identifiers/email.png" /></figure>
+
 </div>
        </span>
     
@@ -727,6 +733,8 @@ to the next level.</p>
 universe is relatively easy, doing the same when you have
 two threads, the implementation of a lock-free queue
 is <em>more challenging</em>.</p>
+
+<figure><figcaption><span></span></figcaption><img style="" src="/book-of-gehn/assets/mpmc-queue/queue-sp-sc.png" /></figure>
 
 <p>In this first part will analyse and implement a lock-free single-producer
 single-consumer queue. A multi-producer multi-consumer queue is
@@ -740,7 +748,9 @@ described in the
           <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2020/02/15/CPU-Cache-Coherence.html"><h2 class="larger">Effects of CPU Cache Coherence</h2></a>
           <br><span class="smaller">February 15, 2020</span>  <br/>
-          <div><p>Most modern cpus see a single <em>shared</em> main memory seeing
+          <div><p><label for="mf-60ce1018c40b8a23f191ac0831675972" class="margin-toggle  ">⊕</label><input type="checkbox" id="mf-60ce1018c40b8a23f191ac0831675972" class="margin-toggle  " /><span class="marginnote  "><img style="" class="fullwidth" alt="" src="/book-of-gehn/assets/memory/rc/cnt-cpu-2ndcpu-heatmap.png" />  <br /></span></p>
+
+<p>Most modern cpus see a single <em>shared</em> main memory seeing
 the same thing, <em>eventually</em>.</p>
 
 <p>This post explores what is
@@ -753,7 +763,9 @@ behind this <em>“eventually”</em> term.</p>
           <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2020/02/07/Compiler-Optimizations-under-RC.html"><h2 class="larger">Compiler Optimizations under a Race Condition</h2></a>
           <br><span class="smaller">February 7, 2020</span>  <br/>
-          <div><p>When two or more concurrent tasks perform non-atomic read/write operations
+          <div><p><label for="mf-7fbb50af557f9e5155904b080e9c6d7f" class="margin-toggle  in-index-only">⊕</label><input type="checkbox" id="mf-7fbb50af557f9e5155904b080e9c6d7f" class="margin-toggle  in-index-only" /><span class="marginnote  in-index-only"><img style="" class="fullwidth" alt="" src="/book-of-gehn/assets/memory/rc/rcO0-busy-loop.png" />  <br /></span></p>
+
+<p>When two or more concurrent tasks perform non-atomic read/write operations
 over the same data we have a <em>race condition</em> and
 the system will be in an undefined state.</p>
 
@@ -779,7 +791,16 @@ and defend from attacks of monsters.</p>
           <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2019/10/23/Constant-Rate-Loop.html"><h2 class="larger">Constant Rate Loop</h2></a>
           <br><span class="smaller">October 23, 2019</span>  <br/>
-          <div>
+          <div><p><label for="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle  in-index-only">⊕</label><input type="checkbox" id="mf-e1406f7dc5c4cd4de5628db455ab7473" class="margin-toggle  in-index-only" /><span class="marginnote  in-index-only"><img style="" class="fullwidth" alt="Bite" src="/book-of-gehn/assets/distributing/constant_rate/examples/bite.gif" />  <br />Same animation that last 1 second in a loop. From top to down, the first
+is an animation without any frame lost, the second had lost some frames
+but <code class="highlighter-rouge">draw()</code> is still in sync, the last one lost the same amount
+of frames but <code class="highlighter-rouge">draw()</code> used its own notion of time an got out of sync.
+ <a href="https://github.com/eldipa/book-of-gehn/blob/master/assets/distributing/constant_rate/examples/drop_iterations.py"><i class="fab fa-github"></i> code</a></span></p>
+
+<figure><figcaption><span></span></figcaption><img style="" src="/book-of-gehn/assets/distributing/constant_rate/examples/rest-nodrop.png" /></figure>
+
+<figure><figcaption><span></span></figcaption><img style="" src="/book-of-gehn/assets/distributing/constant_rate/examples/rest-drop.png" /></figure>
+
 </div>
        </span>
     
@@ -834,7 +855,7 @@ protection against forgery.</p>
 
 <p>We saw this in the <a href="/book-of-gehn/articles/2018/07/03/CBC-Bitflipping.html">CBC Bitflipping post</a>
 and we will see it again here but this time it will be
-the CTR encryption mode our victim.<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+the CTR encryption mode our victim.<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span></p>
 
 </div>
        </span>
@@ -931,12 +952,12 @@ damage.</p>
           <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2019/02/03/Cape-Encryption.html"><h2 class="larger">Cape Encryption</h2></a>
           <br><span class="smaller">February 3, 2019</span>  <br/>
-          <div><p>The Cape library<label for="sn-4bc32159a5b520259ac8bbc444bdd485" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-4bc32159a5b520259ac8bbc444bdd485" class="margin-toggle" /><span class="sidenote">https://github.com/gioblu/Cape/tree/294f810ac4831af26832e70e4ba5d073908232e2</span>
+          <div><p>The Cape library<label for="mn-4bc32159a5b520259ac8bbc444bdd485" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-4bc32159a5b520259ac8bbc444bdd485" class="margin-toggle" /><span class="marginnote">https://github.com/gioblu/Cape/tree/294f810ac4831af26832e70e4ba5d073908232e2 </span>
 offers a symmetric stream cipher implemented in
 <code class="highlighter-rouge">cape_decrypt</code> and <code class="highlighter-rouge">cape_encrypt</code>.</p>
 
 <p>In addition, it offers another symmetric stream cipher, a slightly different
-of the first one, implemented in <code class="highlighter-rouge">cape_hash</code><label for="sn-07e3f75f5385a05dda74ee8bdc043d42" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-07e3f75f5385a05dda74ee8bdc043d42" class="margin-toggle" /><span class="sidenote"><code class="highlighter-rouge">cape_hash</code> is an unfortunately name for a cipher.</span></p>
+of the first one, implemented in <code class="highlighter-rouge">cape_hash</code><label for="mn-07e3f75f5385a05dda74ee8bdc043d42" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-07e3f75f5385a05dda74ee8bdc043d42" class="margin-toggle" /><span class="marginnote"><code class="highlighter-rouge">cape_hash</code> is an unfortunately name for a cipher. </span></p>
 
 <p>In this write-up we are going to analyze the <code class="highlighter-rouge">cape_hash</code> stream cipher
 and see if we can break it.</p>
@@ -977,7 +998,7 @@ and with a nice random quality.</p>
 
 <p>However it was not designed to be used for crypto.</p>
 
-<p>But some folks may not know this…<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+<p>But some folks may not know this…<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span></p>
 
 </div>
        </span>
@@ -996,7 +1017,7 @@ the PRG to encrypt/decrypt the payload performing a simple xor.</p>
 but if this does not happen, all the plaintexts will be encrypted
 with the <em>same</em> pseudo random key stream – totally insecure.</p>
 
-<p>Ready to break it?<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+<p>Ready to break it?<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span></p>
 
 </div>
        </span>
@@ -1016,7 +1037,7 @@ has a valid pad or not.</p>
 <p>Armed with this <em>padding oracle</em> we can break CBC
 one byte at time.</p>
 
-<p>Ready?<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span> <em>Go!</em></p>
+<p>Ready?<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span> <em>Go!</em></p>
 
 </div>
        </span>
@@ -1048,6 +1069,8 @@ of a circular buffer over a continuous and finite memory slice.</p>
 Ancient Greek and symbolize a snake eating
 its own tail – a convenient image for a circular buffer.</p>
 
+<figure><figcaption><span></span></figcaption><img style="" src="/book-of-gehn/assets/circular_buffer/buffer_0_10.png" /></figure>
+
 <p>Source code can be found in the
 <a href="https://github.com/eldipa/tiburoncin">tiburoncin project</a>. Enjoy it!</p>
 
@@ -1058,14 +1081,16 @@ its own tail – a convenient image for a circular buffer.</p>
           <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2018/07/03/CBC-Bitflipping.html"><h2 class="larger">CBC Bitflipping</h2></a>
           <br><span class="smaller">July 3, 2018</span>  <br/>
-          <div><p>CBC does not offer any protection against an active attacker.</p>
+          <div><p><label for="mf-03e66d641fdb1dcfe295e7a3a6f369fb" class="margin-toggle  in-index-only">⊕</label><input type="checkbox" id="mf-03e66d641fdb1dcfe295e7a3a6f369fb" class="margin-toggle  in-index-only" /><span class="marginnote  in-index-only"><img style="max-width:60%;" alt="CBC Dec" src="/book-of-gehn/assets/matasano/cbc-dec.png" />  <br /></span></p>
+
+<p>CBC does not offer any protection against an active attacker.</p>
 
 <p>Flipping some bits in a ciphertext block totally scrambles its
 plaintext but it has a very specific effect in the <em>next</em> plaintext
 block.</p>
 
 <p>Without any message integrity, a CBC ciphertext can be patched
-to modify the plaintext at will.<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+to modify the plaintext at will.<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span></p>
 
 </div>
        </span>
@@ -1080,7 +1105,7 @@ under ECB mode with a secret key.</p>
 <p>This time the idea is not to reveal the key but to <em>forge</em> a plaintext.</p>
 
 <p>Welcome to the <a href="https://cryptopals.com/sets/2/challenges/13">ECB cut-and-paste</a>
-challenge!<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+challenge!<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span></p>
 
 </div>
        </span>
@@ -1093,7 +1118,7 @@ challenge!<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle 
 <a href="/book-of-gehn/articles/2018/06/09/ECB-CBC-Oracle.html">an ECB/CBC oracle</a>;
 now it’s time to take this to the next level and
 break ECB <a href="https://cryptopals.com/sets/2/challenges/14">one byte at time</a>.
-<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span>.</p>
+<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span>.</p>
 
 </div>
        </span>
@@ -1109,7 +1134,7 @@ to distinguish ECB from CBC using
 <a href="https://pypi.org/project/cryptonita/">cryptonita</a></p>
 
 <p>This will be the bases for <a href="/book-of-gehn/articles/2018/06/10/Breaking-ECB.html">breaking ECB</a>
-in a later post.<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span>.</p>
+in a later post.<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span>.</p>
 
 </div>
        </span>
@@ -1118,7 +1143,11 @@ in a later post.<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-t
           <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2018/05/20/Detecting-Penguins.html"><h2 class="larger">Detecting Penguins</h2></a>
           <br><span class="smaller">May 20, 2018</span>  <br/>
-          <div><p>Can you see the penguin?<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+          <div><figure><figcaption><span>The ECB encrypted image on the right
+and its plaintext original version on the left. Image taken from
+<a href="https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation">wikipedia</a>.</span></figcaption><img src="/book-of-gehn/assets/matasano/tux.png" /></figure>
+
+<p>Can you see the penguin?<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span></p>
 
 </div>
        </span>
@@ -1137,7 +1166,7 @@ the plaintext.</p>
 <p>It is 101 cipher, which it is easy to break in theory, but it has more than
 one challenge hidden to be resolve in the practice.</p>
 
-<p>Shall we?<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+<p>Shall we?<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span></p>
 
 </div>
        </span>
@@ -1162,7 +1191,7 @@ that is the <code class="highlighter-rouge">xor</code> encryption of a plaintext
 </code></pre></div></div>
 
 <p>This is obviously a poor and not secure encryption mechanism; let’s find
-the ciphertext then!<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span></p>
+the ciphertext then!<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span></p>
 
 </div>
        </span>
@@ -1178,7 +1207,7 @@ the Cryptopals Challenge)</p>
 <p>It starts from the very begin, really easy, but it goes up to more
 challenging exercises quickly.</p>
 
-<p>Ready?<label for="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="sidenote"><strong>– Spoiler Alert! –</strong></span> <em>Go!</em></p>
+<p>Ready?<label for="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle"> ⊕</label><input type="checkbox" id="mn-92c40aed2262db60522dbf16855f07d8" class="margin-toggle" /><span class="marginnote"><strong>– Spoiler Alert! –</strong> </span> <em>Go!</em></p>
 
 </div>
        </span>
@@ -1187,7 +1216,9 @@ challenging exercises quickly.</p>
           <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2017/04/16/Isolate-wifi-and-keep-traffic-out-Big-Brother-sight.html"><h2 class="larger">Isolate a wifi card and keep your traffic out of the Big Brother sight</h2></a>
           <br><span class="smaller">April 16, 2017</span>  <br/>
-          <div><p>HTTP Proxies blacklisting evil domains, firewalls blocking weird traffic
+          <div><p><label for="mf-9d56bae39ef3717a0ac0633d00b3095c" class="margin-toggle  in-index-only">⊕</label><input type="checkbox" id="mf-9d56bae39ef3717a0ac0633d00b3095c" class="margin-toggle  in-index-only" /><span class="marginnote  in-index-only"><img style="" class="fullwidth" alt="Big Brother sight" src="/book-of-gehn/assets/isolate_wifi/isolate_wifi_big_brother_sight.png" />  <br /></span></p>
+
+<p>HTTP Proxies blacklisting evil domains, firewalls blocking weird traffic
 and IDSs looking for someone that shouldn’t be there are reasonable and
 understandable policies for a corporate environment.</p>
 
@@ -1205,7 +1236,9 @@ trusted authority.</p>
           <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2016/12/18/Forensics-911-recovering-thesis.html"><h2 class="larger">Forensics 911 - recovering a thesis of one year work</h2></a>
           <br><span class="smaller">December 18, 2016</span>  <br/>
-          <div><p>A friend of mine called me: a girl friend of him was hopeless trying to recover her thesis from a corrupted usb stick <em>three days</em> before her presentation.</p>
+          <div><p><label for="mf-5d444facb38e79ef0c8ab5be26ebb333" class="margin-toggle  in-index-only">⊕</label><input type="checkbox" id="mf-5d444facb38e79ef0c8ab5be26ebb333" class="margin-toggle  in-index-only" /><span class="marginnote  in-index-only"><img style="" class="fullwidth" alt="Trimming and Scraping" src="/book-of-gehn/assets/trimming_scraping_ddrescue.png" />  <br />Trimming and Scraping</span></p>
+
+<p>A friend of mine called me: a girl friend of him was hopeless trying to recover her thesis from a corrupted usb stick <em>three days</em> before her presentation.</p>
 
 <p>She was working in her thesis for almost a year, saving all the progresses in that usb stick. But what she didn’t know was that an usb memory has a limited number of writes and with more writes eventually the file system gets corrupted.</p>
 
