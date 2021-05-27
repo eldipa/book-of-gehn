@@ -81,6 +81,35 @@
     
        <span class="index-single-post">
           <hr class="slender post-layout">
+          <a href="/book-of-gehn/articles/2021/05/26/Casting-Broadcasting-LUT-and-Bitwise-Ops.html"><h2 class="larger">Casting, broadcasting, LUT and bitwise ops</h2></a>
+          <br><span class="smaller">May 26, 2021</span>  <br/>
+          <div><p>Z3 has a few basic symbolic operation over bit vectors.</p>
+
+<p>But some others are missing (or at least I couldn’t find them).</p>
+
+<p><em>Cast</em> bit vectors to change the vector width, like when you want to
+<em>upcast</em> or <em>promote</em> a <code class="highlighter-rouge">uint8_t</code> to <code class="highlighter-rouge">uint16_t</code>, is one of them.</p>
+
+<p>Arbitrary <em>bitwise operations</em> is another one. Z3 provides the basic
+<code class="highlighter-rouge">And</code>, <code class="highlighter-rouge">Or</code> and <code class="highlighter-rouge">Xor</code> but arbitrary functions needs to be defined and
+applied by hand.</p>
+
+<p>And about function definitions, Z3 does not have a simple way to <em>define
+a function from a lookup table (LUT) or truth table</em>.</p>
+
+<blockquote>
+  <p><em>A much tricker that I thought!</em></p>
+</blockquote>
+
+<p>This post is a kind-of sequel of
+<a href="/book-of-gehn/articles/2021/05/17/Verifying-Some-Bithacks.html">Verifying some Bithacks post</a>
+and prequel of some future posts.</p>
+
+</div>
+       </span>
+    
+       <span class="index-single-post">
+          <hr class="slender post-layout">
           <a href="/book-of-gehn/articles/2021/05/17/Verifying-Some-Bithacks.html"><h2 class="larger">Verifying some bithacks</h2></a>
           <br><span class="smaller">May 17, 2021</span>  <br/>
           <div><p>We are going to verify some of the <a href="https://graphics.stanford.edu/~seander/bithacks.html">bit twiddling
