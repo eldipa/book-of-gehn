@@ -1,4 +1,95 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-05-27T02:06:08+02:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Casting, broadcasting, LUT and bitwise ops</title><link href="/book-of-gehn/articles/2021/05/26/Casting-Broadcasting-LUT-and-Bitwise-Ops.html" rel="alternate" type="text/html" title="Casting, broadcasting, LUT and bitwise ops" /><published>2021-05-26T00:00:00+02:00</published><updated>2021-05-26T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/05/26/Casting-Broadcasting-LUT-and-Bitwise-Ops</id><content type="html" xml:base="/book-of-gehn/articles/2021/05/26/Casting-Broadcasting-LUT-and-Bitwise-Ops.html">&lt;p&gt;Z3 has a few basic symbolic operation over bit vectors.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="/book-of-gehn/feed.xml" rel="self" type="application/atom+xml" /><link href="/book-of-gehn/" rel="alternate" type="text/html" /><updated>2021-06-05T21:25:58+02:00</updated><id>/book-of-gehn/feed.xml</id><title type="html">The Book of Gehn</title><subtitle></subtitle><author><name>Gehn</name></author><entry><title type="html">Seaborn Cheatsheet</title><link href="/book-of-gehn/articles/2021/06/05/Seaborn-Cheatsheet.html" rel="alternate" type="text/html" title="Seaborn Cheatsheet" /><published>2021-06-05T00:00:00+02:00</published><updated>2021-06-05T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/06/05/Seaborn-Cheatsheet</id><content type="html" xml:base="/book-of-gehn/articles/2021/06/05/Seaborn-Cheatsheet.html">&lt;p&gt;Plotting data was always for me a weak point: it always took me a lot of
+time to make the plots and graphs, reading the documentation, &lt;em&gt;googling&lt;/em&gt;
+how to do one particular tweak and things like that.&lt;/p&gt;
+
+&lt;p&gt;So I challenge myself: could I build a &lt;em&gt;cheatsheet&lt;/em&gt; about plotting?&lt;/p&gt;
+
+&lt;p&gt;Yes, yes I could.&lt;/p&gt;
+
+&lt;figure&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;img src=&quot;/book-of-gehn/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.svg&quot; /&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://seaborn.pydata.org/&quot;&gt;Seaborn&lt;/a&gt; is a very simple but powerful
+plotting library on top of &lt;a href=&quot;https://matplotlib.org/&quot;&gt;matplotlib&lt;/a&gt; designed
+for statistical analysis.&lt;/p&gt;
+
+&lt;p&gt;Quick links:
+&lt;a href=&quot;/book-of-gehn/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.pdf&quot;&gt;PDF (no bg)&lt;/a&gt;,
+&lt;a href=&quot;/book-of-gehn/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg.pdf&quot;&gt;PDF (bg)&lt;/a&gt;,
+&lt;a href=&quot;/book-of-gehn/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.svg&quot;&gt;SVG (no bg)&lt;/a&gt;,
+&lt;a href=&quot;/book-of-gehn/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg.svg&quot;&gt;SVG (bg)&lt;/a&gt;
+.&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;instructions&quot;&gt;Instructions&lt;/h2&gt;
+
+&lt;p&gt;Each rectangle list the parameters that take the plot functions.
+The bold labels inside, like &lt;strong&gt;hist&lt;/strong&gt; and &lt;strong&gt;violin&lt;/strong&gt;, are the names
+of the plots.&lt;/p&gt;
+
+&lt;p&gt;The names are followed by a list of &lt;strong&gt;data parameter&lt;/strong&gt;, also in bold.
+These are used to tell the function from &lt;strong&gt;where&lt;/strong&gt; take the data. Some
+functions may take more parameters additionally, so they are in between
+&lt;strong&gt;square brakets&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;The rest of the parameters listed are optional. Sometimes the
+cheatsheet shows the &lt;em&gt;type&lt;/em&gt; of the parameter, sometimes the &lt;em&gt;range&lt;/em&gt; and
+in others just a few possible values.&lt;/p&gt;
+
+&lt;p&gt;From all of that you can write Python code like the following that plots
+a histogram for the univariate &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;age&quot;&lt;/code&gt; in the given Pandas data frame.
+The extra &lt;code class=&quot;highlighter-rouge&quot;&gt;kde=True&lt;/code&gt; plots a &lt;em&gt;kernel density estimation&lt;/em&gt; on top.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;seaborn&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sns&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;histplot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;age&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kde&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Nested rectangles means that the outer rectangle &lt;strong&gt;includes&lt;/strong&gt; the parameters
+listed in the inner rectangle but not the other way around.&lt;/p&gt;
+
+&lt;p&gt;The &lt;strong&gt;dashed&lt;/strong&gt; rectangles means the &lt;strong&gt;union of&lt;/strong&gt;: the parameters are
+shared across.&lt;/p&gt;
+
+&lt;p&gt;For example &lt;code class=&quot;highlighter-rouge&quot;&gt;bar&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;point&lt;/code&gt; accepts the parameters of &lt;code class=&quot;highlighter-rouge&quot;&gt;box&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;line&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Some parameters are followed by a &lt;em&gt;comment in italics&lt;/em&gt; for a quick
+explanation of the parameters.&lt;/p&gt;
+
+&lt;p&gt;The cheatsheet has a lot of small plots as visual examples. Some of them
+are &lt;strong&gt;linked with a line&lt;/strong&gt; with a plot function (rectangle) and some of them are
+&lt;strong&gt;linked with a dashed line&lt;/strong&gt; to a particular setting.&lt;/p&gt;
+
+&lt;p&gt;For example in the cheatsheet there are 4 examples of &lt;code class=&quot;highlighter-rouge&quot;&gt;hist&lt;/code&gt; showing the
+different results based on &lt;code class=&quot;highlighter-rouge&quot;&gt;element='step'&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;multiple='stack'&lt;/code&gt; and
+&lt;code class=&quot;highlighter-rouge&quot;&gt;multiple='dodge'&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The fourth example is linked to the rectangle for the &lt;code class=&quot;highlighter-rouge&quot;&gt;hist&lt;/code&gt; function
+(bivariate) and not linked to a particular setting.&lt;/p&gt;
+
+&lt;p&gt;The colors also have a meaning: plot functions of the same color belongs
+to the same &lt;em&gt;Seaborn module&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Seaborn has –broadly speaking– 2 groups of functions:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the ones that work at the &lt;strong&gt;axes level&lt;/strong&gt;.&lt;/li&gt;
+  &lt;li&gt;the ones that creates their own figure and axes, the &lt;strong&gt;figure level&lt;/strong&gt;
+(or module level)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The former are the core of Seaborn. Call them on the same axes to do a
+combination (an overlay) of different plots.&lt;/p&gt;
+
+&lt;p&gt;The latter are however simpler. They just call the axes level function
+based on the &lt;code class=&quot;highlighter-rouge&quot;&gt;kind=&lt;/code&gt; parameter.&lt;/p&gt;
+
+&lt;p&gt;The advantage of the figure level functions is that they can create a
+&lt;strong&gt;matrix of plots&lt;/strong&gt; with the &lt;code class=&quot;highlighter-rouge&quot;&gt;row=&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;col=&lt;/code&gt; parameters.&lt;/p&gt;
+
+&lt;p&gt;The colors represent these: red for uni/bivariate distribution plots
+(&lt;code class=&quot;highlighter-rouge&quot;&gt;displot&lt;/code&gt;), blue for relationship plots (&lt;code class=&quot;highlighter-rouge&quot;&gt;relplot&lt;/code&gt;) and green for
+distribution within categories plots (&lt;code class=&quot;highlighter-rouge&quot;&gt;catplot&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;The violet group is for regressions and does not follow exactly the
+pattern above.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">Plotting data was always for me a weak point: it always took me a lot of time to make the plots and graphs, reading the documentation, googling how to do one particular tweak and things like that. So I challenge myself: could I build a cheatsheet about plotting? Yes, yes I could. Seaborn is a very simple but powerful plotting library on top of matplotlib designed for statistical analysis. Quick links: PDF (no bg), PDF (bg), SVG (no bg), SVG (bg) .</summary></entry><entry><title type="html">Casting, broadcasting, LUT and bitwise ops</title><link href="/book-of-gehn/articles/2021/05/26/Casting-Broadcasting-LUT-and-Bitwise-Ops.html" rel="alternate" type="text/html" title="Casting, broadcasting, LUT and bitwise ops" /><published>2021-05-26T00:00:00+02:00</published><updated>2021-05-26T00:00:00+02:00</updated><id>/book-of-gehn/articles/2021/05/26/Casting-Broadcasting-LUT-and-Bitwise-Ops</id><content type="html" xml:base="/book-of-gehn/articles/2021/05/26/Casting-Broadcasting-LUT-and-Bitwise-Ops.html">&lt;p&gt;Z3 has a few basic symbolic operation over bit vectors.&lt;/p&gt;
 
 &lt;p&gt;But some others are missing (or at least I couldn’t find them).&lt;/p&gt;
 
@@ -2340,262 +2431,4 @@ that &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; does the
 data alignment, and who knows what else may change.&lt;/p&gt;
 
 &lt;p&gt;And trust me, &lt;a href=&quot;https://users.cs.northwestern.edu/~robby/courses/322-2013-spring/mytkowicz-wrong-data.pdf&quot;&gt;Producing Wrong Data Without Doing Anything Obviously Wrong!&lt;/a&gt;
-is very common and almost unavoidable.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">You are working in optimizing a piece of software to reduce the CPU cycles that it takes. To compare your improvements, it is reasonable to measure the elapsed time before and after your change. Unless you are using a simulator, it is impossible to run a program isolated from the rest and your measurements will be noisy. If you want to take precise measurements you need a quiescent environment as much as possible.</summary></entry><entry><title type="html">High Precision Timers (userspace)</title><link href="/book-of-gehn/articles/2021/02/27/High-Precision-Timers.html" rel="alternate" type="text/html" title="High Precision Timers (userspace)" /><published>2021-02-27T00:00:00+01:00</published><updated>2021-02-27T00:00:00+01:00</updated><id>/book-of-gehn/articles/2021/02/27/High-Precision-Timers</id><content type="html" xml:base="/book-of-gehn/articles/2021/02/27/High-Precision-Timers.html">&lt;p&gt;You want to measure the time that it takes &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; to run so
-you do the following:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;experiment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;uint64_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;begin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;uint64_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;end&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;now&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Elapsed: %lu&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;end&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;begin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The question is, what &lt;code class=&quot;highlighter-rouge&quot;&gt;now()&lt;/code&gt; function you would use?&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-eb29b55ad6d0f41601d1d47bf7527f71&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-eb29b55ad6d0f41601d1d47bf7527f71&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;You could read a CPU register that implements the clock in hardware.
-Beware, however, that the read may not be cheap and the clock
-may not have the precision that you need.
-&lt;br /&gt;
-Also, the register may be per CPU: to make it work you need to
-ensure that &lt;code class=&quot;highlighter-rouge&quot;&gt;experiment()&lt;/code&gt; does not migrate to another CPU.
-&lt;br /&gt;
-See &lt;a href=&quot;https://github.com/wcohen/libpfm4&quot;&gt;libpfm4&lt;/a&gt;.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;There are some options available:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;time.h&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;sys/time.h&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;getrusage()&lt;/code&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;sys/time.h&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;sys/resource.h&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;time.h&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;However not all of them are as suitable for the task as they may seem.&lt;/p&gt;
-
-&lt;h2 id=&quot;test-escenario&quot;&gt;Test escenario&lt;/h2&gt;
-
-&lt;p&gt;The idea is to call a particular clock several times in a tight loop.&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;size_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;atoi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timespec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;malloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;clock_gettime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CLOCK_MONOTONIC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;print_nsec_resolution&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;mono&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-cb27feb9f66d3ce8a8f57233b20f789c&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-cb27feb9f66d3ce8a8f57233b20f789c&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;If the clock jumps &lt;em&gt;backwards&lt;/em&gt;, this function will print a &lt;em&gt;huge&lt;/em&gt;
-number and not a negative value.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;print_*&lt;/code&gt; functions will print the measurements normalized: no
-matter the clock’s resolution, the printed value will be in nanoseconds
-and to get comparable results the values are respect the first
-measurement.&lt;/p&gt;
-
-&lt;p&gt;In other words:&lt;/p&gt;
-
-&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;uint64_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ref&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tv_sec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000000000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// seconds as nanoseconds&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ref&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tv_nsec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// plus the nanoseconds&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rounds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;kt&quot;&gt;uint64_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tv_sec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000000000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tv_nsec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%s %lu&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;category&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ref&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The full code can be found
-&lt;a href=&quot;/book-of-gehn/assets/timing-assets/clocks.c&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;evaluation&quot;&gt;Evaluation&lt;/h2&gt;
-
-&lt;p&gt;Compiled and executed with 10000 rounds each clock, it generated 70000
-lines.&lt;/p&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-f54216808c493c3f80dc6392ed4cbef4&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-f54216808c493c3f80dc6392ed4cbef4&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;The use of &lt;code class=&quot;highlighter-rouge&quot;&gt;dtype={&quot;clock type&quot;: &quot;category&quot;}&lt;/code&gt; is important. Pandas
-will load these strings and it will create a category for each distinct
-label which internally is represented as an integer.
-&lt;br /&gt;
-This reduces by two orders of magnitud the memory usage
-(&lt;code class=&quot;highlighter-rouge&quot;&gt;d.memory_usage(True, True)&lt;/code&gt; to compare them).
-&lt;a href=&quot;https://pandas.pydata.org/pandas-docs/stable/user_guide/scale.html&quot;&gt;Pandas
-reference&lt;/a&gt;
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;Each line is prefixed with a string that labels the clock type.&lt;/p&gt;
-
-&lt;p&gt;The output can be loaded with &lt;code class=&quot;highlighter-rouge&quot;&gt;pandas&lt;/code&gt; as follows:&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;fname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;sep&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;' '&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;header&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;names&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'clock type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'tval'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'clock type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'category'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;It makes sense to analyze not the time returned by each call but the
-difference between two consecutive calls. This highlights how much
-stable is the clock and how much delay adds the call.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'clock type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;categories&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;selected_rows&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'clock type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;differences&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;selected_rows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'tval'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;diff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;selected_rows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'tval'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;differences&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The full code can be found
-&lt;a href=&quot;/book-of-gehn/assets/timing-assets/analyze.py&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Let’s review what we’ve got.&lt;/p&gt;
-
-&lt;h3 id=&quot;time&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt; has a resolution of a second, so it is a &lt;em&gt;no-go&lt;/em&gt; to measure things
-of the order of the microsecond or less.&lt;/p&gt;
-
-&lt;p&gt;But for completeness I tested &lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt; anyways and what I found
-it was a surprise:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Clock type: time
-         tval
-count  9999.0
-mean      0.0
-std       0.0
-min       0.0
-25%       0.0
-50%       0.0
-75%       0.0
-max       0.0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;If I run &lt;code class=&quot;highlighter-rouge&quot;&gt;time()&lt;/code&gt; in tight &lt;code class=&quot;highlighter-rouge&quot;&gt;for&lt;/code&gt; loop, it returns always the same value,
-no matter how many times the loop iterates.&lt;/p&gt;
-
-&lt;p&gt;I thought that it was a bug but nope, when I run it with &lt;code class=&quot;highlighter-rouge&quot;&gt;gdb&lt;/code&gt; it works as
-expected.&lt;/p&gt;
-
-&lt;p&gt;Weird.&lt;/p&gt;
-
-&lt;h3 id=&quot;gettimeofday&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-dc0b3eefb4998a6ca1169da11ae5af81&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-dc0b3eefb4998a6ca1169da11ae5af81&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;This can be explained due its implementation: instead of doing a
-syscall, a call to &lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; calls a snippet of code in user
-space.
-&lt;br /&gt;
-See more about &lt;a href=&quot;https://0xax.gitbooks.io/linux-insides/content/SysCall/linux-syscall-3.html&quot;&gt;vsyscall and vDSO here&lt;/a&gt;
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; shown the best performance: the worst time measured
-between two consecutive calls is just 2 microseconds, which it is twice
-the minimum resolution of the function.&lt;/p&gt;
-
-&lt;p&gt;Fast but it is also super imprecise.&lt;/p&gt;
-
-&lt;p&gt;More than 75% of the differences between two consecutive measurements
-are zero which means that &lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; returns a cached value and it
-is updated very infrequently.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;clock type: tofd
-              tval
-count  9999.000000
-mean     27.102710
-std     166.646544
-min       0.000000
-25%       0.000000
-50%       0.000000
-75%       0.000000
-max    2000.000000
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In addition to its intrinsic imprecision, &lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; is &lt;strong&gt;not
-guaranteed to be monotonically increasing&lt;/strong&gt;. So you can see &lt;em&gt;jumps&lt;/em&gt; to
-the future or event to the past.&lt;/p&gt;
-
-&lt;p&gt;This is because &lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; is in sync with external sources of
-time like NTP. The user may even change it running &lt;code class=&quot;highlighter-rouge&quot;&gt;date&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Fast but not useful to measure differences of time.&lt;/p&gt;
-
-&lt;h3 id=&quot;getrusage&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;getrusage()&lt;/code&gt;&lt;/h3&gt;
-
-&lt;p&gt;Something similar happens with &lt;code class=&quot;highlighter-rouge&quot;&gt;getrusage()&lt;/code&gt;: it is slightly slower than
-&lt;code class=&quot;highlighter-rouge&quot;&gt;gettimeofday()&lt;/code&gt; but it is still super fast (7 microseconds) but returns
-cached values (at least half of the times).&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Clock type: ruse
-              tval
-count  9999.000000
-mean    524.152415
-std     656.260508
-min       0.000000
-25%       0.000000
-50%       0.000000
-75%    1000.000000
-max    7000.000000
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;clock_gettime&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;label for=&quot;mn-76401935f6d8c10a405345e8f13e5b88&quot; class=&quot;margin-toggle&quot;&gt; ⊕&lt;/label&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mn-76401935f6d8c10a405345e8f13e5b88&quot; class=&quot;margin-toggle&quot; /&gt;&lt;span class=&quot;marginnote&quot;&gt;See also the &lt;a href=&quot;https://www.python.org/dev/peps/pep-0418/#time-monotonic&quot;&gt;PEP 418&lt;/a&gt;.
- &lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;The manpage describes four kind of clocks that may work:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt;: monotonic time but it may be affected by
-incremental changes done by &lt;code class=&quot;highlighter-rouge&quot;&gt;adjtime&lt;/code&gt; or NTP.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC_RAW&lt;/code&gt;: like &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt; but it is not affected by
-&lt;code class=&quot;highlighter-rouge&quot;&gt;adjtime&lt;/code&gt; or NTP. Uses hardware-specific.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_PROCESS_CPUTIME_ID&lt;/code&gt;: per process clock that measures the
-CPU time for the process (among all the threads).&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_THREAD_CPUTIME_ID&lt;/code&gt;: per thread clock that measures the
-CPU time for that particular thread.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; is the only that returned values that make sense
-and &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt; is the winner.&lt;/p&gt;
-
-&lt;p&gt;It has the smallest elapsed time (80 nanoseconds) and it has a
-dispersion of the values of few nanoseconds.&lt;/p&gt;
-
-&lt;p&gt;This can be seen in the percentiles 80, 84, 85, 86 nanoseconds.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_PROCESS_CPUTIME_ID&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_THREAD_CPUTIME_ID&lt;/code&gt; are in the
-second place.&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;         MONOTONIC    MONOTONIC_RAW   PROCESS_CPUTIME    THREAD_CPUTIME
-              tval             tval              tval              tval
-count  9999.000000      9999.000000       9999.000000       9999.000000
-mean    102.900290       773.215422        387.565257        379.232923
-std     295.741321       200.428225        216.037233        210.391130
-min      80.000000       709.000000        366.000000        358.000000
-25%      84.000000       719.000000        374.000000        367.000000
-50%      85.000000       723.000000        377.000000        370.000000
-75%      86.000000       728.000000        401.000000        391.000000
-max    8019.000000     13532.000000      17392.000000      17572.000000
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In all the cases the clocks are quite stable and the outliers are
-probably due noise in the system.&lt;/p&gt;
-
-&lt;h2 id=&quot;conclusions&quot;&gt;Conclusions&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt; is the winner, at least in my
-4.19 kernel, with a minimum delta of 80 to 86 nanoseconds.&lt;/p&gt;
-
-&lt;p&gt;In second place &lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_PROCESS_CPUTIME_ID&lt;/code&gt; or
-&lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_THREAD_CPUTIME_ID&lt;/code&gt;. Good performance, roughly 4 or 5 times slower
-than &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;clock_gettime()&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC_RAW&lt;/code&gt; is not bad but it is at
-least 8 times slower than &lt;code class=&quot;highlighter-rouge&quot;&gt;CLOCK_MONOTONIC&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The rest of the clocks are &lt;strong&gt;not&lt;/strong&gt; useful.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">You want to measure the time that it takes foo() to run so you do the following: void experiment() { uint64_t begin = now(); foo(); uint64_t end = now(); printf(&quot;Elapsed: %lu\n&quot;, end - begin); } The question is, what now() function you would use?</summary></entry></feed>
+is very common and almost unavoidable.&lt;/p&gt;</content><author><name>Gehn</name></author><summary type="html">You are working in optimizing a piece of software to reduce the CPU cycles that it takes. To compare your improvements, it is reasonable to measure the elapsed time before and after your change. Unless you are using a simulator, it is impossible to run a program isolated from the rest and your measurements will be noisy. If you want to take precise measurements you need a quiescent environment as much as possible.</summary></entry></feed>
