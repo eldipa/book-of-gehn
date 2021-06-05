@@ -35,7 +35,7 @@ stop:
 index:
 	@node ./_docker/build_search_index.js ./_posts/ > js/search_index.js
 
-publish: index
+publish:
 	@sudo docker stop GehnPages || true
 	@sudo rm -Rf _site
 	@# Use this file to mark which files were "recreated" by "jekyll build"
