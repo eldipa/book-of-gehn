@@ -7,7 +7,7 @@ Quick writeup of a SQL injection challenge.
 
 <!--more-->
 We start with a
-[pcap](/book-of-gehn/assets/eko2019-writeups/weiro-dir/wtf.pcap)
+[pcap](/assets/eko2019-writeups/weiro-dir/wtf.pcap)
 of a HTTP communication between a client and a server.
 
 It is only one request/response.

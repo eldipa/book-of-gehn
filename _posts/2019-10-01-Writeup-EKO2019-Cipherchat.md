@@ -3,7 +3,7 @@ layout: post
 title: "Cipherchat (Crypto writeup - EKO 2019)"
 ---
 
-We start with a [communication](/book-of-gehn/assets/eko2019-writeups/cipherchat-dir/cipherchat.pcap)
+We start with a [communication](/assets/eko2019-writeups/cipherchat-dir/cipherchat.pcap)
 between two machines, encrypted with an unknown algorithm and
 the challenge is to break it.
 
@@ -12,7 +12,7 @@ As a *hint* we have the code that the client used to talk with the server.<!--mo
 
 ## Decompile
 
-It is a Python 3 [compiled code](/book-of-gehn/assets/eko2019-writeups/cipherchat-dir/client.min.pyc)
+It is a Python 3 [compiled code](/assets/eko2019-writeups/cipherchat-dir/client.min.pyc)
 so our first task is to decompile it.
 
 For this I'm going to use [uncompyle6](https://github.com/rocky/python-uncompyle6)
@@ -67,7 +67,7 @@ and things like that.
 Finally, I tried to rename the variables to have a meaningful name.
 
 The decompiled code is
-[here](/book-of-gehn/assets/eko2019-writeups/cipherchat-dir/client.min.py).
+[here](/assets/eko2019-writeups/cipherchat-dir/client.min.py).
 
 ## Analysis of the Cipher
 
@@ -154,7 +154,7 @@ it is handy to use ``Statistic > Conversations`` in ``wireshark``
 to summarize the protocols, addresses and ports.' %}
 
 Not secret at all. ``srcport`` is the source port chosen by the OS which
-from the [pcap](/book-of-gehn/assets/eko2019-writeups/cipherchat-dir/cipherchat.pcap)
+from the [pcap](/assets/eko2019-writeups/cipherchat-dir/cipherchat.pcap)
 we know that it is 47898.
 
 So

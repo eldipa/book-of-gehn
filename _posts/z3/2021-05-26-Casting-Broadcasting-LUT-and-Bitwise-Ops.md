@@ -20,7 +20,7 @@ a function from a lookup table (LUT) or truth table*.
 > *A much tricker that I thought!*
 
 This post is a kind-of sequel of
-[Verifying some Bithacks post](/book-of-gehn/articles/2021/05/17/Verifying-Some-Bithacks.html)
+[Verifying some Bithacks post](/articles/2021/05/17/Verifying-Some-Bithacks.html)
 and prequel of some future posts.<!--more-->
 
 ## Casting
@@ -289,7 +289,7 @@ Some
 be used to simplify Z3 expressions and speedup the model solving.
 
 When [verifying the rank
-bit](/book-of-gehn/articles/2021/05/17/Verifying-Some-Bithacks.html) I
+bit](/articles/2021/05/17/Verifying-Some-Bithacks.html) I
 tested different approaches and only the *branchless* implementation
 gave me a result in a reasonable time.
 

@@ -275,7 +275,7 @@ As mentioned before we can build a De Bruijn graph and then through a
 Hamiltonian or Euclidean path we can build a De Bruijn sequence.
 
 But we can skip that and create the sequence directly with the [FMK
-algorithm](/book-of-gehn/assets/debruijn-assets/debruijn.py).
+algorithm](/assets/debruijn-assets/debruijn.py).
 
 FMK comes from the name of its authors: Fredricksen, Maiorana and Kessler.
 
@@ -286,7 +286,7 @@ The algorithm can generate necklaces, Lyndon words, pre-necklaces and De
 Bruijn sequences. Four in one.
 
 A Python implementation can be found
-[here](/book-of-gehn/assets/debruijn-assets/debruijn.py).
+[here](/assets/debruijn-assets/debruijn.py).
 
 ## Applications
 

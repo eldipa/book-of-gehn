@@ -20,7 +20,7 @@ Book) with the given key.
 In ECB each plaintext block is encrypted using the same key.
 
 
-{% maincolumn '<img style="max-width:60%;" alt="ECB Enc" src="/book-of-gehn/assets/matasano/ecb-enc.png">' '' %}
+{% maincolumn '<img style="max-width:60%;" alt="ECB Enc" src="/assets/matasano/ecb-enc.png">' '' %}
 
 Decrypting is a piece of cake; this is just to get practice about
 [AES in ECB mode](https://cryptopals.com/sets/1/challenges/7)
@@ -40,7 +40,7 @@ Decrypting is a piece of cake; this is just to get practice about
 b"I'm back and I'm ringin' the bell<...>Play that funky music \n\x04\x04\x04\x04"
 ```
 
-{% maincolumn '<img style="max-width:60%;" alt="ECB Dec" src="/book-of-gehn/assets/matasano/ecb-dec.png">'
+{% maincolumn '<img style="max-width:60%;" alt="ECB Dec" src="/assets/matasano/ecb-dec.png">'
 '<br />Note how to encryption/decryption of one block don&apos;t depend of any other: this allows the encryption/decryption to be at random places and in parallel.' %}
 
 ## Detecting Penguins
@@ -54,7 +54,7 @@ more equal blocks, the ciphertext will have the same blocks repeated, something
 unlikely for a truly random string.
 
 We can use the same technique done in
-[the previous post](/book-of-gehn/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html)
+[the previous post](/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html)
 for detecting coincidences.
 
 ```python

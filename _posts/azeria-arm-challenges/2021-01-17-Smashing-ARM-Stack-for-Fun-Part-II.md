@@ -63,7 +63,7 @@ and `errx` will be called.
 ```
 
 {% marginnote
-'As mentioned in a [previous post](/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html),
+'As mentioned in a [previous post](/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html),
 when `pc` is used for indexing
 the `pc` is the address of the current about-to-be-executed instruction
 *plus* 8 bytes.
@@ -98,7 +98,7 @@ pointer.
    0x104ec <main+60>    ldr    r3, [r3]
 ```
 
-Like in the [previous challenge](/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html),
+Like in the [previous challenge](/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html),
 begin of the buffer for `strcpy`
 is 4 bytes below the pushed arguments and has a size of 64 bytes
 (0x48 bytes minus 4 bytes for the pushed `fp` and 4 bytes for the

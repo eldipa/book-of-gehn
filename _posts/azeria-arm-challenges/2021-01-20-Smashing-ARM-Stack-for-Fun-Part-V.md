@@ -28,7 +28,7 @@ pwndbg> pdisass &main
 `sub r3, fp, #0x44` means that the buffer begins 0x44 bytes from `fp`,
 the begin of the stack frame.
 
-As we saw [previously](/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html),
+As we saw [previously](/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html),
 the stack frame includes the *previous* value
 of `fp` but not `lr` which it is *immediately below*.
 

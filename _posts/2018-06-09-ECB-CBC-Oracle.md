@@ -9,7 +9,7 @@ and how we can build
 to distinguish ECB from CBC using
 [cryptonita](https://pypi.org/project/cryptonita/)
 
-This will be the bases for [breaking ECB](/book-of-gehn/articles/2018/06/10/Breaking-ECB.html)
+This will be the bases for [breaking ECB](/articles/2018/06/10/Breaking-ECB.html)
 in a later post.{% marginnote '**-- Spoiler Alert! --**' %}.<!--more-->
 
 ### ``PKCS#7`` padding
@@ -50,7 +50,7 @@ For the first plaintext block we use an
 [Initialization Vector](https://en.wikipedia.org/wiki/Initialization_vector)
 for the XOR operation.
 
-{% maincolumn '<img style="max-width:60%;" alt="CBC Enc" src="/book-of-gehn/assets/matasano/cbc-enc.png">' '' %}
+{% maincolumn '<img style="max-width:60%;" alt="CBC Enc" src="/assets/matasano/cbc-enc.png">' '' %}
 
 This IV should be random but for the sake of the test it
 will be full of zeros.
@@ -72,7 +72,7 @@ will be full of zeros.
 b"I'm back and I'm ringin' the bell<...>Play that funky music \n"
 ```
 
-{% maincolumn '<img style="max-width:60%;" alt="CBC Dec" src="/book-of-gehn/assets/matasano/cbc-dec.png">'
+{% maincolumn '<img style="max-width:60%;" alt="CBC Dec" src="/assets/matasano/cbc-dec.png">'
 '<br />At difference with the encryption, the decryption of one block doesn&apos;t depend of any other: you can decrypt any block at random or in parallel.' %}
 
 ### Generating secrets
@@ -221,4 +221,4 @@ We will repeat this 1024 to prove that this works:
 
 ## Break it!
 
-Of course, [keep reading.](/book-of-gehn/articles/2018/06/10/Breaking-ECB.html)
+Of course, [keep reading.](/articles/2018/06/10/Breaking-ECB.html)

@@ -3,7 +3,7 @@ layout: post
 title: "RC-on-XDP-RX-Queue"
 ---
 
-{% marginfigure '' '<img style="max-width:120%;" alt="RC on RX queue" src="/book-of-gehn/assets/xdp-rx-rc/rx-rc-queues.png" />' '' '' 'in-index-only' %}
+{% marginfigure '' '<img style="max-width:120%;" alt="RC on RX queue" src="/assets/xdp-rx-rc/rx-rc-queues.png" />' '' '' 'in-index-only' %}
 
 Picture this: you'd been developing for six months a network sniffer
 using XDP, a kernel *in-pass* in Linux.
@@ -46,7 +46,7 @@ frames holding the packets free to be reused.
 Only when the packets' addresses are pushed into the fill queue (FQ)
 the frames are available again.
 
-{% maincolumn '<img style="max-width:80%;" alt="UMEM cycle" src="/book-of-gehn/assets/xdp-rx-rc/rx-rc-umem-cycle.png">'
+{% maincolumn '<img style="max-width:80%;" alt="UMEM cycle" src="/assets/xdp-rx-rc/rx-rc-umem-cycle.png">'
 'Addresses of free frames are consumed from the FQ queue by the kernel (1).
 XDP then writes the incoming packet in a free frame (2) and pushes the
 address into the RX queue (3). The user application consumes from the RX
@@ -301,7 +301,7 @@ This path is known as the XDP generic path or just XDP generic.
 Remember than the RX is a single-producer queue so it is not thread safe
 for concurrent pushes.
 
-{% marginfigure '' '<img style="max-width:120%;" alt="RC on RX queue" src="/book-of-gehn/assets/xdp-rx-rc/rx-rc-queues.png" />'
+{% marginfigure '' '<img style="max-width:120%;" alt="RC on RX queue" src="/assets/xdp-rx-rc/rx-rc-queues.png" />'
 '' %}
 
 No problem when XDP runs in the driver but when it does in the generic

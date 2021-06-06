@@ -4,7 +4,7 @@ title: "Smashing ARM Stack for Fun - Part VI"
 ---
 
 We have the same vulnerability than we have in
-[stack4](/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-V.html)
+[stack4](/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-V.html)
 but this time we will make our own egg/shellcode.<!--more-->
 
 
@@ -262,14 +262,14 @@ pi@raspberrypi:~$ gcc -c -o egg.o egg.s
 pi@raspberrypi:~$ objcopy -O binary --only-section=.text egg.o egg.text
 ```
 
-The assembly can be found [here](/book-of-gehn/assets/azeria-arm-challenges-assets/egg.s).
+The assembly can be found [here](/assets/azeria-arm-challenges-assets/egg.s).
 
 ## Testing
 
 It is always a good idea to test the shellcode *separately* from the
 exploitation.
 
-For this [we can create a small C program](/book-of-gehn/assets/azeria-arm-challenges-assets/test-egg.c)
+For this [we can create a small C program](/assets/azeria-arm-challenges-assets/test-egg.c)
 to load the *egg* from a file
 into a buffer with *permission for execution* and then jump into it:
 
@@ -357,7 +357,7 @@ pi@raspberrypi:~$ setarch linux32 --addr-no-randomize /bin/bash
 pwn!
 ```
 
-The assembly of the egg can be found [here](/book-of-gehn/assets/azeria-arm-challenges-assets/egg.s).
+The assembly of the egg can be found [here](/assets/azeria-arm-challenges-assets/egg.s).
 
 ## Readings
 

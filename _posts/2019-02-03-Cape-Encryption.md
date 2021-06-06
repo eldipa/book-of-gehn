@@ -134,7 +134,7 @@ and after that it will repeat itself.
 
 That means that plaintext of more than 256 bytes will be xored
 with a *repeating* key stream and we know
-[how to break this](/book-of-gehn/articles/2018/03/01/In-XOR-We-Trust.html).
+[how to break this](/articles/2018/03/01/In-XOR-We-Trust.html).
 
 ## (Partially) Known plaintext attack
 

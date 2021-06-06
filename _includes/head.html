@@ -26,14 +26,14 @@
       });
     </script>
     {% if site.offline %}
-      <script src='{{ "/js/mathjax/MathJax.js" | prepend: site.baseurl }}' async></script>
+      <script src='{{ "/js/mathjax/MathJax.js" }}' async></script>
     {% else %}
       <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js' async></script>
     {% endif %}
   {% endif %}
 
   {% if site.offline %}
-    <script src="{{ "/js/jquery-3.4.1.min.js" | prepend: site.baseurl }}"></script>
+    <script src="{{ "/js/jquery-3.4.1.min.js" }}"></script>
   {% else %}
     <script
        src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -43,34 +43,34 @@
 
   {% if site.phaser %}
     {% if site.offline %}
-      <script src='{{ "/js/phaser-3.18.1.js" | prepend: site.baseurl }}' ></script>
+      <script src='{{ "/js/phaser-3.18.1.js" }}' ></script>
     {% else %}
       <script src='https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js' ></script>
     {% endif %}
   {% endif %}
 
     {% if site.offline %}
-      <script src='{{ "/js/underscore-1.9.1.js" | prepend: site.baseurl }}' ></script>
+      <script src='{{ "js/underscore-1.9.1.js" }}' ></script>
     {% else %}
       <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js' ></script>
     {% endif %}
 
     {% if site.offline %}
-      <script src='{{ "/js/d3.v4.min.js" | prepend: site.baseurl }}'></script>
+      <script src='{{ "/js/d3.v4.min.js" }}'></script>
     {% else %}
       <script src="https://d3js.org/d3.v4.min.js"></script>
     {% endif %}
 
-    <script src='{{ "/js/venn/venn.min.js" | prepend: site.baseurl }}'></script>
-    <script src='{{ "/js/venn/helper.js" | prepend: site.baseurl }}'></script>
+    <script src='{{ "/js/venn/venn.min.js" }}'></script>
+    <script src='{{ "/js/venn/helper.js" }}'></script>
 
-    <script src='{{ "/js/fix_syntax_highlight.js" | prepend: site.baseurl }}'></script>
-  <link rel="stylesheet" type="text/css" href="{{ "/css/tufte.css" | prepend: site.baseurl }}">
-  <link rel="stylesheet" type="text/css" href="{{ "/css/latex.css" | prepend: site.baseurl }}">
+    <script src='{{ "/js/fix_syntax_highlight.js" }}'></script>
+  <link rel="stylesheet" type="text/css" href="{{ "/css/tufte.css" }}">
+  <link rel="stylesheet" type="text/css" href="{{ "/css/latex.css" }}">
 
-  <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
+  <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.url }}">
 
-  <link rel="stylesheet" type="text/css" href="{{ "/css/all.min.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" type="text/css" href="{{ "/css/all.min.css" }}">
 
   {% feed_meta %}
 </head>

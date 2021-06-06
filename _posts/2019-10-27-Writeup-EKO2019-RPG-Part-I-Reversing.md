@@ -8,7 +8,7 @@ and defend from attacks of monsters.
 
 Let's see if we can know how it works.<!--more-->
 
-It is a 64 bits ELF [binary](book-of-gehn/assets/eko2019-writeups/rpg-dir/rpg):
+It is a 64 bits ELF [binary](assets/eko2019-writeups/rpg-dir/rpg):
 
 ```shell
 $ file rpg                      # byexample: +norm-ws

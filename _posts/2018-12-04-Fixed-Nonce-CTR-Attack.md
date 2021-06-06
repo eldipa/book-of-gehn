@@ -67,7 +67,7 @@ uses to xor the payload.
 
 In other words, it performs a xor *reusing* the key stream and
 we already know how to
-[break a repeating xor key cipher](/book-of-gehn/articles/2018/03/01/In-XOR-We-Trust.html).
+[break a repeating xor key cipher](/articles/2018/03/01/In-XOR-We-Trust.html).
 
 But first, not all the ciphertexts are of the same length so to simplify we need
 to uniform their lengths.

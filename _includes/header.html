@@ -25,9 +25,9 @@
 	{% for node in pg %}
 		{% unless node.nav_exclude or node.url contains ".css" %}
 		    {% if page.url == node.url %}
-		      <a class="active" href="{{node.url | prepend: site.baseurl}}" class="active">{{node.title}}</a>
+		      <a class="active" href="{{node.url}}" class="active">{{node.title}}</a>
 		    {% else %}
-		      <a href="{{node.url | prepend: site.baseurl}}">{{node.title}}</a>
+		      <a href="{{node.url}}">{{node.title}}</a>
 		    {% endif %}
 	    {% endunless %}
   	{% endfor %}

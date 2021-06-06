@@ -23,7 +23,7 @@ pi@raspberrypi:~$ gcc -S -O0 -o asm1.asm asm1.c
 
 `raspberrypi` is a QEMU virtual machine for Arm running a Raspbian
 Stretch. The setup is explained in my previous post
-[QEMUlating a Rasbian (ARM)](/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html).
+[QEMUlating a Rasbian (ARM)](/articles/2020/12/15/Qemulating-Rasbian-ARM.html).
 
 The code is quite simple:
 
@@ -418,9 +418,9 @@ and [write ups](https://www.coranac.com/tonc/text/asm.htm) about Arm
 during the last weeks.
 
 When I
-[started](/book-of-gehn/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html)
+[started](/articles/2020/12/27/TLDR-Quick-Overview-of-Arm.html)
  my idea was to use a [QEMU virtual machine for
-testing](/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html):
+testing](/articles/2020/12/15/Qemulating-Rasbian-ARM.html):
 code a little of assembly, compile it, debugging it with GDB and seeing
 the effects.
 

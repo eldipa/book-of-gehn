@@ -6,7 +6,7 @@ title: "CTR Bitflipping"
 No much to explain: encryption **does not** offer any
 protection against forgery.
 
-We saw this in the [CBC Bitflipping post](/book-of-gehn/articles/2018/07/03/CBC-Bitflipping.html)
+We saw this in the [CBC Bitflipping post](/articles/2018/07/03/CBC-Bitflipping.html)
 and we will see it again here but this time it will be
 the CTR encryption mode our victim.{% marginnote '**-- Spoiler Alert! --**' %}<!--more-->
 
@@ -21,7 +21,7 @@ the CTR encryption mode our victim.{% marginnote '**-- Spoiler Alert! --**' %}<!
 >>> block_size = 16     # leave this fixed, it is what happen in practice
 -->
 
-Recall from [CBC Bitflipping post](/book-of-gehn/articles/2018/07/03/CBC-Bitflipping.html)
+Recall from [CBC Bitflipping post](/articles/2018/07/03/CBC-Bitflipping.html)
 the scenario where we have a ``add_user_data`` function to *user*
 profiles:
 
@@ -47,7 +47,7 @@ adding ``admin=true``.
 ...     return b'admin=true' in msg.split(b';')
 ```
 
-In [CBC Bitflipping post](/book-of-gehn/articles/2018/07/03/CBC-Bitflipping.html)
+In [CBC Bitflipping post](/articles/2018/07/03/CBC-Bitflipping.html)
 we saw that CBC does not offer any protection agaisnt foregery and how to
 break it.
 

@@ -14,7 +14,7 @@ But what exactly does that suppose to mean? What is behind the
 generic *undefined state*?<!--more-->
 
 
-Consider the [following code](/book-of-gehn/assets/memory/rc/rc.c)
+Consider the [following code](/assets/memory/rc/rc.c)
 
 ```cpp
 void* loop(void *p) {

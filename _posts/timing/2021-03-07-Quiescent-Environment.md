@@ -60,7 +60,7 @@ At the instrumentation level:
 recompile.
  - prefer deterministic (like counting the elapsed time) over sampling, specially for
 small-fast function targets; sometimes sampling is the only way however.
- - use a [high precision clock](/book-of-gehn/articles/2021/02/27/High-Precision-Timers.html).
+ - use a [high precision clock](/articles/2021/02/27/High-Precision-Timers.html).
  - perhaps a [causal profiler
 (coz)](https://github.com/plasma-umass/coz). See
 [post](https://easyperf.net/blog/2020/02/26/coz-vs-sampling-profilers)
@@ -180,9 +180,9 @@ executed *after* it (and the same for the `end` mark).
 
 {% marginnote
 'I wrote a few posts about this: a lock free queue [part
-1](/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html),
+1](/articles/2020/03/22/Lock-Free-Queue-Part-I.html),
 [part
-2](/book-of-gehn/articles/2020/04/28/Lock-Free-Queue-Part-II.html).
+2](/articles/2020/04/28/Lock-Free-Queue-Part-II.html).
 ' %}
 
 Welcome to the *out of order execution* world.
@@ -192,7 +192,7 @@ You could use barriers but these are **not** cheap.
 ## Precision of the measurement
 
 Getting the time is not cost-free. Even the most [precise
-clocks](/book-of-gehn/articles/2021/02/27/High-Precision-Timers.html) like
+clocks](/articles/2021/02/27/High-Precision-Timers.html) like
 `clock_gettime` adds some delay.
 
 If instrumenting the binary (statically or dynamically) is too invasive,

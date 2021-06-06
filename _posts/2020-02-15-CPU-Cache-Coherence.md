@@ -13,7 +13,7 @@ the same thing, *eventually*.
 This post explores what is
 behind this *"eventually"* term.<!--more-->
 
-Consider the [following function](/book-of-gehn/assets/memory/rc/rccnt.c).
+Consider the [following function](/assets/memory/rc/rccnt.c).
 
 It is executed by two threads that increment by one
 the values of an array one at time: one waiting for even numbers
@@ -46,7 +46,7 @@ shared array `ctx->data` is not protected in any way
 so there is a *race condition* there.
 
 As we saw in a
-[previous post](/book-of-gehn/articles/2020/02/07/Compiler-Optimizations-under-RC.html)
+[previous post](/articles/2020/02/07/Compiler-Optimizations-under-RC.html)
 we can avoid any corruption due the RC for this so simple program
 if we don't allow the compiler to optimize the code.
 
@@ -81,7 +81,7 @@ Sum 160
 
 > For this post I ran several times the program with all
 > the possible combinations of cpus; scripts and the dataset are
-> [here](/book-of-gehn/assets/memory/rc/rccnt-data.tar.gz).
+> [here](/assets/memory/rc/rccnt-data.tar.gz).
 
 ## CPU contention
 

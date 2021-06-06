@@ -7,16 +7,16 @@ The tricky part of breaking the
 [Vigenere cipher](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher)
 consists in finding the length of the key.
 
-{% marginfigure '' '<img src="/book-of-gehn/assets/kasiski/kasiski_scan_positions.png">'
+{% marginfigure '' '<img src="/assets/kasiski/kasiski_scan_positions.png">'
 '' '' 'in-index-only' %}
 
 We discussed this in the
-[breaking Vigenere](/book-of-gehn/articles/2018/05/01/Breaking-Vigenere.html)
+[breaking Vigenere](/articles/2018/05/01/Breaking-Vigenere.html)
 post.
 
 In that occasion we used the
 [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distance) and
-the [Index of Coincidence](/book-of-gehn/articles/2019/10/04/Index-of-Coincidence.html).
+the [Index of Coincidence](/articles/2019/10/04/Index-of-Coincidence.html).
 
 But another method existed much before the development of the IC around 1922.
 
@@ -155,7 +155,7 @@ ngram you will have to store twice the source string).
 A simple solution is to use an id: different ngrams will have different
 ids while the instances of the *same* ngram will have the same id.
 
-{% maincolumn '<img style="max-width:45%;" src="/book-of-gehn/assets/kasiski/kasiski_scan_positions.png">'
+{% maincolumn '<img style="max-width:45%;" src="/assets/kasiski/kasiski_scan_positions.png">'
 '' %}
 
 The following Python fragment summarizes the above:
@@ -193,7 +193,7 @@ pos_sorted = [(p, id) for p, id in pos_sorted
                       if ngram_cnt_by_id[id] > 1]
 ```
 
-{% maincolumn '<img style="max-width:60%;" src="/book-of-gehn/assets/kasiski/kasiski_scan_count_filter.png">'
+{% maincolumn '<img style="max-width:60%;" src="/assets/kasiski/kasiski_scan_count_filter.png">'
 '' %}
 
 The final result is a list of tuples `(position, id)` with the
@@ -216,7 +216,7 @@ and build a ngram of `n+1` bytes at `p_1` if and only if
 In other words, they are consecutive.
 
 
-{% maincolumn '<img style="max-width:60%;" src="/book-of-gehn/assets/kasiski/kasiski_merge.png">'
+{% maincolumn '<img style="max-width:60%;" src="/assets/kasiski/kasiski_merge.png">'
 '' %}
 
 
@@ -372,8 +372,8 @@ That's for the Part II.
 
 ## References
 
- - [Breaking Vigenere](/book-of-gehn/articles/2018/05/01/Breaking-Vigenere.html).
- - [Index of Coincidence](/book-of-gehn/articles/2019/10/04/Index-of-Coincidence.html).
+ - [Breaking Vigenere](/articles/2018/05/01/Breaking-Vigenere.html).
+ - [Index of Coincidence](/articles/2019/10/04/Index-of-Coincidence.html).
  - [Python Time Complexity](https://wiki.python.org/moin/TimeComplexity).
  - [Dynamic Programming](https://en.wikipedia.org/wiki/Dynamic_programming).
  - [Automating the Cracking of Simple Ciphers, by Matthew C. Berntsen](assets/kasiski/MatthewBerntsenBUThesis.7z).

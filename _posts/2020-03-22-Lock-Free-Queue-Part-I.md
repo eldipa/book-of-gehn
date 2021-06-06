@@ -14,7 +14,7 @@ is *more challenging*.
 In this first part will analyse and implement a lock-free single-producer
 single-consumer queue. A multi-producer multi-consumer queue is
 described in the
-[second part](/book-of-gehn/articles/2020/04/28/Lock-Free-Queue-Part-II.html).<!--more-->
+[second part](/articles/2020/04/28/Lock-Free-Queue-Part-II.html).<!--more-->
 
 In a traditional queue we have two pointers:
 the *head*, that points to the next free entry to write and the
@@ -31,7 +31,7 @@ reads the data and moves forward the *tail*.
 'Full queue. One entry is always left empty to differentiate a
 full queue from an empty queue.
 <br />
-[Other implementations](/book-of-gehn/articles/2018/09/16/Ouroboros-Circular-Buffer.html)
+[Other implementations](/articles/2018/09/16/Ouroboros-Circular-Buffer.html)
 do not waste this entry.' %}
 
 The pointers serve as stop-markers: the producer will not write if
@@ -166,7 +166,7 @@ We *really need* that those loads and stores happen even if the compiler thinks
 that they are not needed.
 
 {% marginnote
-'[Take at look](/book-of-gehn/articles/2020/02/07/Compiler-Optimizations-under-RC.html)
+'[Take at look](/articles/2020/02/07/Compiler-Optimizations-under-RC.html)
 of what `volatile` does.
 <br />
 See also the comments about this in
@@ -315,7 +315,7 @@ We say that the consumer *acquires* the producer's tail and the
 producer *release* it.
 
 {% marginnote '
-<img class="fullwidth" style="float: right; margin-left: 10px;" src="/book-of-gehn/assets/mpmc-queue/reorder-what.png" />
+<img class="fullwidth" style="float: right; margin-left: 10px;" src="/assets/mpmc-queue/reorder-what.png" />
 *"No reads or writes in the current thread can be reordered
 after this `RELEASE` store. All writes in the current thread are visible
 in other threads that `ACQUIRE` (load) the same atomic variable.

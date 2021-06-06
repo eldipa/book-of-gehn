@@ -3,7 +3,7 @@ layout: post
 title: "CBC Bitflipping"
 ---
 
-{% marginfigure '' '<img style="max-width:60%;" alt="CBC Dec" src="/book-of-gehn/assets/matasano/cbc-dec.png">' '' '' 'in-index-only'%}
+{% marginfigure '' '<img style="max-width:60%;" alt="CBC Dec" src="/assets/matasano/cbc-dec.png">' '' '' 'in-index-only'%}
 
 CBC does not offer any protection against an active attacker.
 
@@ -74,7 +74,7 @@ of the *next* ciphertext block to get the *next* plaintext block.
 If we modify one ciphertext block its decryption will be totally scrambled
 but we will have control of the *next* plaintext block.
 
-{% maincolumn '<img style="max-width:60%;" alt="CBC Dec" src="/book-of-gehn/assets/matasano/cbc-dec.png">' '' %}
+{% maincolumn '<img style="max-width:60%;" alt="CBC Dec" src="/assets/matasano/cbc-dec.png">' '' %}
 
 {% marginnote "We don't know if our inject plaintext
 will be aligned to the block size boundary. To ensure that we inject

@@ -3,7 +3,7 @@ layout: post
 title: "Self-Licensing"
 ---
 
-{% maincolumn '<img class="in-index-only" style="max-width:60%;" alt="self-licensing" src="/book-of-gehn/assets/self-licensing/self-licensing-small.png">' '' %}
+{% maincolumn '<img class="in-index-only" style="max-width:60%;" alt="self-licensing" src="/assets/self-licensing/self-licensing-small.png">' '' %}
 <!--more-->
 
 {% fullwidth 'assets/self-licensing/self-licensing-whole.png'

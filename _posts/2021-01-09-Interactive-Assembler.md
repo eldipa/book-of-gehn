@@ -12,7 +12,7 @@ were too strange for me.
 I stepped back to plan it better: my idea was to use GDB to debug small snippets of Arm
 code, learn about it before jumping into the challenges.
 
-I setup a [QEMU virtual machine](/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html)
+I setup a [QEMU virtual machine](/articles/2020/12/15/Qemulating-Rasbian-ARM.html)
 running Rasbian in an Arm CPU.
 
 With a GCC and GDB running there I started but the compile-load-debug

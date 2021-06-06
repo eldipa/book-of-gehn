@@ -136,7 +136,7 @@ returns will be at *4 bytes more*  than `fp` *before* the return:
 ## The attack (without DEP and ASLR)
 
 The `egg.text` is the same one used in the
-[part 6](/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html).
+[part 6](/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html).
 
 ```shell
 pi@raspberrypi:~$ echo -ne 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\x88\xfb\xff\xbe' > exploit
@@ -163,7 +163,7 @@ This is the last part of the
 However there are a lot of things to explore, tweak and stretch.
 
 In the
-[part 6](/book-of-gehn/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html)
+[part 6](/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html)
 I coded a ARM egg, the next obvious step would be write the same egg in
 Thumb mode.
 
@@ -173,7 +173,7 @@ to learn how to bypass this restriction (known as Data Execution
 Prevention *DEP* or Write-xor-Execute *W+E*).
 
 
-Since [part 5](/book-of-gehn/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V.html)
+Since [part 5](/articles/2021/01/20/Smashing-ARM-Stack-for-Fun-Part-V.html)
 we were *hardcoding* addresses. *Shame on me*.
 
 Address Space Layout Randomization *(ASLR)* is a well established feature

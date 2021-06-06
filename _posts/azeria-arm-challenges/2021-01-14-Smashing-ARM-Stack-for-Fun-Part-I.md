@@ -33,7 +33,7 @@ qemu-system-arm
 '
 '' %}
 
-Let's [spin a Rasbian](/book-of-gehn/articles/2020/12/15/Qemulating-Rasbian-ARM.html)
+Let's [spin a Rasbian](/articles/2020/12/15/Qemulating-Rasbian-ARM.html)
 first. Make your to forward a port for the `ssh` and another for the
 `gdbserver` so we can connect to them from the host machine.
 
@@ -74,7 +74,7 @@ In addition to the debugger, I will use an
 [interactive assembler](https://github.com/bad-address/iasm) to play
 with some Arm code that I may not understand but which I don't want to
 run in the debugger
-(see [my post about `iasm`](/book-of-gehn/articles/2021/01/09/Interactive-Assembler.html)).
+(see [my post about `iasm`](/articles/2021/01/09/Interactive-Assembler.html)).
 
 ## Stack initialization
 

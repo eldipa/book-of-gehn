@@ -86,7 +86,7 @@ trace(msg)  {
 }
 ```
 
-In my [previous post](/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html)
+In my [previous post](/articles/2020/03/22/Lock-Free-Queue-Part-I.html)
 we saw that a write may not be visible to others until we need *commit*.
 
 We don't do this on purpose: if we add a kind of barrier/memory reorder

@@ -4,7 +4,7 @@ title: "Affine Cipher"
 ---
 
 A *linear* cipher like the Hill Cipher is
-[vulnerable](/book-of-gehn/articles/2019/01/02/Break-Hill-Cipher-with-a-Known-Plaintext-Attack.html)
+[vulnerable](/articles/2019/01/02/Break-Hill-Cipher-with-a-Known-Plaintext-Attack.html)
 to a known plaintext attack: just resolve a set of linear
 equations and get the secret key.
 

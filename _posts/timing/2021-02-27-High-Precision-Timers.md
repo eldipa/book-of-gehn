@@ -78,7 +78,7 @@ for (int i = 0; i < rounds; ++i) {
 ```
 
 The full code can be found
-[here](/book-of-gehn/assets/timing-assets/clocks.c).
+[here](/assets/timing-assets/clocks.c).
 
 ## Evaluation
 
@@ -122,7 +122,7 @@ stable is the clock and how much delay adds the call.
 ```
 
 The full code can be found
-[here](/book-of-gehn/assets/timing-assets/analyze.py).
+[here](/assets/timing-assets/analyze.py).
 
 Let's review what we've got.
 

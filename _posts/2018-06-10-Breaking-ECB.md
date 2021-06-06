@@ -4,7 +4,7 @@ title: "Breaking ECB"
 ---
 
 In the previous post we built
-[an ECB/CBC oracle](/book-of-gehn/articles/2018/06/09/ECB-CBC-Oracle.html);
+[an ECB/CBC oracle](/articles/2018/06/09/ECB-CBC-Oracle.html);
 now it's time to take this to the next level and
 break ECB [one byte at time](https://cryptopals.com/sets/2/challenges/14).
 {% marginnote '**-- Spoiler Alert! --**' %}.<!--more-->
@@ -13,7 +13,7 @@ break ECB [one byte at time](https://cryptopals.com/sets/2/challenges/14).
 ### Generating secrets
 
 We will use the same setup of the
-[previous post](/book-of-gehn/articles/2018/06/09/ECB-CBC-Oracle.html)
+[previous post](/articles/2018/06/09/ECB-CBC-Oracle.html)
 but this time, our objective will decrypt ECB without the key.
 
 {% marginnote

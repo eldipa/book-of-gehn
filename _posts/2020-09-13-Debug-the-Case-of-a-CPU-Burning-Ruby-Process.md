@@ -77,7 +77,7 @@ to ready) so other threads can use it.
 
 {% marginnote
 'I talk a marginally about this in my
-[other post](/book-of-gehn/articles/2020/02/15/CPU-Cache-Coherence.html)
+[other post](/articles/2020/02/15/CPU-Cache-Coherence.html)
 ' %}
 
 I found this syscall in the past to implement a neighbor-friendly busy wait

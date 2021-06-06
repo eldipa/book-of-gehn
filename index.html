@@ -5,7 +5,7 @@ layout: home
     {% for post in site.posts %}
        <span class="index-single-post">
           <hr class="slender post-layout">
-          <a href="{{ post.url | prepend: site.baseurl }}"><h2 class="larger">{{ post.title }}</h2></a>
+          <a href="{{ post.url }}"><h2 class="larger">{{ post.title }}</h2></a>
           <br><span class="smaller">{{ post.date | date: "%B %-d, %Y" }}</span>  <br/>
           <div>{{ post.excerpt }}</div>
        </span>

@@ -19,10 +19,10 @@ plotting library on top of [matplotlib](https://matplotlib.org/) designed
 for statistical analysis.
 
 Quick links:
-[PDF (no bg)](/book-of-gehn/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.pdf),
-[PDF (bg)](/book-of-gehn/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg.pdf),
-[SVG (no bg)](/book-of-gehn/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.svg),
-[SVG (bg)](/book-of-gehn/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg.svg)
+[PDF (no bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.pdf),
+[PDF (bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg.pdf),
+[SVG (no bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.svg),
+[SVG (bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg.svg)
 .<!--more-->
 
 ## Instructions

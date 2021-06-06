@@ -19,14 +19,14 @@ module Jekyll
       elsif @text[0].start_with?('<')
         img_html = "#{@text[0]}"
       else
-        if @text[0].start_with("/")
-          @text[0] = @text[0][1..]
+        if @text[0].start_with?("/")
+          @text[0] = @text[0][1..-1]
         end
 
-        if baseurl
+        if baseurl && baseurl != "/"
           src = "#{baseurl}/#{@text[0]}"
         else
-          src = "#{@text[0]}"
+          src = "/#{@text[0]}"
         end
         img_html = "<img src='#{src}' />"
       end

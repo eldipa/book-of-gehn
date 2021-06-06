@@ -8,7 +8,7 @@ is tricky, adding more producers and consumers moves this
 to the next level.
 
 This is the continuation of the
-[lock-free single-producer single-consumer queue](/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html)<!--more-->
+[lock-free single-producer single-consumer queue](/articles/2020/03/22/Lock-Free-Queue-Part-I.html)<!--more-->
 
 Not only we need to prevent race conditions between the producers and
 the consumers but also between producers and between consumers.
@@ -270,7 +270,7 @@ for DPDK's [rte_ring](http://git.dpdk.org/dpdk/tree/lib/librte_ring/rte_ring_c11
 
 Also [GCC Atomics, gcc.gnu.org](https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html)
 and my previous post
-[lock-free single-producer single-consumer queue](/book-of-gehn/articles/2020/03/22/Lock-Free-Queue-Part-I.html).
+[lock-free single-producer single-consumer queue](/articles/2020/03/22/Lock-Free-Queue-Part-I.html).
 
 Also:
 

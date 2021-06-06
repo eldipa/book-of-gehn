@@ -179,8 +179,8 @@ pwndbg> pdisass &main 9
 ```
 
 So instead of a cookie like in the
-[stack0](/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html)
-or [stack1](/book-of-gehn/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-II.html)
+[stack0](/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html)
+or [stack1](/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-II.html)
 we have the address of a function.
 
 {% marginnote
