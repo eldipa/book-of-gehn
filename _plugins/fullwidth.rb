@@ -19,7 +19,16 @@ module Jekyll
       elsif @text[0].start_with?('<')
         img_html = "#{@text[0]}"
       else
-        img_html = "<img src='#{baseurl}/#{@text[0]}' />"
+        if @text[0].start_with("/")
+          @text[0] = @text[0][1..]
+        end
+
+        if baseurl
+          src = "#{baseurl}/#{@text[0]}"
+        else
+          src = "#{@text[0]}"
+        end
+        img_html = "<img src='#{src}' />"
       end
 
       "<figure class='fullwidth'>#{img_html}"+

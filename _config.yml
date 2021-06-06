@@ -1,7 +1,7 @@
 # Note: If you want to deploy to a GitHub user site (user.github.io), change baseurl to /
-baseurl: "/book-of-gehn"
+baseurl: "/"
 
-repo_url: "https://github.com/eldipa/book-of-gehn/"
+repo_url: "https://book-of-gehn.github.io"
 
 title: The Book of Gehn
 # Whether the header (with large title and subtitle) should be displayed

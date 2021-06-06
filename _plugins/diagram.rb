@@ -102,7 +102,16 @@ module Jekyll
         `touch #{dst_site}`
       end
 
-      html = "<object align='middle' data='#{site.baseurl}/#{umlpath}/#{fname}' type='image/#{img_format}+xml'></object>"
+      if umlpath.start_with("/")
+        umlpath = umlpath[1..]
+      end
+
+      if site.baseurl
+        root = "#{site.baseurl}/"
+      else
+        root = ""
+      end
+      html = "<object align='middle' data='#{root}#{umlpath}/#{fname}' type='image/#{img_format}+xml'></object>"
       return [site, umlpath, fname, img_format, html]
     end
 
