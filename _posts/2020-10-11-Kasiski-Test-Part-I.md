@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Kasiski Test - Part I"
+tags: cryptography cryptonita vigenere kasiski
 ---
 
 The tricky part of breaking the

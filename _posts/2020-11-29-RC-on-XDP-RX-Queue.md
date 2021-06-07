@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "RC-on-XDP-RX-Queue"
+tags: debugging queue lock free kernel
 ---
 
 {% marginfigure '' '<img style="max-width:120%;" alt="RC on RX queue" src="/assets/xdp-rx-rc/rx-rc-queues.png" />' '' '' 'in-index-only' %}

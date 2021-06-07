@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Quiescent Environment"
+tags: quiescent performance
 ---
 
 You are working in optimizing a piece of software to reduce

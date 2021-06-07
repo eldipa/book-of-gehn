@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "In XOR we trust"
+tags: cryptography matasano cryptonita repeating key
 ---
 
 This is the first set of exercises for the

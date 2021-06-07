@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "TL;DR Quick Overview of Arm"
+tags: tldr tl;dr ARM
 ---
 
 Speed-reading of

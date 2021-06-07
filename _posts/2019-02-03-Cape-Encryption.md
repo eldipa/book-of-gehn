@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Cape Encryption"
+tags: cryptography cryptonita
 ---
 
 The Cape library{% marginnote

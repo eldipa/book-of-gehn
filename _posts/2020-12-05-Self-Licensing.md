@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Self-Licensing"
+tags: psychology
 ---
 
 {% maincolumn '<img class="in-index-only" style="max-width:60%;" alt="self-licensing" src="/assets/self-licensing/self-licensing-small.png">' '' %}

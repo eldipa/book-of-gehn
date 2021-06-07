@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Break Hill Cipher with a Known Plaintext Attack"
+tags: cryptography cryptonita hill cipher
 ---
 
 Given a matrix secret key $$K$$ with shape $$n\textrm{x}n$$, the

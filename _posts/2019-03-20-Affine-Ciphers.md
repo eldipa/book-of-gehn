@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Affine Cipher"
+tags: cryptography cryptonita affine differential
 ---
 
 A *linear* cipher like the Hill Cipher is

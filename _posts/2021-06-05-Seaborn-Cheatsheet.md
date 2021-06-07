@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Seaborn Cheatsheet"
+tags: seaborn matplotlib pandas plotting cheatsheet
 ---
 
 Plotting data was always for me a weak point: it always took me a lot of

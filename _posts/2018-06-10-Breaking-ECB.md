@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Breaking ECB"
+tags: cryptography matasano cryptonita ECB
 ---
 
 In the previous post we built

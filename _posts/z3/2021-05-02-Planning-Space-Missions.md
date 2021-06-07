@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Planning Space Missions with Z3"
+tags: z3 smt sat solver integer linear optimization
 ---
 
 A space company is planning the next 4 years. It has several projects,

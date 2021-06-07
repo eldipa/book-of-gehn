@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Weirdo (SQLi writeup - EKO 2019)
+tags: challenge eko sql hacking
 ---
 
 Quick writeup of a SQL injection challenge.

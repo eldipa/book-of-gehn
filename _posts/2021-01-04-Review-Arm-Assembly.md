@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Review Arm Assembly"
+tags: ARM reversing iasm
 ---
 
 There is no other way to learn something that playing with it.

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Debug: the Case of a CPU Burning Ruby Process"
+tags: performance debugging rbspy perf
 ---
 
 

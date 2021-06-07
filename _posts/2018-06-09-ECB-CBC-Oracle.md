@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "ECB/CBC Oracle"
+tags: cryptography matasano cryptonita ECB CBC oracle PKCS#7
 ---
 
 In this post will review the Cipher Block Chaining mode (or CBC)

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Verifying some bithacks"
+tags: z3 smt sat solver bitvec verify bithacks
 ---
 
 We are going to verify some of the [bit twiddling

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Constant Rate Loop
+tags: algorithm game clocks frame rating
 ---
 
 {% marginfigure 'Bite' 'assets/distributing/constant_rate/examples/bite.gif'

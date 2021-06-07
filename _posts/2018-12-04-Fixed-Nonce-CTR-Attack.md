@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Fixed Nonce CTR Attack"
+tags: cryptography matasano cryptonita CTR counter nonce PRG chi-square undistinguishable
 ---
 
 The Counter mode, or just CTR mode, turns a block cipher into a stream cipher.

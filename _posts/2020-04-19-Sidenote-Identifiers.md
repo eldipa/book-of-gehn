@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Sidenote: Identifiers"
+tags: identifier
 ---
 
 What would be a nice identifier for the people in, let's say, a database?

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Smashing ARM Stack for Fun - Part VII"
+tags: reversing exploiting ARM iasm azeria-labs egg shellcode PIC
 ---
 
 It's time to solve the last challenge of this 7 part serie.<!--more-->

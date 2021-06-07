@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "From a Regex to a Nondeterministic Finite Automata"
+tags: regex automata state machine NFA string
 ---
 
 Before building complex state machine we need to learn the basics blocks.

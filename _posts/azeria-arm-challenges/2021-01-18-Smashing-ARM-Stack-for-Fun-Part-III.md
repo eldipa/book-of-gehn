@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Smashing ARM Stack for Fun - Part III"
+tags: reversing exploiting ARM iasm azeria-labs
 ---
 
 Another fast moving post

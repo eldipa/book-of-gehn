@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "High Precision Timers (userspace)"
+tags: timers clocks performance
 ---
 
 You want to measure the time that it takes `foo()` to run so

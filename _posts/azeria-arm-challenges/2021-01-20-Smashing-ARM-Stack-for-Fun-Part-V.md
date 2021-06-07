@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Smashing ARM Stack for Fun - Part V"
+tags: reversing exploiting ARM iasm azeria-labs egg shellcode
 ---
 
 [Fifth challenge](https://github.com/azeria-labs/ARM-challenges)

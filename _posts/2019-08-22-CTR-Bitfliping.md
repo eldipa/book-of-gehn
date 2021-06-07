@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "CTR Bitflipping"
+tags: cryptography matasano cryptonita CTR counter forgery
 ---
 
 No much to explain: encryption **does not** offer any

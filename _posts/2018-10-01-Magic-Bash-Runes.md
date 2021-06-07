@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "() { Magic Bash Runes"
+tags: bash shellshock hacking
 ---
 
 Despite of been 4 years old, ``Shellshock`` is still a very interesting

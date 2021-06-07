@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Optimum Packaging of Chocolate"
+tags: z3 smt sat solver linear optimization
 ---
 
 A small business sells two types of chocolate packs: A and B.

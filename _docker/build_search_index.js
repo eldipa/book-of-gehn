@@ -4,7 +4,7 @@ const child_process = require("child_process");
 const lunr = require('lunr');
 
 const target_dir = process.argv[2];
-const listing = child_process.execSync(`find ${target_dir} -name *.md`, {'maxBuffer':128*1024*1024});
+const listing = child_process.execSync(`find ${target_dir} -name '*.md'`, {'maxBuffer':128*1024*1024});
 
 const fnames = listing.toString().split(/(?:\r\n|\r|\n)/g);
 fnames.sort();
@@ -23,6 +23,12 @@ function to_url_name(fname) {
     return fname.replace(/[.]md$/, ".html");
 }
 
+
+/*
+ * The following was a serie of filters to remove words before indexing them
+ * but now that we use the tags of each post, we want to index all the words
+ * in the tags.
+ *
 // Things like:
 //  123
 //  0.1
@@ -84,12 +90,15 @@ function remove_spurious_tokens_plugin(builder) {
     builder.pipeline.after(lunr.stopWordFilter, filter_spurious_token);
 }
 
+*/
+
 var ref2path = {};
 var id = 0;
 var doc_count = 0;
 const lunr_idx = lunr(function () {
     // Enable the plugin to remove any token that is just garbage
-    this.use(remove_spurious_tokens_plugin);
+    // Not longer needed
+    // this.use(remove_spurious_tokens_plugin);
 
     this.ref('id');
     this.field('content');
@@ -99,22 +108,40 @@ const lunr_idx = lunr(function () {
             return;
         }
 
-        process.stderr.write("- " + fname + "\n");
-        const doc = {
-            "id": id,
-            "content": fs.readFileSync(fname, 'utf8')
-        };
+        const lines = fs.readFileSync(fname, 'utf8').split(/\r?\n/)
 
-        this.add(doc);
-        ref2path[id] = to_url_name(fname);
+        let tags_str = "";
+        if (lines[0].startsWith('---')) {
+            let ix = 1;
+            while (lines[ix] !== undefined && !lines[ix].startsWith('---')) {
+                if (lines[ix].startsWith('tags:')) {
+                    tags_str = lines[ix].substring(5);
+                    break;
+                }
+                ix += 1;
+            }
+        }
 
-        id++;
-        doc_count++;
+        process.stderr.write("- " + fname + ": " + tags_str + "\n");
+
+        if (tags_str) {
+            const doc = {
+                "id": id,
+                "content": tags_str
+            };
+
+            this.add(doc);
+            ref2path[id] = to_url_name(fname);
+
+            id++;
+            doc_count++;
+        }
     }, this);
 });
 
 // We don't want to use this filter during the query time
-lunr_idx.pipeline.remove(filter_spurious_token);
+// Not longer needed
+// lunr_idx.pipeline.remove(filter_spurious_token);
 
 /*
 const inv = lunr_idx.invertedIndex;

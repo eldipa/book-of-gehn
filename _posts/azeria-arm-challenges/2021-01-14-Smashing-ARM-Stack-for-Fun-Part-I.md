@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Smashing ARM Stack for Fun - Part I"
+tags: reversing exploiting ARM qemu iasm azeria-labs
 ---
 
 This is the first of a serie of posts about exploiting 32 bits Arm

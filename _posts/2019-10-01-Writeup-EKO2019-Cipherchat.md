@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Cipherchat (Crypto writeup - EKO 2019)"
+tags: challenge eko hacking python bytecode
 ---
 
 We start with a [communication](/assets/eko2019-writeups/cipherchat-dir/cipherchat.pcap)

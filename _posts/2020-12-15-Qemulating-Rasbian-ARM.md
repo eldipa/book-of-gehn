@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "QEMUlating a Rasbian (ARM)"
+tags: qemu ARM Rasbian
 ---
 
 Quick how-to download and run a Raspbian Buster (ARM) emulating

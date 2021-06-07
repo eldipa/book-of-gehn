@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Index of Coincidence Explained"
+tags: cryptography index of coincidence
 ---
 
 The concept of Index of Coincidence was introduced by William Friedman

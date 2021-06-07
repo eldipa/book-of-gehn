@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Effects of CPU Cache Coherence"
+tags: reversing performance cache CPU
 ---
 
 {% marginfigure '' 'assets/memory/rc/cnt-cpu-2ndcpu-heatmap.png'

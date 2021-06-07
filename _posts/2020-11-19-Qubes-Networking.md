@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Qubes OS Networking"
+tags: qubes networking ip route arp firewall iptables
 ---
 
 [Qubes OS](https://www.qubes-os.org/) has an interesting network system

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Isolate a wifi card and keep your traffic out of the Big Brother sight
+tags: wifi container hacking
 ---
 
 {% marginfigure 'Big Brother sight' 'assets/isolate_wifi/isolate_wifi_big_brother_sight.png' '' '' 'in-index-only' %}

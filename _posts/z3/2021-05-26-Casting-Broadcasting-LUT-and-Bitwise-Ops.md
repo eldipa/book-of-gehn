@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Casting, broadcasting, LUT and bitwise ops"
+tags: z3 smt sat solver bitvec bithacks
 ---
 
 Z3 has a few basic symbolic operation over bit vectors.

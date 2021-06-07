@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Ksplice-Pointer-Challenge"
+tags: pointer memory
 ---
 
 What does the following code?

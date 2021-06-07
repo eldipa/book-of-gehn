@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "CBC Bitflipping"
+tags: cryptography matasano cryptonita CBC cipher block chaining forgery forge bit flipping
 ---
 
 {% marginfigure '' '<img style="max-width:60%;" alt="CBC Dec" src="/assets/matasano/cbc-dec.png">' '' '' 'in-index-only'%}

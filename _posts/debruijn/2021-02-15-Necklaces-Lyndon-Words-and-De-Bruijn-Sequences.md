@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Necklaces, Lyndon words and De Bruijn Sequences"
+tags: necklace lyndon debruijn string
 ---
 
 What have in common a dense arrays for mapping numbers power of 2

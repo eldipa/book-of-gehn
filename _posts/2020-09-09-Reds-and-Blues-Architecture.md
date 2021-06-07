@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Reds and Blues Architecture
+tags: performance architecture queue distributing
 ---
 
 {% marginfigure '' 'assets/design/reds-and-blues-original.png'

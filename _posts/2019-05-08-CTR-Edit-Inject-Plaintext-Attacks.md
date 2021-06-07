@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "CTR Edit/Inject Plaintext Attacks"
+tags: cryptography matasano cryptonita CTR counter forgery
 ---
 
 A CTR-mode cipher turns a block cipher into a stream cipher.

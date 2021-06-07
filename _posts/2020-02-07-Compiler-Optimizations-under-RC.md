@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Compiler Optimizations under a Race Condition"
+tags: reversing IDA performance volatile
 ---
 
 {% marginfigure '' 'assets/memory/rc/rcO0-busy-loop.png'

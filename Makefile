@@ -33,7 +33,7 @@ stop:
 	sudo docker stop GehnPages
 
 index:
-	@node ./_docker/build_search_index.js ./_posts/ > js/search_index.js
+	node ./_docker/build_search_index.js ./_posts/ > js/search_index.js
 
 publish:
 	@sudo docker stop GehnPages || true
@@ -62,6 +62,9 @@ publish:
 	@# Check for this cookie. If we found it means that we are publishing
 	@# draft articles. Abort!
 	@grep -q -v -R 'OI/tb2g5khoRa5v3srldjQiPFqlbcFlnYpk99k0wEwE=' _public/ || ( echo "Draft are beign published. Aborting" && exit 1 )
+	@# Copy RSS from the new blog site to the old one
+	@# for backward compatibility
+	@cp _public/feed.xml _old_public/
 	@git diff --quiet _config.yml css/ fonts/ _includes/ js/ _layouts/ _plugins/ _sass/ ||  ( echo "Some 'root' folders are not commited. Commit them first before publishing. Aborting" && exit 1 )
 	( cd _public && git status )
 

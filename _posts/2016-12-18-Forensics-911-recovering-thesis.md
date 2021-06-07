@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Forensics 911 - recovering a thesis of one year work
+tags: forensics
 ---
 
 {% marginfigure 'Trimming and Scraping' 'assets/trimming_scraping_ddrescue.png' 'Trimming and Scraping' '' 'in-index-only' %}

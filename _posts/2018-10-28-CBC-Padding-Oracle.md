@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "CBC Padding Oracle Attack"
+tags: cryptography matasano cryptonita CBC cipher block chaining padding oracle
 ---
 
 AES and other ciphers work on blocks; if the plaintext length

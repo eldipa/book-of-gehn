@@ -1,6 +1,7 @@
 ---
 layout: post
 title: RPG - Part I (IDA writeup - EKO 2019)
+tags: eko challenge reversing IDA
 ---
 
 ``rpg`` is a buggy game where the player can attack to

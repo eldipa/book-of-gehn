@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Blending Whisky with Z3"
+tags: z3 smt sat solver linear optimization blending
 ---
 
 A whisky producer uses three kind of licor to make their whisky: $$A$$,

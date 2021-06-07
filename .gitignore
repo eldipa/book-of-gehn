@@ -9,6 +9,7 @@ assets/matasano/__pycache__/
 uml
 _tmp_uml_svg_in_*
 _docker/node_modules/
+_old_public
 
 # already in _posts folder
 assets/azeria-arm-challenges-assets

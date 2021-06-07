@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Debugging Lock Free Algorithms"
+tags: performance lock free data structure debugging
 ---
 
 Debugging multithread code is hard and lock free algorithms

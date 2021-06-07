@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Detecting Penguins"
+tags: cryptography matasano cryptonita ECB electronic code block
 ---
 
 

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Lock Free Queue - Part II
+tags: performance lock free data structure queue
 ---
 
 If implementing a lock-free queue for only one producer and consumer

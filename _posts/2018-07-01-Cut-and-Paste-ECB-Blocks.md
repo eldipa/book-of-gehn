@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Cut and Paste ECB blocks"
+tags: cryptography matasano cryptonita ECB forgery forge
 ---
 
 In this game we control partially a plaintext that is encrypted

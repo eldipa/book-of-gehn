@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Congruence Closure with Z3"
+tags: z3 smt sat solver equivalence congruence set
 ---
 
 Assume that you know that $$a = b$$, $$b = c$$ and $$d = e$$. What can you

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Breaking Vigenere"
+tags: cryptography matasano cryptonita vigenere
 ---
 
 A plaintext was encrypted via a XOR with key of unknown bytes of length,

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Lock-Free Queue - Part I
+tags: performance lock free data structure queue
 ---
 
 While implementing a bounded queue or *ring buffer* in a single-thread

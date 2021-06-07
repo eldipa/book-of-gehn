@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Breaking MT19937 Crypto"
+tags: cryptography matasano cryptonita MT19937 PRG
 ---
 
 The Mersenne-Twister 19937 or just MT19937 is one of the most

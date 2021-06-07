@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Separate your SSH Agent Identities
+tags: bash scripting security
 ---
 
 Using a ``ssh-agent`` to handle our keys is handy.

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Smashing ARM Stack for Fun - Part VI"
+tags: reversing exploiting ARM iasm azeria-labs egg shellcode PIC
 ---
 
 We have the same vulnerability than we have in

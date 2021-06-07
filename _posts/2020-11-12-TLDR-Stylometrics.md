@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "TL;DR Stylometrics"
+tags: tldr tl;dr stylometric
 ---
 
 A ghost writer is a person that writes a document, essay or paper but

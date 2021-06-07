@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Ouroboros - Circular Buffer
+tags: circular buffer data structure performance
 ---
 
 ``struct circular_buffer`` is a simple but quite efficient implementation

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "A string of coincidences is not a coincidence"
+tags: cryptography matasano cryptonita index coincidence
 ---
 
 A cipher is *semantically secure* if given a randomly chosen key, its ciphertext

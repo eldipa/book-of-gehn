@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Better Compression of Log Files (PoC)
+tags: scripting string compression
 ---
 
 The logs present several patterns that are repeated again and again;

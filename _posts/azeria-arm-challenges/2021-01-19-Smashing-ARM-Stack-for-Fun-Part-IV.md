@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Smashing ARM Stack for Fun - Part IV"
+tags: reversing exploiting ARM iasm azeria-labs objdump
 ---
 
 This time the goal is to make the program print the message

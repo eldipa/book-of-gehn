@@ -2,6 +2,7 @@
 layout: post
 title: "Solving a Murder Case with Z3"
 latex_macros: "R: '{\\\\tiny{\\\\_}}', s: '{_}'"
+tags: z3 smt sat solver propositional logic first order
 ---
 
 
