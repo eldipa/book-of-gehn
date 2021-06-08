@@ -14,3 +14,4 @@ _old_public
 # already in _posts folder
 assets/azeria-arm-challenges-assets
 assets/debruijn-assets
+js/search_index.js

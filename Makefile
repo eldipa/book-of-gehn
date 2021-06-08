@@ -33,7 +33,7 @@ stop:
 	sudo docker stop GehnPages
 
 index:
-	node ./_docker/build_search_index.js ./_posts/ > js/search_index.js
+	@node ./_docker/build_search_index.js ./_posts/ > js/search_index.js
 
 publish:
 	@sudo docker stop GehnPages || true

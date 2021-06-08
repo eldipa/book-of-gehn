@@ -110,24 +110,34 @@ const lunr_idx = lunr(function () {
 
         const lines = fs.readFileSync(fname, 'utf8').split(/\r?\n/)
 
-        let tags_str = "";
+        let content_for_indexing = "";
+        let tags_line_found = false;
+        let title_line_found = false;
         if (lines[0].startsWith('---')) {
             let ix = 1;
             while (lines[ix] !== undefined && !lines[ix].startsWith('---')) {
                 if (lines[ix].startsWith('tags:')) {
-                    tags_str = lines[ix].substring(5);
-                    break;
+                    content_for_indexing += lines[ix].substring(5) + " ";
+                    tags_line_found = true;
                 }
+                else if (lines[ix].startsWith('title:')) {
+                    content_for_indexing += lines[ix].substring(6) + " ";
+                    title_line_found = true;
+                }
+
+                if (tags_line_found && title_line_found)
+                    break;
+
                 ix += 1;
             }
         }
 
-        process.stderr.write("- " + fname + ": " + tags_str + "\n");
+        process.stderr.write("- " + fname + ": " + content_for_indexing + "\n");
 
-        if (tags_str) {
+        if (content_for_indexing) {
             const doc = {
                 "id": id,
-                "content": tags_str
+                "content": content_for_indexing
             };
 
             this.add(doc);
