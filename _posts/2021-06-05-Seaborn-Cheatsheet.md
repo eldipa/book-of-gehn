@@ -12,7 +12,7 @@ So I challenge myself: could I build a *cheatsheet* about plotting?
 
 Yes, yes I could.
 
-{% maincolumn 'assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.svg'
+{% maincolumn 'assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-v1.svg'
 '' %}
 
 [Seaborn](https://seaborn.pydata.org/) is a very simple but powerful
@@ -20,10 +20,10 @@ plotting library on top of [matplotlib](https://matplotlib.org/) designed
 for statistical analysis.
 
 Quick links:
-[PDF (no bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.pdf),
-[PDF (bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg.pdf),
-[SVG (no bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet.svg),
-[SVG (bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg.svg)
+[PDF (no bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-v1.pdf),
+[PDF (bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg-v1.pdf),
+[SVG (no bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-v1.svg),
+[SVG (bg)](/assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-bg-v1.svg)
 .<!--more-->
 
 ## Instructions
