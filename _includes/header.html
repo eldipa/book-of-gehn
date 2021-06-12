@@ -1,6 +1,24 @@
 <header>
 	{% if site.header == true %}
-		<h1 class="header-title"><a href="{{site.baseurl}}/">{{ site.title }}</a></h1>
+    {% comment %}
+                <aside id="sidebar">
+                    <ul>
+                        <li>Projects: byexample</li>
+                        <li>
+                            <form id="blog-search-form">
+                                <input type="search" placeholder="search"></input>
+                                <div class="query-error"></div>
+                                <div class="controls">
+                                    <button type="submit">Search</button>
+                                    <button type="reset">Reset</button>
+                                </div>
+                            </form>
+                        </li>
+                        <li><a style="text-decoration: none;" href="/feed.xml"><img height="16px" width="16px" src="/assets/blog-assets/rss-32px.png" /></a></li>
+                    </ul>
+                </aside>
+    {% endcomment %}
+		<h1 class="header-title"><a href="{{site.baseurl}}">{{ site.title }}</a></h1>
 		{% if site.subtitle == "" or site.subtitle == nil %}
 		{% else %}
 			<h2 class="header-subtitle">{{ site.subtitle }}</h2>
@@ -31,6 +49,18 @@
 		    {% endif %}
 	    {% endunless %}
   	{% endfor %}
+            <form id="blog-search-form">
+                <input type="search" placeholder="search posts"></input>
+                <span class="query-error"></span>
+                <span class="controls">
+                    <button type="submit">Go</button>
+                    <button style="display: none;" id="reset_search" type="reset">Clear</button>
+                </span>
+            </form>
 	</nav>
+
+    <div style="display: none;" id="search_error"></div>
+    <article style="display: none;" class="group" id="search_results">
+    </article>
     {% endcomment %}
 </header>

@@ -1,5 +1,6 @@
 ---
 layout: home
+title: 3rd parties
 ---
 
 ## 3rd Parties - Stuff written by someone else
