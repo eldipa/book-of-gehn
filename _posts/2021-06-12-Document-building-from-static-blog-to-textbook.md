@@ -135,6 +135,18 @@ Once again, Pandoc's filters fit perfect for the job.
 
 ## Fixing syntax highlighting
 
+{% marginmarkdowncode
+'
+```nasm
+pwndbg> pdisass &main
+ ► 0x1044c <main>       push   {fp, lr}
+   0x10450 <main+4>     add    fp, sp, #4
+   0x10454 <main+8>     sub    sp, sp, #0x50
+   0x10470 <main+36>    bl     #gets@plt <gets@plt>
+```
+'
+'' %}
+
 For the blog, the code is highlighted with
 [Rouge](https://github.com/rouge-ruby/rouge). It works like a charm but
 no without some sharp corners.
@@ -207,12 +219,14 @@ be quite handy.
 
 ## Images and diagrams
 
+{% marginfigure '' 'assets/statistics/seaborn-cheatsheet/seaborn-cheatsheet-v1.svg'
+'' '' '' %}
 
 I make a lot of diagrams, state machines and plots but I try to not make
 them by hand.
 
 Tools that requires a human to do the layout are a waste of time (there
-are exceptions like me [Seaborn Cheatsheet](/book-of-gehn/articles/2021/06/05/Seaborn-Cheatsheet.html)).
+are exceptions like me [Seaborn Cheatsheet](/articles/2021/06/05/Seaborn-Cheatsheet.html)).
 
 Instead I prefer to *describe* the diagram in text and let a
 program to do the image and layout for me.
@@ -222,6 +236,31 @@ name, it is for more than UML.
 
 For simpler block diagrams I use [Ditaa](http://ditaa.sourceforge.net/)
 and for graph-like I have the good old [Graphviz](https://graphviz.org/).
+
+{% marginplantuml  %}
+`
+@startuml
+hide empty description
+
+
+state "AppVM" as app1 {
+state "route" as route
+
+[*] --> route
+}
+
+state "ProxyVM" as proxy1 {
+state "route" as route2
+
+route -down[dashed]-> prerouting : ping from .7.27 to .8.8
+prerouting -left-> filter
+filter -down-> route2
+route2 -right-> postrouting
+}
+
+@enduml
+`
+{% endmarginplantuml %}
 
 So far I'm using these tools for by blog so I write the
 PlantUML/Ditaa/Graphviz diagrams (text) inside a Liquid tag in the same
@@ -329,5 +368,37 @@ to be trivial.
 
 There are a lot of gaps and problems without solution but I bet that
 this is going to improve my workflow.
+
+So far, this is want I think it may work:
+
+{% maincolumnplantuml  %}
+`
+@startuml
+hide empty description
+
+state "Markdown" as md1
+state "Markdown" as md2
+
+md1 -right-> md2 : Jinja2
+
+state "Pandoc" as pandoc {
+state "Json" as js1
+state "Json" as js2
+
+js1 -right[dashed]-> js2 : filters
+}
+
+md2 -right-> js1
+
+state "Tex/Latex" as tex
+js2 -> tex
+js2 -down-> html
+
+tex -> PDF : pdflatex
+
+@enduml
+`
+{% endmaincolumnplantuml %}
+
 
 Fingers crossed.

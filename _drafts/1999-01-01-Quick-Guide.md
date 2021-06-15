@@ -28,7 +28,7 @@ To a *local post*
 [Other implementations](/book-of-gehn/articles/2018/09/16/Ouroboros-Circular-Buffer.html)
 
 Link to a Asset
-For this [we can create a small C program](/book-of-gehn/assets/azeria-arm-challenges-assets/test-egg.c)
+For this [we can create a small C program](/assets/azeria-arm-challenges-assets/test-egg.c)
 
 ## Math / Latex
 
