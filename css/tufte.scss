@@ -175,6 +175,7 @@ ul.header-list {
     margin-top: 50px;
     margin-left: 30px;
     width: initial;
+    border-right: 2px solid black;
     /* position: absolute; */
     /* right: 10%; */
     /* top: 0px; */
@@ -182,6 +183,7 @@ ul.header-list {
 
 ul.header-list li {
      margin-top: 0px;
+     padding-right: 5px;
 }
 
 hgroup.header-group {
