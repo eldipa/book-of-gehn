@@ -26,6 +26,7 @@ function to_url_name(fname) {
 var ref2doc = {};
 var id = 0;
 var doc_count = 0;
+var not_indexed = [];
 const lunr_idx = lunr(function () {
     this.ref('id');
     this.field('content');
@@ -41,6 +42,9 @@ const lunr_idx = lunr(function () {
         let title_str = "";
         if (lines[0].startsWith('---')) {
             let ix = 1;
+            // Try to find the title of the post and its tags *before*
+            // reaching the end of the "front-matter" section (marked
+            // with at least three '-')
             while (lines[ix] !== undefined && !lines[ix].startsWith('---')) {
                 if (lines[ix].startsWith('tags:')) {
                     tags_str += lines[ix].substring(5) + " ";
@@ -73,9 +77,19 @@ const lunr_idx = lunr(function () {
 
             id++;
             doc_count++;
+        } else {
+            not_indexed.push(fname);
         }
     }, this);
 });
+
+// Warn about files that where not indexed
+if (not_indexed.length > 0) {
+    process.stderr.write("\n\n[Warn] Not indexed:\n");
+    not_indexed.forEach(function (fname) {
+        process.stderr.write("- " + fname + "\n");
+    });
+}
 
 const idx = {
     // Map lunr documents' ids to our documents
@@ -85,17 +99,19 @@ const idx = {
 };
 
 
-
+// Store the index as a valid Javascript statement (literal)
+// so it can be included with <script src="..."> by the web page
 const idx_str = JSON.stringify(idx)
 process.stdout.write('const blog_search_index = ');
 process.stdout.write(idx_str);
 process.stdout.write(';');
 
+// Testing: reload the serialized index, search for a word
+// and print the matching posts.
 const idx2 = JSON.parse(idx_str);
 idx2.lunr_idx = lunr.Index.load(idx2.lunr_idx);
 
-
-const found = idx2.lunr_idx.search("arm");
+const found = idx2.lunr_idx.search("+arm +qemu");
 found.forEach(function (match) {
     process.stderr.write(idx2.ref2doc[match.ref].path + "\n");
     process.stderr.write(JSON.stringify(match, null, 2) + "\n");

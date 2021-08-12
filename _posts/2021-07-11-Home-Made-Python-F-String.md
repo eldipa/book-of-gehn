@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Home Made Python F-String"
+tags: Python
 ---
 
 Python 3.6 introduced the so called *f-strings*: literal strings that
@@ -15,7 +16,7 @@ Before 3.6 you would to do something like this:
 'x=11 y=22'
 ```
 
-But with the f-strings we can remove the burocratic call to `format`:
+But with the f-strings we can remove the bureaucratic call to `format`:
 
 ```python
 >>> f"x={x} y={y}"
@@ -71,7 +72,7 @@ The idea is to *eval* `x` in the context of the caller's frame: this
 will not only resolve variables like `x` but also expressions like
 `x**2`.
 
-Combining all togheter:
+Combining all together:
 
 
 ```python

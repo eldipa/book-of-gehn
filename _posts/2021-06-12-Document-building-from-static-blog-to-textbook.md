@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Document Building: from static web blogs to textbooks"
+tags: blog latex
 ---
 
 I've being writing for a long time. I'm far from being a good writer but
