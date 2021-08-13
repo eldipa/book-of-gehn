@@ -2,6 +2,7 @@
 layout: post
 title: "Quick Guide / Template"
 latex_macros: "R: '{\\\\hat{R}}', s: ['{\\\\overline{#1}}', 1]"
+tags: foo bar
 ---
 
 About how to write a post.<!--more-->

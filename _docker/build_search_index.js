@@ -61,7 +61,7 @@ const lunr_idx = lunr(function () {
         }
 
         const content_for_indexing = title_str + " " + tags_str;
-        process.stderr.write("- " + fname + ": " + content_for_indexing + "\n");
+        //process.stderr.write("- " + fname + ": " + content_for_indexing + "\n");
 
         if (content_for_indexing) {
             const elem = {
@@ -82,14 +82,6 @@ const lunr_idx = lunr(function () {
         }
     }, this);
 });
-
-// Warn about files that where not indexed
-if (not_indexed.length > 0) {
-    process.stderr.write("\n\n[Warn] Not indexed:\n");
-    not_indexed.forEach(function (fname) {
-        process.stderr.write("- " + fname + "\n");
-    });
-}
 
 const idx = {
     // Map lunr documents' ids to our documents
@@ -116,3 +108,12 @@ found.forEach(function (match) {
     process.stderr.write(idx2.ref2doc[match.ref].path + "\n");
     process.stderr.write(JSON.stringify(match, null, 2) + "\n");
 }, this);
+
+// Warn about files that were not indexed
+if (not_indexed.length > 0) {
+    process.stderr.write("\n\n[Warn] Not indexed:\n");
+    not_indexed.forEach(function (fname) {
+        process.stderr.write("- " + fname + "\n");
+    });
+}
+
