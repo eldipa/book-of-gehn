@@ -1,30 +1,15 @@
 <header>
 	{% if site.header == true %}
-    {% comment %}
-                <aside id="sidebar">
-                    <ul>
-                        <li>Projects: byexample</li>
-                        <li>
-                            <form id="blog-search-form">
-                                <input type="search" placeholder="search"></input>
-                                <div class="query-error"></div>
-                                <div class="controls">
-                                    <button type="submit">Search</button>
-                                    <button type="reset">Reset</button>
-                                </div>
-                            </form>
-                        </li>
-                        <li><a style="text-decoration: none;" href="/feed.xml"><img height="16px" width="16px" src="/assets/blog-assets/rss-32px.png" /></a></li>
-                    </ul>
-                </aside>
-    {% endcomment %}
                 <hgroup class="header-group">
 		<h1 class="header-title"><a href="{{site.baseurl}}">{{ site.title }}</a></h1>
                 </hgroup>
                 <ul class="header-list">
                     <li><a href="https://byexamples.github.io">byexample</a></li>
                     <li><a href="https://bisturi.github.io">bisturi</a></li>
-                    <li><a style="text-decoration: none;" href="/feed.xml"><img height="16px" width="16px" src="/assets/blog-assets/rss-32px.png" /></a></li>
+                    <li>
+                        <a class="raw_link" href="/feed.xml"><img height="16px" width="16px" src="/assets/blog-assets/rss-32px.png" /></a>
+                        <a class="raw_link" href="https://github.com/eldipa"><img height="16px" width="16px" src="/assets/blog-assets/github.png" /></a>
+                    </li>
                 </ul>
 		{% if site.subtitle == "" or site.subtitle == nil %}
 		{% else %}
@@ -44,8 +29,8 @@
     For each subfolder, the index.html file is used to draw the page.
     {% endcomment %}
 
-    {% comment %}
     <nav class="group">
+    {% comment %}
 	{% assign pg = site.pages | sort: "weight" %}
 	{% for node in pg %}
 		{% unless node.nav_exclude or node.url contains ".css" %}
@@ -56,11 +41,12 @@
 		    {% endif %}
 	    {% endunless %}
   	{% endfor %}
+    {% endcomment %}
             <form id="blog-search-form">
-                <input type="search" placeholder="search posts"></input>
+                <input type="search" placeholder="+must -not *fuzzy*"></input>
                 <span class="query-error"></span>
                 <span class="controls">
-                    <button type="submit">Go</button>
+                    <button type="submit">Filter</button>
                     <button style="display: none;" id="reset_search" type="reset">Clear</button>
                 </span>
             </form>
@@ -69,5 +55,4 @@
     <div style="display: none;" id="search_error"></div>
     <article style="display: none;" class="group" id="search_results">
     </article>
-    {% endcomment %}
 </header>

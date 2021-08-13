@@ -67,6 +67,11 @@ a > h1, a > h2, a > h3, a > h4, h1 > a, h2 > a, h3 > a, h4 > a {
   color: $text-color;
 }
 
+a.raw_link {
+    text-decoration: none;
+    background: none;
+}
+
 li > a, p > a, cite > a, .sidenote a, .credits a, .marginnote a, footer a {
 
 // CUSTOM
