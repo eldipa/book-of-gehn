@@ -60,6 +60,11 @@ const lunr_idx = lunr(function () {
             }
         }
 
+        title_str = title_str
+            .replace(/^[ '"]+/g, '') // strip leading quotes
+            .replace(/[ '"]+$/g, '') // strip trailing quotes
+            .replace(/[ ]+/g, ' '); // normalize whitespace
+
         const content_for_indexing = title_str + " " + tags_str;
         //process.stderr.write("- " + fname + ": " + content_for_indexing + "\n");
 
