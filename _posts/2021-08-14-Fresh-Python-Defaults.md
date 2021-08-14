@@ -4,7 +4,7 @@ title: "Fresh Python Defaults"
 tags: Python
 ---
 
-When defining a Python function, you can define the default value
+When defining a Python function you can define the default value
 of its parameters.
 
 The defaults are evaluated *once* and bound to the function's signature.
@@ -32,8 +32,8 @@ a=1 b=z! c=[3, 2]
 a=1 b=x! c=[2, 2, 2]
 ```
 
-A mutable default can be uses as the function's private state
-as an alternative to functional-traditional *closures* and to
+A mutable default can be used as the function's private state
+as an alternative to functional-traditional *closures* and
 object-oriented classes.
 
 But in general a mutable default is most likely to be a bug.
@@ -57,23 +57,24 @@ themselves.
 ```
 
 `inspect.signature` does not retrieve the *"static"* signature of `foo`
-but its *current-alive* signature.
+but its *current-alive* signature. That's why we get `c=[2, 2, 2]`
+instead of `c=[]`.
 
-While `Signature` is an immutable object, `Signature` parameters' default
+While `Signature` is an immutable object, `Signature` parameters' defaults
 aren't:
 
 ```python
 >>> sig = inspect.signature(foo)
->>> sig.parameters['c'].default.clear() # clear the list
+>>> sig.parameters['c'].default.clear() # clear c's default list
 
 >>> foo(1)  # uses the same but "refreshed" default list
 a=1 b=x! c=[2]
 
->>> sig.parameters['c'].default.clear() # clear for the next call: doesn't scale
+>>> sig.parameters['c'].default.clear() # clear for the next call
 ```
 
 This is an interesting way to refresh default objects but `clear()`
-is not an universal: it works for `list`, `dict` and `set` but not for
+is not universal: it works for `list`, `dict` and `set` but not for
 user-defined objects.
 
 Still, `inspect.signature` gives the name of the parameters that have
@@ -115,7 +116,7 @@ perfectly safe as their value, by definition, cannot change.
 `const_types` is not an exhaustive set, only the most common types are
 there.
 
-In fact we don't need to store the `param`s as they are stored in the
+In fact we don't need to store the `param` objects as they are stored in the
 function's signature anyways. The parameters' names are enough.
 
 ```python
@@ -134,9 +135,9 @@ the arguments.
 
 Python binds only the parameters that have an explicit value:
 
- - if a parameter without a default is not bounded, `TypeError` is
+ - if a parameter *without* a default is not bound, `TypeError` is
 raised.
- - if the parameter *has* a default the parameter is left *unbound*.
+ - if a parameter *has* a default it is left *unbound*.
 
 This is perfect because we can know which parameters are not bound yet:
 
@@ -149,11 +150,18 @@ This is perfect because we can know which parameters are not bound yet:
 
 This is the idea: we check the unbound parameters and if they are not
 immutable we copy their default values and *bind* the copy like if the
-user would passed the values explicitly.
+user would passed it *explicitly*.
 
 ```python
 >>> from copy import deepcopy
 >>> arguments['c'] = deepcopy(params['c'].default)
+```
+
+`c` not longer is unbound:
+
+```python
+>>> set(params) - set(arguments) # c is bound now
+set()
 ```
 
 Because there could be still unbound parameters, we can let Python
@@ -161,10 +169,6 @@ follow the normal path and bind them with the respective defaults.
 
 ```python
 >>> bound.apply_defaults()
->>> arguments = bound.arguments
-
->>> set(params) - set(arguments) # all the parameters are bound now
-set()
 ```
 
 Finally we can emulate a function call like this:
