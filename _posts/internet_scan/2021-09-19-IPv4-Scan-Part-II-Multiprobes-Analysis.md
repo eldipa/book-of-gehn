@@ -7,7 +7,7 @@ tags: pandas julia categorical ordinal parquet statistics
 To my surprise the
 [dataset](https://www.kaggle.com/signalspikes/internet-port-scan-1)
 preprocessed in my
-[previous post](/book-of-gehn/articles/2021/09/10/IPv4-Scan-Dataset-Preprocessing.html)
+[previous post](/articles/2021/09/10/IPv4-Scan-Dataset-Preprocessing.html)
 **has** duplicated entries. These are scans
 to the same host and port but with a different timestamp.
 
@@ -84,7 +84,7 @@ julia> df[!, :port] = categorical(df[:, :port], compress=true, ordered=true)
 ```
 
 As
-[explained earlier](/book-of-gehn/articles/2021/09/10/IPv4-Scan-Dataset-Preprocessing.html),
+[explained earlier](/articles/2021/09/10/IPv4-Scan-Dataset-Preprocessing.html),
 the ports **don't** have a natural order however
 I this as an opportunity to explore and document *how to work with ordinals*.
 

@@ -26,7 +26,7 @@ To an *external resource*:
 [DPDK](http://git.dpdk.org/dpdk/tree/lib/librte_ring/rte_ring_c11_mem.h)
 
 To a *local post*
-[Other implementations](/book-of-gehn/articles/2018/09/16/Ouroboros-Circular-Buffer.html)
+[Other implementations](/articles/2018/09/16/Ouroboros-Circular-Buffer.html)
 
 Link to a Asset
 For this [we can create a small C program](/assets/azeria-arm-challenges-assets/test-egg.c)
