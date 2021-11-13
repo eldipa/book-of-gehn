@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "IPv4 Scan 2021 - Multiprobes Analysis"
-tags: pandas julia categorical ordinal parquet statistics
+tags: pandas julia categorical ordinal parquet statistics seaborn
 ---
 
 To my surprise the
@@ -10,6 +10,8 @@ preprocessed in my
 [previous post](/articles/2021/09/10/IPv4-Scan-Dataset-Preprocessing.html)
 **has** duplicated entries. These are scans
 to the same host and port but with a different timestamp.
+
+{% marginfigure 'Hist' 'assets/internet_scan/time_interval_hist.svg' 'Histogram of the interval between probes to the same host-port in seconds.' '' 'in-index-only' %}
 
 Questions like "which open port is more likely" will biased
 because the same host-port may be counted more than once.
@@ -208,7 +210,9 @@ Dict{Int64, Int64} with 5 entries:
   1 => 64774182
 ```
 
-So `masscan` didn't sent $$N$$ probes to each port **or** it did it but the
+Notice how most of ip-port tuples were scanned once.
+
+So `masscan` didn't send $$N$$ probes to each port **or** it did it but the
 some probes never were answered *(why?, who knows)*.
 
 This could explain why some ports were scanned twice while others only
@@ -219,10 +223,14 @@ one.
 {% marginnote
 'Sanity check: from the distribution of probes per port we know that we
 have 13038 ports with 2 probes which will contribute with 13038 rows to
-the difference dataframe; 750 ports with 3 probes which will contribute
+the difference dataframe;
+<br />
+750 ports with 3 probes which will contribute
 with 750 * 2 rows to the result; 27 ports with 4 probes contributing
 with 27 * 3 rows and finally 1 port with 5 probes contributing with 5 *
-4 rows. The expected total is 14623 which it is exactly the row count
+4 rows.
+<br />
+The expected total is 14623 which it is exactly the row count
 of `df2`.
 ' %}
 
@@ -264,6 +272,15 @@ Dict{Union{Missing, Int32}, Int64} with 30 entries:
   34 => 3
   40 => 1
 ```
+
+Certainly a histogram is better for this case:
+
+{% maincolumn 'assets/internet_scan/time_interval_hist.svg'
+'Histogram of intervals between probes to the same host-port in seconds.
+<br />
+The median (5.0) and the mean (6.89) are labeled. The vertical axis is
+in logarithmic scale.' %}
+
 
 This was more spread than I expected. Most of the intervals are in the
 low range but there is non-negligible count for the 15 secs interval.
@@ -308,7 +325,7 @@ The median confirms our first analysis: the distribution is right skewed
 *(the mean is on the right of the median)*.
 
 
-### What about the 0 interval?
+### What about the zero interval?
 
 We can filter which rows has such in two ways being the second one the
 preferred and fastest:
@@ -354,12 +371,20 @@ couldn't finish a single group-by + aggregation.
 
 It is obvious that there are too many copies.
 
-Doing a home-made custom aggregation function to sort this *bypassed*
-the memory problem ended up in a *never-finishing* problem.
+Doing a home-made custom aggregation function to sort this,
+I successfully *bypassed* the memory problem but I ended up in
+another one: *CPU 100% never-finishing* execution problem.
 
-I'm talking of processing a 10% dataset for a whole night.
+The custom aggregation function was written in Python, of course, but
+calling Python code for each row is incredible slow.
 
-After a week it was clear that Pandas+Dask need more love.
+And all of this for a reduced dataset!
+
+I'm talking of processing a 10% dataset and it didn't finish after
+running for a whole night.
+
+After a week of trying and failing, it was clear that Pandas+Dask need
+more love.
 
 That's when I considered
 [Julia](https://julialang.org/).

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "IPv4 Scan 2021 - Hop-Count Route Stability"
-tags: pandas julia statistics
+tags: pandas julia statistics seaborn
 ---
 
 [masscan](https://github.com/robertdavidgraham/masscan/) tracks the
@@ -10,6 +10,9 @@ tags: pandas julia statistics
 {% marginnote
 'Yes and no: they should not but some network devices will *mangle the packets
 as they want*, including setting arbitrary TTLs.
+<br />
+See the observations done in the
+[TTL Boost post](/articles/2021/11/13/IPv4-Scan-Part-V-TTL-Boost.html).
 ' %}
 
 These time to live (TTL) are numbers between 0 and 255
@@ -29,9 +32,13 @@ That&apos;s the point of the TTL: to catch and drop packets looping around.
 Of course the host set the TTL to some reasonable high number so the
 packet should reach to its destination (us) before reaching to zero.
 
+{% marginfigure '' 'assets/internet_scan/ip-ttl-range-and-time.png' ''
+'' 'in-index-only' %}
+
 We cannot know exactly which route/s the packets taken but we can
-*count for how many hops they went*: any change in the *hop-count* and we will get
-different TTLs and that's evidence that they taken different routes.
+*count for how many hops they went through*: any change in the *hop-count*
+and we will get different TTLs and that's evidence that they taken
+different routes.
 
 The inverse is not true: a constant hop-count does not imply that
 the route taken is the same, only the route/s have the same hops.
@@ -44,6 +51,7 @@ how much a *route* is *stable* in terms of
 
 ## How much stable is a route in a *burst*?
 
+
 [masscan](https://github.com/robertdavidgraham/masscan/) scans the same
 host sending several probes at the *same time* in a *burst*.
 
@@ -52,10 +60,23 @@ As saw in a
 `masscan` may scan the same host more than once. We will call these
 *rounds of bursts* or just *rounds*.
 
-Let's focus in the firsts which we know they happen roughly at the same
-time.
+{% maincolumn '<img style="max-width:80%;" alt="Bursts and Rounds" src="/assets/internet_scan/ip-burst-rounds.png">'
+'`masscan` sends multiple packets (*probes*) to test the hosts&apos;
+ports.
+<br />
+<br />
+It sends *at the same time* the probes to *the same host* in a
+**burst**.
+<br />
+<br />
+Some time later it *may* scan the same host *again*. The collection of
+bursts to *the same host* are the **rounds** for that host.
+' %}
 
 ### TTLs extrema values for each short burst
+
+Let's review the short bursts first, the probes sent to a host at the
+same time:
 
 ```julia
 julia> short_bursts_g = groupby(df, [:ip, :timestamp])
@@ -67,6 +88,13 @@ Alternatively:
 ```julia
 julia> short_bursts = combine(short_bursts_g, :ttl => (x -> [extrema(x)]) => [:min, :max])
 ```
+
+{% marginfigure '' 'assets/internet_scan/ip-short-burst-ttls.png'
+'For each response, the TTL is read and the minimum and maximum
+values are calculated for each burst.
+<br />
+This gives an idea of how different the TTL can be for probes sent
+in a *short-elapsed burst*.' %}
 
 The latter walks over the samples once calling the `extrema` function.
 However `extrema` is not compatible with `DataFrames` as is so we need
@@ -92,11 +120,16 @@ The difference between the *extremes*, called the *range*, shows that
 the routes are quite stable, at least during the scan for a particular
 host.
 
-The histogram shows that only a few cases the difference was up to 7.
+The histogram shows that all the bursts have a TTL range of 0
+except very few cases.
+
+This means that the routes are **stable** but...
 
 Keep in mind that the scans for a particular host *in a particular time*
 are like **bursts**: so it is reasonable that the routes didn't change
 in such short period.
+
+What would happen if we analyze now the stability for a longer period?
 
 ## How much stable is a route in a longer period?
 
@@ -203,10 +236,23 @@ From there the differences are spread over the 8 to 239 range. The mean
 is around the middle of the range and the standard deviation is approx
 one quarter so the values are really spread.
 
-There are only 172217 samples of 43056567 so the *unstable* represents
-only 0.39998%.
+{% marginnote
+'In the dataset we have a slightly more unique hosts: 43056596.
+The difference is due the filtering that we did above but it does
+not change the results.
+' %}
+
+There are only 172217 samples of 43056567 unique hosts
+so the *unstable* represents only 0.39998%.
 
 ### Bursts over longer periods but for how long?
+
+{% marginfigure '' 'assets/internet_scan/ip-ttl-range-and-time.png'
+'For each burst we calculate its TTL range.
+<br />
+From there, a bunch of statistics can be calculated about the TTL ranges
+for the *same hosts* giving us an idea of the stability of the route
+to it.' %}
 
 Can we conclude that the routes are 99% of the time *stable*?
 
@@ -214,7 +260,7 @@ Well, yes but we are making an assumption: when we have two or more
 bursts to the same host we are assuming that those happen at different
 moments but... what do we mean by *different moments*?
 
-Certainly difference of a few seconds does not change anything by real.
+Certainly, a difference of a few seconds does not change anything by real.
 
 What we want is to measure the changes in the TTLs between bursts that
 happen at **hours** of difference.
@@ -239,11 +285,13 @@ difference.
 The 25-quantile, that represents the value of the first quarter of the
 samples, is of 25612.8 seconds, a little more than 7 hours.
 
+
 ## Conclusions
 
 So with these so-spread bursts and the so-little changed difference in
 the TTLs we can conclude that most of the hop-count routes are *stable*.
 
-We cannot say anything about the real routes that the packets taken but
+We cannot say anything about the real routes that the packets took but
 we can know that the count of hops that they passed through remained
 constant.
+

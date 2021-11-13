@@ -9,7 +9,7 @@ is a survey or port scan of the whole IPv4 range made
 with [masscan](https://github.com/robertdavidgraham/masscan).
 
 The dataset however is much smaller than the expected mostly because
-most of the host didn't response and/or it had all the scanned ports
+most of the hosts didn't response and/or they had all the scanned ports
 closed.
 
 Only open ports were registered.
