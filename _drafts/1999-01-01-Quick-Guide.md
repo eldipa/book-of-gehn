@@ -102,14 +102,14 @@ use the `&apos;` entity.
 
 {% maincolumn 'assets/memory/rc/cnt-cpu-2ndcpu-heatmap.png'
 'Image in the main column,
-<bt />
+<br />
 and this comment to its right.' %}
 
-{% maincolumn '<img style="max-width:60%;" alt="CBC Enc" src="/book-of-gehn/assets/matasano/cbc-enc.png">' '' %}
+{% maincolumn '<img style="max-width:60%;" alt="CBC Enc" src="/assets/matasano/cbc-enc.png">' '' %}
 
 {% marginfigure 'Alternative name' 'assets/eko2019-writeups/rpg-dir/second_indirection.png'
 'Image on the right of the main column,
-<bt />
+<br />
 and this comment below of it. Captions and CSS style are optional' 'max-width: 100%;'
 'more optional classes here' %}
 
