@@ -1,0 +1,15 @@
+title: The Book of Gehn
+description: ""
+offline: true
+header: true
+baseurl: "/"
+subtitle: ""
+author: Martin Di Paola
+email: ""
+
+# These are the metadata that each post/page will have by default
+# More metadata, optionally overriding this one, can be added per
+# post/page in the post's front matter.
+page-defaults:
+    excerpt: ""
+    latex_macros: ""

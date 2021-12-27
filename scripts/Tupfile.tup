@@ -1,0 +1,131 @@
+# Import from the environment the variable INDOCKER.
+# Then, compare it with "1" if it doesn't match stop with
+# a message error.
+# INDOCKER should be set to "1" to signal that we are running Tup
+# in the correct docker so we can be sure that all the commands and
+# scripts here will be run using the tools in the docker container
+import INDOCKER
+ifneq (1,$(INDOCKER))
+error Stop! You must be in the container for developing.
+endif
+
+# Preprocess the first input file (%1f) with Jinja2 and output
+# the resulting file into %1o.
+#
+# The preprocessing takes second input file that should be a YAML
+# file with the configuration for the template processing.
+#
+# We assume that such YAML file is in next to the input file (%1f)
+# but wit the additional extension .yml (%1f.yml)
+#
+# Because such extra input file is not going to be present in the initial
+# input list, Tup will complain if the extra input file (%1f.yml) was generated
+# by another Tup-rule because Tup will not be able to properly order the rules
+# that *generates* the %1f.yml file and the rules that *requieres* such
+# file (like the rules that use the !j2 macro below).
+# To fix this, this macro adds %1f.yml in the order-only input file so Tup
+# can know that this Tup-rule *depends* on that file too besides the input %1f
+!j2 = |> ^ j2 %f^ j2 --customize scripts/j2helpers.py %1f %2f > %o |>  | ^scripts/__pycache__/* ^dbg/
+
+!extract-front = |> ^ front %f^ ./scripts/front.py %1f %1o %2o site.yaml |>  | ^scripts/__pycache__/* ^dbg/
+
+!compile-md = |> ^ compile %f^ ./scripts/html.sh %1f %1o |>  | ^dbg/
+
+# Optimize the size of the PNG images
+!minify-png = |> ^ minify %f^ optipng -o7 --strip all -quiet -out %1o %1f |> | ^dbg/
+
+# Compilers
+!compile-scss = |> ^ compile %f^ sass --load-path=.  %1f %1o |> | ^dbg/
+
+# Minifiers
+!minify-css = |> ^ minify %f^ cleancss -O1 --source-map -o %1o %1f |> | ^dbg/
+!minify-js = |> ^ minify %f^ uglifyjs --source-map --compress --mangle -o %1o -- %1f |> | ^dbg/
+
+
+!cp = |> ^ cp %f^ cp %f %o |>
+
+# Posts pipeline
+# --------------
+
+# (!extract-front) Extract the front matter (YAML) of each post and generate
+# a post without the front matter and a separated yaml file
+#
+# (!j2) Process each Jinja template Markdown file reading the YAML configuration
+# and generate the "final" Markdown file.
+#
+# (!compile-md) Compile each Markdown into a HTML
+{% for f in glob('posts/**/*.md') -%}
+: {{f}} |> !extract-front |> {{ f('out/posts/j2md/{:n.md, .md.yml}') }}
+
+: {{ f('out/posts/j2md/{:n.md, .md.yml}') }} |> !j2 |> {{ f('out/posts/md/{:b}') }}
+
+: {{ f('out/posts/md/{:b}') }} |> !compile-md |> {{ f('out/site/articles/{:D}.html') }}
+# ---
+{% endfor %}
+
+#
+# End of the Posts pipeline ------
+
+
+
+# Posts' PNG pipeline
+{% for f in glob('posts/**/*.png') -%}
+: {{f}} |> !minify-png |> {{f('out/site/img/{:f}', 'posts/')}}
+{% endfor %}
+#
+# End of the PNG pipeline ------
+
+
+
+# CSS pipeline
+# ------------
+
+# Compile SCSS to CSS
+: foreach z/css/*.scss |> !compile-scss |> out/z/css/%B.css out/z/css/%B.css.map
+
+# Minify CSS
+: foreach out/z/css/*.css |> !minify-css |> out/site/css/%B.min.css out/site/css/%B.min.css.map
+: foreach z/css/*.css |> !minify-css |> out/site/css/%B.min.css out/site/css/%B.min.css.map
+#
+# End of the CSS pipeline ------
+
+
+
+
+# Font pipeline
+{% for f in glob('z/fonts/**/*.woff') -%}
+: {{f}} |> !cp |> {{f('out/site/{:f}', 'z/')}}
+{% endfor %}
+#
+# End of the Font pipeline ------
+
+
+# JS pipeline
+# -----------
+#
+# Minify the JS files
+#
+# The JS files of the MathJax lib require that the minified files be
+# called as if they weren't minified. This is because MathJax loads
+# the files in background and it does not know that we changed their names
+{% for f in glob('z/js/**/*.js') -%}
+{% if "MathJax" in f %}
+: {{f}} |> !minify-js |> {{f('out/site/{:f.js, .js.map}', 'z/')}}
+{% else %}
+: {{f}} |> !minify-js |> {{f('out/site/{:f.min.js, .min.js.map}', 'z/')}}
+{% endif %}
+{% endfor %}
+#
+# End of the JS pipeline ------
+
+
+# TUP cheatsheet
+# ===============
+#
+# %f represents the input file name;
+# %o the output file name;
+# %B the basename of the input (no extension, no directory)
+# %g the matched glob of a foreach
+
+
+

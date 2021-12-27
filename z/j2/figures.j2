@@ -1,0 +1,28 @@
+
+{#
+    marginfig() macro will take the caller's content as the caption
+    of an image/figure to include.
+    Example:
+
+        {% call marginfig(path) %}
+        Foo bar
+        {% endcall %}
+
+    Note: the page.imghome variable must be set to the post's home for images
+    Given posts/foo/bar/a-post.md it should be set to /img/foo/bar/
+
+#}
+{% macro marginfig(src, max_width=None, cls='fullwidth', alt='', home=page.imghome) -%}
+{{ _figures__fig(src=src, caption=caller(), max_width=max_width,
+    cls=cls, alt=alt, kind='marginfig', home=home) }}
+{%- endmacro %}
+
+{% macro fullfig(src, max_width=None, cls='fullwidth', alt='', home=page.imghome) -%}
+{{ _figures__fig(src=src, caption=caller(), max_width=max_width,
+    cls=cls, alt=alt, kind='fullfig', home=home) }}
+{%- endmacro %}
+
+{% macro mainfig(src, max_width=None, cls='', alt='', home=page.imghome) -%}
+{{ _figures__fig(src=src, caption=caller(), max_width=max_width,
+    cls=cls, alt=alt, kind='mainfig', home=home) }}
+{%- endmacro %}
