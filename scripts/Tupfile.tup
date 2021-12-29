@@ -41,6 +41,7 @@ endif
 !minify-css = |> ^ minify %f^ cleancss -O1 --source-map -o %1o %1f |> | ^dbg/
 !minify-js = |> ^ minify %f^ uglifyjs --source-map --compress --mangle -o %1o -- %1f |> | ^dbg/
 
+!convert-font = |> ^ convert %f^ ./scripts/convert-font.py %1f %1o |> | ^dbg/
 
 !cp = |> ^ cp %f^ cp %f %o |>
 
@@ -68,9 +69,13 @@ endif
 
 
 
-# Posts' PNG pipeline
+# PNG pipeline
 {% for f in glob('posts/**/*.png') -%}
 : {{f}} |> !minify-png |> {{f('out/site/img/{:f}', 'posts/')}}
+{% endfor %}
+
+{% for f in glob('z/img/**/*.png') -%}
+: {{f}} |> !minify-png |> {{f('out/site/img/{:f}', 'z/img/')}}
 {% endfor %}
 #
 # End of the PNG pipeline ------
@@ -93,7 +98,22 @@ endif
 
 
 # Font pipeline
+# -------------
+#
+# Convert the given fonts (TTF / WOFF) in the latest font format
+# for the web: WOFF2.
+#
+# Input fonts of type WOFF2 are copied as they are.
+#
 {% for f in glob('z/fonts/**/*.woff') -%}
+: {{f}} |> !convert-font |> {{f('out/site/{:f.woff2}', 'z/')}}
+{% endfor %}
+
+{% for f in glob('z/fonts/**/*.ttf') -%}
+: {{f}} |> !convert-font |> {{f('out/site/{:f.woff2}', 'z/')}}
+{% endfor %}
+
+{% for f in glob('z/fonts/**/*.woff2') -%}
 : {{f}} |> !cp |> {{f('out/site/{:f}', 'z/')}}
 {% endfor %}
 #

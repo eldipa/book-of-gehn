@@ -17,5 +17,7 @@ fi
 
 mkdir -p "$(dirname $2)"
 pandoc \
+    -f markdown-tex_math_dollars-tex_math_single_backslash-tex_math_double_backslash \
+    -t html \
     -o "$2" \
     "$1"

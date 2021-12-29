@@ -7,14 +7,14 @@
   <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
   <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | e | truncate(160) }}{% else %}{{ site.description }}{% endif %}">
 
-  <link href='//fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
+  <link href='/css/load-lato-fonts.min.css' rel='stylesheet' type='text/css'>
 
   <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
       root: "/js/MathJax-2.7.7",
       extensions: ["tex2jax.js"],
       jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["$$","$$"],["\\(","\\)"]]},
+      tex2jax: {inlineMath: [["%%","%%"],["\\(","\\)"]]},
       TeX: {
         Macros: {
           {% if page.latex_macros %}
@@ -24,27 +24,27 @@
       }
     });
   </script>
-  <script src='{{ "/js/MathJax-2.7.7/MathJax.js" }}' async></script>
+  <script src='/js/MathJax-2.7.7/MathJax.js' async></script>
 
-  <script src="{{ "/js/jquery-3.6.0.min.js" }}"></script>
+  <script src="/js/jquery-3.6.0.min.js"></script>
 
-  <script src='{{ "/js/underscore-1.9.1.min.js" }}' ></script>
+  <script src='/js/underscore-1.9.1.min.js' ></script>
 
-  <script src='{{ "/js/d3-7.4.2.min.js" }}'></script>
+  <script src='/js/d3-7.4.2.min.js'></script>
 
-  <script src='{{ "/js/venn/venn-0.2.14.min.js" }}'></script>
-  <script src='{{ "/js/venn/helper.min.js" }}'></script>
+  <script src='/js/venn/venn-0.2.14.min.js'></script>
+  <script src='/js/venn/helper.min.js'></script>
 
-  <script src='{{ "/js/fix_syntax_highlight.min.js" }}'></script>
-  <link rel="stylesheet" type="text/css" href="{{ "/css/tufte.min.css" }}">
-  <link rel="stylesheet" type="text/css" href="{{ "/css/latex.min.css" }}">
+  <script src='/js/fix_syntax_highlight.min.js'></script>
+  <link rel="stylesheet" type="text/css" href="/css/tufte.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/latex.min.css">
 
   <link rel="canonical" href="{~ (site.url + page.url) | replace('index.html','') }}">
 
-  <link rel="stylesheet" type="text/css" href="{{ "/css/font-awesome-5.min.css" }}">
+  <link rel="stylesheet" type="text/css" href="/css/font-awesome-5.min.css">
 
-  <script src='{{ "/js/lunr-2.3.9.min.js" }}'></script>
-  <script src='{{ "/js/search_index.min.js" }}'></script>
-  <script src='{{ "/js/search.min.js" }}'></script>
+  <script src='/js/lunr-2.3.9.min.js'></script>
+  <script src='/js/search_index.min.js'></script>
+  <script src='/js/search.min.js'></script>
 </head>
 ```

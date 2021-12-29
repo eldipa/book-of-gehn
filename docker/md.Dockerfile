@@ -55,6 +55,7 @@ RUN pip3 install                                \
             panflute==2.1.3                     \
             pygments                            \
             python-frontmatter                  \
+            fonttools[woff]                     \
  && npm install -g sass                         \
  && npm install -g clean-css-cli                \
  && npm install -g uglify-js                    \
