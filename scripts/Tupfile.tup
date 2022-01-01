@@ -69,6 +69,18 @@ endif
 
 
 
+
+# Posts' assets pipeline
+# -----------------------
+{% for f in glob('posts/**/*.sh') -%}
+: {{f}} |> !cp|> {{ f('out/site/assets/{:f}', 'posts/') }}
+# ---
+{% endfor %}
+
+#
+# End of the Posts pipeline ------
+
+
 # PNG pipeline
 {% for f in glob('posts/**/*.png') -%}
 : {{f}} |> !minify-png |> {{f('out/site/img/{:f}', 'posts/')}}
