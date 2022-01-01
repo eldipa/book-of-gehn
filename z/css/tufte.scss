@@ -771,3 +771,8 @@ article .MathJax_Display {
     width: 55%;
     font-size: 1.4rem;
 }
+
+span.as-paragraph {
+    @extend p;
+    display: inline-block;
+}
