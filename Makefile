@@ -1,4 +1,3 @@
-.PHONY: Tupfile
 
 all: Tupfile
 	@tup
@@ -8,8 +7,9 @@ all: Tupfile
 #
 # With this we can make a Tupfile with dynamic rules just
 # playing with the template engine Jinja (j2)
-Tupfile: scripts/Tupfile.tup
-	@j2 --customize scripts/j2helpers.py $^ > $@
+Tupfile: scripts/j2helpers.py z/Tupfile.tup
+	@echo "Recreating Tupfile..."
+	@j2 --customize scripts/j2helpers.py z/Tupfile.tup > $@
 
 serve:
 	@cd out/site ; python3 -m http.server 4000
