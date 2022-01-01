@@ -12,4 +12,8 @@ Tupfile: scripts/j2helpers.py z/Tupfile.tup
 	@j2 --customize scripts/j2helpers.py z/Tupfile.tup > $@
 
 serve:
-	@cd out/site ; python3 -m http.server 4000
+	# Serve (locally) the site on port 4000 watching for requests
+	# to out/site/articles/**/*.html. If such request is received,
+	# the server will call 'make' before serving it triggering a
+	# recomputation of the site behind the scenes
+	@./scripts/server.py -c make -d out/site -t 'out/site/articles/**/*.html' 4000
