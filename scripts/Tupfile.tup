@@ -25,23 +25,23 @@ endif
 # file (like the rules that use the !j2 macro below).
 # To fix this, this macro adds %1f.yml in the order-only input file so Tup
 # can know that this Tup-rule *depends* on that file too besides the input %1f
-!j2 = |> ^ j2 %f^ j2 --customize scripts/j2helpers.py %1f %2f > %o |>  | ^scripts/__pycache__/* ^dbg/
+!j2 = |> ^ j2 %f^ j2 --customize scripts/j2helpers.py %1f %2f > %o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
-!extract-front = |> ^ front %f^ ./scripts/front.py %1f %1o %2o site.yaml |>  | ^scripts/__pycache__/* ^dbg/
+!extract-front = |> ^ front %f^ ./scripts/front.py %1f %1o %2o site.yaml |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
-!compile-md = |> ^ compile %f^ ./scripts/html.sh %1f %1o |>  | ^dbg/
+!compile-md = |> ^ compile %B^ ./scripts/html.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 # Optimize the size of the PNG images
-!minify-png = |> ^ minify %f^ optipng -o7 --strip all -quiet -out %1o %1f |> | ^dbg/
+!minify-png = |> ^ minify %f^ optipng -o7 --strip all -quiet -out %1o %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 # Compilers
-!compile-scss = |> ^ compile %f^ sass --load-path=.  %1f %1o |> | ^dbg/
+!compile-scss = |> ^ compile %f^ sass --load-path=.  %1f %1o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 # Minifiers
-!minify-css = |> ^ minify %f^ cleancss -O1 --source-map -o %1o %1f |> | ^dbg/
-!minify-js = |> ^ minify %f^ uglifyjs --source-map --compress --mangle -o %1o -- %1f |> | ^dbg/
+!minify-css = |> ^ minify %f^ cleancss -O1 --source-map -o %1o %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!minify-js = |> ^ minify %f^ uglifyjs --source-map --compress --mangle -o %1o -- %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
-!convert-font = |> ^ convert %f^ ./scripts/convert-font.py %1f %1o |> | ^dbg/
+!convert-font = |> ^ convert %f^ ./scripts/convert-font.py %1f %1o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 !cp = |> ^ cp %f^ cp %f %o |>
 
