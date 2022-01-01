@@ -8,21 +8,49 @@
         Foo bar
         {% endcall %}
 
+    Or like this, without a caption:
+
+        {{ marginfig(path) }}
+
     Note: the page.imghome variable must be set to the post's home for images
     Given posts/foo/bar/a-post.md it should be set to /img/foo/bar/
 
+    Note: the page.isindex variable must be set to indicate of the
+    current page is an index page or not.
+
 #}
-{% macro marginfig(src, max_width=None, cls='fullwidth', alt='', home=page.imghome) -%}
+{% macro marginfig(src, max_width=None, cls='fullwidth', alt='', home=page.imghome, indexonly=False) -%}
+{% if (indexonly and page.isindex) or not indexonly -%}
+{% if caller is defined -%}
 {{ _figures__fig(src=src, caption=caller(), max_width=max_width,
-    cls=cls, alt=alt, kind='marginfig', home=home) }}
+cls=cls, alt=alt, kind='marginfig', home=home) }}
+{% else %}
+{{ _figures__fig(src=src, caption='', max_width=max_width,
+cls=cls, alt=alt, kind='marginfig', home=home) }}
+{%- endif %}
+{%- endif %}
 {%- endmacro %}
 
-{% macro fullfig(src, max_width=None, cls='fullwidth', alt='', home=page.imghome) -%}
+{% macro fullfig(src, max_width=None, cls='fullwidth', alt='', home=page.imghome, indexonly=False) -%}
+{% if (indexonly and page.isindex) or not indexonly -%}
+{% if caller is defined -%}
 {{ _figures__fig(src=src, caption=caller(), max_width=max_width,
     cls=cls, alt=alt, kind='fullfig', home=home) }}
+{% else %}
+{{ _figures__fig(src=src, caption='', max_width=max_width,
+    cls=cls, alt=alt, kind='fullfig', home=home) }}
+{%- endif %}
+{%- endif %}
 {%- endmacro %}
 
-{% macro mainfig(src, max_width=None, cls='', alt='', home=page.imghome) -%}
+{% macro mainfig(src, max_width=None, cls='', alt='', home=page.imghome, indexonly=False) -%}
+{% if (indexonly and page.isindex) or not indexonly -%}
+{% if caller is defined -%}
 {{ _figures__fig(src=src, caption=caller(), max_width=max_width,
     cls=cls, alt=alt, kind='mainfig', home=home) }}
+{% else %}
+{{ _figures__fig(src=src, caption='', max_width=max_width,
+    cls=cls, alt=alt, kind='mainfig', home=home) }}
+{%- endif %}
+{%- endif %}
 {%- endmacro %}
