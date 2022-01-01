@@ -21,6 +21,15 @@ else:
 
 post['excerpt'] = excerpt
 
+
+# Append a token at the end of the content (HTML) to workaround a bug
+# in Pandoc that does not make the last paragraph of the content a real
+# HTML paragraph.
+# Appending a dummy HTML code fixes this
+
+content += '\n\n<!--eof-->'
+
+
 # Set the date of the post from the file and save it into
 # metadata
 y, m, d, _ = os.path.basename(src_filename).split('-', 3)
