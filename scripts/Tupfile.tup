@@ -56,11 +56,11 @@ endif
 #
 # (!compile-md) Compile each Markdown into a HTML
 {% for f in glob('posts/**/*.md') -%}
-: {{f}} |> !extract-front |> {{ f('out/posts/j2md/{:n.md, .md.yml}') }}
+: {{f}} |> !extract-front |> {{ f('out/posts/front/{:n.md, .yml}') }}
 
-: {{ f('out/posts/j2md/{:n.md, .md.yml}') }} |> !j2 |> {{ f('out/posts/md/{:b}') }}
+: {{ f('out/posts/front/{:n.md, .yml}') }} |> !j2 |> {{ f('out/posts/md/{:b}') }}
 
-: {{ f('out/posts/md/{:b}') }} |> !compile-md |> {{ f('out/site/articles/{:D}.html') }}
+: {{ f('out/posts/md/{:b}') }} {{ f('out/posts/front/{:n.yml}') }} |> !compile-md |> {{ f('out/site/articles/{:D}.html') }}
 # ---
 {% endfor %}
 
