@@ -36,10 +36,17 @@ y, m, d, _ = os.path.basename(src_filename).split('-', 3)
 post['date'] = '-'.join((y, m, d))
 
 
-imgs_home = '/img'
+# Set the home of the image and assets for this post
 post_home = os.path.dirname(os.path.relpath(src_filename, 'posts'))
+for name, home in zip(('imghome', 'assestshome'), ('/img', '/assets')):
+    post[name] = os.path.join(home, post_home)
 
-post['imghome'] = os.path.join(imgs_home, post_home)
+
+# Default for 'isindex'
+if 'isindex' not in post:
+    post['isindex'] = False
+
+
 
 with open(site_filename, 'rt') as f:
     site = yaml.safe_load(f.read())
