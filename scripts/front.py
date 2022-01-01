@@ -83,6 +83,7 @@ setpagevars = '{% set page = namespace(' + metadata_str + ') %}\n'
 
 imports = '''
 {% from 'z/j2/figures.j2' import marginfig, fullfig, mainfig with context %}
+{% from 'z/j2/notes.j2' import marginnotes, spoileralert with context %}
 '''
 
 # This is a shortcut. If the post has a 'layout' field in its metadata

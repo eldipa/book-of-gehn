@@ -140,7 +140,7 @@ class Path(str):
 
         return p.fmt(fmt)
 
-def ensure_html(s):
+def ensure_html_block(s):
     # Note: leave the newlines before the begin of and after
     # the end of the fenced-code to ensure that they are properly
     # recognized by Pandoc
@@ -149,6 +149,21 @@ def ensure_html(s):
 %s
 ```
 ''' % s
+
+def post_process_by_hook(s, **opts):
+    ''' Create a CodeBlock with a special class 'post_process_by_hook'
+        and with zero or more options (opts).
+
+        This CodeBlock will be post-processed by a Pandoc Hook (see
+        Panflute) to do post processing like converting Markdown text
+        into HTML.
+    '''
+    opt_str = ' '.join(f'{k}={v}' for k, v in opts.items())
+    return '''
+```{.post_process_by_hook %s}
+%s
+```
+''' % (opt_str, s)
 
 def url_from(src, home):
     if any(src.startswith(x) for x in ('http://', 'https://', '//')):
@@ -186,12 +201,6 @@ def _figures__fig(ctx, src, caption, max_width, cls, alt, kind, home):
     span_cls = 'marginnote'
     img_cls = fig_cls = cls
 
-    # optional caption with a new-line
-    if caption:
-        br_caption = f'   <br>{caption}'
-    else:
-        br_caption = ''
-
     # optional style
     if max_width is not None:
         style = f'style="max-width: {max_width}"'
@@ -201,23 +210,53 @@ def _figures__fig(ctx, src, caption, max_width, cls, alt, kind, home):
     id = base64.b64encode((src + caption + kind).encode('utf8')).decode('utf8')
 
     if kind == 'marginfig':
-        return ensure_html(
-f'''<label for='{id}' class='{lbl_cls}'>&#8853;</label>
+        return ensure_html_block(
+f'''<p><label for='{id}' class='{lbl_cls}'>&#8853;</label>
 <input type='checkbox' id='{id}' class='{input_cls}'/>
 <span class='{span_cls}'>
-<img {style} class='{img_cls}' alt='{alt}' src='{src}' />
-{br_caption}
-</span>''')
+<img {style} class='{img_cls}' alt='{alt}' src='{src}' />''') + \
+post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
+ensure_html_block('''</span></p>''')
 
     elif kind == 'fullfig':
-        return ensure_html(
-f'''<figure class='{fig_cls}'><img {style} class='{img_cls}' alt='{alt}' src='{src}' />
-<figcaption>{caption}</figcaption></figure>''')
+        return ensure_html_block(
+f'''<p><figure class='{fig_cls}'><img {style} class='{img_cls}' alt='{alt}' src='{src}' />
+<figcaption>''') +\
+post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
+ensure_html_block('''</figcaption></figure></p>''')
 
     elif kind == 'mainfig':
-        return ensure_html(
-f'''<figure><figcaption><span markdown='1'>{caption}</span></figcaption>
-<img {style} class='{img_cls}' alt='{alt}' src='{src}' /></figure>''')
+        return ensure_html_block(
+f'''<p><figure><figcaption><span markdown='1'>''') +\
+post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
+ensure_html_block('''</span></figcaption>
+<img {style} class='{img_cls}' alt='{alt}' src='{src}' /></figure></p>''')
+
+
+@jinja2.contextfunction
+def _notes__notes(ctx, caption, kind):
+    wrapper_cls = 'as-paragraph'
+    lbl_cls = 'margin-toggle'
+    input_cls = 'margin-toggle'
+    span_cls = 'marginnote'
+
+    id = base64.b64encode((caption + kind).encode('utf8')).decode('utf8')
+
+    if kind == 'marginnotes':
+        return ensure_html_block(
+f'''<p><label for='{id}' class='{lbl_cls}'> &#8853;</label>
+<input type='checkbox' id='{id}' class='{input_cls}'/>
+<span class='{span_cls}'>''') + \
+        post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
+        ensure_html_block('''</span></p>''')
+
+
+@jinja2.contextfunction
+def asset(ctx, src):
+    home = ctx.get('assestshome')
+    assert home
+    return url_from(src, home=home)
+
 
 # DO NOT RENAME THIS FUNCTION (required by j2cli)
 def j2_environment_params():
@@ -229,9 +268,11 @@ def j2_environment_params():
 def j2_environment(env):
     # Public functions
     env.globals['glob'] = globfn
+    env.globals['asset'] = asset
 
     # Private functions
     env.globals['_figures__fig'] = _figures__fig
+    env.globals['_notes__notes'] = _notes__notes
 
 
 # DO NOT RENAME THIS FUNCTION (required by j2cli)
