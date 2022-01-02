@@ -1,4 +1,5 @@
 ---
+layout: post
 title: Isolate a wifi card and keep your traffic out of the Big Brother sight
 tags: wifi container hacking
 ---

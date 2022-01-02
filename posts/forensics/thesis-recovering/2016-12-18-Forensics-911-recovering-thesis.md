@@ -1,4 +1,5 @@
 ---
+layout: post
 title: Forensics 911 - recovering a thesis of one year work
 tags: forensics
 ---
