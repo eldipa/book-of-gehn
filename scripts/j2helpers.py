@@ -35,6 +35,18 @@ def date(env, val, outfmt, infmt='%Y-%m-%d'):
     d = datetime.strptime(val, infmt)
     return d.strftime(outfmt)
 
+@jinja2.pass_context
+def j2(ctx, val, altctx=None):
+    ''' Take the given string and process it with Jinja2
+        as any other template using the given "alternative" context.
+
+        If no alternative context is passed, use the current
+        context to populate any variable in the template.
+    '''
+    if altctx is None:
+        altctx = ctx
+
+    return ctx.environment.from_string(val).render(altctx)
 
 class Path(str):
     def __new__(cls, *args, **kw):
@@ -270,7 +282,7 @@ def j2_environment(env):
     env.globals['glob'] = globfn
     env.globals['asset'] = asset
 
-    # Private functions
+    # Private functions called from J2 macros
     env.globals['_figures__fig'] = _figures__fig
     env.globals['_notes__notes'] = _notes__notes
 
@@ -278,7 +290,8 @@ def j2_environment(env):
 # DO NOT RENAME THIS FUNCTION (required by j2cli)
 def extra_filters():
     return dict(
-            date=date
+            date=date,
+            j2=j2
             )
 
 # DO NOT RENAME THIS FUNCTION (required by j2cli)
