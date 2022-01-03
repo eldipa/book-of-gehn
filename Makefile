@@ -16,4 +16,4 @@ serve:
 	# to out/site/articles/**/*.html. If such request is received,
 	# the server will call 'make' before serving it triggering a
 	# recomputation of the site behind the scenes
-	@./scripts/server.py -c make -d out/site -t 'out/site/articles/**/*.html' 4000
+	@./scripts/server.py -c make -d out/site -t 'out/site/articles/**/*.html' -t 'out/site/pages/**/*.html'  -t 'out/site/pages/'  -t 'out/site/' 4000

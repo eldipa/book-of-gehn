@@ -1,6 +1,5 @@
 ```{=html}
 <header>
-	{% if site.header == true %}
                 <hgroup class="header-group">
 		<h1 class="header-title"><a href="{{site.baseurl}}">{{ site.title }}</a></h1>
                 </hgroup>
@@ -16,7 +15,6 @@
 		{% else %}
 			<h2 class="header-subtitle">{{ site.subtitle }}</h2>
 		{% endif %}
-	{% endif %}
 
     {#
     add a link in the header for each Jekyll page only if it is not

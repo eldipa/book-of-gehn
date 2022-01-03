@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
-  <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | e | truncate(160) }}{% else %}{{ site.description }}{% endif %}">
+  <meta name="description" content="{% if page.raw_excerpt %}{{ page.raw_excerpt | e | truncate(600) }}{% else %}{{ site.description }}{% endif %}">
 
   <link href='/css/load-lato-fonts.min.css' rel='stylesheet' type='text/css'>
 

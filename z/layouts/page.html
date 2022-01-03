@@ -1,0 +1,13 @@
+<html>
+  {% include "./z/incl/head.html" %}
+  <body>
+    {% include "./z/incl/header.html" %}
+    <article class="group">
+        <h1>{{ page.title }}</h1>
+{% block content required %}
+{% endblock %}
+    </article>
+    {% include "./z/incl/print-footer.html" %}
+    {% include "./z/incl/footer.html" %}
+  </body>
+</html>

@@ -1,6 +1,6 @@
 
 {% macro marginnotes(indexonly=False) -%}
-{% if (indexonly and page.isindex) or not indexonly -%}
+{% if (indexonly and isexcerpt) or not indexonly -%}
 {{ _notes__notes(caption=caller(), kind='marginnotes') }}
 {%- endif %}
 {%- endmacro %}

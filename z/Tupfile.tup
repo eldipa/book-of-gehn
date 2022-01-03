@@ -27,15 +27,16 @@ endif
 # can know that this Tup-rule *depends* on that file too besides the input %1f
 !j2 = |> ^ j2 %f^ j2 --customize scripts/j2helpers.py %1f %2f > %o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
-!extract-front = |> ^ front %f^ ./scripts/front.py %1f %1o %2o site.yaml |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!extract-front = |> ^ front %f^ ./scripts/front.py %1f %1o %2o %3o site.yaml |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
-!compile-md = |> ^ compile %B^ ./scripts/html.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 # Optimize the size of the PNG images
 !minify-png = |> ^ minify %f^ optipng -o7 --strip all -quiet -out %1o %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 # Compilers
 !compile-scss = |> ^ compile %f^ sass --load-path=.  %1f %1o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!compile-md = |> ^ compile %B^ ./scripts/html.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!combine-ymls = |> ^ combine %B^ ./scripts/combine-ymls.py %1o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 # Minifiers
 !minify-css = |> ^ minify %f^ cleancss -O1 --source-map -o %1o %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
@@ -49,16 +50,17 @@ endif
 # --------------
 
 # (!extract-front) Extract the front matter (YAML) of each post and generate
-# a post without the front matter and a separated yaml file
+# a post without the front matter, the excerpt of it and a separated yaml file
 #
 # (!j2) Process each Jinja template Markdown file reading the YAML configuration
-# and generate the "final" Markdown file.
+# and generate the "final" Markdown file. The same goes for the excerpt.
 #
 # (!compile-md) Compile each Markdown into a HTML
 {% for f in glob('posts/**/*.md') -%}
-: {{f}} |> !extract-front |> {{ f('out/posts/front/{:n.md, .yml}') }}
+: {{f}} |> !extract-front |> {{ f('out/posts/front/{:n.md, .excerpt.md, .yml}') }}
 
 : {{ f('out/posts/front/{:n.md, .yml}') }} |> !j2 |> {{ f('out/posts/md/{:b}') }}
+: {{ f('out/posts/front/{:n.excerpt.md, .yml}') }} |> !j2 |> {{ f('out/posts/md/{:n.excerpt.md}') }}
 
 : {{ f('out/posts/md/{:b}') }} {{ f('out/posts/front/{:n.yml}') }} |> !compile-md |> {{ f('out/site/articles/{:D}.html') }}
 # ---
@@ -68,6 +70,25 @@ endif
 # End of the Posts pipeline ------
 
 
+# Index pipeline
+# --------------
+#  - extract the front of each page (and create pages' .yml)
+#  - take each page's .yml and all the posts' .yml and create a single "combined" .yml
+#  - run j2 over each page with the "combined" .yml and obtain a .md
+#    make this step dependant of the excerpt files created by the Post pipeline
+#    because it is likely that the index page will include some of them.
+#  - compile the markdown and obtain the .html
+{% for f in glob('pages/**/*.md') -%}
+: {{f}} |> !extract-front |> {{ f('out/pages/front/{:n.md, .excerpt.md, .yml}') }}
+
+: {{ f('out/pages/front/{:n.yml}') }} {{ glob('out/posts/front/*.yml') | join(' ') }} |> !combine-ymls |> {{ f('out/pages/front/{:n.comb.yml}') }}
+
+: {{ f('out/pages/front/{:n.md, .comb.yml}') }} | {{ glob('out/posts/front/*.excerpt.md') | join(' ') }}  |> !j2 |> {{ f('out/pages/md/{:b}') }}
+
+: {{ f('out/pages/md/{:b}') }} {{ f('out/pages/front/{:n.comb.yml}') }} |> !compile-md |> {{ f('out/site/pages/{:n}.html') }}
+# ---
+{% endfor %}
+# ---
 
 
 # Posts' assets pipeline
