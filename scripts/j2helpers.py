@@ -9,17 +9,36 @@ from datetime import datetime
 from jinja2.filters import environmentfilter
 
 @jinja2.contextfunction
-def globfn(ctx, pattern):
+def globfn(ctx, pattern, rel=None):
     ''' Allow the listing of some files in the filesystem.
 
         {% for f in glob('foo/**/*.bar') %}
             {{ f }}
         {% endfor %}
 
+        -> foo/2.bar
+        -> foo/zaz/1.bar
+
         Note: glob() scans the filesystem by real, it does not
         work on "non-existing-yet-files" like Tup uses.
+
+        If rel is not None, all the paths will be relative to
+        the given rel path.
+
+        {% for f in glob('foo/**/*.bar', rel='foo/') %}
+            {{ f }}
+        {% endfor %}
+
+        -> 2.bar
+        -> zaz/1.bar
     '''
-    return list(sorted(Path(f) for f in glob.glob(pattern, recursive=True)))
+    listing = glob.glob(pattern, recursive=True)
+    if rel is None:
+        paths = (Path(f) for f in listing)
+    else:
+        paths = (Path(f).rel(rel) for f in listing)
+
+    return list(sorted(paths))
 
 @environmentfilter
 def date(env, val, outfmt, infmt='%Y-%m-%d'):
