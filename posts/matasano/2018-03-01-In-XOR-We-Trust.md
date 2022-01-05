@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "In XOR we trust"
-tags: cryptography matasano cryptonita repeating key
+tags: [cryptography, matasano, cryptonita, repeating key]
 inline_default_language: python
 ---
 
