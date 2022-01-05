@@ -56,6 +56,7 @@ RUN pip3 install                                \
             pygments                            \
             python-frontmatter                  \
             fonttools[woff]                     \
+            feedgen                             \
  && npm install -g sass                         \
  && npm install -g clean-css-cli                \
  && npm install -g uglify-js                    \

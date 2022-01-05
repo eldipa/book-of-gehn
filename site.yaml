@@ -1,9 +1,12 @@
 title: The Book of Gehn
-description: ""
+description: "blog"
 baseurl: "/"
 subtitle: ""
 author: Martin Di Paola
 email: "martinp.dipaola@gmail.com"
+url: "https://book-of-gehn.github.io"
+name_atom: "atom.xml"
+name_rss: "rss.xml"
 
 # These are the metadata that each post/page will have by default
 # More metadata, optionally overriding this one, can be added per

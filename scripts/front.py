@@ -7,7 +7,7 @@ two files, one with the content and the other with the metadata.
 import frontmatter
 import sys, os, yaml
 
-src_filename, content_filename, excerpt_filename, yaml_filename, site_filename = sys.argv[1:]
+src_filename, withlayout_filename, withoutlayout_filename, excerpt_filename, yaml_filename, site_filename = sys.argv[1:]
 
 # Load site's configuration
 with open(site_filename, 'rt') as f:
@@ -37,13 +37,15 @@ if excerpt_end > 0:
 else:
     excerpt = ''
 
-page['excerpt_file'] = excerpt_filename
 page['raw_excerpt'] = excerpt
 
 
+# Define the files created from this page
+#page['excerpt_j2_file'] = excerpt_filename
+#page['content_html_file'] = withlayout_filename
+
 # Read source file content (without the metadata)
 content = page.content
-
 
 # Post pages are special.
 ispost = page['ispost']
@@ -53,8 +55,12 @@ ispost = page['ispost']
 #
 # This is only for post pages
 if ispost:
-    y, m, d, _ = os.path.basename(src_filename).split('-', 3)
+    y, m, d, n = os.path.basename(src_filename).split('-', 3)
     page['date'] = '-'.join((y, m, d))
+    page['url'] = "/".join((site['url'], y, m, d, os.path.splitext(n)[0] + '.html'))
+else:
+    n = src_filename
+    page['url'] = "/".join((site['url'], os.path.splitext(n)[0]  + '.html'))
 
 # Set the home of the image and assets for this page
 # This will be the same folder structure that the page has
@@ -98,6 +104,9 @@ imports = '''
 {% from 'z/j2/notes.j2' import marginnotes, spoileralert with context %}
 '''
 
+content_without_layout = setpagevars + setsitevars + setexcerptvar + imports + content
+
+
 # If the page has a 'layout' field in its metadata
 # assume that it is the name of a template from which the page wants
 # to extend.
@@ -121,13 +130,15 @@ if 'layout' in page:
     block_begin = '{% block content %}\n'
     block_end = '\n{% endblock content %}\n'
 
-    content = extends + setpagevars + setsitevars + setexcerptvar + imports + block_begin + content + block_end
+    content_with_layout = extends + setpagevars + setsitevars + setexcerptvar + imports + block_begin + content + block_end
 else:
-    content = setpagevars + setsitevars + setexcerptvar + imports + content
+    content_with_layout = content_without_layout
 
 # Finally, write down the page content (without the metadata)
-with open(content_filename, 'wt') as f:
-    f.write(content)
+with open(withlayout_filename, 'wt') as f:
+    f.write(content_with_layout)
+with open(withoutlayout_filename, 'wt') as f:
+    f.write(content_without_layout)
 
 
 # Like the page content, add the variables/imports to the excerpt

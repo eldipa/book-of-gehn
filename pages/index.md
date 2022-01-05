@@ -9,7 +9,7 @@ ispost: false
       <a href="{~ post['url'] }}"><h2 class="larger">{{ post['title'] }}</h2></a>
       <br><span class="smaller">{{ post['date'] | date("%B %-d, %Y") }}</span>  <br/>
       <div>
-{% include post['excerpt_file'] %}
+{% include post['refs']['excerpt-j2'] %}
 </div>
    </span>
 {% endfor %}
