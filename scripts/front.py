@@ -18,7 +18,7 @@ with open(src_filename, 'rt') as f:
     page = frontmatter.loads(f.read())
 
 
-# Add any default for the page from the site config if the given
+# Add any default to the page from the site config if the given
 # page does not have a value for it
 for k, v in site.get('page_defaults', {}).items():
     if k not in page:
@@ -37,12 +37,9 @@ if excerpt_end > 0:
 else:
     excerpt = ''
 
+# Save the unprocessed raw excerpt
 page['raw_excerpt'] = excerpt
 
-
-# Define the files created from this page
-#page['excerpt_j2_file'] = excerpt_filename
-#page['content_html_file'] = withlayout_filename
 
 # Read source file content (without the metadata)
 content = page.content
@@ -50,17 +47,25 @@ content = page.content
 # Post pages are special.
 ispost = page['ispost']
 
-# Set the date of the page from the file and save it into
-# metadata.
+# Set the page URL and the date and save it into its metadata.
 #
-# This is only for post pages
+# The URL is different for Posts and Pages and the Pages
+# don't have a date to store.
 if ispost:
+    # Given
+    #   posts/forensics/thesis-recovering/2016-12-18-Forensics-911-recovering-thesis.md
+    # the date will be 2016-12-18
+    # and the URL will be /<site-url>/articles/2016/12/18/Forensics-911-recovering-thesis.html
     y, m, d, n = os.path.basename(src_filename).split('-', 3)
     page['date'] = '-'.join((y, m, d))
-    page['url'] = "/".join((site['url'], y, m, d, os.path.splitext(n)[0] + '.html'))
+    page['url'] = "/".join((site['url'], 'articles', y, m, d, os.path.splitext(n)[0] + '.html'))
 else:
+    # Given
+    #   pages/index.md
+    # the URL will be /<site-url>/index.html
     n = src_filename
     page['url'] = "/".join((site['url'], os.path.splitext(n)[0]  + '.html'))
+
 
 # Set the home of the image and assets for this page
 # This will be the same folder structure that the page has
@@ -75,6 +80,7 @@ for name, home in zip(('imghome', 'assestshome'), ('/img', '/assets')):
 
 
 # Load all the site config into the template
+# under the 'site' variable
 tmp = []
 for k, v in site.items():
     tmp.append(f'{k} = {repr(v)}')
@@ -104,6 +110,7 @@ imports = '''
 {% from 'z/j2/notes.j2' import marginnotes, spoileralert with context %}
 '''
 
+# This is the page content with the J2 variables and imports added
 content_without_layout = setpagevars + setsitevars + setexcerptvar + imports + content
 
 

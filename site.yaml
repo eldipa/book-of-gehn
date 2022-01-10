@@ -4,7 +4,7 @@ baseurl: "/"
 subtitle: ""
 author: Martin Di Paola
 email: "martinp.dipaola@gmail.com"
-url: "https://book-of-gehn.github.io"
+url: "http://127.0.0.1:4000"
 name_atom: "atom.xml"
 name_rss: "rss.xml"
 

@@ -55,10 +55,10 @@ endif
 {% for f in glob('posts/**/*.md') -%}
 
 {# (!extract-front) Extract the front matter (YAML) of each post and generate:
-   - the post's content with a layout set
-   - the post's content without a layout set
-   - the post's excerpt
-   - the front matter metadata in a yml file #}
+   - the post's content with a layout set (.md)
+   - the post's content without a layout set (.no-layout.md)
+   - the post's excerpt (.excerpt.md)
+   - the front matter metadata in a yml file (.yml) #}
 : {{f}} |> !extract-front |> {{ f('out/posts/front/{:n.md, .no-layout.md, .excerpt.md, .yml}') }}
 
 
@@ -71,7 +71,9 @@ endif
 
 
 {# (!compile-md) Compile each Markdown into a HTML
-   using the yml to customize it further. #}
+   using the yml to customize it further.
+   This goes for the post with and without the layout but it does not go
+   for the excerpt. #}
 : {{ f('out/posts/md/{:b}') }} {{ f('out/posts/front/{:n.yml}') }} \
     |> !compile-md                                                 \
     |> {{ f('out/site/articles/{:D}.html') }}
@@ -88,7 +90,7 @@ endif
         excerpt-j2 {{ f('out/posts/front/{:n.excerpt.md}') }} \
         content-html {{ f('out/posts/html/{:n.html}') }}       \
     |> {{ f('out/posts/meta/{:n.yml}') }}
-# ---
+# ------------------------
 {% endfor %}
 
 #
@@ -96,38 +98,43 @@ endif
 
 # Pages pipeline
 # --------------
-#  - extract the front of each page (and create pages' .yml)
-#  - take each page's .yml and all the posts' .yml and create a single "combined" .yml
-#  - run j2 over each page with the "combined" .yml and obtain a .md
-#    make this step dependant of the excerpt files created by the Post pipeline
-#    because it is likely that the index page will include some of them.
-#  - compile the markdown and obtain the .html
 {% for f in glob('pages/**/*.md', rel='pages/') -%}
+{#
+    Like in the Posts pipepline, extract the front matter of the Pages.
+    Note: the .no-layout.md and .excerpt.md of a Page are not used. #}
 : {{ f('pages/{:f}') }}                                     \
     |> !extract-front                                       \
     |> {{ f('out/pages/front/{:f.md, .no-layout.md, .excerpt.md, .yml}') }}
 
+{#  Take each page's .yml and all the posts' .yml and create
+    a single "combined" .yml so the page can refer not only its private
+    metadata but also the posts' metadata as well #}
 : {{ f('out/pages/front/{:f.yml}') }} {{ glob('out/posts/meta/*.yml') | join(' ') }}    \
     |> !combine-ymls                                        \
     |> {{ f('out/pages/front/{:f.comb.yml}') }}
 
+{#  Run j2 over each page with the "combined" .yml and obtain a .md
+    Make this step dependant of the excerpt files created by the Post pipeline
+    because it is likely that the index page will include some of them. #}
 : {{ f('out/pages/front/{:f.md, .comb.yml}') }} | {{ glob('out/posts/front/*.excerpt.md') | join(' ') }}    \
     |> !j2                                                  \
     |> {{ f('out/pages/md/{:f}') }}
 
+{#  Compile the markdown and obtain the .html
+    Notice how we compile only the .md (.no-layout and .excerpt are ignored #}
 : {{ f('out/pages/md/{:f}') }} {{ f('out/pages/front/{:f.comb.yml}') }}     \
     |> !compile-md                                          \
     |> {{ f('out/site/{:f.html}') }}
-# ---
+# ------------------------
 {% endfor %}
-# ---
+#
+# End of the Page pipeline ------
 
 
 # Posts' assets pipeline
 # -----------------------
 {% for f in glob('posts/**/*.sh') -%}
 : {{f}} |> !cp|> {{ f('out/site/assets/{:f}', 'posts/') }}
-# ---
 {% endfor %}
 
 #
