@@ -37,6 +37,7 @@ endif
 !compile-scss = |> ^ compile %f^ sass --load-path=.  %1f %1o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !compile-md = |> ^ compile %B^ ./scripts/html.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !combine-ymls = |> ^ combine %B^ ./scripts/combine-ymls.py %1o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!compile-search = |> ^ compile search set %o ^ node ./scripts/build_search_index.js %f > %o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !make-feed = |> ^ feed %B^ ./scripts/make-feed.py %1o %2o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 # Minifiers
@@ -46,6 +47,7 @@ endif
 !add-refs = |> ^ ref %B^ ./scripts/add-refs.py %f %o  |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 !convert-font = |> ^ convert %f^ ./scripts/convert-font.py %1f %1o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+
 
 !cp = |> ^ cp %f^ cp %f %o |>
 
@@ -148,6 +150,12 @@ endif
     |> !make-feed                                               \
     |> out/site/rss.xml out/site/atom.xml
 
+
+# Search data generation
+# ----------------------
+: {{ glob('posts/**/*.md') | join(' ') }}                   \
+    |> !compile-search                                      \
+    |> out/site/js/search_index.js
 
 # PNG pipeline
 {% for f in glob('posts/**/*.png') -%}
