@@ -1,0 +1,126 @@
+---
+layout: post
+title: "Detecting Penguins"
+tags: [cryptography, matasano, cryptonita, ECB, electronic code block]
+inline_default_language: python
+---
+
+
+{% maincolumn 'assets/matasano/tux.png' 'The ECB encrypted image on the right
+and its plaintext original version on the left. Image taken from
+[wikipedia](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation).' %}
+
+{{ spoileralert() }}
+Can you see the penguin?
+
+<!--more-->
+
+## Warming up
+
+The following ciphertext was encrypted with AES in ECB mode (Electronic Code
+Book) with the given key.
+
+In ECB each plaintext block is encrypted using the same key.
+
+
+{% maincolumn '<img style="max-width:60%;" alt="ECB Enc" src="/assets/matasano/ecb-enc.png">' '' %}
+
+Decrypting is a piece of cake; this is just to get practice about
+[AES in ECB mode](https://cryptopals.com/sets/1/challenges/7)
+
+```python
+>>> from cryptonita import B, load_bytes     # byexample: +timeout=10
+
+>>> ciphertext = B(open('./assets/matasano/7.txt'), encoding=64)
+>>> blocks = ciphertext.nblocks(16)
+
+>>> key = B('YELLOW SUBMARINE')
+
+>>> from Crypto.Cipher import AES
+>>> plaintext = B.join(AES.new(key, AES.MODE_ECB).decrypt(b) for b in blocks)
+
+>>> print(plaintext)
+b"I'm back and I'm ringin' the bell<...>Play that funky music \n\x04\x04\x04\x04"
+```
+
+{% maincolumn '<img style="max-width:60%;" alt="ECB Dec" src="/assets/matasano/ecb-dec.png">'
+'<br />Note how to encryption/decryption of one block don&apos;t depend of any other: this allows the encryption/decryption to be at random places and in parallel.' %}
+
+## Detecting Penguins
+
+If two plaintext *blocks* are the same, ECB
+will encrypt them to the *same* ciphertext block.
+
+[Detecting AES in ECB mode](https://cryptopals.com/sets/1/challenges/8)
+from a pool of random strings is therefore trivial: if the plaintext has two or
+more equal blocks, the ciphertext will have the same blocks repeated, something
+unlikely for a truly random string.
+
+We can use the same technique done in
+[the previous post](/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html)
+for detecting coincidences.
+
+```python
+>>> ciphertexts = list(load_bytes('./assets/matasano/8.txt', encoding=16))
+
+>>> from cryptonita.scoring import icoincidences
+>>> scores = [icoincidences(c) for c in ciphertexts]
+
+>>> scores_and_indexes = [(s, i) for i, s in enumerate(scores)]
+>>> scores_and_indexes.sort()
+>>> scores_and_indexes[-3:] # higher values, less random
+[(0.00526729<...>, 92),
+ (0.00526729<...>, 173),
+ (0.01305031<...>, 132)]
+
+>>> methods = {}
+>>> methods['IC - Byte sequence'] = scores
+```
+
+Instead of working at the byte level, we can work with blocks:
+a coincidence of two or more blocks is much less likely to be random
+than a coincidence of two or more bytes:
+
+```python
+>>> scores = [icoincidences(c.nblocks(16)) for c in ciphertexts]
+
+>>> scores_and_indexes = [(s, i) for i, s in enumerate(scores)]
+>>> scores_and_indexes.sort()
+>>> scores_and_indexes[-1:] # higher values, less random
+[(0.133333333<...>, 132)]
+
+>>> methods['IC - Nblocks sequence'] = scores
+```
+
+{% fullwidth 'assets/matasano/score_pinguins.png' 'Scores by methods. For the Nblocks method, the size of the block is of 16 bytes.' %}
+
+<br />
+
+<!--
+>>> import sys
+>>> sys.path.append("./assets/plotting")
+
+>>> from plotting import plt, show                      # byexample: +timeout=10
+>>> import pandas as pd                                 # byexample: +timeout=10
+
+>>> methods = pd.DataFrame(methods)
+
+>>> def min_max_normalizer(c):
+...     return (c - c.min()) / (c.max() - c.min())
+
+>>> methods = methods.apply(min_max_normalizer, axis=0)
+
+>>> with show(save='./assets/matasano/score_pinguins.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
+...     axes = methods.plot(style='o', subplots=True, layout=(2, 1))
+...
+...     _ = [ax.vlines(132, 0, 1, linestyles='dashed') for ax in axes.flat]
+-->
+
+### Broken?
+
+Well, distinguishing  a encryption from a random string is enough to considere
+a cipher broken, but trying to get the plaintext from it is another
+level.
+
+The 132th plaintext  will still be a secret, for now.
+
