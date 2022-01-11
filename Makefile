@@ -1,6 +1,9 @@
+# Pass this environment variable to compile (tup) only a subset
+# of the targets. Leave it undefined to compile everything.
+PAGETARGET ?=
 
 all: Tupfile
-	@tup
+	tup ${PAGETARGET}
 
 # List all the directories in posts/ and drafts/ folders and
 # create a Tupfile with the rules to build the blog site

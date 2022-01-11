@@ -46,8 +46,16 @@ class ReactiveHTTPRequestHandler(SimpleHTTPRequestHandler):
 
     def may_recompile_or_fail(self):
         if self.should_recompile():
-            print("Recompiling")
-            ret = subprocess.call(self.cmd, shell=True)
+            path = self.translate_path(self.path)
+            env = dict(os.environ)
+
+            if os.path.splitext(path)[1] == '.html':
+                env['PAGETARGET'] = path
+                print(f"Recompiling {path}")
+            else:
+                print(f"Recompiling <all>")
+
+            ret = subprocess.call(self.cmd, shell=True, env=env)
             if ret != 0:
                 self.send_error(HTTPStatus.IM_A_TEAPOT, "Recompilation failed")
                 return False
