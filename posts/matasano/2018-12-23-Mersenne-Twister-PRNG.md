@@ -89,11 +89,12 @@ True
 
 ## Cloning
 
-{% marginnote
-'Formally, there is not such efficient algorithm that allow an attack
+{% call marginnotes() %}
+Formally, there is not such efficient algorithm that allow an attack
 to distinguish even with a small probability for large but finite
 sequences. Eventually with a *really large* sequences the attacker may
-break it.' %}
+break it.
+{% endcall %}
 
 A property that all PRNG cryptographically secure must hold is that
 even if the attacker knows the partial output of the PRNG he cannot distinguish
@@ -120,11 +121,12 @@ True
 The fundamental problem of the MT19937 is that part of the
 output generation is a *reversible* operation.
 
-{% marginnote
-'And this is how we could make the MT19937 a little harder:
+{% call marginnotes() %}
+And this is how we could make the MT19937 a little harder:
 make the operation non-invertible *and* making each output
 byte a function based on the whole secret state adding more
-entropy and shuffling into the mix.' %}
+entropy and shuffling into the mix.
+{% endcall %}
 
 And because each output byte has a dependency with one and
 just one single secret byte, from that output byte an attacker
@@ -169,9 +171,9 @@ an unknown position:
 8
 ```
 
-{% marginnote
-'[Create the MT19937 stream cipher and break it](https://cryptopals.com/sets/3/challenges/24)'
-%}
+{% call marginnotes() %}
+[Create the MT19937 stream cipher and break it](https://cryptopals.com/sets/3/challenges/24)
+{% endcall %}
 
 Because the cipher does not use a *random* secret key (the seed),
 it is possible to break this ciphering.

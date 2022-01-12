@@ -28,9 +28,10 @@ the ciphertext then!<!--more-->
 
 ## Distinguish a ciphertext
 
-{% marginnote
-'[Detect single-character XOR](https://cryptopals.com/sets/1/challenges/4)
-challenge' %}
+{% call marginnotes() %}
+[Detect single-character XOR](https://cryptopals.com/sets/1/challenges/4)
+challenge
+{% endcall %}
 
 The basic idea is that some patterns in the plaintext are propagated
 to the ciphertext and those we will be enough to distinguish it from
@@ -266,7 +267,9 @@ of crafted strings.
 
 Here is the plot of the scores calculated by the different methods:
 
-{% fullwidth 'assets/matasano/scores_by_method.png' 'Scores by methods. Notice how the the element 170th gets the lower value in most cases indicating that the string is not random.' %}
+{% call fullfig('scores_by_method.png') %}
+Scores by method. Notice how the element 170th gets the lower value in most cases indicating that the string is not random.
+{% endcall %}
 
 <br />
 

@@ -325,9 +325,11 @@ This attack is implemented in
 [cryptonita](https://pypi.org/project/cryptonita/). Here is a set of
 different ciphertexts to break.
 
-{% marginnote 'This unlocks the
+{% call marginnotes() %}
+This unlocks the
 [The CBC padding oracle](https://cryptopals.com/sets/3/challenges/17)
-challenge.' %}
+challenge.
+{% endcall %}
 
 Enjoy!
 

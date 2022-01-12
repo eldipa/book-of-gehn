@@ -19,12 +19,13 @@ We will use the same setup of the
 [previous post](/articles/2018/06/09/ECB-CBC-Oracle.html)
 but this time, our objective will decrypt ECB without the key.
 
-{% marginnote
-'In fact, there are two challenges: the
+{% call marginnotes() %}
+In fact, there are two challenges: the
 [simple](https://cryptopals.com/sets/2/challenges/12)
 and the
 [harder](https://cryptopals.com/sets/2/challenges/14)
-versions. We will break the harder of course.' %}
+versions. We will break the harder of course.
+{% endcall %}
 
 Remember that we will have a secret payload appended to the attacker-controlled plaintext
 and it is the objective for the

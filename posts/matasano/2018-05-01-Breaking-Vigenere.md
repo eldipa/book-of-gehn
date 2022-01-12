@@ -85,7 +85,9 @@ Before you think that I didn't programmed the Hamming distance correctly:
 37
 ```
 
-{% fullwidth 'assets/matasano/kl_guesses.png' 'Score of each guess by method. The maximum score using the Hamming distance is at 5. Using the Index of Coincidence is at 29.' %}
+{% call fullfig('kl_guesses.png') %}
+Score of each guess by method. The maximum score using the Hamming distance is at 5. Using the Index of Coincidence is at 29.
+{% endcall %}
 
 <br />
 
@@ -205,9 +207,10 @@ discard the unlikely keys and just save the most likely:
 120
 ```
 
-{% marginnote
-'More keys than grams of ordinay mass in the
-[observable universe](https://en.wikipedia.org/wiki/Observable_universe)' %}
+{% call marginnotes() %}
+More keys than grams of ordinay mass in the
+[observable universe](https://en.wikipedia.org/wiki/Observable_universe)
+{% endcall %}
 
 ``120`` is a really small number compared with the whole key space ``2^(8*29)``
 
@@ -231,8 +234,9 @@ You probably guessed which is the one
 >>> ciphertext ^ key.inf()
 <...>I'm back and I'm ringin' the bell<...>Play that funky music<...>
 ```
-{% marginnote
-'[Vanilla Ice - Play that Funky Music](https://www.youtube.com/watch?v=n2Ubq9XII8c)' %}
+{% call marginnotes() %}
+[Vanilla Ice - Play that Funky Music](https://www.youtube.com/watch?v=n2Ubq9XII8c)
+{% endcall %}
 
 [Break repeating-key XOR](https://cryptopals.com/sets/1/challenges/6) *done*.
 

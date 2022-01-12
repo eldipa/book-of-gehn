@@ -6,9 +6,11 @@ inline_default_language: python
 ---
 
 
-{% maincolumn 'assets/matasano/tux.png' 'The ECB encrypted image on the right
+{% call mainfig('tux.png') %}
+The ECB encrypted image on the right
 and its plaintext original version on the left. Image taken from
-[wikipedia](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation).' %}
+[wikipedia](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation).
+{% endcall %}
 
 {{ spoileralert() }}
 Can you see the penguin?
@@ -22,8 +24,7 @@ Book) with the given key.
 
 In ECB each plaintext block is encrypted using the same key.
 
-
-{% maincolumn '<img style="max-width:60%;" alt="ECB Enc" src="/assets/matasano/ecb-enc.png">' '' %}
+{{ mainfig('ecb-enc.png', max_width='60%') }}
 
 Decrypting is a piece of cake; this is just to get practice about
 [AES in ECB mode](https://cryptopals.com/sets/1/challenges/7)
@@ -43,8 +44,11 @@ Decrypting is a piece of cake; this is just to get practice about
 b"I'm back and I'm ringin' the bell<...>Play that funky music \n\x04\x04\x04\x04"
 ```
 
-{% maincolumn '<img style="max-width:60%;" alt="ECB Dec" src="/assets/matasano/ecb-dec.png">'
-'<br />Note how to encryption/decryption of one block don&apos;t depend of any other: this allows the encryption/decryption to be at random places and in parallel.' %}
+{% call mainfig('ecb-dec.png', max_width='60%') %}
+<br />
+Note how to encryption/decryption of one block don&apos;t depend of any other:
+this allows the encryption/decryption to be at random places and in parallel.
+{% endcall %}
 
 ## Detecting Penguins
 
@@ -92,7 +96,9 @@ than a coincidence of two or more bytes:
 >>> methods['IC - Nblocks sequence'] = scores
 ```
 
-{% fullwidth 'assets/matasano/score_pinguins.png' 'Scores by methods. For the Nblocks method, the size of the block is of 16 bytes.' %}
+{% call fullfig('score_pinguins.png') %}
+Scores by method. For the Nblocks method, the size of the block is of 16 bytes.
+{% endcall %}
 
 <br />
 

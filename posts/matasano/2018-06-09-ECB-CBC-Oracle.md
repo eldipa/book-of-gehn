@@ -28,9 +28,10 @@ easy cake.
 'YELLOW SUBMARINE\x04\x04\x04\x04'
 ```
 
-{% marginnote
-'Yeup, [PKCS#7 padding validation](https://cryptopals.com/sets/2/challenges/15),
-I know what is coming with this....' %}
+{% call marginnotes() %}
+Yeup, [PKCS#7 padding validation](https://cryptopals.com/sets/2/challenges/15),
+I know what is coming with this....
+{% endcall %}
 
 If a plaintext has an incorrect padding, the ``unpad`` will fail.
 
@@ -53,7 +54,7 @@ For the first plaintext block we use an
 [Initialization Vector](https://en.wikipedia.org/wiki/Initialization_vector)
 for the XOR operation.
 
-{% maincolumn '<img style="max-width:60%;" alt="CBC Enc" src="/assets/matasano/cbc-enc.png">' '' %}
+{{ mainfig('cbc-enc.png', max_width='60%') }}
 
 This IV should be random but for the sake of the test it
 will be full of zeros.
@@ -75,14 +76,18 @@ will be full of zeros.
 b"I'm back and I'm ringin' the bell<...>Play that funky music \n"
 ```
 
-{% maincolumn '<img style="max-width:60%;" alt="CBC Dec" src="/assets/matasano/cbc-dec.png">'
-'<br />At difference with the encryption, the decryption of one block doesn&apos;t depend of any other: you can decrypt any block at random or in parallel.' %}
+{% call mainfig('cbc-dec.png', max_width='60%') %}
+<br />
+At difference with the encryption, the decryption of one block doesn&apos;t depend of any other:
+you can decrypt any block at random or in parallel.
+{% endcall %}
 
 ### Generating secrets
 
-{% marginnote
-'With the exception of the *seed* that will be fix to make the test
-reproducible and the *block side* to make it a little easier.' %}
+{% call marginnotes() %}
+With the exception of the *seed* that will be fix to make the test
+reproducible and the *block side* to make it a little easier.
+{% endcall %}
 
 Before doing real crypto, we need to generate a
 *secret and random* configuration
@@ -147,8 +152,9 @@ remain fixed.
 
 Now this is where the action begins.
 
-{% marginnote
-'[An ECB/CBC detection oracle](https://cryptopals.com/sets/2/challenges/11)' %}
+{% call marginnotes() %}
+[An ECB/CBC detection oracle](https://cryptopals.com/sets/2/challenges/11)
+{% endcall %}
 
 In this challenge
 we need to find when a secret encryption is using ECB or CBC mode.

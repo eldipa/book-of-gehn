@@ -20,8 +20,9 @@ Ready to break it?<!--more-->
 
 ## Warming up
 
-{% marginnote
-'[Implement CTR, the stream cipher mode](https://cryptopals.com/sets/3/challenges/18)' %}
+{% call marginnotes() %}
+[Implement CTR, the stream cipher mode](https://cryptopals.com/sets/3/challenges/18)
+{% endcall %}
 
 Let's implement a CTR
 
@@ -296,7 +297,9 @@ between ``i'm rated`` and ``I'm rated``. ``:´|``
 >>> kstream = (kstream[:1] ^ fix) + kstream[1:]
 ```
 
-{% marginnote '[Break fixed-nonce CTR statistically](https://cryptopals.com/sets/3/challenges/20)' %}
+{% call marginnotes() %}
+[Break fixed-nonce CTR statistically](https://cryptopals.com/sets/3/challenges/20)
+{% endcall %}
 
 And we are done!
 
@@ -370,8 +373,9 @@ True
 
 ## Break fixed-nonce CTR - Second chance
 
-{% marginnote
-'[Break fixed-nonce CTR mode using substitutions](https://cryptopals.com/sets/3/challenges/19)' %}
+{% call marginnotes() %}
+[Break fixed-nonce CTR mode using substitutions](https://cryptopals.com/sets/3/challenges/19)
+{% endcall %}
 
 Let's take another set of plaintexts,
 encrypt them with a fixed-nonce CTR and break the encryption.
