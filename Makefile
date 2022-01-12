@@ -10,9 +10,11 @@ all: Tupfile
 #
 # With this we can make a Tupfile with dynamic rules just
 # playing with the template engine Jinja (j2)
-Tupfile: scripts/j2helpers.py z/Tupfile.tup
+Tupfile: scripts/j2helpers.py z/Tupfile.tup recreate-tupfile
+
+recreate-tupfile:
 	@echo "Recreating Tupfile..."
-	@j2 --customize scripts/j2helpers.py z/Tupfile.tup > $@
+	@j2 --customize scripts/j2helpers.py z/Tupfile.tup > Tupfile
 
 serve:
 	# Serve (locally) the site on port 4000 watching for requests
