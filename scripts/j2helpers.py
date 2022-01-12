@@ -260,7 +260,7 @@ ensure_html_block('''</figcaption></figure></p>''')
         return ensure_html_block(
 f'''<p><figure><figcaption><span markdown='1'>''') +\
 post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
-ensure_html_block('''</span></figcaption>
+ensure_html_block(f'''</span></figcaption>
 <img {style} class='{img_cls}' alt='{alt}' src='{src}' /></figure></p>''')
 
 
