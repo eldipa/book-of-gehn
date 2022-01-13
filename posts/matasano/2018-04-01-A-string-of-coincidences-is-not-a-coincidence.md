@@ -71,12 +71,13 @@ and carry more information (or it has less redundancy if you want).
 
 The entropy is defined as:
 
-$$S=\sum_{\forall p_{x}}p_{x}\textrm{log}_{n}\left(p_{x}\right)$$
+```tex;mathjax
+S=\sum_{\forall p_{x}}p_{x}\textrm{log}_{n}\left(p_{x}\right)
+```
 
-<!-- *_ -->
-
-Where each $$p_{x}$$ <!-- *_ --> is the probability of the event $$x$$ and
-$$n$$ is the number of event types.
+Where each `p_{x}`{.mathjax} is the probability of the event
+`x`{.mathjax} and
+`n`{.mathjax} is the number of event types.
 
 What is an event, it is up to you.
 

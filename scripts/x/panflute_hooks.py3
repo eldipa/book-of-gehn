@@ -61,11 +61,10 @@ def highlight_code_inline_and_blocks_with_pygments(elem, doc):
         However the latter syntax is not recognized by Vim or other
         editors and the syntax highlight in the editor looks terrible.
 
-        The formar syntax, being a hack, is preferred and currently
+        The former syntax, being a hack, is preferred and currently
         the ONLY supported for now.
     '''
     if type(elem) in {CodeBlock, Code} and elem.classes:
-        assert len(elem.classes) == 1
         lexer = None
         lang, *tmp = elem.classes[0].split(';')
         if lang == 'none':
@@ -73,7 +72,11 @@ def highlight_code_inline_and_blocks_with_pygments(elem, doc):
 
         # Map [showlinenums startfrom=3] to {showlinenums: True, startfrom: 3}
         key_values = [kv.split('=', 1) for kv in tmp]
-        attributes = dict(kv if len(kv) == 2 else (kv, True) for kv in key_values)
+        attributes = dict(kv if len(kv) == 2 else (kv[0], True) for kv in key_values)
+        attributes.update(dict((cls, True) for cls in elem.classes))
+
+        if attributes.get('mathjax', False):
+            return wrap_code_with_mathjax_tags(elem, doc, attributes)
 
         # Find a lexer to parse the syntax. Return the element as is
         # if no such lexer exist
@@ -123,6 +126,17 @@ def highlight_code_inline_and_blocks_with_pygments(elem, doc):
             return RawBlock(text=code_h, format='html')
         else:
             assert False
+
+def wrap_code_with_mathjax_tags(elem, doc, attributes):
+    if type(elem) not in {CodeBlock, Code}:
+        assert False
+
+    if type(elem) == Code:
+        return RawInline(text=r"\("+elem.text+r"\)", format='html')
+    elif type(elem) == CodeBlock:
+        return RawBlock(text="$$"+elem.text+"$$", format='html')
+    else:
+        assert False
 
 def post_process_by_hook(elem, doc):
     ''' Perform a post-processing of the CodeBlock if it is marked

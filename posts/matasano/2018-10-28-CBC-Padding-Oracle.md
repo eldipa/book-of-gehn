@@ -110,25 +110,29 @@ has a valid pad or not.
 
 ## CBC decryption and padding
 
-Let's be $$m$$ the ith plaintext block,
-$$c$$ the i-1th ciphertext block and
-$$x$$ the decryption of the ith ciphertext block.
+Let's be `m`{.mathjax} the ith plaintext block,
+`c`{.mathjax} the i-1th ciphertext block and
+`x`{.mathjax} the decryption of the ith ciphertext block.
 
-Then, we can say that for CBC the plaintext block $$m$$
+Then, we can say that for CBC the plaintext block `m`{.mathjax}
 is reconstructed from this:
 
-$$x \oplus c = m$$
+```tex;mathjax
+x \oplus c = m
+```
 
-Let's say now that instead of $$c$$
-we use $$f$$, a *forged* ciphertext block,
+Let's say now that instead of `c`{.mathjax}
+we use `f`{.mathjax}, a *forged* ciphertext block,
 if we are reconstructing the last plaintext block, this one will be:
 
-$$x \oplus f = ?$$
+```tex;mathjax
+x \oplus f = ?
+```
 
 Now, because this is the last block, this will affect the padding
 of the final plaintext.
 
-The padding will be ok *only if* $$x \oplus f$$ is
+The padding will be ok *only if* `x \oplus f`{.mathjax} is
 equals to one of these:
 
 ```
@@ -144,29 +148,33 @@ one byte at time.
 
 ## Guess the last byte
 
-For the plaintext block $$m$$, let's be $$m_1$$,
+For the plaintext block `m`{.mathjax}, let's be `m_1`{.mathjax},
 the last byte of the block.
 Using the same convention, this last byte is
 
-$$x_1 \oplus c_1 = m_1$$
+```tex;mathjax
+x_1 \oplus c_1 = m_1
+```
 
-If instead of $$c_1$$ we use a forged last byte
-$$f_1$$, the decrypted byte will be
+If instead of `c_1`{.mathjax} we use a forged last byte
+`f_1`{.mathjax}, the decrypted byte will be
 
-$$x_1 \oplus f_1 = ?$$
+```tex;mathjax
+x_1 \oplus f_1 = ?
+```
 
 The decrypted message will have a valid padding only if:
 
-$$
+```tex;mathjax
 \begin{cases}
 x_1 \oplus f_1 = 01 & (1)\\
 x_1 \oplus f_1 = pp & (2)
 \end{cases}
-$$
+```
 
-The case 2 means that $$x_1 \oplus f_1$$ is equal to
+The case 2 means that `x_1 \oplus f_1`{.mathjax} is equal to
 the original padding byte and this will happen only if
-$$f_1 = c_1$$ or in other words if we didn't
+`f_1 = c_1`{.mathjax} or in other words if we didn't
 forge anything.
 
 It doesn't add much info.
@@ -176,72 +184,74 @@ padding and, by definition, it must be ``01``.
 
 Then,
 
-$$
-\begin{align*}  %%*
+```tex;mathjax
+\begin{align*}
 x_1 \oplus f_1 & = 01                           \\
            x_1 & = 01 \oplus f_1
-\end{align*} %%*
-$$
+\end{align*}
+```
 
-So we *learnt* $$x_1$$ and from here it is trivial
+So we *learnt* `x_1`{.mathjax} and from here it is trivial
 to break the last plaintext byte:
 
-$$
-\begin{align*}  %%*
+```tex;mathjax
+\begin{align*}
                 x_1 \oplus c_1 & = m_1          \\
     (01 \oplus f_1) \oplus c_1 & = m_1
-\end{align*} %%*
-$$
+\end{align*}
+```
 
-as $$f_1$$ is our forged byte and $$c_1$$
+as `f_1`{.mathjax} is our forged byte and `c_1`{.mathjax}
 is the last byte of the previous ciphertext block, all of them known by us.
 
 The case 1 and 2 are easily identified as in the second case
-$$f_1 = c_1$$.
+`f_1 = c_1`{.mathjax}.
 
 There is, however, a special situation in which the case 1 and 2 are
 the same: this happens when the original padding byte is actually ``01``.
 
-Nevertheless, the equation $$(01 \oplus f_1) \oplus c_1 = m_1$$
+Nevertheless, the equation `(01 \oplus f_1) \oplus c_1 = m_1`{.mathjax}
 is still true.
 
 ## Guess the penultimate byte
 
-Knowing $$x_1$$ we can forge the value
-of $$m_1$$ to ``02``:
+Knowing `x_1`{.mathjax} we can forge the value
+of `m_1`{.mathjax} to ``02``:
 
-$$
-\begin{align*}  %%*
+```tex;mathjax
+\begin{align*}
       x_1 \oplus f_1 & = 02                     \\
                  f_1 & = (02 \oplus x_1)
-\end{align*} %%*
-$$
+\end{align*}
+```
 
-This $$f_1$$ is **not** the same than the previous section:
+This `f_1`{.mathjax} is **not** the same than the previous section:
 it is a different
 forged byte used to forge a ``02`` in the last value of the plaintext.
 
 With this, the penultimate byte will forge a plaintext with a
 *valid padding* only if:
 
-$$x_2 \oplus f_2 = 02$$
+```tex;mathjax
+x_2 \oplus f_2 = 02
+```
 
 Then, for the case of a valid padding we can guess
-$$x_2$$ and therefore $$m_2$$:
+`x_2`{.mathjax} and therefore `m_2`{.mathjax}:
 
-$$
-\begin{align*}  %%*
+```tex;mathjax
+\begin{align*}
       x_2 \oplus f_2 & = 02                     \\
                  x_2 & = (02 \oplus f_2)
-\end{align*} %%*
-$$
+\end{align*}
+```
 
-$$
-\begin{align*}  %%*
+```tex;mathjax
+\begin{align*}
                    x_2 \oplus c_2 & = m_2                     \\
       (02 \oplus f_2) \oplus c_2  & = m_2
-\end{align*} %%*
-$$
+\end{align*}
+```
 
 At difference with guessing the last byte, in this scenario there is
 only one possible value for a valid padding: ``02``

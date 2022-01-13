@@ -74,3 +74,35 @@ Similarly, `fullfig` and `mainfig` are used to put an image at full
 width (occupying the main part and the margin; with the caption below it)
 and to put it at the main part only (with the caption on the margin)
 respectively.
+
+## Latex
+
+Tex/Latex can be inline like in `p^2`{.mathjax} or in a block like:
+
+```tex;mathjax
+\begin{align*}
+      x_2 \oplus f_2 & = 02                     \\
+                 x_2 & = (02 \oplus f_2)
+\end{align*}
+```
+
+And
+
+```tex;mathjax
+x_2 \oplus f_2 = 02
+```
+
+For the inline math we use backticks and the `{.mathjax}` attribute
+and for the bloc we use three backticks (code fenced block) with
+the class `tex;mathjax`.
+
+Special symbols can be set using Unicode like ⊕ which it is cool
+in the markdown text. This may not always look good in the webpage
+however.
+
+These Unicode can be written inside a MathJax inline/block with some
+okay results in general:
+
+```tex;mathjax
+x_2 ⊕ f_2 = 02
+```
