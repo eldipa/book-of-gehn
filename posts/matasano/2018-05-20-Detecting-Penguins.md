@@ -2,7 +2,7 @@
 layout: post
 title: "Detecting Penguins"
 tags: [cryptography, matasano, cryptonita, ECB, electronic code block]
-inline_default_language: python
+inline_default_language: none
 ---
 
 

@@ -2,7 +2,7 @@
 layout: post
 title: "Breaking ECB"
 tags: [cryptography, matasano, cryptonita, ECB]
-inline_default_language: python
+inline_default_language: none
 ---
 
 {{ spoileralert() }}

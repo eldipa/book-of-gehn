@@ -16,14 +16,14 @@ But some folks may not know this...<!--more-->
 
 ## Warming up
 
-<!--
+{# <!--
 >>> import sys
 >>> sys.path.append("./assets/matasano")
 >>> from challenge import generate_config            # byexample: +timeout=10
 
 >>> seed = 20181223
 >>> cfg = generate_config(random_state=seed)
--->
+--> #}
 
 Before anything, let's
 [implement the MT19937 Mersenne Twister RNG](https://cryptopals.com/sets/3/challenges/21)
@@ -61,7 +61,8 @@ so it will impossible to find it by brute force"*
 >>> x = next(iter(MT19937(secret_seed)))
 ```
 
-Exploring 64 bits is quite hard but the seed is **not random**, therefor
+Exploring 64 bits is quite hard but the seed is **not random**,
+therefore
 we do not need to explore the whole space.
 
 Instead we just explore the numbers in the vicinity of the current time

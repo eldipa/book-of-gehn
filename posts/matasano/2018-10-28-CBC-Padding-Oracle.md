@@ -30,7 +30,7 @@ Consider the following plaintext of 15 bytes:
 15
 ```
 
-Now, if we pad this using ``pkcs#7`` to complete a 16 bytes block,
+Now, if we pad this using ``pkcs#7``{.none} to complete a 16 bytes block,
 the last byte will be ``01``:
 
 ```python

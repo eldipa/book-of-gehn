@@ -32,7 +32,7 @@ in ECB mode:
 ```
 
 Consider the following function that builds a ciphertext from an hypothetical
-"create profile for a new user":
+*"create profile for a new user"*:
 
 ```python
 >>> from cryptonita import B                # byexample: +timeout=10
@@ -55,7 +55,7 @@ The ``profile_for`` can create as many user as we want but all of them will
 have the same privilege level or role: ``user``.
 
 Then the ciphertext can be sent to a server where the given credentials are
-stored and the profile is "created".
+stored and the profile is *"created"*.
 
 ```python
 >>> from urllib.parse import parse_qs
@@ -150,7 +150,7 @@ ready to be cut:
          :.......cut
 ```
 
-where ``PPP`` is a ``pkcs#7`` padding such as if the whole ``C1`` block was
+where ``PPP`` is a ``pkcs#7``{.none} padding such as if the whole ``C1`` block was
 the last block of the ciphertext, the decryption + un-padding would success.
 
 ### Paste a block

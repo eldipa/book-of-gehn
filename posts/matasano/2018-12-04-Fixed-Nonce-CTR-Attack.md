@@ -116,7 +116,7 @@ begin of a sentence it is very likely that they are in uppercase and
 the first letter of a word **may not** (and will not) follow the ETAOIN-SHRDLU
 frequency.
 
-Therefor we need *another* statistical model, one for the upper case:
+Therefore we need *another* statistical model, one for the upper case:
 
 ```python
 >>> from cryptonita.scoring.freq import tsamcin_brped
@@ -288,7 +288,7 @@ So we got the correct key stream? Well, we didn't:
 ### Undistinguishable
 
 Unless we have more knowledge about the plaintexts, we cannot distinguish
-between ``i'm rated`` and ``I'm rated``. ``:´|``
+between ``i'm rated``{.none} and ``I'm rated``{.none}. ``:´|``{.none}
 
 ```python
 >>> fix = B(b'i') ^ B(b'I')
@@ -420,7 +420,7 @@ encrypt them with a fixed-nonce CTR and break the encryption.
 ```
 
 Quite close. By manual inspection the correct plaintext should be
-``Coming with vivid fa``.
+``Coming with vivid fa``{.none}.
 
 With a *known plaintext* breaking the rest of the key bytes is trivial:
 
