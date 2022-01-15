@@ -54,8 +54,11 @@ endif
 
 # Posts' assets pipeline
 # -----------------------
-{% for f in glob('posts/**/*.sh') -%}
+{% for listfile in glob('posts/**/assets-list') -%}
+# {{listfile}}
+{% for f in glob_from_file(listfile) -%}
 : {{f}} |> !cp|> {{ f('out/site/assets/{:f}', 'posts/') }} <postssassets>
+{% endfor %}
 {% endfor %}
 
 #

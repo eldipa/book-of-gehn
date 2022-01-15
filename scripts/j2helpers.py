@@ -54,6 +54,25 @@ def globfn(ctx, pattern, rel=None, fmt=None):
 
     return list(sorted(paths))
 
+@jinja2.contextfunction
+def glob_from_file_fn(ctx, fname, rel=None, fmt=None):
+    ''' Like globfn, but take one or more glob-patterns from
+        a file.
+    '''
+    ret = []
+    home = os.path.dirname(fname)
+    with open(fname, 'rt') as src:
+        for pattern in src:
+            pattern = pattern.strip()
+            if not pattern or pattern.startswith('#'):
+                continue
+
+            pattern = os.path.join(home, pattern)
+            ret.extend(globfn(ctx, pattern, rel=rel, fmt=fmt))
+
+    ret.sort()
+    return ret
+
 @environmentfilter
 def date(env, val, outfmt, infmt='%Y-%m-%d'):
     ''' Take a date <val> in a particular format <infmt> and output
@@ -313,6 +332,7 @@ def j2_environment_params():
 def j2_environment(env):
     # Public functions
     env.globals['glob'] = globfn
+    env.globals['glob_from_file'] = glob_from_file_fn
     env.globals['asset'] = asset
 
     # Private functions called from J2 macros
