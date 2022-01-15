@@ -197,14 +197,14 @@ endif
 {#  Take each page's .yml and all the posts' .yml and create
     a single "combined" .yml so the page can refer not only its private
     metadata but also the posts' metadata as well #}
-: {{ f('out/pages/front/{:f.yml}') }} {{ glob('out/posts/meta/*.yml') | join(' ') }}    \
+: {{ f('out/pages/front/{:f.yml}') }} {{ glob('posts/**/*.md', fmt='out/posts/meta/{:n.yml}') | join(' ') }}    \
     |> !combine-ymls                                        \
     |> {{ f('out/pages/front/{:f.comb.yml}') }}
 
 {#  Run j2 over each page with the "combined" .yml and obtain a .md
     Make this step dependant of the excerpt files created by the Post pipeline
     because it is likely that the index page will include some of them. #}
-: {{ f('out/pages/front/{:f.md, .comb.yml}') }} | {{ glob('out/posts/front/*.excerpt.md') | join(' ') }}    \
+: {{ f('out/pages/front/{:f.md, .comb.yml}') }} | {{ glob('posts/**/*.md', fmt='out/posts/md/{:n.excerpt.md}' ) | join(' ') }}    \
     |> !j2                                                  \
     |> {{ f('out/pages/md/{:f}') }}
 
@@ -221,8 +221,8 @@ endif
 
 # Feed generation
 # ---------------
-: site.yaml {{ glob('out/posts/meta/*.yml') | join(' ') }}      \
-    | {{ glob('out/posts/html/*.html') | join(' ') }}     \
+: site.yaml {{ glob('posts/**/*.md', fmt='out/posts/meta/{:n.yml}') | join(' ') }}      \
+    | {{ glob('posts/**/*.md', fmt='out/posts/html/{:n.html}') | join(' ') }}     \
     |> !make-feed                                               \
     |> out/site/rss.xml out/site/atom.xml
 

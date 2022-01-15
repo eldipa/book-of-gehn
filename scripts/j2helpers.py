@@ -9,7 +9,7 @@ from datetime import datetime
 from jinja2.filters import environmentfilter
 
 @jinja2.contextfunction
-def globfn(ctx, pattern, rel=None):
+def globfn(ctx, pattern, rel=None, fmt=None):
     ''' Allow the listing of some files in the filesystem.
 
         {% for f in glob('foo/**/*.bar') %}
@@ -31,12 +31,26 @@ def globfn(ctx, pattern, rel=None):
 
         -> 2.bar
         -> zaz/1.bar
+
+        If fmt is not None, all the paths are re-formatted (see Path
+        class):
+
+        {% for f in glob('foo/**/*.bar', fmt='out/{:f}') %}
+            {{ f }}
+        {% endfor %}
+
+        -> out/foo/2.bar
+        -> out/foo/zaz/1.bar
+
     '''
     listing = glob.glob(pattern, recursive=True)
     if rel is None:
         paths = (Path(f) for f in listing)
     else:
         paths = (Path(f).rel(rel) for f in listing)
+
+    if fmt:
+        paths = (f(fmt) for f in paths)
 
     return list(sorted(paths))
 
