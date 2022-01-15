@@ -354,10 +354,10 @@ section { padding-top: 1rem;
 
 
 /*
-  I agree in that the 'list' resouce is abused (or overused) in general
+  I agree in that the 'list' resource is abused (or overused) in general
   but it is still a valid resource.
-  Setting list-style-type to None disable this resource (make undistinguishble
-  from a normal parragraph.
+  Setting list-style-type to None disable this resource (makes it
+  undistinguishable from a normal paragraph)
 
   Because of this I'm restoring it to its normal state
   */
@@ -365,6 +365,10 @@ ul,ol { width: 55%;
      -webkit-padding-start: 5%;
      -webkit-padding-end: 5%;
  }
+
+li > p {
+    display: inline;
+}
 
 ul { list-style: circle inside; }
 ol { list-style: lower-roman; }
