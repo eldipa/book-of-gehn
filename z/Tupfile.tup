@@ -71,7 +71,7 @@ endif
 {% endfor %}
 
 {% for f in glob('z/img/**/*.png') -%}
-: {{f}} |> !minify-png |> {{f('out/site/img/{:f}', 'z/img/')}}
+: {{f}} |> !minify-png |> {{f('out/site/img/{:f}', 'z/img/')}} <siteresources>
 {% endfor %}
 #
 # End of the PNG pipeline ------
@@ -85,8 +85,8 @@ endif
 : foreach z/css/*.scss |> !compile-scss |> out/z/css/%B.css out/z/css/%B.css.map
 
 # Minify CSS
-: foreach out/z/css/*.css |> !minify-css |> out/site/css/%B.min.css out/site/css/%B.min.css.map
-: foreach z/css/*.css |> !minify-css |> out/site/css/%B.min.css out/site/css/%B.min.css.map
+: foreach out/z/css/*.css |> !minify-css |> out/site/css/%B.min.css out/site/css/%B.min.css.map <siteresources>
+: foreach z/css/*.css |> !minify-css |> out/site/css/%B.min.css out/site/css/%B.min.css.map <siteresources>
 #
 # End of the CSS pipeline ------
 
@@ -102,15 +102,15 @@ endif
 # Input fonts of type WOFF2 are copied as they are.
 #
 {% for f in glob('z/fonts/**/*.woff') -%}
-: {{f}} |> !convert-font |> {{f('out/site/{:f.woff2}', 'z/')}}
+: {{f}} |> !convert-font |> {{f('out/site/{:f.woff2}', 'z/')}} <siteresources>
 {% endfor %}
 
 {% for f in glob('z/fonts/**/*.ttf') -%}
-: {{f}} |> !convert-font |> {{f('out/site/{:f.woff2}', 'z/')}}
+: {{f}} |> !convert-font |> {{f('out/site/{:f.woff2}', 'z/')}} <siteresources>
 {% endfor %}
 
 {% for f in glob('z/fonts/**/*.woff2') -%}
-: {{f}} |> !cp |> {{f('out/site/{:f}', 'z/')}}
+: {{f}} |> !cp |> {{f('out/site/{:f}', 'z/')}} <siteresources>
 {% endfor %}
 #
 # End of the Font pipeline ------
@@ -126,9 +126,9 @@ endif
 # the files in background and it does not know that we changed their names
 {% for f in glob('z/js/**/*.js') -%}
 {% if "MathJax" in f %}
-: {{f}} |> !minify-js |> {{f('out/site/{:f.js, .js.map}', 'z/')}}
+: {{f}} |> !minify-js |> {{f('out/site/{:f.js, .js.map}', 'z/')}} <siteresources>
 {% else %}
-: {{f}} |> !minify-js |> {{f('out/site/{:f.min.js, .min.js.map}', 'z/')}}
+: {{f}} |> !minify-js |> {{f('out/site/{:f.min.js, .min.js.map}', 'z/')}} <siteresources>
 {% endif %}
 {% endfor %}
 #
@@ -164,12 +164,12 @@ endif
    have them updated if someone updates the HTML (with that we can
    then serve the HTML and the assets and show them in a web browser. #}
 : {{ f('out/posts/md/{:b}') }} {{ f('out/posts/front/{:n.yml}') }} \
-    |  <postssassets>                                              \
+    |  <postssassets> <siteresources>                              \
     |> !compile-md                                                 \
     |> {{ f('out/site/articles/{:D}.html') }}
 
 : {{ f('out/posts/md/{:n.no-layout.md}') }} {{ f('out/posts/front/{:n.yml}') }} \
-    |  <postssassets>                                              \
+    |  <postssassets> <siteresources>                              \
     |> !compile-md                                                 \
     |> {{ f('out/posts/html/{:n.html}') }}
 
@@ -214,6 +214,7 @@ endif
 {#  Compile the markdown and obtain the .html
     Notice how we compile only the .md (.no-layout and .excerpt are ignored #}
 : {{ f('out/pages/md/{:f}') }} {{ f('out/pages/front/{:f.comb.yml}') }}     \
+    |  <siteresources>                                      \
     |> !compile-md                                          \
     |> {{ f('out/site/{:f.html}') }}
 # ------------------------
