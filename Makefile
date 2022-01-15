@@ -5,6 +5,9 @@ PAGETARGET ?=
 all: Tupfile
 	tup ${PAGETARGET}
 
+force: Tupfile
+	tup -k ${PAGETARGET}
+
 # List all the directories in posts/ and drafts/ folders and
 # create a Tupfile with the rules to build the blog site
 #
