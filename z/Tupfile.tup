@@ -29,9 +29,6 @@ endif
 
 !extract-front = |> ^ front %f^ ./scripts/front.py %1f %1o %2o %3o %4o site.yaml |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
-# Optimize the size of the PNG images
-!minify-png = |> ^ minify %f^ optipng -o7 --strip all -quiet -out %1o %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
-
 # Compilers
 !compile-scss = |> ^ compile %f^ sass --load-path=.  %1f %1o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !compile-md = |> ^ compile %B^ ./scripts/html.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
@@ -42,6 +39,8 @@ endif
 # Minifiers
 !minify-css = |> ^ minify %f^ cleancss -O1 --source-map -o %1o %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !minify-js = |> ^ minify %f^ uglifyjs --source-map --compress --mangle -o %1o -- %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!minify-png = |> ^ minify %f^ optipng -o7 --strip all -quiet -out %1o %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!minify-gif = |> ^ minify %f^ gifsicle --no-warnings --optimize=3 -i %1f -o %1o  |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 !add-refs = |> ^ ref %B^ ./scripts/add-refs.py %f %o  |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
@@ -76,6 +75,13 @@ endif
 #
 # End of the PNG pipeline ------
 
+
+# GIF pipeline
+{% for f in glob('posts/**/*.gif') -%}
+: {{f}} |> !minify-gif |> {{f('out/site/img/{:f}', 'posts/')}} <postssassets>
+{% endfor %}
+#
+# End of the PNG pipeline ------
 
 
 # CSS pipeline
