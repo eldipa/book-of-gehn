@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from panflute import (run_filters, Code, Header, Str, Para, Space,
-RawInline, Plain, Link, CodeBlock, RawBlock, convert_text)
+RawInline, Plain, Link, CodeBlock, RawBlock, convert_text, Table, Div,
+Caption)
 
 import sys, os
 
@@ -178,6 +179,32 @@ def post_process_by_hook(elem, doc):
 
         return newelems
 
+def wrap_table_into_div(elem, doc):
+    if type(elem) not in {Table}:
+        return
+
+    attributes = []
+
+    # Search for the first Plain Str of the Caption and see if it starts
+    # with {...}.
+    # It it does, assume that it is a Pandoc Attributes syntax and parse
+    # it.
+    if elem.caption.content and type(elem.caption.content[0]) in {Plain}:
+        tmp = elem.caption.content[0].content[0].text
+        if tmp.startswith('{') and tmp.find('}') > 0:
+            attributes = tmp[1:tmp.find('}')].split()
+            tmp = tmp[tmp.find('}')+1:]
+
+            # Remain something?
+            if tmp:
+                elem.caption.content[0].content[0].text = tmp
+            else:
+                del elem.caption.content[0].content[0]
+
+    if ".fullwidth" in attributes:
+        return Div(elem, classes=["fullwidth"])
+
+    return Div(elem, classes=["table-wrapper"])
 
 def what(elem, doc):
     ''' Debugging / exploring / tracing. '''
@@ -187,10 +214,13 @@ def what(elem, doc):
         trace_file = open(fname, 'wt')
 
     print(type(elem), file=trace_file)
-    if type(elem) in {CodeBlock, Code}:
+    if type(elem) in {Table, Caption}:
         print("-----", elem, "-----", file=trace_file)
-        print(dir(elem), elem.classes, elem.attributes, file=trace_file)
+        print(dir(elem), getattr(elem, 'classes', None), getattr(elem, 'attributes', None), file=trace_file)
         print(doc, file=trace_file)
+
+    #if type(elem) in {Str}:
+    #    print(elem, file=trace_file)
 
     #if type(elem) == Link:
     #    print(elem, file=trace_file)
@@ -199,6 +229,7 @@ if __name__ == '__main__':
     try:
         run_filters([
             what,
+            wrap_table_into_div,
             post_process_by_hook,
             set_language_for_inline_code,
             highlight_code_inline_and_blocks_with_pygments,

@@ -458,6 +458,9 @@ blockquote .sidenote, blockquote .marginnote { margin-right: -79% }
 p, footer, div.table-wrapper, div.mathblock{ width: 55%; }
 
 div.table-wrapper { overflow-x: auto; } //changed all overflow values to 'auto' so scroll bars appear only as needed
+div.table-wrapper > table { width: initial; max-width: initial; } // reset this as the table-wrapper already defines the width
+
+div.fullwidth > table { width: initial; max-width: initial; }
 
 @media screen and (max-width: 760px) { p, footer,div.mathblock { width: 90%; }
                                        pre code { width: 87.5%; }

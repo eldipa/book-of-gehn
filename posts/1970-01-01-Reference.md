@@ -106,3 +106,47 @@ okay results in general:
 ```tex;mathjax
 x_2 ⊕ f_2 = 02
 ```
+
+## Tables
+
+Tables are supported by Pandoc's Markdown in different formats.
+
+The *pipe* table is one of the simplest:
+
+     Center       |   Left                 |     Right
+ :-------------:  |  :-------------------  | ---------:
+     None         |  2586369892            |         0
+     LZMA         |  153390408             |   94.069%
+     *Split* LZMA |  60047300              |   96.715%
+
+Table: This is a caption for the table. It is the first line after
+the table that begins with `Table:` or `:`.
+
+Depending on the location of the `:` the columns are aligned
+differently. (to center, to left
+and to right respectively in the example above)
+
+Columns' sizes are based on their content like in the table above.
+
+However if one content is too large, the content will wrap and
+the columns' sizes will be based on the relative size of the dashes lines.
+
+  Small         |   Widest                      |  Too Long: Wrapped
+ :-----         |  :--------------------------- | :---------
+  None          |  258                          |   aaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaaaaa aaaaaaaaaa aaaaaaaaaaaaaa
+  LZMA          |  153                          |  bb
+  *Split* LZMA  |  600                          |  cx
+
+Tables that are so wide can use the extend of the webpage
+adding the attribute `.fullwidth` to the caption (`Table:`). This is a hack made by us
+and not officially supported by Pandoc but it works.
+
+  Small         |   Widest                      |  Too Long: Wrapped
+ :-----         |  :--------------------------- | :---------
+  None          |  258                          |   aaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaaaaa aaaaaaaaaa aaaaaaaaaaaaaa
+  LZMA          |  153                          |  bb
+  *Split* LZMA  |  600                          |  cx
+
+Table:{.fullwidth}
+
+There are **more** kind of tables in Pandoc.
