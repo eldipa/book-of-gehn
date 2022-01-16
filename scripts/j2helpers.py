@@ -246,8 +246,36 @@ def _figures__fig(ctx, src, caption, max_width, cls, alt, kind, home):
         The <cls> sets the class of the img tag and <alt> is the alternate
         text to show if the image cannot be loaded by the browser.
 
-        <max_width> sets the maximum width of the image and
-        <caption> is the caption of it, added after the image.
+        The <max_width> sets the maximum width of the image and
+
+        The rest of the parameters are used by put_figure_in_layout()
+    '''
+
+    src = url_from(src, home=home)
+
+    # optional style
+    if max_width is not None:
+        style = f'style="max-width: {max_width}"'
+    else:
+        style = ''
+
+    img_cls = cls
+    img_html = f'''<img {style} class='{img_cls}' alt='{alt}' src='{src}' />'''
+
+    return put_figure_in_layout(ctx, img_html, caption, cls, kind, home)
+
+def put_figure_in_layout(ctx, img_html, caption, cls, kind, home):
+    ''' Generate HTML code to show a figure defined in the HTML
+        <img_html> parameter.
+
+        This HTML could be a <img>, <object> or other thing that makes
+        sense.
+
+        The <cls> sets the class of the figure tag (applies to fullfig
+        only)
+
+        <caption> is the caption of the image, added after the image or
+        next to it depending of the layout (<kind>).
 
         <kind> defines the flavour for figure (html code and position):
 
@@ -258,33 +286,26 @@ def _figures__fig(ctx, src, caption, max_width, cls, alt, kind, home):
             - mainfig: the figure expands across the main column with the caption
               in the margin.
     '''
-    src = url_from(src, home=home)
 
     lbl_cls = 'margin-toggle'
     input_cls = 'margin-toggle'
     span_cls = 'marginnote'
-    img_cls = fig_cls = cls
+    fig_cls = cls
 
-    # optional style
-    if max_width is not None:
-        style = f'style="max-width: {max_width}"'
-    else:
-        style = ''
-
-    id = base64.b64encode((src + caption + kind).encode('utf8')).decode('utf8')
+    id = base64.b64encode((img_html + caption + kind).encode('utf8')).decode('utf8')
 
     if kind == 'marginfig':
         return ensure_html_block(
 f'''<p><label for='{id}' class='{lbl_cls}'>&#8853;</label>
 <input type='checkbox' id='{id}' class='{input_cls}'/>
 <span class='{span_cls}'>
-<img {style} class='{img_cls}' alt='{alt}' src='{src}' />''') + \
+{img_html}''') + \
 post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
 ensure_html_block('''</span></p>''')
 
     elif kind == 'fullfig':
         return ensure_html_block(
-f'''<p><figure class='{fig_cls}'><img {style} class='{img_cls}' alt='{alt}' src='{src}' />
+f'''<p><figure class='{fig_cls}'>{img_html}
 <figcaption>''') +\
 post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
 ensure_html_block('''</figcaption></figure></p>''')
@@ -294,7 +315,7 @@ ensure_html_block('''</figcaption></figure></p>''')
 f'''<p><figure><figcaption><span markdown='1'>''') +\
 post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
 ensure_html_block(f'''</span></figcaption>
-<img {style} class='{img_cls}' alt='{alt}' src='{src}' /></figure></p>''')
+{img_html}</figure></p>''')
 
 
 @jinja2.contextfunction
@@ -322,6 +343,45 @@ def asset(ctx, src):
     return url_from(src, home=home)
 
 
+@jinja2.contextfunction
+def _diagrams_diag(ctx, source_code, type, max_width, cls, kind, home):
+    img_format = 'svg'
+
+    tmphome = ctx.get('tmphome')
+    assert tmphome
+
+    # build a file name based on the source code of the diagram (plus
+    # type and output (image) format)
+    fname = base64.b64encode((source_code + type + img_format).encode('utf8')).decode('utf8')
+
+    src_fpath = os.path.join(tmphome, 'diagrams', fname + '.' + type)
+
+    # Check if we already have a source code written to disk before and
+    # if it is the same that the current one.
+    try:
+        previous_source_code = open(src_fpath, 'rt').read()
+        source_code_changed = source_code != previous_source_code
+    except:
+        source_code_changed = True
+
+    src = url_from(src, home=home)
+
+    # optional style
+    if max_width is not None:
+        style = f'style="max-width: {max_width}"'
+    else:
+        style = ''
+
+    img_cls = cls
+
+    data_path = ''
+    img_format = ''
+
+    img_html = f'''<object {style} class='{img_cls}' align='middle' data='{data_path}' type='image/{img_format}+xml'></object>'''
+
+    return put_figure_in_layout(ctx, img_html, caption, cls, kind, home)
+
+
 # DO NOT RENAME THIS FUNCTION (required by j2cli)
 def j2_environment_params():
     # Jinja2 Environment configuration hook
@@ -338,6 +398,7 @@ def j2_environment(env):
     # Private functions called from J2 macros
     env.globals['_figures__fig'] = _figures__fig
     env.globals['_notes__notes'] = _notes__notes
+    env.globals['_diagrams_diag'] = _diagrams_diag
 
 
 # DO NOT RENAME THIS FUNCTION (required by j2cli)
