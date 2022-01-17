@@ -159,11 +159,12 @@ In order to support diagrams, the name of each file generated must
 be listed in the `artifacts` field of the post's metadata.
 
 {% call maindiag('label.svg', 'plantuml') %}
-```
+```plantuml
 hide empty description
 
 [*] -> [*] : a
 ```
+Optional captions can be set here, after the code fenced block
 {% endcall %}
 
 
