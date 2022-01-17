@@ -23,10 +23,10 @@
 {% if (indexonly and isexcerpt) or not indexonly -%}
 {% if caller is defined -%}
 {{ _figures__fig(src=src, caption=caller(), max_width=max_width,
-cls=cls, alt=alt, kind='marginfig', home=home) }}
+cls=cls, alt=alt, location='margin', home=home) }}
 {% else %}
 {{ _figures__fig(src=src, caption='', max_width=max_width,
-cls=cls, alt=alt, kind='marginfig', home=home) }}
+cls=cls, alt=alt, location='margin', home=home) }}
 {%- endif %}
 {%- endif %}
 {%- endmacro %}
@@ -35,10 +35,10 @@ cls=cls, alt=alt, kind='marginfig', home=home) }}
 {% if (indexonly and isexcerpt) or not indexonly -%}
 {% if caller is defined -%}
 {{ _figures__fig(src=src, caption=caller(), max_width=max_width,
-    cls=cls, alt=alt, kind='fullfig', home=home) }}
+    cls=cls, alt=alt, location='full', home=home) }}
 {% else %}
 {{ _figures__fig(src=src, caption='', max_width=max_width,
-    cls=cls, alt=alt, kind='fullfig', home=home) }}
+    cls=cls, alt=alt, location='full', home=home) }}
 {%- endif %}
 {%- endif %}
 {%- endmacro %}
@@ -47,10 +47,10 @@ cls=cls, alt=alt, kind='marginfig', home=home) }}
 {% if (indexonly and isexcerpt) or not indexonly -%}
 {% if caller is defined -%}
 {{ _figures__fig(src=src, caption=caller(), max_width=max_width,
-    cls=cls, alt=alt, kind='mainfig', home=home) }}
+    cls=cls, alt=alt, location='main', home=home) }}
 {% else %}
 {{ _figures__fig(src=src, caption='', max_width=max_width,
-    cls=cls, alt=alt, kind='mainfig', home=home) }}
+    cls=cls, alt=alt, location='main', home=home) }}
 {%- endif %}
 {%- endif %}
 {%- endmacro %}

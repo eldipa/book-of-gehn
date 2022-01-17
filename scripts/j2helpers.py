@@ -2,11 +2,30 @@
 # See https://github.com/kolypto/j2cli
 # pip install j2cli
 
-import jinja2, re, os, glob, base64
+import jinja2, re, os, glob, hashlib, frontmatter, base64, sys
 from functools import partial
 from datetime import datetime
+from tempfile import NamedTemporaryFile
+from subprocess import check_call, check_output, STDOUT
 
 from jinja2.filters import environmentfilter
+
+import fasteners
+
+
+# NOTE: this "artifact thing" has a race condition
+def create_artifact_file(output_file_path, *hash_items):
+    s = (''.join(hash_items) + output_file_path)
+    fname = os.path.basename(output_file_path) + ':' + hashlib.sha1(s.encode('utf8')).hexdigest()
+    artifact_file_path = '/tmp/' + fname
+    exists = os.path.exists(artifact_file_path)
+
+    return artifact_file_path, exists
+
+
+def output_updated_artifact(artifact_file_path, output_file_path):
+    os.system(f'cp "{artifact_file_path}" "{output_file_path}"')
+
 
 @jinja2.contextfunction
 def globfn(ctx, pattern, rel=None, fmt=None):
@@ -72,6 +91,22 @@ def glob_from_file_fn(ctx, fname, rel=None, fmt=None):
 
     ret.sort()
     return ret
+
+@jinja2.contextfunction
+def artifacts_of(ctx, fname, rel=None, fmt=None):
+    src = frontmatter.load(fname)
+    home = os.path.dirname(fname)
+    listing = (os.path.join(home, artifact) for artifact in src.get('artifacts', []))
+
+    if rel is None:
+        paths = (Path(f) for f in listing)
+    else:
+        paths = (Path(f).rel(rel) for f in listing)
+
+    if fmt:
+        paths = (f(fmt) for f in paths)
+
+    return list(sorted(paths))
 
 @environmentfilter
 def date(env, val, outfmt, infmt='%Y-%m-%d'):
@@ -237,7 +272,7 @@ def url_from(src, home):
         return os.path.join(home, src)
 
 @jinja2.contextfunction
-def _figures__fig(ctx, src, caption, max_width, cls, alt, kind, home):
+def _figures__fig(ctx, src, caption, max_width, cls, alt, location, home):
     ''' Generate HTML code to show an image that it is at <src>.
 
         If <src> is not absolute (see url_from), the image is searched
@@ -262,9 +297,9 @@ def _figures__fig(ctx, src, caption, max_width, cls, alt, kind, home):
     img_cls = cls
     img_html = f'''<img {style} class='{img_cls}' alt='{alt}' src='{src}' />'''
 
-    return put_figure_in_layout(ctx, img_html, caption, cls, kind, home)
+    return put_figure_in_layout(ctx, img_html, caption, cls, location, home)
 
-def put_figure_in_layout(ctx, img_html, caption, cls, kind, home):
+def put_figure_in_layout(ctx, img_html, caption, cls, location, home):
     ''' Generate HTML code to show a figure defined in the HTML
         <img_html> parameter.
 
@@ -275,9 +310,9 @@ def put_figure_in_layout(ctx, img_html, caption, cls, kind, home):
         only)
 
         <caption> is the caption of the image, added after the image or
-        next to it depending of the layout (<kind>).
+        next to it depending of the layout (<location>).
 
-        <kind> defines the flavour for figure (html code and position):
+        <location> defines the flavour for figure (html code and position):
 
             - marginfig: the figure goes into the margin with the caption
               below of it
@@ -292,9 +327,9 @@ def put_figure_in_layout(ctx, img_html, caption, cls, kind, home):
     span_cls = 'marginnote'
     fig_cls = cls
 
-    id = base64.b64encode((img_html + caption + kind).encode('utf8')).decode('utf8')
+    id = base64.b64encode((img_html + caption + location).encode('utf8')).decode('utf8')
 
-    if kind == 'marginfig':
+    if location == 'margin':
         return ensure_html_block(
 f'''<p><label for='{id}' class='{lbl_cls}'>&#8853;</label>
 <input type='checkbox' id='{id}' class='{input_cls}'/>
@@ -303,19 +338,21 @@ f'''<p><label for='{id}' class='{lbl_cls}'>&#8853;</label>
 post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
 ensure_html_block('''</span></p>''')
 
-    elif kind == 'fullfig':
+    elif location == 'full':
         return ensure_html_block(
 f'''<p><figure class='{fig_cls}'>{img_html}
 <figcaption>''') +\
 post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
 ensure_html_block('''</figcaption></figure></p>''')
 
-    elif kind == 'mainfig':
+    elif location == 'main':
         return ensure_html_block(
 f'''<p><figure><figcaption><span markdown='1'>''') +\
 post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
 ensure_html_block(f'''</span></figcaption>
 {img_html}</figure></p>''')
+    else:
+        assert False
 
 
 @jinja2.contextfunction
@@ -344,27 +381,54 @@ def asset(ctx, src):
 
 
 @jinja2.contextfunction
-def _diagrams_diag(ctx, source_code, type, max_width, cls, kind, home):
-    img_format = 'svg'
+def _diagrams_diag(ctx, fname, source_code, type, max_width, cls, location, home):
+    # Drop the "fences" of the code fenced block and split
+    # the diagram source code from the caption (this last optional)
+    source_code = source_code.strip()
+    lines = source_code.split('\n')
 
-    tmphome = ctx.get('tmphome')
-    assert tmphome
+    assert lines[0].startswith('```')
+    del lines[0]
+    separator_at = lines.index('```')
+    assert separator_at > 0
 
-    # build a file name based on the source code of the diagram (plus
-    # type and output (image) format)
-    fname = base64.b64encode((source_code + type + img_format).encode('utf8')).decode('utf8')
+    source_code = '\n'.join(lines[:separator_at])
+    caption = '\n'.join(lines[separator_at+1:])
 
-    src_fpath = os.path.join(tmphome, 'diagrams', fname + '.' + type)
+    # Location of the final diagram in the web site
+    data_path = url_from(fname, home=home)
 
-    # Check if we already have a source code written to disk before and
-    # if it is the same that the current one.
-    try:
-        previous_source_code = open(src_fpath, 'rt').read()
-        source_code_changed = source_code != previous_source_code
-    except:
-        source_code_changed = True
+    # Location of the final diagram in the file system.
+    # This is a HACK XXX because we are hardcoding the site location
+    file_path = 'out/site/' + data_path
+    img_format = os.path.splitext(fname)[1][1:]
 
-    src = url_from(src, home=home)
+    # This is another HACK XXX because j2 does not know when or when not
+    # to generate the diagram. Touching the file system in the incorrect
+    # moment and Tup will complain.
+    #
+    # To sort this out we activate the "environment" from j2's command line
+    # in the Tupfile and we see this as a variable named ENV. A really
+    # dirty hack XXX.
+    #
+    # The artifact-hack is also another hack to avoid recomputing the same
+    # diagram again if the source code didn't change. This speeds up quite
+    # a lot the compilation.
+    if ctx.get('ENV') != None:
+        artifact_file_path, exists = create_artifact_file(file_path, source_code, img_format, type)
+
+        if not exists:
+            if type == 'plantuml':
+                generate_plantuml_diagram(artifact_file_path, source_code, img_format)
+            else:
+                assert False
+
+        # We need to call this even if the artifact didn't require generation
+        # This is because Tup will delete the output file before calling us
+        # so we are forced to create the output file again. Fortunatelly,
+        # if the artifact file exists, we didn't have to pay the generation
+        # cost, only the copy.
+        output_updated_artifact(artifact_file_path, file_path)
 
     # optional style
     if max_width is not None:
@@ -374,12 +438,29 @@ def _diagrams_diag(ctx, source_code, type, max_width, cls, kind, home):
 
     img_cls = cls
 
-    data_path = ''
-    img_format = ''
-
     img_html = f'''<object {style} class='{img_cls}' align='middle' data='{data_path}' type='image/{img_format}+xml'></object>'''
 
-    return put_figure_in_layout(ctx, img_html, caption, cls, kind, home)
+    return put_figure_in_layout(ctx, img_html, caption, cls, location, home)
+
+def generate_plantuml_diagram(artifact_file_path, source_code, img_format):
+    with NamedTemporaryFile(delete=False, mode='wt') as f:
+        src_fname = f.name
+        f.write("@startuml\n")
+        f.write(source_code)
+        f.write("\n@enduml")
+
+    jar_path = './scripts/x/plantuml-1.2022.0.jar'
+    args = '-nometadata'
+    try:
+        cmd = f"java -Djava.awt.headless=true -jar {jar_path} -t{img_format} {src_fname} {args}".split()
+        out = check_output(cmd, stderr=STDOUT)
+        if out:
+            print(out, file=sys.stderr)
+            raise Exception("Plantuml failed")
+        os.system(f'mv "{src_fname}.{img_format}" "{artifact_file_path}"')
+    finally:
+        os.remove(src_fname)
+
 
 
 # DO NOT RENAME THIS FUNCTION (required by j2cli)
@@ -394,6 +475,7 @@ def j2_environment(env):
     env.globals['glob'] = globfn
     env.globals['glob_from_file'] = glob_from_file_fn
     env.globals['asset'] = asset
+    env.globals['artifacts_of'] = artifacts_of
 
     # Private functions called from J2 macros
     env.globals['_figures__fig'] = _figures__fig

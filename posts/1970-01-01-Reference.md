@@ -3,6 +3,8 @@ layout: post
 title: "Blog Reference"
 tags: [cryptography, matasano, cryptonita, repeating key]
 inline_default_language: python
+artifacts:
+ - label.svg
 ---
 
 ## Front matter
@@ -150,3 +152,18 @@ and not officially supported by Pandoc but it works.
 Table:{.fullwidth}
 
 There are **more** kind of tables in Pandoc.
+
+## Diagrams
+
+In order to support diagrams, the name of each file generated must
+be listed in the `artifacts` field of the post's metadata.
+
+{% call maindiag('label.svg', 'plantuml') %}
+```
+hide empty description
+
+[*] -> [*] : a
+```
+{% endcall %}
+
+

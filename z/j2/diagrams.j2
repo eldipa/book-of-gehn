@@ -1,0 +1,21 @@
+
+{% macro maindiag(fname, type, max_width=None, cls='', home=page.imghome, indexonly=False) -%}
+{% if (indexonly and isexcerpt) or not indexonly -%}
+{{ _diagrams_diag(fname=fname, source_code=caller(), type=type, max_width=max_width,
+    cls=cls, location='main', home=home) }}
+{%- endif %}
+{%- endmacro %}
+
+{% macro fulldiag(fname, type, max_width=None, cls='', home=page.imghome, indexonly=False) -%}
+{% if (indexonly and isexcerpt) or not indexonly -%}
+{{ _diagrams_diag(fname=fname, source_code=caller(), type=type, max_width=max_width,
+    cls=cls, location='full', home=home) }}
+{%- endif %}
+{%- endmacro %}
+
+{% macro margindiag(fname, type, max_width=None, cls='', home=page.imghome, indexonly=False) -%}
+{% if (indexonly and isexcerpt) or not indexonly -%}
+{{ _diagrams_diag(fname=fname, source_code=caller(), type=type, max_width=max_width,
+    cls=cls, location='margin', home=home) }}
+{%- endif %}
+{%- endmacro %}

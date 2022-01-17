@@ -46,6 +46,7 @@ RUN apt-get -y update                           \
 RUN apt-get -y update                           \
  && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -y install \
             npm                                 \
+            openjdk-17-jre                      \
  && apt-get clean                               \
  && rm -rf /var/lib/apt/lists/
 
@@ -57,6 +58,7 @@ RUN pip3 install                                \
             python-frontmatter                  \
             fonttools[woff]                     \
             feedgen                             \
+            fasteners                           \
  && npm install -g sass                         \
  && npm install -g clean-css-cli                \
  && npm install -g uglify-js                    \

@@ -25,7 +25,7 @@ endif
 # file (like the rules that use the !j2 macro below).
 # To fix this, this macro adds %1f.yml in the order-only input file so Tup
 # can know that this Tup-rule *depends* on that file too besides the input %1f
-!j2 = |> ^ j2 %f^ j2 --customize scripts/j2helpers.py %1f %2f > %o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!j2 = |> ^ j2 %f^ j2 --customize scripts/j2helpers.py %1f %2f > %1o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 !extract-front = |> ^ front %f^ ./scripts/front.py %1f %1o %2o %3o %4o site.yaml |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
@@ -61,7 +61,7 @@ endif
 {% endfor %}
 
 #
-# End of the Posts pipeline ------
+# End of the Posts' assets pipeline ------
 
 
 # PNG pipeline
@@ -156,7 +156,7 @@ endif
 {# (!j2) Process each Jinja template Markdown file reading the YAML configuration
    and generate the "final" Markdown file. The same goes for the content
    without layout and the excerpt. #}
-: {{ f('out/posts/front/{:n.md, .yml}') }} |> !j2 |> {{ f('out/posts/md/{:b}') }}
+: {{ f('out/posts/front/{:n.md, .yml}') }} |> !j2 -e ENV |> {{ f('out/posts/md/{:b}') }} {{ artifacts_of(f, rel='posts', fmt='out/site/img/{:f}') | join(' ') }}
 : {{ f('out/posts/front/{:n.excerpt.md, .yml}') }} |> !j2 |> {{ f('out/posts/md/{:n.excerpt.md}') }}
 : {{ f('out/posts/front/{:n.no-layout.md, .yml}') }} |> !j2 |> {{ f('out/posts/md/{:n.no-layout.md}') }}
 
