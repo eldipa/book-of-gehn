@@ -77,6 +77,8 @@ width (occupying the main part and the margin; with the caption below it)
 and to put it at the main part only (with the caption on the margin)
 respectively.
 
+Maximum width can be set with `max_width="nn%"`.
+
 ## Latex
 
 Tex/Latex can be inline like in `p^2`{.mathjax} or in a block like:
