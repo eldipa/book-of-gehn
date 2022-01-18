@@ -8,3 +8,13 @@
 {% macro spoileralert() -%}
 {% call marginnotes() %}**-- Spoiler Alert! --**{% endcall %}
 {%- endmacro %}
+
+{#
+The <span> is a trick to make sure that the space between
+the inline element <i> and the rest of the text (link_name)
+is not breakeable (writing &nbsp; alone is not enough)
+#}
+{% macro codelink(src, link_name="code") -%}
+<a href="{{ asset(src) }}"><span style="white-space: nowrap;"><i class="fab fa-github"></i>&nbsp;{{link_name}}</span></a>
+{%- endmacro %}
+

@@ -108,7 +108,7 @@ setexcerptvar = '{% set isexcerpt = False %}\n'
 imports = '''
 {% from 'z/j2/figures.j2' import marginfig, fullfig, mainfig with context %}
 {% from 'z/j2/diagrams.j2' import margindiag, fulldiag, maindiag with context %}
-{% from 'z/j2/notes.j2' import marginnotes, spoileralert with context %}
+{% from 'z/j2/notes.j2' import marginnotes, spoileralert, codelink with context %}
 '''
 
 # This is the page content with the J2 variables and imports added
