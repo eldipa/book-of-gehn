@@ -168,3 +168,27 @@ Optional captions can be set here, after the code fenced block
 {% endcall %}
 
 
+## Code link
+
+Use `{ { codelink(url, [link name]}}` to generate a link to some nice
+code like {{codelink("foo.py")}}
+
+## Horizontal line
+
+Bla bla bla
+{{ hline() }}
+Bla bla bla
+
+
+## Quotes
+
+
+> "The virtual interfaces in client VMs are called `ethX`,
+> and are provided by the `xen_netfront` kernel module, and
+> the corresponding interfaces in the Net/Proxy VM are
+> called `vifX.Y` and are created by the `xen_netback` module."
+> <cite class="epigraph">[Playing with Qubes networking for fun](https://theinvisiblethings.blogspot.com/2011/09/playing-with-qubes-networking-for-fun.html)</cite>
+
+Highlight/Take home message
+
+>>> "This is important"
