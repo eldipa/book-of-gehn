@@ -39,8 +39,6 @@ Use me for small things.
 
 Multiple paragraphs are allowed as also *markdown* **of**
 `any` [kind]().
-
-Fenced Code is **not supported** for now.
 {% endcall %}
 
 Margin notes son notas de texto que apareceran en el margen de la

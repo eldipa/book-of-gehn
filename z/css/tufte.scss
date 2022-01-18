@@ -281,8 +281,13 @@ pre, pre code, p code, p pre code, li code, li pre { font-family: $code-font;  /
         line-height: 1.71428571;        // of triple backticks plus rationalized line-heights and margins
         margin-top: 1.71428571rem; }
 
+.pseudo-pre {
+    // ensure that whitespace is preserved in the code even if it is
+    // inline
+    white-space: pre-wrap;
+}
 
-:not(pre) > code {
+:not(pre):not(.pseudo-pre) > code {
     background-color: rgba(242,204,145,.5);
     padding: 1px 2px;
     border-radius: 2px;

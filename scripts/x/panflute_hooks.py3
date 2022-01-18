@@ -4,7 +4,7 @@ from panflute import (run_filters, Code, Header, Str, Para, Space,
 RawInline, Plain, Link, CodeBlock, RawBlock, convert_text, Table, Div,
 Caption)
 
-import sys, os
+import sys, os, base64
 
 trace_file=None
 
@@ -37,6 +37,7 @@ def set_language_for_inline_code(elem, doc):
         default = doc.get_metadata('inline_default_language', default='')
         if default:
             elem.classes.append(default)
+
 
 def highlight_code_inline_and_blocks_with_pygments(elem, doc):
     ''' Take Code and CodeBlock items and highlight their context
@@ -75,6 +76,7 @@ def highlight_code_inline_and_blocks_with_pygments(elem, doc):
         key_values = [kv.split('=', 1) for kv in tmp]
         attributes = dict(kv if len(kv) == 2 else (kv[0], True) for kv in key_values)
         attributes.update(dict((cls, True) for cls in elem.classes))
+        attributes.update(elem.attributes)
 
         if attributes.get('mathjax', False):
             return wrap_code_with_mathjax_tags(elem, doc, attributes)
@@ -91,14 +93,15 @@ def highlight_code_inline_and_blocks_with_pygments(elem, doc):
 
         code = elem.text
 
-        # TODO for now we have these hardcoded but we could customize
-        # them through the attributes.
-        ops = {'cssclass' : 'highlight-candombe'}
-        if type(elem) == Code:
-            # We want a slightly different style for the inline code
-            # so we change the CSS class a little
-            ops['cssclass'] += '-inline'
+        print("===> Elem attrs", elem.attributes, file=trace_file)
+        print("===> Var attrs", attributes, file=trace_file)
+        default_cssclass = 'highlight-candombe-inline' if type(elem) == Code else 'highlight-candombe'
+        ops = {
+                'cssclass' : attributes.get('cssclass', default_cssclass)
+                }
+        print("===> Ops", ops, file=trace_file)
 
+        if type(elem) == Code:
             # We don't want to wrap the code with <div> and <pre> which
             # will break the layout/flow of the web page.
             # Instead we add a <span> manually later
@@ -122,6 +125,14 @@ def highlight_code_inline_and_blocks_with_pygments(elem, doc):
             # added by Pygments to have the correct style but for the
             # Code (inline) we need to do this by hand.
             code_h = f'<code><span class="{ops["cssclass"]}">{code_h.rstrip()}</span></code>'
+
+            # Because the code is not wrapped with <pre> because it
+            # breaks the layout of the webpage, if required we can add
+            # a <span> with the class 'pseudo-pre' to "emulate" it via
+            # CSS
+            if attributes.get('wrap-with-pseudo-pre', False):
+                code_h = '<span class="pseudo-pre">' + code_h + '</span>'
+
             return RawInline(text=code_h, format='html')
         elif type(elem) == CodeBlock:
             return RawBlock(text=code_h, format='html')
@@ -157,7 +168,12 @@ def post_process_by_hook(elem, doc):
             return elem
 
         elem.classes.remove('post_process_by_hook')
-        elems = convert_text(elem.text, input_format=elem.attributes['input_format'])
+
+        # The content of the post_process_by_hook is always in base64
+        # to avoid the need to escape any character that could confuse
+        # Pandoc before reaching us.
+        elem_text = base64.b64decode(elem.text.encode('utf8')).decode('utf8')
+        elems = convert_text(elem_text, input_format=elem.attributes['input_format'])
 
         if not elems:
             return
@@ -166,12 +182,31 @@ def post_process_by_hook(elem, doc):
         # and separate them with <br /> breaks.
         # Visually should be the same but this output format is suitable
         # when the final location of the text cannot contain paragraphs.
+        #
+        # An exception to this are the CodeBlock which are passed as
+        # they are
         assert elem.attributes['output_format'] == 'plain-block'
 
         newelems = []
         for el in elems:
-            assert type(el) == Para
-            newelems.append(Plain(*el.content))
+            assert type(el) in {Para, CodeBlock}
+            if type(el) == Para:
+                newelems.append(Plain(*el.content))
+            elif type(el) == CodeBlock:
+                inline = Code(
+                        text=el.text,
+                        identifier=el.identifier,
+                        classes=el.classes,
+                        attributes=el.attributes
+                        )
+
+                # Set the attributes to mimic the style of a CodeBlock
+                inline.attributes['cssclass'] = 'highlight-candombe'
+                inline.attributes['wrap-with-pseudo-pre'] = 'pseudo-pre'
+                newelems.append(Plain(inline))
+
+            else:
+                assert False
             newelems.append(RawBlock('<br /><br />', format='html'))
 
         # Drop last <br /><br />

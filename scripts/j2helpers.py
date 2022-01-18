@@ -257,6 +257,9 @@ def post_process_by_hook(s, **opts):
         Panflute) to do post processing like converting Markdown text
         into HTML.
     '''
+    # Encode this in Base64 so we can be sure that the content will
+    # *not* be interpreted by Pandoc here but only for the Pandoc Hook
+    s = base64.b64encode(s.encode('utf8')).decode('utf8')
     opt_str = ' '.join(f'{k}={v}' for k, v in opts.items())
     return '''
 ```{.post_process_by_hook %s}

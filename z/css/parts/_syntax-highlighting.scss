@@ -46,11 +46,11 @@ $spacing-unit:     30px;
     .kd    { font-weight: bold } // Keyword.Declaration
     .kp    { font-weight: bold } // Keyword.Pseudo
     .kr    { font-weight: bold } // Keyword.Reserved
-    .kt    { color: #458; font-weight: bold } // Keyword.Type
-    .m     { color: #099 } // Literal.Number
+    .kt    { color: #33467e; font-weight: bold } // Keyword.Type
+    .m     { color: #620099 } // Literal.Number
     .s     { color: #d14 } // Literal.String
     .na    { color: #008080 } // Name.Attribute
-    .nb    { color: #0086B3 } // Name.Builtin
+    .nb    { color: #620099 } // Name.Builtin
     .nc    { color: #458; font-weight: bold } // Name.Class
     .no    { color: #008080 } // Name.Constant
     .ni    { color: #800080 } // Name.Entity
@@ -61,10 +61,10 @@ $spacing-unit:     30px;
     .nv    { color: #008080 } // Name.Variable
     .ow    { font-weight: bold } // Operator.Word
     .w     { color: #bbb } // Text.Whitespace
-    .mf    { color: #099 } // Literal.Number.Float
-    .mh    { color: #099 } // Literal.Number.Hex
-    .mi    { color: #099 } // Literal.Number.Integer
-    .mo    { color: #099 } // Literal.Number.Oct
+    .mf    { color: #620099 } // Literal.Number.Float
+    .mh    { color: #620099 } // Literal.Number.Hex
+    .mi    { color: #620099 } // Literal.Number.Integer
+    .mo    { color: #620099 } // Literal.Number.Oct
     .sb    { color: #d14 } // Literal.String.Backtick
     .sc    { color: #d14 } // Literal.String.Char
     .sd    { color: #d14 } // Literal.String.Doc
@@ -80,13 +80,15 @@ $spacing-unit:     30px;
     .vc    { color: #008080 } // Name.Variable.Class
     .vg    { color: #008080 } // Name.Variable.Global
     .vi    { color: #008080 } // Name.Variable.Instance
-    .il    { color: #099 } // Literal.Number.Integer.Long
+    .il    { color: #620099 } // Literal.Number.Integer.Long
 }
 
 .highlight-candombe {
     background: transparent;
+    text-shadow: initial;
 }
 
 .highlight-candombe-inline {
     //background: rgba(242,204,145,.5);
+    text-shadow: initial;
 }
