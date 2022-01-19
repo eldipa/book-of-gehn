@@ -382,6 +382,12 @@ def asset(ctx, src):
     assert home
     return url_from(src, home=home)
 
+@jinja2.contextfunction
+def img(ctx, src):
+    home = ctx.get('imghome')
+    assert home
+    return url_from(src, home=home)
+
 
 @jinja2.contextfunction
 def _diagrams_diag(ctx, fname, source_code, type, max_width, cls, location, home):
@@ -478,6 +484,7 @@ def j2_environment(env):
     env.globals['glob'] = globfn
     env.globals['glob_from_file'] = glob_from_file_fn
     env.globals['asset'] = asset
+    env.globals['img'] = img
     env.globals['artifacts_of'] = artifacts_of
 
     # Private functions called from J2 macros
