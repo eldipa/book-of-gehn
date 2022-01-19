@@ -1,6 +1,6 @@
 *.pyc
-out/
+/out/
 Tupfile
 .tup
-dbg/
+/dbg/
 .*.swp
