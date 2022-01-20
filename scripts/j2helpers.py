@@ -14,9 +14,9 @@ import fasteners
 
 
 # NOTE: this "artifact thing" has a race condition
-def create_artifact_file(output_file_path, *hash_items):
+def create_artifact_file(output_file_path, type, *hash_items):
     s = (''.join(hash_items) + output_file_path)
-    fname = os.path.basename(output_file_path) + ':' + hashlib.sha1(s.encode('utf8')).hexdigest()
+    fname = os.path.basename(output_file_path) + ':' + type + ":" + hashlib.sha1(s.encode('utf8')).hexdigest()
     artifact_file_path = '/tmp/' + fname
     exists = os.path.exists(artifact_file_path)
 
@@ -424,11 +424,13 @@ def _diagrams_diag(ctx, fname, source_code, type, max_width, cls, location, home
     # diagram again if the source code didn't change. This speeds up quite
     # a lot the compilation.
     if ctx.get('ENV') != None:
-        artifact_file_path, exists = create_artifact_file(file_path, source_code, img_format, type)
+        artifact_file_path, exists = create_artifact_file(file_path, type, source_code, img_format)
 
         if not exists:
             if type == 'plantuml':
                 generate_plantuml_diagram(artifact_file_path, source_code, img_format)
+            elif type == 'ditaa':
+                generate_ditaa_diagram(artifact_file_path, source_code, img_format)
             else:
                 assert False
 
@@ -469,6 +471,76 @@ def generate_plantuml_diagram(artifact_file_path, source_code, img_format):
         os.system(f'mv "{src_fname}.{img_format}" "{artifact_file_path}"')
     finally:
         os.remove(src_fname)
+
+
+def generate_ditaa_diagram(artifact_file_path, source_code, img_format):
+    with NamedTemporaryFile(delete=False, mode='wt') as f:
+        src_fname = f.name
+        f.write(source_code)
+
+    jar_path = './scripts/x/ditaa.jar'
+    args = '--no-shadows --no-separation'
+    try:
+        cmd = f"java -Djava.awt.headless=true -jar {jar_path} --overwrite --transparent --svg {src_fname} {args}".split()
+        out = check_output(cmd, stderr=STDOUT)
+        if b'error' in out.lower():
+            print(out, file=sys.stderr)
+            raise Exception("Ditaa failed")
+        patch_ditaa_svg(f"{src_fname}.{img_format}")
+        os.system(f'mv "{src_fname}.{img_format}" "{artifact_file_path}"')
+    finally:
+        os.remove(src_fname)
+
+def patch_ditaa_svg(svg_fname):
+    style = '''
+      <style type='text/css'>
+          /* <![CDATA[ */
+              text {
+                    fill: black !important;
+                    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace !important;
+              }
+              path {
+                    stroke-width: 1.5 !important;
+              }
+          /* ]]> */
+      </style>
+    '''
+
+    script = '''
+      <script type="text/javascript">
+        <![CDATA[
+        setTimeout(function() {
+            // make all the "white" closed shapes transparent.
+            var paths = document.getElementsByTagName('path');
+            for (var i = 0; i < paths.length; i++) {
+                var path = paths[i];
+                if (path.getAttribute("fill") == "white") {
+                    path.setAttribute("fill", "#ffffff00"); // transparent
+                }
+            }
+        }, 1000);
+        ]]>
+      </script>
+    '''
+    with open(svg_fname, 'rt') as f:
+        svg = f.read()
+
+
+    r = re.compile(
+            r'''width='([0-9]*)'.*?height='([0-9]*)'.*?shape-rendering=''',
+            re.DOTALL
+            )
+
+    m = r.search(svg)
+    width, height = m.group(1), m.group(2)
+
+    fixbox = f" viewBox='0 0 {width} {height}' shape-rendering="
+    svg = r.sub(fixbox, svg, count=1)
+
+    svg = svg.replace('<defs>', script + style + '<defs>', 1)
+
+    with open(svg_fname, 'wt') as f:
+        f.write(svg)
 
 
 
