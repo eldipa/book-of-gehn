@@ -431,12 +431,14 @@ def _diagrams_diag(ctx, fname, source_code, type, max_width, cls, location, home
                 generate_plantuml_diagram(artifact_file_path, source_code, img_format)
             elif type == 'ditaa':
                 generate_ditaa_diagram(artifact_file_path, source_code, img_format)
+            elif type == 'dot':
+                generate_dot_diagram(artifact_file_path, source_code, img_format)
             else:
                 assert False
 
         # We need to call this even if the artifact didn't require generation
         # This is because Tup will delete the output file before calling us
-        # so we are forced to create the output file again. Fortunatelly,
+        # so we are forced to create the output file again. Fortunately,
         # if the artifact file exists, we didn't have to pay the generation
         # cost, only the copy.
         output_updated_artifact(artifact_file_path, file_path)
@@ -541,6 +543,23 @@ def patch_ditaa_svg(svg_fname):
 
     with open(svg_fname, 'wt') as f:
         f.write(svg)
+
+def generate_dot_diagram(artifact_file_path, source_code, img_format):
+    with NamedTemporaryFile(delete=False, mode='wt') as f:
+        src_fname = f.name
+        f.write(source_code)
+
+    bin_path = 'dot'
+    args = ''
+    try:
+        cmd = f"{bin_path} -T{img_format} -o{src_fname}.{img_format} {args} {src_fname}".split()
+        out = check_output(cmd, stderr=STDOUT)
+        if out:
+            print(out, file=sys.stderr)
+            raise Exception("Graphviz failed")
+        os.system(f'mv "{src_fname}.{img_format}" "{artifact_file_path}"')
+    finally:
+        os.remove(src_fname)
 
 
 
