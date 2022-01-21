@@ -80,6 +80,11 @@ endif
 {% for f in glob('posts/**/*.gif') -%}
 : {{f}} |> !minify-gif |> {{f('out/site/img/{:f}', 'posts/')}} <postssassets>
 {% endfor %}
+
+# SVG pipeline
+{% for f in glob('posts/**/*.svg') -%}
+: {{f}} |> !cp |> {{f('out/site/img/{:f}', 'posts/')}} <postssassets>
+{% endfor %}
 #
 # End of the PNG pipeline ------
 
