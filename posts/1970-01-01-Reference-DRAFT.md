@@ -98,6 +98,10 @@ For the inline math we use backticks and the `{.mathjax}` attribute
 and for the bloc we use three backticks (code fenced block) with
 the class `tex;mathjax`.
 
+A shortcut for the inline math is using backticks as usual but after
+the first backtick write `]` like in `]g_i`. Set `{.none}` to
+disable like `]g_i`{.none}.
+
 Special symbols can be set using Unicode like ⊕ which it is cool
 in the markdown text. This may not always look good in the webpage
 however.

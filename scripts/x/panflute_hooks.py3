@@ -34,9 +34,14 @@ def set_language_for_inline_code(elem, doc):
     '''
 
     if type(elem) == Code and not elem.classes:
-        default = doc.get_metadata('inline_default_language', default='')
-        if default:
-            elem.classes.append(default)
+        if elem.text.startswith(']') and len(elem.text) > 1:
+            elem.text = elem.text[1:]
+            elem.classes.append('mathjax')
+
+        else:
+            default = doc.get_metadata('inline_default_language', default='')
+            if default:
+                elem.classes.append(default)
 
 
 def highlight_code_inline_and_blocks_with_pygments(elem, doc):
