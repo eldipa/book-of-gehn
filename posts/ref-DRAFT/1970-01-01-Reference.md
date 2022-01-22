@@ -32,6 +32,24 @@ Usar `{ { spoileralert() }}` para poner un mini cartelito de advertencia
 
 Usar el tag `<!--more-->` para marcar el fin del *abstract*.<!--more-->
 
+## Draft Folders
+
+Folders with the word `DRAFT` in their filename are marked as drafts. They
+are compiled as any other folder (assets, posts, ...)
+but they are removed from the public site.
+
+## Secret Folders
+
+Any resource
+Posts with the word `SECRET` in their filename are marked as secret. They
+are compiled as any other post but their URL path are changed to
+a random and secret but deterministic hash so they are served by
+the public web site but they are neither indexed nor available unless
+you know the hash.
+
+This of course assumes that the web server is not offering an index
+page itself.
+
 ## Notes
 
 {% call marginnotes() %}

@@ -67,3 +67,9 @@ RUN pip3 install                                \
  && dpkg -i pandoc-2.16.2-1-amd64.deb  \
  && rm -f pandoc-2.16.2-1-amd64.deb
 
+
+RUN apt-get -y update                           \
+ && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -y install \
+            rsync                               \
+ && apt-get clean                               \
+ && rm -rf /var/lib/apt/lists/

@@ -25,3 +25,16 @@ serve:
 	# the server will call 'make' before serving it triggering a
 	# recomputation of the site behind the scenes
 	@./scripts/server.py -c make -d out/site -t 'out/site/articles/**/*.html' -t 'out/site/pages/**/*.html'  -t 'out/site/pages/'  -t 'out/site/' 4000
+
+publish:
+	# Make the public site. Note that the DRAFT folders
+	# are *not* copied however this impl is not perfect
+	# and it leaks thinks like the drafts' date
+	# (article/<date>/)
+	@rsync --human-readable --partial --progress --recursive \
+	       --times --delete --links \
+	       --exclude ".git" 	\
+	       --exclude "**DRAFT**" 	\
+               out/site/ public-site/
+	@# This is not necessary; just in case
+	@find public-site/ -name '**DRAFT**' -delete

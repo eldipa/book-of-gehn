@@ -4,3 +4,4 @@ Tupfile
 .tup
 /dbg/
 .*.swp
+/public-site/
