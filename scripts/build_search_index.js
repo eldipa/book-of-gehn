@@ -32,6 +32,10 @@ const lunr_idx = lunr(function () {
             return;
         }
 
+        if (fname.includes('DRAFT') || fname.includes('HIDDEN')) {
+            return;
+        }
+
         const lines = fs.readFileSync(fname, 'utf8').split(/\r?\n/)
 
         let tags_str = "";

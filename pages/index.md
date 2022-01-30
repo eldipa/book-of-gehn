@@ -4,6 +4,7 @@ title: ""
 ispost: false
 ---
 {% for post in posts %}
+{% if 'draft' not in post.tags and 'hidden' not in post.tags %}
    <span class="index-single-post">
       <hr class="slender post-layout">
       <a href="{{ post['url'] }}"><h2 class="larger">{{ post['title'] }}</h2></a>
@@ -12,4 +13,5 @@ ispost: false
 {% include post['refs']['excerpt-j2'] %}
 </div>
    </span>
+{% endif %}
 {% endfor %}

@@ -47,6 +47,10 @@ content = page.content
 # Post pages are special.
 ispost = page['ispost']
 
+# Ensure the page has a "tags" field
+if 'tags' not in page:
+    page['tags'] = []
+
 # Set the page URL and the date and save it into its metadata.
 #
 # The URL is different for Posts and Pages and the Pages
@@ -66,6 +70,12 @@ else:
     n = src_filename
     page['url'] = "/".join((site['url'], os.path.splitext(n)[0]  + '.html'))
 
+
+if 'DRAFT' in src_filename:
+    page['tags'].append('draft')
+
+if 'HIDDEN' in src_filename:
+    page['tags'].append('hidden')
 
 # Set the home of the image and assets for this page
 # This will be the same folder structure that the page has

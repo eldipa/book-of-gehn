@@ -1,6 +1,7 @@
 # Pass this environment variable to compile (tup) only a subset
 # of the targets. Leave it undefined to compile everything.
 PAGETARGET ?=
+SECRET ?= secret
 
 all: Tupfile
 	tup ${PAGETARGET}
@@ -36,5 +37,11 @@ publish:
 	       --exclude ".git" 	\
 	       --exclude "**DRAFT**" 	\
                out/site/ public-site/
+	# Hide the hidden posts/pages changing their names
+	# to something random
+	@find public-site/ -name '**HIDDEN**' -print0 | xargs --null -I{} bash -c 'mv {} `echo {} | sed s/HIDDEN/${SECRET}/g`'
 	@# This is not necessary; just in case
 	@find public-site/ -name '**DRAFT**' -delete
+	@find public-site/ -name '**HIDDEN**' -delete
+	# Point to the correct public web site
+	@grep -Rl 'http://127.0.0.1:4000' public-site/ | xargs -I{} sed -i 's%http://127.0.0.1:4000%https://book-of-gehn.github.io%g' {}

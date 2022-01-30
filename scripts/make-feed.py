@@ -21,6 +21,9 @@ for fname in post_metadata_filenames:
     with open(fname, 'rt') as f:
         post = yaml.safe_load(f.read())
 
+    if 'draft' in post['tags'] or 'hidden' in post['tags']:
+        continue
+
     fe = fg.add_entry()
     fe.title(post['title'])
     fe.link(href=post['url'], title=post['title'], rel='alternate', type="text/html")
