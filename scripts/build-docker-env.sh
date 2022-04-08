@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-docker build                                \
+sudo docker build                           \
     -t blog-env                             \
     -f docker/md.Dockerfile          \
     docker/

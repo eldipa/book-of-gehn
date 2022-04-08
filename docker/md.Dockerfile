@@ -8,10 +8,13 @@ RUN apt-get -y update                           \
             clang-format                        \
             fuse3                               \
             ghostscript                         \
+            gifsicle                            \
             git                                 \
             graphviz                            \
             less                                \
             libfuse3-dev                        \
+            npm                                 \
+            openjdk-17-jre                      \
             optipng                             \
             pandoc                              \
             pkg-config                          \
@@ -21,6 +24,7 @@ RUN apt-get -y update                           \
             python3-pip                         \
             python3-setuptools                  \
             python3-venv                        \
+            rsync                               \
             sudo                                \
             vim                                 \
             wget                                \
@@ -34,7 +38,7 @@ RUN apt-get -y update                           \
  &&  usermod -aG admin user                                             \
  &&  mkdir -p /home/user                                                \
  &&  chown -R user /home/user                                           \
- && git clone git://github.com/gittup/tup.git   \
+ && git clone https://github.com/gittup/tup.git \
  && cd tup                                      \
  && chmod u+x ./bootstrap.sh                    \
  && CFLAGS="-g" ./build.sh                      \
@@ -42,13 +46,6 @@ RUN apt-get -y update                           \
  && chmod a+x /usr/bin/tup                      \
  && cd ..                                       \
  && rm -R tup/
-
-RUN apt-get -y update                           \
- && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -y install \
-            npm                                 \
-            openjdk-17-jre                      \
- && apt-get clean                               \
- && rm -rf /var/lib/apt/lists/
 
 RUN pip3 install                                \
             j2cli                               \
@@ -66,10 +63,3 @@ RUN pip3 install                                \
  && dpkg -i pandoc-2.16.2-1-amd64.deb  \
  && rm -f pandoc-2.16.2-1-amd64.deb
 
-
-RUN apt-get -y update                           \
- && DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -y install \
-            rsync                               \
-            gifsicle                            \
- && apt-get clean                               \
- && rm -rf /var/lib/apt/lists/

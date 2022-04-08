@@ -8,8 +8,6 @@ from datetime import datetime
 from tempfile import NamedTemporaryFile
 from subprocess import check_call, check_output, STDOUT
 
-from jinja2.filters import environmentfilter
-
 
 # NOTE: this "artifact thing" has a race condition
 def create_artifact_file(output_file_path, type, *hash_items):
@@ -25,7 +23,7 @@ def output_updated_artifact(artifact_file_path, output_file_path):
     os.system(f'cp "{artifact_file_path}" "{output_file_path}"')
 
 
-@jinja2.contextfunction
+@jinja2.pass_context
 def globfn(ctx, pattern, rel=None, fmt=None):
     ''' Allow the listing of some files in the filesystem.
 
@@ -71,7 +69,7 @@ def globfn(ctx, pattern, rel=None, fmt=None):
 
     return list(sorted(paths))
 
-@jinja2.contextfunction
+@jinja2.pass_context
 def glob_from_file_fn(ctx, fname, rel=None, fmt=None):
     ''' Like globfn, but take one or more glob-patterns from
         a file.
@@ -90,7 +88,7 @@ def glob_from_file_fn(ctx, fname, rel=None, fmt=None):
     ret.sort()
     return ret
 
-@jinja2.contextfunction
+@jinja2.pass_context
 def artifacts_of(ctx, fname, rel=None, fmt=None):
     src = frontmatter.load(fname)
     home = os.path.dirname(fname)
@@ -106,7 +104,7 @@ def artifacts_of(ctx, fname, rel=None, fmt=None):
 
     return list(sorted(paths))
 
-@environmentfilter
+@jinja2.pass_environment
 def date(env, val, outfmt, infmt='%Y-%m-%d'):
     ''' Take a date <val> in a particular format <infmt> and output
         the same date but in a differrent format <outfmt>.
@@ -272,7 +270,7 @@ def url_from(src, home):
     else:
         return os.path.join(home, src)
 
-@jinja2.contextfunction
+@jinja2.pass_context
 def _figures__fig(ctx, src, caption, max_width, cls, alt, location, home):
     ''' Generate HTML code to show an image that it is at <src>.
 
@@ -356,7 +354,7 @@ ensure_html_block(f'''</span></figcaption>
         assert False
 
 
-@jinja2.contextfunction
+@jinja2.pass_context
 def _notes__notes(ctx, caption, kind):
     wrapper_cls = 'as-paragraph'
     lbl_cls = 'margin-toggle'
@@ -374,20 +372,20 @@ f'''<p><label for='{id}' class='{lbl_cls}'> &#8853;</label>
         ensure_html_block('''</span></p>''')
 
 
-@jinja2.contextfunction
+@jinja2.pass_context
 def asset(ctx, src):
     home = ctx.get('assestshome')
     assert home
     return url_from(src, home=home)
 
-@jinja2.contextfunction
+@jinja2.pass_context
 def img(ctx, src):
     home = ctx.get('imghome')
     assert home
     return url_from(src, home=home)
 
 
-@jinja2.contextfunction
+@jinja2.pass_context
 def _diagrams_diag(ctx, fname, source_code, type, max_width, cls, location, home):
     # Drop the "fences" of the code fenced block and split
     # the diagram source code from the caption (this last optional)
@@ -441,11 +439,14 @@ def _diagrams_diag(ctx, fname, source_code, type, max_width, cls, location, home
         # cost, only the copy.
         output_updated_artifact(artifact_file_path, file_path)
 
+    style_for_centering = 'display: block; margin-left: auto; margin-right: auto;'
+
     # optional style
+    style_for_max_width = ''
     if max_width is not None:
-        style = f'style="max-width: {max_width}"'
-    else:
-        style = ''
+        style_for_max_width = f'max-width: {max_width};'
+
+    style = f'style="{style_for_centering}{style_for_max_width}"'
 
     img_cls = cls
 

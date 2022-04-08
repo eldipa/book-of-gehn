@@ -8,7 +8,7 @@ run_in_docker() {
     local wd="/home/user/proj/book-of-gehn"
     local img=blog-env
     local user="1000:1000"
-    docker run                                  \
+    sudo -E docker run                          \
         --device /dev/fuse                      \
         --cap-add SYS_ADMIN                     \
         --security-opt apparmor:unconfined      \
