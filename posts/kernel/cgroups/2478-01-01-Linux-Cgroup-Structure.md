@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Linux Control Group (cgroup)"
-tags: [linux, kernel, cgroup, hidden]
+tags: [linux, kernel, cgroup, HIDDEN]
 artifacts:
  - cgroup-hierarchical-org.svg
  - cgroup-states.svg

@@ -4,7 +4,7 @@ title: ""
 ispost: false
 ---
 {% for post in posts %}
-{% if 'draft' not in post.tags and 'hidden' not in post.tags %}
+{% if 'DRAFT' not in post.tags and 'HIDDEN' not in post.tags %}
    <span class="index-single-post">
       <hr class="slender post-layout">
       <a href="{{ post['url'] }}"><h2 class="larger">{{ post['title'] }}</h2></a>

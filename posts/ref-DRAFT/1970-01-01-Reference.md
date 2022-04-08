@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Blog Reference"
-tags: [cryptography, matasano, cryptonita, repeating key]
+tags: [cryptography, matasano, cryptonita, repeating key, DRAFT, HIDDEN]
 inline_default_language: python
 artifacts:
  - label.svg

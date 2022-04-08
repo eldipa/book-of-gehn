@@ -21,7 +21,7 @@ for fname in post_metadata_filenames:
     with open(fname, 'rt') as f:
         post = yaml.safe_load(f.read())
 
-    if 'draft' in post['tags'] or 'hidden' in post['tags']:
+    if 'DRAFT' in post['tags'] or 'HIDDEN' in post['tags']:
         continue
 
     fe = fg.add_entry()
