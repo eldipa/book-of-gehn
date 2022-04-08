@@ -237,6 +237,7 @@ and for graph-like I have the good old [Graphviz](https://graphviz.org/).
 {% call margindiag('qubes-net-path.svg', 'plantuml')  %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "AppVM" as app1 {
 state "route" as route
@@ -367,6 +368,7 @@ So far, this is want I think it may work:
 {% call maindiag('build-blog.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "Markdown" as md1
 state "Markdown" as md2

@@ -60,6 +60,7 @@ if the player was created selecting 0 again yields a
 {% call maindiag('mentalmodel.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "0) Create player\n1) Update player name\n2) Delete player\n3) Player attack\n4) Player defend\n5) Get current time" as menu
 state "Enter player name:" as askname

@@ -54,6 +54,7 @@ labeled with the particular character.
 {% call maindiag('label.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 [*] -> [*] : a
 ```
@@ -68,6 +69,7 @@ A NFA moves from one state to another through a `\epsilon`{.mathjax}-transition
 {% call maindiag('epsilon.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 [*] -> [*] : <math>\epsilon</math>
 ```
@@ -83,6 +85,7 @@ in regex syntax as ``a?``
 {% call maindiag('optional.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 [*] -> [*] : <math>\epsilon</math>
 [*] -> [*] : a
@@ -95,6 +98,7 @@ be a simple *literal*.
 {% call maindiag('sm_optional.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "<math>sm_1</math>" as sm1
 
@@ -113,6 +117,7 @@ to *bypass* `sm_1`{.mathjax}.
 {% call margindiag('concat.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "<math>sm_1</math>" as sm1
 state "<math>sm_2</math>" as sm2
@@ -145,6 +150,7 @@ to match a sequence of *repeated* submatches. In regex syntax, ``a{n}``.
 {% call margindiag('repeated.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "<math>sm_1</math>" as sm1a
 state "<math>sm_1</math>" as sm1b
@@ -168,6 +174,7 @@ a *zero or more* or *klee* construction, the famous ``a*``:
 {% call maindiag('klee.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "<math>sm_1</math>" as sm1
 
@@ -191,6 +198,7 @@ or with the higher limit unbounded ``a{2,}`` ``a+``.
 {% call maindiag('range.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "<math>sm_1</math>" as sm1a
 state "<math>sm_1</math>" as sm1b
@@ -219,6 +227,7 @@ more state machines using `\epsilon`{.mathjax}-transitions.
 {% call maindiag('union.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "<math>sm_1</math>" as sm1
 state "<math>sm_2</math>" as sm2

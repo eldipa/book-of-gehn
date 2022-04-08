@@ -183,10 +183,13 @@ be listed in the `artifacts` field of the post's metadata.
 {% call maindiag('label.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+hide members
+hide circle
+skinparam backgroundColor transparent
 
 [*] -> [*] : a
 ```
-Optional captions can be set here, after the code fenced block
+*Optional* captions can be set here, after the code fenced block
 {% endcall %}
 
 

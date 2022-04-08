@@ -282,6 +282,7 @@ VM and not the full chain.
 {% call margindiag('path.svg', 'plantuml') %}
 ```plantuml
 hide empty description
+skinparam backgroundColor transparent
 
 state "AppVM" as app1 {
 state "route" as route
