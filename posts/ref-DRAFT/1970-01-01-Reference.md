@@ -192,6 +192,8 @@ skinparam backgroundColor transparent
 *Optional* captions can be set here, after the code fenced block
 {% endcall %}
 
+*Referencia:*
+https://crashedmind.github.io/PlantUMLHitchhikersGuide/layout/layout.html
 
 ## Code link
 
