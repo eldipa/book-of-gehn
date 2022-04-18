@@ -1,17 +1,12 @@
 ---
 layout: post
-title: "Linux Control Group (cgroup)"
+title: "Linux Control Group - Organization"
 tags: [linux, kernel, cgroup, HIDDEN]
 artifacts:
  - cgroup-hierarchical-org.svg
  - cgroup-states.svg
 ---
 
-<!--
-$ touch /sys/fs/cgroup/testing/cgroup.type      # byexample: +fail-fast
-$ echo $?                                       # byexample: +fail-fast
-0
--->
 
 ### Mount point
 
@@ -314,5 +309,6 @@ of `threaded` type as well.
 Delete recursively every cgroup (folder) from the leaves to the
 root.
 
-$ rmdir $(find /sys/fs/cgroup/testing/* -type d | sort -r)        # byexample: +pass -skip
+$ cd /sys/fs/cgroup/                                              # byexample: +pass -skip
+$ rmdir $(find /sys/fs/cgroup/testing/ -type d | sort -r)         # byexample: +pass -skip
 -->
