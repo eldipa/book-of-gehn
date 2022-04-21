@@ -158,7 +158,7 @@ You can generalize this cast as a macro
 `READ(x) ((volatile typeof((x)))(x))`
 
 Take at look at Linux's
-[`READ_ONCE`](https://github.com/torvalds/linux/blob/master/include/linux/compiler.h)
+[`READ_ONCE`](https://github.com/torvalds/linux/blob/f143c11bb7b924403ea2d5b5c990717772293620/include/linux/compiler.h#L275-L293)
 for a more complete construction even for non-atomic/non-primitive variables. {% endcall %}
 
 Or we could use `volatile` in a cast:
