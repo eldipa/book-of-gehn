@@ -11,6 +11,8 @@ from subprocess import check_call, check_output, STDOUT
 
 # NOTE: this "artifact thing" has a race condition
 def create_artifact_file(output_file_path, type, *hash_items):
+    if type == 'already-exists':
+        return None, True
     s = (''.join(hash_items) + output_file_path)
     fname = os.path.basename(output_file_path) + ':' + type + ":" + hashlib.sha1(s.encode('utf8')).hexdigest()
     artifact_file_path = '/tmp/' + fname
@@ -437,7 +439,12 @@ def _diagrams_diag(ctx, fname, source_code, type, max_width, cls, location, home
         # so we are forced to create the output file again. Fortunately,
         # if the artifact file exists, we didn't have to pay the generation
         # cost, only the copy.
-        output_updated_artifact(artifact_file_path, file_path)
+        #
+        # The type 'already-exists' is a HACK to make _diagrams_diag to not
+        # generate any new diagram but to assume that the diagram exists
+        # or eventually will exist.
+        if type != 'already-exists':
+            output_updated_artifact(artifact_file_path, file_path)
 
     style_for_centering = 'display: block; margin-left: auto; margin-right: auto;'
 

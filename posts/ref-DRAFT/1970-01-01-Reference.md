@@ -195,6 +195,25 @@ skinparam backgroundColor transparent
 *Referencia:*
 https://crashedmind.github.io/PlantUMLHitchhikersGuide/layout/layout.html
 
+## Already-exists diagrams
+
+If we want to generate a diagram for the index but not for the main
+post's page, TUP will complain because the post will claim that a
+diagram will be generated (defined in the `artifacts`) but that's not
+true.
+
+The hack is to set a 'already-exists' diagram type that will behave
+exactly like any diagram but it will not produce any file.
+
+It is your responsibility to make the file available eventually.
+
+{% call margindiag('label.svg', 'already-exists') %}
+```
+Not of use but required to not break the margindiag() parser.
+```
+Caption here, optional.
+{% endcall %}
+
 ## Code link
 
 Use `{ { codelink(url, [link name]}}` to generate a link to some nice
