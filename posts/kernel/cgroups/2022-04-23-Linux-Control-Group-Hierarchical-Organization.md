@@ -26,6 +26,10 @@ This post focus in the organization of cgroups and it is the first
 of a 3-posts series about `cgroup` in its new `v2` version.
 <!--more-->
 
+<!--
+$ test -d /sys/fs/cgroup/test && echo "cgroup test/ already created!"     # byexample: +fail-fast
+-->
+
 ## Overview of `cgroup` organization
 
 {% call marginnotes() %}
