@@ -181,7 +181,7 @@ def post_process_by_hook(elem, doc):
         elems = convert_text(elem_text, input_format=elem.attributes['input_format'])
 
         if not elems:
-            return
+            return []
 
         # Plain block means: convert all the paragraphs in Plain texts
         # and separate them with <br /> breaks.
