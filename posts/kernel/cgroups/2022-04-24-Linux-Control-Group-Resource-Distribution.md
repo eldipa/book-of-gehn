@@ -23,13 +23,16 @@ While CPU and memory are the most common resources that can be
 exhausted, the process id *space* is not infinite: it is an integer
 typically in the range of 1 to `2^{16}`{.mathjax}.
 
-{% call marginnotes() %}
-[Fork bomb reference](https://en.wikipedia.org/wiki/Fork_bomb).
+{% call margindiag('testing_shell_echo_cat.svg', 'already-exists', indexonly=True) %}
+```
+Not of use.
+```
 {% endcall %}
 
 A malicious or really-bugged program can trivially consume all the
 available pids spawning thousands of processes and threads *long before*
 other resource get exhausted. This the so called *fork bomb*.
+
 
 Once you run out of pids, no other process can be started leaving the system
 unusable.
@@ -577,6 +580,10 @@ $ echo "Hello" | cat        # byexample: +timeout=30
 
 
 ## Explosion contained
+
+{% call marginnotes() %}
+[Fork bomb reference](https://en.wikipedia.org/wiki/Fork_bomb).
+{% endcall %}
 
 Not really sure why, but a fork bomb in my machine tends to eat all the CPU
 so it is not just eating all the pids.
