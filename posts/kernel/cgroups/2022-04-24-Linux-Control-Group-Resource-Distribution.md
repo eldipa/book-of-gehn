@@ -604,6 +604,12 @@ $ bomb       # byexample: +timeout=90
 <...>Resource temporarily unavailable<...>
 ```
 
+After a few experiments I would say that the `+pids` controller is by no
+means the only measure to take to contain a fork explosion. Without
+`+cpu` I melted down my machine a few times.
+
+Run the bomb under your responsibility!
+
 ## Further reading
 
 With `+pids` we set a limit on a resource but *limiting* is just one
