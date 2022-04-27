@@ -219,6 +219,11 @@ Caption here, optional.
 Use `{ { codelink(url, [link name]}}` to generate a link to some nice
 code like {{codelink("foo.py")}}
 
+## Post link
+
+Markdown link should work:
+[part 6](/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html)
+
 ## Horizontal line
 
 Bla bla bla

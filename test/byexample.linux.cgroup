@@ -1,0 +1,5 @@
+-l=shell
+-x-shebang=shell:%e sudo test/ds/rootshell %a
+posts/kernel/cgroups/2022-04-23-Linux-Control-Group-Hierarchical-Organization.md
+posts/kernel/cgroups/2022-04-24-Linux-Control-Group-Resource-Distribution.md
+posts/kernel/cgroups/2022-04-25-Linux-Control-Group-No-Internal-Process-Constraint.md
