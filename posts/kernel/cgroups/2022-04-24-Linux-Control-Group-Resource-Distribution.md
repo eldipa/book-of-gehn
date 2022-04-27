@@ -12,6 +12,12 @@ artifacts:
  - testing_cg1_shell_echo_cat_cg2_sleep_limited_by_parent.svg
 ---
 
+{% call marginnotes() %}
+Previous post: [hierarchical organization](/articles/2022/04/23/Linux-Control-Group-Hierarchical-Organization.html)
+<br />
+Next coming post: [no internal process constraint](/articles/2022/04/27/Linux-Control-Group-No-Internal-Process-Constraint.html)
+{% endcall %}
+
 A system has hundreds of resources that process may use (and exhaust!):
 controlling them it is not trivial and requires a precise intervention
 by part of the kernel.
@@ -36,12 +42,6 @@ other resource get exhausted. This the so called *fork bomb*.
 
 Once you run out of pids, no other process can be started leaving the system
 unusable.
-
-{% call marginnotes() %}
-Previous post: [hierarchical organization](/articles/2022/04/23/Linux-Control-Group-Hierarchical-Organization.html)
-<br />
-Next coming post: [no internal process constraint](/articles/2022/04/27/Linux-Control-Group-No-Internal-Process-Constraint.html)
-{% endcall %}
 
 In this post we will explore the rules of resources distribution in a
 `cgroup` hierarchy and in particular how to avoid fork bombs to explode.

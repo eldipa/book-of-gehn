@@ -5,6 +5,7 @@ tags: [linux, kernel, cgroup]
 artifacts:
  - starting.svg
  - testing_with_proc_in_cg1.svg
+ - testing_with_proc_in_cg1_simple.svg
  - testing_with_proc_in_cg1_and_cg2.svg
  - testing_with_proc_in_cg1_and_cg2_alt.svg
  - restart.svg
@@ -17,6 +18,12 @@ artifacts:
 $ test -d /sys/fs/cgroup/test && echo "cgroup test/ already created!"     # byexample: +fail-fast
 -->
 
+{% call marginnotes() %}
+Previous posts: [hierarchical organization](/articles/2022/04/23/Linux-Control-Group-Hierarchical-Organization.html)
+<br />
+and [resources distribution](/articles/2022/04/24/Linux-Control-Group-Resource-Distribution.html)
+{% endcall %}
+
 In the previous post we saw that we cannot enable a controller or add a
 process to a cgroup freely. That would make the implementation of
 each controller harder.
@@ -24,12 +31,6 @@ each controller harder.
 In `v2` the hierarchy is subject to the *no internal process*
 constraint which ensures that a controller will have all the processes
 in leaves of its domain tree.
-
-{% call marginnotes() %}
-Previous posts: [hierarchical organization](/articles/2022/04/23/Linux-Control-Group-Hierarchical-Organization.html)
-<br />
-and [resources distribution](/articles/2022/04/24/Linux-Control-Group-Resource-Distribution.html)
-{% endcall %}
 
 This is the last of a 3-post series about `cgroup` and certainly, this
 *no internal process* constraint was the hardest to understand.
@@ -686,12 +687,59 @@ This is a sketch and by no means it is a fully specification.
 
 ## *No internal process* constraint, from a controller's perspective
 
-Consider the scenario seen earlier when we tried and failed to add a
-process `p2` to different cgroups in the hierarchy
+Consider the scenario seen earlier:
 
-{% call maindiag('testing_with_proc_in_cg1.svg', 'already-exists') %}
-```
-Not of use.
+{% call maindiag('testing_with_proc_in_cg1_simple.svg', 'dot') %}
+```dot
+digraph CG  {
+    bgcolor="transparent";
+
+    // Controllers
+    node [shape=none] {
+        "cpu" [label="cpu ≤ X", group=lvl0];
+        "cpu_cg1" [label="cpu ≤ Y", group=lvl1];
+        "cpu_cg1_1" [label="cpu ≤ Z", group=lvl2];
+    }
+
+    // Domains
+    node [shape=box, color="#000000", style=solid] {
+        "test" [label="test/", group=lvl0];
+        "cg1" [label="cg1/", group=lvl1];
+        "cg1_1" [label="cg1_1/", group=lvl2];
+    }
+
+    // Processes
+    node [shape=circle,  color="#880000", style=bold, width=0.5, fixedsize=true] {
+        "p1" [label="p1", group=lvl1];
+        "p2" [label="p2", group=lvl1];
+    }
+
+    // Failed processes
+    node [shape=circle,  color="#880000", style="dashed,bold", width=0.5, fixedsize=true] {
+    }
+
+    // Error messages
+    node [shape=underline,  color="#880000", style="dashed,bold", fixedsize=false] {
+    }
+
+    // Cgroups at top
+    {rank=min; cpu cpu_cg1, cpu_cg1_1}
+    {rank=same; test cg1 cg1_1}
+
+    {rank=max; p1 p2 }
+
+    cpu -> test [style=dashed, arrowtail=dot, dir=back, color="#620099"];
+    cpu_cg1 -> cg1 [style=dashed, arrowtail=dot, dir=back, color="#620099"];
+
+    test -> cg1;
+
+    cg1 -> cg1_1;
+
+    cg1 -> p1;
+    cg1 -> p2;
+
+    cg1_1 -> cpu_cg1_1  [style=dashed, arrowhead=dot, color="#620099"];
+}
 ```
 {% endcall %}
 
@@ -701,10 +749,8 @@ You are at `test/cg1/` with some processes there. The cgroup
 has the controller's files to control/distribute the
 resources (`cpu.max` in this case).
 
-It is easy to see how `cpu.max` can be interpreted: just limit the CPU
+It is easy to see how `cpu.max` can be interpreted: just control the CPU
 usage among `p1` and `p2`.
-
-Roughly speaking, a half to each.
 
 But what would you if a process is added to `test/cg1/cg1_1/`. The
 problem is not that you have another process, the problem is that
@@ -723,13 +769,6 @@ cases.
 In `v2` these cases are just forbidden: you cannot have processes in one
 cgroup and in its subtree *and at the same time* have a control file in
 the cgroup and another in the subtree.
-
-Or you have processes in the cgroup and in its subtree but the control
-file are only in the cgroup (subtree's root)...
-
-...or you have a control file in a cgroup and in each of its children but
-no cgroup can have a single process if one of its ancestors has already
-processes, with the obvious exception of the *root*.
 
 From the controller's perspective, in term of the location of its control file,
 all the processes are at the *leaves of its domain*. Even if the processes

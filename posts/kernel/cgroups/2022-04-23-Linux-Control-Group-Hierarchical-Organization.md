@@ -22,14 +22,17 @@ to inconsistent behaviour and hard adoption.
 Fast forwarding 9 years, in kernel 4.5 a rewrite of `cgroup` revamp the
 idea, making it simpler and consistent.
 
-{% call marginnotes() %}
-Post 2: [resources distribution](/articles/2022/04/24/Linux-Control-Group-Resource-Distribution.html)
-<br />
-Post 3: [no internal process constraint](/articles/2022/04/27/Linux-Control-Group-No-Internal-Process-Constraint.html)
-{% endcall %}
-
 This post focus in the organization of cgroups and it is the first
 of a 3-posts series about `cgroup` in its new `v2` version.
+
+In the next posts
+we will see how the
+[resources are distributed](/articles/2022/04/24/Linux-Control-Group-Resource-Distribution.html)
+among the cgroups and
+[which constraints](/articles/2022/04/27/Linux-Control-Group-No-Internal-Process-Constraint.html)
+do we have.
+
+
 <!--more-->
 
 <!--
