@@ -37,6 +37,12 @@ other resource get exhausted. This the so called *fork bomb*.
 Once you run out of pids, no other process can be started leaving the system
 unusable.
 
+{% call marginnotes() %}
+Previous post: [hierarchical organization](/articles/2022/04/23/Linux-Control-Group-Hierarchical-Organization.html)
+<br />
+Next coming post: [no internal process constraint](/articles/2022/04/27/Linux-Control-Group-No-Internal-Process-Constraint.html)
+{% endcall %}
+
 In this post we will explore the rules of resources distribution in a
 `cgroup` hierarchy and in particular how to avoid fork bombs to explode.
 <!--more-->
@@ -625,7 +631,9 @@ resources and controllers exist.
 
 ## Next stuff
 
-In the past post we talked about how we can organize the `cgroup`
+In the
+[past post](/articles/2022/04/23/Linux-Control-Group-Hierarchical-Organization.html)
+ we talked about how we can organize the `cgroup`
 hierarchy and in this post how we can control and distribute resources
 over it.
 
@@ -633,8 +641,9 @@ But we talked little about where the processes should be put in the
 hierarchy. It may seem that they could be put anywhere and for `v1` that
 is true.
 
-In `v2` however, the things will get a bit hairy and weird with the no
-internal process constraint.
+In `v2` however, the things will get a bit hairy and weird with the
+[no internal process constraint](/articles/2022/04/27/Linux-Control-Group-No-Internal-Process-Constraint.html).
+
 
 <!--
 Move our shell(s) to the root
