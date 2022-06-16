@@ -24,13 +24,14 @@ Ready to break it?<!--more-->
 [Implement CTR, the stream cipher mode](https://cryptopals.com/sets/3/challenges/18)
 {% endcall %}
 
-Let's implement a CTR
+Let's implement a CTR. As usual we generate a pseudo-random
+configuration to parametrize the CTR.
 
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
 >>> import sys
->>> sys.path.append("./assets/matasano")
+>>> sys.path.append("./posts/matasano/assets")
 >>> from challenge import generate_config, enc_ctr, dec_ctr  # byexample: +timeout=10
 
 >>> seed = 20181204
@@ -54,12 +55,12 @@ Now let's check that our AES cipher in Counter mode works
 If the nonce is fixed, then several *independent* ciphertext
 will be encrypted with the same key stream.
 
-Let's load some plaintexts and let's encrypt them in that way
-and see if we can break the encryption.
+Let's load some plaintexts and let's encrypt them reusing the same
+nonce over and over and see if we can break the encryption later.
 
 ```python
 >>> from cryptonita.conv import transpose, uniform_length    # byexample: +timeout=10
->>> plaintexts = list(load_bytes('./assets/matasano/20.txt', encoding=64))
+>>> plaintexts = list(load_bytes('./posts/matasano/assets/20.txt', encoding=64))
 
 >>> ciphertexts = [enc_ctr(p, cfg.key, cfg.nonce) for p in plaintexts]
 ```
@@ -73,8 +74,13 @@ In other words, it performs a xor *reusing* the key stream and
 we already know how to
 [break a repeating xor key cipher](/articles/2018/03/01/In-XOR-We-Trust.html).
 
-But first, not all the ciphertexts are of the same length so to simplify we need
-to uniform their lengths.
+> Quick recap: because the key stream was reused, the ith byte of all
+> the ciphertexts was xor'd with the *same* key byte and therefore,
+> xor'ing two ciphertexts will remove the key stream leaving us the xor
+> of the two underlying plaintexts.
+
+We notice that not all the ciphertexts are of the same length so to simplify
+we need to uniform their lengths.
 
 For example, we could truncate all the ciphertexts to the length of the smallest.
 
@@ -122,17 +128,26 @@ Therefore we need *another* statistical model, one for the upper case:
 >>> from cryptonita.scoring.freq import tsamcin_brped
 ```
 
+> Yes, I know, `tsamcin_brped` is a terrible name but it is aligned with
+> `etaoin_shrdlu`.
+
 ### Score a decryption using Chi-square test
 
 The frequency attack (``freq_attack``) implemented in
 [cryptonita](https://pypi.org/project/cryptonita/)
 returns a guess: a set of possible key bytes.
 
-To narrow this down we try each one (brute force) and
-score each potential plaintext.
+To determine the correct key we need to try each of them by brute force
+(`brute_force`) and *"see"* which looks more "human text".
 
-For this we take the frequency of the letters in the plaintext
-and compare them with the expected frequency using a
+This could be done by hand but we want to fully automate this... so no
+deal!
+
+The idea is to automate which deciphered text looks more or less like
+English text (the expected for our plaintexts) and discard any other.
+
+For this we *observe* the frequency of the letters in the deciphered plaintext
+and compare them with the *expected* frequency using a
 [Chi-square test](https://en.wikipedia.org/wiki/Chi-squared_test).
 
 In [cryptonita](https://pypi.org/project/cryptonita/), this
@@ -149,6 +164,9 @@ yields none key we roll back and score using a more relaxed score function:
 >>> from cryptonita.scoring import all_ascii_printable
 ```
 
+As you may guess, `all_ascii_printable` returns `1` if all the
+characters in the deciphered plaintext are ASCII and `0` otherwise.
+
 ### Guess the CTR key stream
 
 Mixing all this together:
@@ -158,15 +176,32 @@ Mixing all this together:
 >>> from functools import partial
 
 >>> guesses = []
+>>> # we iterate over each column (the i==0 correspond to the first letter)
 >>> for i, c in enumerate(tciphertexts_transposed):
 ...     if i == 0:  # first letter, use a special statistical model
-...         most_common = etaoin_shrdlu() | tsamcin_brped()
+...         most_common = tsamcin_brped()
 ...     else:
 ...         most_common = etaoin_shrdlu()
 ...
+...     # frequency attack, try to find the most likely key bytes
+...     # for the ith letter
 ...     byte_guess = freq_attack(c, most_common, 1)
-...     g = brute_force(c, partial(fit_freq_score, expected_prob=most_common), byte_guess)
-...     if not g:   # fit_freq_score was too hard, rollback to a more soft score func
+...
+...     # build a score function using the fit_freq_score parametrized
+...     # with the "expected" probabilities from our model
+...     # fit_freq_score will take an input and from there it will obtain
+...     # the "observed" probabilities and will compare them with the
+...     # expected using Chi-Square.
+...     score_fun = partial(fit_freq_score, expected_prob=most_common)
+...
+...     # Try every possible key byte from our freq_attack scoring
+...     # the deciphered outputs with the fit_freq_score. Poor scored
+...     # are drop so we should only have left the most likely keys.
+...     g = brute_force(c, score_fun, byte_guess)
+...     if not g:
+...         # but may be fit_freq_score is too restrictive.
+...         # rollback to a much lax/loose score function (but with
+...         # more false positives)
 ...         g = brute_force(c, all_ascii_printable, byte_guess)
 ...
 ...     byte_guess = g
@@ -184,10 +219,17 @@ have (we are still guessing so there is not one single answer yet)
 
 >>> from cryptonita.fuzzy_set import len_join_fuzzy_sets
 >>> len_join_fuzzy_sets(guesses)
-10985
+1690
 ```
 
-### Correct the key stream
+Considere for a moment those numbers. Of 53 characters we initially have
+a key space of `256^53`{.mathjax}, a number which has more than 100
+digits.
+
+But with a frequency attack and a good score function we managed to
+reduce the key space to only 1690.
+
+### How close are out guesses?
 
 Let's build the key stream (still a guess):
 
@@ -216,93 +258,75 @@ But we are *very close*:
 0.9811<...>
 ```
 
-So our current key stream is *almost* correct, only a few bytes need
-to be tweaked.
+Not only it is very close, the true key stream is there, in one of our
+guesses!
 
-Some possible next steps:
+```python
+>>> any(tplaintexts[0] == tciphertexts[0] ^ kstream for kstream in kstream_guess)
+True
+```
 
- - Use ``etaoin_shrdlu`` to correct them? No really. We used this to build
-the initial key stream so it is unlikely that we can fix the key stream
-using this or any other model at the *character level*.
- - Then use a bigram model? Much better but a bigram model uses only two
-characters and may not be robust enough. Worst, we are working with a very
-short plaintexts/ciphertexts (~50 characters) and this is too short for
-a bigram model (the model is too sparse and mostly flat so it will be hard
-to draw any conclusion.
- - So, what about some a more *specific* model? Bingo!
+But how we can pick it without cheating? without using `tplaintexts` as
+it is supposed to be the unknown here?
 
-With a more specific model we can get more info from the short sequences
-but this requires to know much about the plaintext.
+Yes, with more brute force!
 
-If we assume that most of the plaintext is built from English words
-then we could use a *spell checker* to correct any misspelled word
-product of a incorrect key.
+### Speller based score
+
+Brute force, but clever.
+
+We can use a score based on well English written text using a *speller*
+
+In this case, `good_written_word_score` takes a `aspell.Speller` and it
+will return a score based on how many words in the deciphered text are
+correctly spelled (weighting each word by its length)
 
 ```python
 >>> import aspell
->>> from cryptonita.suggesters import good_written_word_suggester
+>>> from cryptonita.scoring import good_written_word_score
 
->>> gword_suggester = partial(good_written_word_suggester, speller=aspell.Speller())
+>>> score = partial(good_written_word_score, speller=aspell.Speller(), word_weight_fun=len)
 ```
-
-With this *suggester* we can try to *correct* the key:
 
 ```python
->>> from cryptonita.attacks import correct_key
+>>> kstream_guess = brute_force(tciphertexts[0], score, kstream_guess)
+>>> kstream_guess.cut_off(n=10)
 
->>> tmp = correct_key(kstream, ciphertexts, gword_suggester)
->>> correction = B('').join(k.most_likely() for k in tmp)
+>>> [(p, tciphertexts[0] ^ kstr) for kstr, p in kstream_guess.sorted_items()]     # byexample: +norm-ws
+[(1.4946588552783956e-56,   'I\'m rated "R"...this is a warning, ya better void / P'),
+ (1.4036747792866314e-56,   'N\'m rated "R"...this is a warning, ya better void / P'),
+ (7.026934200276732e-57,    'I\'m ratede"R"...this is a warning, ya better void / P'),
+ (6.374212793632498e-57,    'N\'m ratede"R"...this is a warning, ya better void / P'),
+ (5.972894070235226e-57,    'I\'m rated "R"...this is a warning, yaebetter void / P'),
+ (5.490470454496446e-57,    'I\'m rated "R"...t\'is is a warning, ya better void / P'),
+ (5.265568867883322e-57,    'I\'m rated "R"...t&is is a warning, ya better void / P'),
+ (5.25603393501155e-57,     'I\'m rated "R"...t!is is a warning, ya better void / P'),
+ (5.249351712403237e-57,    'N\'m rated "R"...this is a warning, yaebetter void / P'),
+ (5.156250121008111e-57,    'N\'m rated "R"...t\'is is a warning, ya better void / P')]
 ```
 
-The ``correct_key`` method works like ``brute_force`` but from another
-point of view.
-
-``brute_force`` tries each possible key, decrypting the same ciphertext
-and then scoring each decryption independently.
-
-``correct_key``, instead, try the same key to decrypt several different
-ciphertexts and try to get the most likely corrections that improve
-all the decryption (it does not score independently).
-
-Okay, how well was our correction? How many bytes did we correct?
-And how the decrypted texts looks like?
+Our winner is on the top!
 
 ```python
->>> len([c for c in correction if c != 0])
-1
-
->>> tciphertexts[0] ^ kstream
-':\'m rated "R"...this is a warning, ya better void / P'
-
->>> tciphertexts[0] ^ kstream ^ correction
-'i\'m rated "R"...this is a warning, ya better void / P'
+>>> kstream = kstream_guess.most_likely()
+>>> tciphertexts[0] ^ kstream == tplaintexts[0]
+True
 ```
 
-So we got the correct key stream? Well, we didn't:
-
-```python
->>> tplaintexts[0]
-'I\'m rated "R"...this is a warning, ya better void / P'
-```
-
-### Undistinguishable
+### About undistinguishable
 
 Unless we have more knowledge about the plaintexts, we cannot distinguish
 between ``i'm rated``{.none} and ``I'm rated``{.none}. ``:´|``{.none}
 
-```python
->>> fix = B(b'i') ^ B(b'I')
+The fact that we hit the correct key stream comes from *"we guessed"*
+that the first letter was in uppercase.
 
->>> kstream = kstream ^ correction
->>> kstream = (kstream[:1] ^ fix) + kstream[1:]
-```
+
+## Full break (enjoy!)
 
 {% call marginnotes() %}
 [Break fixed-nonce CTR statistically](https://cryptopals.com/sets/3/challenges/20)
 {% endcall %}
-
-And we are done!
-
 
 ```python
 >>> all(p == c ^ kstream for p, c in zip(tplaintexts, tciphertexts))
@@ -381,7 +405,7 @@ Let's take another set of plaintexts,
 encrypt them with a fixed-nonce CTR and break the encryption.
 
 ```python
->>> plaintexts = list(load_bytes('./assets/matasano/19.txt', encoding=64))
+>>> plaintexts = list(load_bytes('./posts/matasano/assets/19.txt', encoding=64))
 >>> ciphertexts = [enc_ctr(p, cfg.key, cfg.nonce) for p in plaintexts]
 
 >>> tplaintexts = uniform_length(plaintexts)
@@ -393,7 +417,7 @@ encrypt them with a fixed-nonce CTR and break the encryption.
 >>> guesses = []
 >>> for i, c in enumerate(tciphertexts_transposed):
 ...     if i == 0:  # first letter, use a special statistical model
-...         most_common = etaoin_shrdlu() | tsamcin_brped()
+...         most_common = etaoin_shrdlu()
 ...     else:
 ...         most_common = etaoin_shrdlu()
 ...
@@ -410,13 +434,13 @@ encrypt them with a fixed-nonce CTR and break the encryption.
 20
 
 >>> len_join_fuzzy_sets(guesses)
-23712
+2496
 
 >>> kstream_guess = join_fuzzy_sets(guesses, cut_off=0, j=B(''))
 >>> kstream = kstream_guess.most_likely()
 
 >>> tciphertexts[1] ^ kstream
-'7*ming {ith vivid fa'
+'c*ming {ith vivid fa'
 ```
 
 Quite close. By manual inspection the correct plaintext should be

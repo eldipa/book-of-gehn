@@ -88,7 +88,7 @@ has a valid pad or not.
 
 <!--
 >>> import sys
->>> sys.path.append("./assets/matasano")
+>>> sys.path.append("./posts/matasano/assets")
 >>> from challenge import generate_config, enc_cbc, dec_cbc  # byexample: +timeout=10
 
 >>> seed = 20181028
@@ -344,7 +344,7 @@ challenge.
 Enjoy!
 
 ```python
->>> plaintexts = list(load_bytes('./assets/matasano/17.txt', encoding=64))
+>>> plaintexts = list(load_bytes('./posts/matasano/assets/17.txt', encoding=64))
 >>> ciphertexts = [cfg.iv + enc_cbc(p.pad(bsize, 'pkcs#7'), cfg.key, cfg.iv) for p in plaintexts]
 
 >>> from cryptonita.attacks.block_ciphers import decrypt_cbc_padding_attack

@@ -16,14 +16,16 @@ But some folks may not know this...<!--more-->
 
 ## Warming up
 
-{# <!--
+{#
+<!--
 >>> import sys
->>> sys.path.append("./assets/matasano")
+>>> sys.path.append("./posts/matasano/assets")
 >>> from challenge import generate_config            # byexample: +timeout=10
 
 >>> seed = 20181223
 >>> cfg = generate_config(random_state=seed)
---> #}
+-->
+ #}
 
 Before anything, let's
 [implement the MT19937 Mersenne Twister RNG](https://cryptopals.com/sets/3/challenges/21)
@@ -35,7 +37,7 @@ For testing, I'm going to use the following
 >>> from cryptonita.attacks.prng import MT19937
 >>> from cryptonita import B
 
->>> f = open('assets/matasano/MT19937.vector', 'rt')
+>>> f = open('posts/matasano/assets/MT19937.vector', 'rt')
 >>> seed = int(f.readline())
 
 >>> expected_rnd_seq = [int(line) for line in f]

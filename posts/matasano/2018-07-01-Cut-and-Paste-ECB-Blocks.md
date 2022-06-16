@@ -21,7 +21,7 @@ in ECB mode:
 
 ```python
 >>> import sys
->>> sys.path.append("./assets/matasano")
+>>> sys.path.append("./posts/matasano/assets")
 >>> from challenge import generate_config, enc_ecb, dec_ecb  # byexample: +timeout=10
 
 >>> seed = 20180701   # make the tests 'random' but deterministic

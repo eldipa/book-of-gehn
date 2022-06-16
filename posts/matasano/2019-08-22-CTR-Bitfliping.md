@@ -19,7 +19,7 @@ the CTR encryption mode our victim.<!--more-->
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
 >>> import sys
->>> sys.path.append("./assets/matasano")
+>>> sys.path.append("./posts/matasano/assets")
 >>> from challenge import generate_config, enc_ctr, dec_ctr  # byexample: +timeout=10
 
 >>> seed = 20190822   # make the tests 'random' but deterministic

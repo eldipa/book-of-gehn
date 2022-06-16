@@ -33,7 +33,7 @@ and it is the objective for the
 
 ```python
 >>> import sys
->>> sys.path.append("./assets/matasano")
+>>> sys.path.append("./posts/matasano/assets")
 
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 >>> from challenge import enc_ecb, generate_config

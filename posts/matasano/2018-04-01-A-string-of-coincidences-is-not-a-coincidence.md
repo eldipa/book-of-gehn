@@ -16,7 +16,7 @@ that is the ``xor`` encryption of a plaintext using a single-byte key.
 
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
->>> ciphertexts = list(load_bytes('./assets/matasano/4.txt', encoding=16))
+>>> ciphertexts = list(load_bytes('./posts/matasano/assets/4.txt', encoding=16))
 
 >>> methods = {}
 ```
@@ -276,7 +276,7 @@ Scores by method. Notice how the element 170th gets the lower value in most case
 
 <!--
 >>> import sys
->>> sys.path.append("./assets/plotting")
+>>> sys.path.append("./z/py/plotting")
 
 >>> from plotting import plt, show                      # byexample: +timeout=20
 >>> import pandas as pd                                 # byexample: +timeout=20
@@ -288,7 +288,7 @@ Scores by method. Notice how the element 170th gets the lower value in most case
 
 >>> methods = methods.apply(min_max_normalizer, axis=0)
 
->>> with show(save='./assets/matasano/scores_by_method.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
+>>> with show(save='./posts/matasano/assets/scores_by_method.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
 ...     axes = methods.plot(style='o', subplots=True, layout=(3, 2))
 ...
 ...     _ = [ax.vlines(170, 0, 1, linestyles='dashed') for ax in axes.flat]

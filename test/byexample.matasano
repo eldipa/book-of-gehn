@@ -1,0 +1,5 @@
+-l=python
+--timeout=4
+-j=2
+posts/matasano/*.md
+posts/matasano/assets/challenge.py

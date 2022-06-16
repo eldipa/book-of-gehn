@@ -62,11 +62,11 @@ will be full of zeros.
 
 ```python
 >>> import sys
->>> sys.path.append("./assets/matasano")
+>>> sys.path.append("./posts/matasano/assets")
 
 >>> from challenge import dec_cbc, enc_cbc, enc_ecb
 
->>> ciphertext = B(open('./assets/matasano/10.txt'), encoding=64)
+>>> ciphertext = B(open('./posts/matasano/assets/10.txt'), encoding=64)
 
 >>> iv = B(0) * 16
 >>> key = B("YELLOW SUBMARINE")

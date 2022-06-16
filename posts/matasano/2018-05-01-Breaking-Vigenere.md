@@ -30,7 +30,7 @@ and we will score each one with the
 ```python
 >>> from cryptonita import B                # byexample: +timeout=10
 
->>> ciphertext = B(open('./assets/matasano/6.txt'), encoding=64)
+>>> ciphertext = B(open('./posts/matasano/assets/6.txt'), encoding=64)
 
 >>> from cryptonita.attacks import guess_key_length
 >>> from cryptonita.scoring import key_length_by_hamming_distance
@@ -93,7 +93,7 @@ Score of each guess by method. The maximum score using the Hamming distance is a
 
 ```python
 >>> import sys
->>> sys.path.append("./assets/plotting")
+>>> sys.path.append("./z/py/plotting")
 
 >>> from plotting import plt, show                      # byexample: +timeout=10
 >>> import pandas as pd                                 # byexample: +timeout=10
@@ -101,7 +101,7 @@ Score of each guess by method. The maximum score using the Hamming distance is a
 >>> guesses = pd.DataFrame({'Hamming Distance': lengths_hd,
 ...                         'Index of Coincidence': lengths_ic})
 
->>> with show(save='./assets/matasano/kl_guesses.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
+>>> with show(save='./posts/matasano/assets/kl_guesses.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
 ...     _ = guesses.plot(style='o', subplots=True, layout=(2, 1))
 ...
 ```

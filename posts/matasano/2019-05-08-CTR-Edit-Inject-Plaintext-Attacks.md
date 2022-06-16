@@ -21,7 +21,7 @@ is actually a booby-trap.
 
 <!--
 >>> import sys
->>> sys.path.append("./assets/matasano")
+>>> sys.path.append("./posts/matasano/assets")
 >>> from challenge import generate_config, enc_ctr, dec_ctr # byexample: +timeout=10
 
 >>> seed = 20190508
@@ -54,7 +54,7 @@ with a simple known-plaintext attack.
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
->>> ptext = B(open('./assets/matasano/25.txt', 'rt'), encoding=64)
+>>> ptext = B(open('./posts/matasano/assets/25.txt', 'rt'), encoding=64)
 >>> ctext = enc_ctr(ptext, secret_cfg.key, secret_cfg.nonce)
 
 >>> patch = B('A') * len(ctext)

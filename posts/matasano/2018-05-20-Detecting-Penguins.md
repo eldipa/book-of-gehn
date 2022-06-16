@@ -32,7 +32,7 @@ Decrypting is a piece of cake; this is just to get practice about
 ```python
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
->>> ciphertext = B(open('./assets/matasano/7.txt'), encoding=64)
+>>> ciphertext = B(open('./posts/matasano/assets/7.txt'), encoding=64)
 >>> blocks = ciphertext.nblocks(16)
 
 >>> key = B('YELLOW SUBMARINE')
@@ -65,7 +65,7 @@ We can use the same technique done in
 for detecting coincidences.
 
 ```python
->>> ciphertexts = list(load_bytes('./assets/matasano/8.txt', encoding=16))
+>>> ciphertexts = list(load_bytes('./posts/matasano/assets/8.txt', encoding=16))
 
 >>> from cryptonita.scoring import icoincidences
 >>> scores = [icoincidences(c) for c in ciphertexts]
@@ -104,7 +104,7 @@ Scores by method. For the Nblocks method, the size of the block is of 16 bytes.
 
 <!--
 >>> import sys
->>> sys.path.append("./assets/plotting")
+>>> sys.path.append("./z/py/plotting")
 
 >>> from plotting import plt, show                      # byexample: +timeout=10
 >>> import pandas as pd                                 # byexample: +timeout=10
@@ -116,7 +116,7 @@ Scores by method. For the Nblocks method, the size of the block is of 16 bytes.
 
 >>> methods = methods.apply(min_max_normalizer, axis=0)
 
->>> with show(save='./assets/matasano/score_pinguins.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
+>>> with show(save='./posts/matasano/assets/score_pinguins.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
 ...     axes = methods.plot(style='o', subplots=True, layout=(2, 1))
 ...
 ...     _ = [ax.vlines(132, 0, 1, linestyles='dashed') for ax in axes.flat]

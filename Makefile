@@ -43,3 +43,6 @@ publish:
 
 test-cgroup:
 	byexample @test/byexample.linux.cgroup
+
+test-matasano:
+	byexample @test/byexample.matasano

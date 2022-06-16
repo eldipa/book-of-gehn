@@ -26,7 +26,7 @@ the block size or the encryption mode:
 >>> from cryptonita import B                # byexample: +timeout=10
 
 >>> import sys
->>> sys.path.append("./assets/matasano")
+>>> sys.path.append("./posts/matasano/assets")
 >>> from challenge import generate_config, enc_cbc, dec_cbc  # byexample: +timeout=10
 
 >>> seed = 20180703   # make the tests 'random' but deterministic
