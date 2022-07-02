@@ -67,7 +67,7 @@ for detecting coincidences.
 ```python
 >>> ciphertexts = list(load_bytes('./posts/matasano/assets/8.txt', encoding=16))
 
->>> from cryptonita.scoring import icoincidences
+>>> from cryptonita.metrics import icoincidences
 >>> scores = [icoincidences(c) for c in ciphertexts]
 
 >>> scores_and_indexes = [(s, i) for i, s in enumerate(scores)]
