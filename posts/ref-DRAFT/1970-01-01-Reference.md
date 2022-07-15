@@ -224,6 +224,13 @@ code like {{codelink("foo.py")}}
 Markdown link should work:
 [part 6](/articles/2021/01/26/Smashing-ARM-Stack-for-Fun-Part-VI.html)
 
+## Asset link
+
+From [here]({{ asset('') }}) you can download all the assets (folder
+where the `assets-list` file exists)
+and
+from [here]({{ asset('foo/bar.rb') }}) you can download a particular file.
+
 ## Horizontal line
 
 Bla bla bla
