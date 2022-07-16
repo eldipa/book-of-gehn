@@ -65,6 +65,7 @@ never enabled it by default.
 This post describes the *why* and *how* of the
 [optimizations contributed](https://github.com/byexamples/pyte/tree/Screen-Optimizations)
 to `pyte` to go from seconds to **microseconds**.
+<!--more-->
 
 ## Artifacts and artificial boundaries
 

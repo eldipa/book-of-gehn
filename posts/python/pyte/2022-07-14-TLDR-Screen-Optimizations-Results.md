@@ -11,7 +11,25 @@ and speedups due the
 to [pyte](https://github.com/selectel/pyte) and
 [summarized here](/articles/2022/07/15/Sparse-Aware-Optimizations-for-Terminal-Emulator-Pyte.html)
 
+For large geometries (240x800, 2400x8000), `Screen.display` runs orders
+of magnitud faster and consumes between 1.10 and 50.0 times less memory.
+
+For smaller geometries the minimum improvement was of 2 times faster.
+
+`Stream.feed` is now between 1.10 and 7.30 times faster and if
+`Screen` is tuned, the speedup is between 1.14 and 12.0.
+
+For memory usage, `Stream.feed` is between 1.10 and 17.0 times lighter
+and up to 44.0 times lighter if `Screen` is tuned.
+
+`Screen.reset` is between 1.10 and 1.50 slower but several cases improve
+if the `Screen` is tuned (but not all).
+
+However there are a few regressions, most of them small but some
+up to 4 times.
+
 At the moment of writing this post, the PR is still pending to review.
+<!--more-->
 
 # What is this PR about?
 
