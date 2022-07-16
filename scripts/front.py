@@ -63,12 +63,14 @@ if ispost:
     y, m, d, n = os.path.basename(src_filename).split('-', 3)
     page['date'] = '-'.join((y, m, d))
     page['url'] = "/".join((site['url'], 'articles', y, m, d, os.path.splitext(n)[0] + '.html'))
+    page['public_html'] = "/".join(('articles', y, m, d, os.path.splitext(n)[0] + '.html'))
 else:
     # Given
     #   pages/index.md
     # the URL will be /<site-url>/index.html
     n = src_filename
     page['url'] = "/".join((site['url'], os.path.splitext(n)[0]  + '.html'))
+    page['public_html'] = "/".join((os.path.splitext(n)[0]  + '.html'))
 
 
 if 'DRAFT' in src_filename:

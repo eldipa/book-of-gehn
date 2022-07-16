@@ -35,6 +35,7 @@ publish:
 	       --times --delete --links \
 	       --exclude ".git" 	\
 	       --exclude "**DRAFT**" 	\
+	       --exclude-from=out/pages/front/index.drafts 	\
                out/site/ public-site/
 	@# This is not necessary; just in case
 	@find public-site/ -name '**DRAFT**' -delete

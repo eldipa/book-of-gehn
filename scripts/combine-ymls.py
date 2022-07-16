@@ -16,6 +16,7 @@ for fname in posts_yamls:
 
 posts.sort(key=lambda p: p['date'], reverse=True)
 main['posts'] = posts
+main['drafts'] = [p for p in posts if ('DRAFT' in p['tags'] or 'HIDDEN' in p['tags'])]
 
 with open(out_filename, 'wt') as f:
     f.write(yaml.dump(main))
