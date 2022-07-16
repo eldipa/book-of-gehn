@@ -271,6 +271,11 @@ The animation will appear smooth to the user but behind the scene
 the ``draw()`` will be out of sync: the animation will take more time
 to complete or it will be cut in the middle.
 
+{% call marginnotes() %}
+We could pass also how many iteration had happen since the last time,
+something like `func(it, it-last_it)`.
+{% endcall %}
+
 Instead, we can pass to ``func()`` the iteration number explicitly.
 
 The ``draw()`` must be updated accordingly:
