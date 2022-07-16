@@ -9,5 +9,5 @@ with open(combined_meta_filename, 'rt') as f:
 
 with open(out_filename, 'wt') as f:
     for post in main['drafts']:
-        f.write('out/site/' + post['public_html'] + '\n')
+        f.write(post['public_html'] + '\n')
 
