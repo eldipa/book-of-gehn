@@ -13,7 +13,7 @@ But technology improved in this sense and new encoders exist that can
 compress (loosely) the same audio with the same quality but at a much
 smaller bit rate, and therefore, resulting in much smaller files.
 
-Quick and dirty script follows!
+Quick and dirty script follows!<!--more-->
 
 ## Encoders & containers
 
