@@ -259,6 +259,10 @@ The plan is:
  - add to the list any *unexpected* and *missing* group
  - if the list is not empty, raise `AssertionError`
 
+{% call marginnotes() %}
+Updated version: {{codelink("assert_df_equal.py")}}
+{% endcall %}
+
 This is the code:
 
 ```python
