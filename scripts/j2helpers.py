@@ -302,6 +302,11 @@ def _figures__fig(ctx, src, caption, max_width, width, cls, alt, location, home)
 
     src = url_from(src, home=home)
 
+    if width is None and src.endswith('.svg'):
+        # SVG image files are "elastic" by nature. Set them to the full
+        # extend of the parent node in the HTML.
+        width = '100%'
+
     # optional style
     style = as_css_style(
         max_width = max_width,
