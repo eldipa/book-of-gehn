@@ -85,7 +85,7 @@ Before you think that I didn't programmed the Hamming distance correctly:
 37
 ```
 
-{% call fullfig('kl_guesses.png') %}
+{% call mainfig('kl_guesses.svg') %}
 Score of each guess by method. The maximum score using the Hamming distance is at 5. Using the Index of Coincidence is at 29.
 {% endcall %}
 
@@ -101,7 +101,7 @@ Score of each guess by method. The maximum score using the Hamming distance is a
 >>> guesses = pd.DataFrame({'Hamming Distance': lengths_hd,
 ...                         'Index of Coincidence': lengths_ic})
 
->>> with show(save='./posts/matasano/assets/kl_guesses.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
+>>> with show(save='./posts/matasano/kl_guesses.svg', columns = 2, transparent = True): # byexample: +timeout=600 +skip
 ...     _ = guesses.plot(style='o', subplots=True, layout=(2, 1))
 ...
 ```

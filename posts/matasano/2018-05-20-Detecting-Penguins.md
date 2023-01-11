@@ -96,7 +96,7 @@ than a coincidence of two or more bytes:
 >>> methods['IC - Nblocks sequence'] = scores
 ```
 
-{% call fullfig('score_pinguins.png') %}
+{% call mainfig('score_pinguins.svg') %}
 Scores by method. For the Nblocks method, the size of the block is of 16 bytes.
 {% endcall %}
 
@@ -116,7 +116,7 @@ Scores by method. For the Nblocks method, the size of the block is of 16 bytes.
 
 >>> methods = methods.apply(min_max_normalizer, axis=0)
 
->>> with show(save='./posts/matasano/assets/score_pinguins.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
+>>> with show(save='./posts/matasano/score_pinguins.svg', columns = 2, transparent = True): # byexample: +timeout=600 +skip
 ...     axes = methods.plot(style='o', subplots=True, layout=(2, 1))
 ...
 ...     _ = [ax.vlines(132, 0, 1, linestyles='dashed') for ax in axes.flat]

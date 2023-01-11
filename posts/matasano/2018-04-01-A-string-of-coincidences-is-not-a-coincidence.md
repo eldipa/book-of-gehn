@@ -274,7 +274,7 @@ of crafted strings.
 
 Here is the plot of the scores calculated by the different methods:
 
-{% call fullfig('scores_by_method.svg', width='100%') %}
+{% call fullfig('scores_by_method.svg') %}
 Scores by method. Notice how the element 170th gets the lower value in most cases indicating that the string is not random.
 {% endcall %}
 
@@ -294,9 +294,7 @@ Scores by method. Notice how the element 170th gets the lower value in most case
 
 >>> methods = methods.apply(min_max_normalizer, axis=0)
 
-The following saves the plot in a SVG file with a transparent background
-(facecolor = (0,0,0,0))
->>> with show(save='./posts/matasano/scores_by_method.svg', columns = 2, facecolor = (0,0,0,0)): # byexample: +timeout=600 +skip
+>>> with show(save='./posts/matasano/scores_by_method.svg', columns = 2, transparent = True): # byexample: +timeout=600 +skip
 ...     axes = methods.plot(style='o', subplots=True, layout=(3, 2))
 ...
 ...     _ = [ax.vlines(170, 0, 1, linestyles='dashed') for ax in axes.flat]
