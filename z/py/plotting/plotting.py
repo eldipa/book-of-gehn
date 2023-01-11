@@ -61,8 +61,12 @@ def latexify(fig_width=None, fig_height=None, columns=0, usetex=True, rc={}):
 SAVEFIG_KARGS = {
         'dpi', 'facecolor', 'edgecolor',
         'orientation', 'papertype', 'format',
-        'transparent', 'bbox_inches', 'pad_inches',
+        'bbox_inches', 'pad_inches',
         'frameon', 'metadata',
+
+        # 'transparent',  on SVG files this does not work well,
+        # it is better to use facecolor = (0, 0, 0, 0)
+        # See the 'transparent' shortcut on show() about this
         }
 
 # https://stackoverflow.com/questions/14827650/pyplot-scatter-plot-marker-size
@@ -80,6 +84,13 @@ def show(save=None, *, skip=False, context='paper', style='darkgrid', **kargs):
     savefig_kargs.update({k:v for k,v in kargs.items() if k in SAVEFIG_KARGS})
 
     latexify_kargs = {k:v for k,v in kargs.items() if k in LATEXIFY_KARGS}
+
+    transparent = kargs.pop('transparent', False)
+    if transparent and 'facecolor' in savefig_kargs:
+        raise Exception(f"You cannot mix 'transparent' with 'facecolor'. Sorry.")
+
+    if transparent:
+        savefig_kargs['facecolor'] = (0,0,0,0)
 
     unused_kargs = set(kargs.keys()) - SAVEFIG_KARGS - LATEXIFY_KARGS
     if unused_kargs:
