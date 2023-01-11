@@ -272,8 +272,21 @@ def url_from(src, home):
     else:
         return os.path.join(home, src)
 
+def as_css_style(**kargs):
+    chks = []
+    for name, val in kargs.items():
+        if val is not None:
+            chks.append(f"{name}: {val};")
+
+    if not chks:
+        return ''
+
+    style = ' '.join(chks)
+    assert '"' not in style
+    return 'style="{style}"'
+
 @jinja2.pass_context
-def _figures__fig(ctx, src, caption, max_width, cls, alt, location, home):
+def _figures__fig(ctx, src, caption, max_width, width, cls, alt, location, home):
     ''' Generate HTML code to show an image that it is at <src>.
 
         If <src> is not absolute (see url_from), the image is searched
@@ -290,10 +303,10 @@ def _figures__fig(ctx, src, caption, max_width, cls, alt, location, home):
     src = url_from(src, home=home)
 
     # optional style
-    if max_width is not None:
-        style = f'style="max-width: {max_width}"'
-    else:
-        style = ''
+    style = as_css_style(
+        max_width = max_width,
+        width = width
+        )
 
     img_cls = cls
     img_html = f'''<img {style} class='{img_cls}' alt='{alt}' src='{src}' />'''
