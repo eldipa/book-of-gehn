@@ -203,6 +203,12 @@ will be the xor of two ASCII strings.
 >>> methods['Entropy xor-level'] = [s for s in scores]
 ```
 
+{% call marginnotes() %}
+I wonder, what would happen if instead of xoring using the first byte
+we try then the second byte and then the third. Will these agree? Could we use
+them to remove false positives?
+{% endcall %}
+
 Interesting, this method has more false positives than others but at the
 same time, this method makes a clear distinction between a few really non
 random strings and the rest of the strings in the pool.
@@ -268,7 +274,7 @@ of crafted strings.
 
 Here is the plot of the scores calculated by the different methods:
 
-{% call fullfig('scores_by_method.png') %}
+{% call fullfig('scores_by_method.svg', width='100%') %}
 Scores by method. Notice how the element 170th gets the lower value in most cases indicating that the string is not random.
 {% endcall %}
 
@@ -288,7 +294,9 @@ Scores by method. Notice how the element 170th gets the lower value in most case
 
 >>> methods = methods.apply(min_max_normalizer, axis=0)
 
->>> with show(save='./posts/matasano/assets/scores_by_method.png', latexify_kargs={'columns':2}): # byexample: +timeout=600 +skip
+The following saves the plot in a SVG file with a transparent background
+(facecolor = (0,0,0,0))
+>>> with show(save='./posts/matasano/scores_by_method.svg', columns = 2, facecolor = (0,0,0,0)): # byexample: +timeout=600 +skip
 ...     axes = methods.plot(style='o', subplots=True, layout=(3, 2))
 ...
 ...     _ = [ax.vlines(170, 0, 1, linestyles='dashed') for ax in axes.flat]
