@@ -283,7 +283,7 @@ def as_css_style(**kargs):
 
     style = ' '.join(chks)
     assert '"' not in style
-    return 'style="{style}"'
+    return f'style="{style}"'
 
 @jinja2.pass_context
 def _figures__fig(ctx, src, caption, max_width, width, cls, alt, location, home):
