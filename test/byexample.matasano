@@ -1,4 +1,4 @@
--l=python
+-l=python3
 --timeout=4
 -j=2
 posts/matasano/*.md
