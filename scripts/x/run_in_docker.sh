@@ -6,7 +6,7 @@ set -o pipefail
 name=blog
 run_in_docker() {
     local wd="/home/user/proj/book-of-gehn"
-    local img=blog-env
+    local img=bloglatex
     local user="1000:1000"
     sudo -E docker run                          \
         --device /dev/fuse                      \
