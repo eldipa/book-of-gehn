@@ -223,7 +223,7 @@ have (we are still guessing so there is not one single answer yet)
 ```
 
 Considere for a moment those numbers. Of 53 characters we initially have
-a key space of `256^53`{.mathjax}, a number which has more than 100
+a key space of `256^{53}`{.mathjax}, a number which has more than 100
 digits.
 
 But with a frequency attack and a good score function we managed to
