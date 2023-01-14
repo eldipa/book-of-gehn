@@ -18,25 +18,63 @@ one challenge hidden to be resolve in the practice.
 {{ spoileralert() }}
 Shall we?<!--more-->
 
-## Guessing the length of the key
+## Hamming distance (at bit level)
 
-``guess_key_length`` will score each possible length using a scoring
-function.
+Given two messages of the same length, the
+[Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance)
+consists in counting how many bits one differ of the other.
 
-For this, we will explore the full range of possible lengths from 1 to 40
-and we will score each one with the
-[Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance).
+In other words, we do an xor between the messages and count how many
+ones we get.
 
 ```python
 >>> from cryptonita import B                # byexample: +timeout=10
+>>> B('this is a test').hamming_distance(B('wokka wokka!!!'))
+37
+```
+
+## Guessing the length of the key
+
+We will compute the Hamming distance between blocks of different
+lengths.
+
+Most of the case we will be computing the distance between 2 random
+ciphertext blocks.
+
+But if we hit the length of the key, the xor of 2 ciphertext blocks
+will cancel out the random bits from the key exposing the xor
+of 2 plaintext blocks.
+
+The idea is that the Hamming distance of them will be significantly
+shorter.
+
+This is exactly what `key_length_by_hamming_distance` does: scores how
+likely a length is computing the Hamming distance between blocks of a
+given length.
+
+```python
+>>> from cryptonita.scoring import key_length_by_hamming_distance
 
 >>> ciphertext = B(open('./posts/matasano/assets/6.txt'), encoding=64)
 
->>> from cryptonita.attacks import guess_key_length
->>> from cryptonita.scoring import key_length_by_hamming_distance
+>>> key_length_by_hamming_distance(ciphertext, length=3)
+0.291<...>
 
->>> lengths_hd = guess_key_length(ciphertext, length_space=40,
-...                            score_func=key_length_by_hamming_distance)
+>>> key_length_by_hamming_distance(ciphertext, length=29)
+0.5818<...>
+```
+
+Instead of testing by hand we can use the `scoring` function
+and explore the full range of possible lengths and score each one
+keeping only the more likely.
+
+An educated guess would be to explore the lengths between 1 and 40
+
+```python
+>>> from cryptonita.scoring import scoring
+
+>>> lengths_hd = scoring(ciphertext, space=range(1, 41),
+...                      score_func=key_length_by_hamming_distance)
 ```
 
 There isn't a single response, of course.
@@ -45,18 +83,21 @@ This method *guesses* the length of
 the key so we have a set of possible values, ones more likely than
 others.
 
-For this, ``guess_key_length`` returns a
+For this, ``scoring`` returns a
 [Fuzzy Set](https://en.wikipedia.org/wiki/Fuzzy_set) where each possible
 length has a probability linked to it.
 
-We could cut the set further and keep only the top 5 more likely lengths:
+Here are the top 5 more likely lengths that got the highest scores (and
+the lowest Hamming distance)
 
 ```python
 >>> l = lengths_hd.copy()
 >>> l.cut_off(n=5)
 >>> l
-{5 -> 0.8500, 3 -> 0.7500, 2 -> 0.6875, 13 -> 0.6827, 11 -> 0.6705}
+{29 -> 0.5819, 40 -> 0.5500, 36 -> 0.5417, 38 -> 0.5362, 35 -> 0.5357}
 ```
+
+## Index of coincidence
 
 But because we are rebels, we will guess the length of the key using
 another scoring function: the
@@ -65,8 +106,8 @@ another scoring function: the
 ```python
 >>> from cryptonita.scoring import key_length_by_ic
 
->>> lengths_ic = guess_key_length(ciphertext, length_space=40,
-...                            score_func=key_length_by_ic, min_score=0.01)
+>>> lengths_ic = scoring(ciphertext, space=range(1, 41),
+...                      score_func=key_length_by_ic, min_score=0.01)
 
 >>> l = lengths_ic.copy()
 >>> l.cut_off(n=5)
@@ -74,24 +115,14 @@ another scoring function: the
 {29 -> 0.0598, 40 -> 0.0235, 30 -> 0.0232, 10 -> 0.0230, 26 -> 0.0223}
 ```
 
-> Interesting, both guesses have one guess that has a value higher than the
-> rest. However both methods suggest two different sets (at least for the top 5
-> guesses)
-
-Before you think that I didn't programmed the Hamming distance correctly:
-
-```python
->>> B('this is a test').hamming_distance(B('wokka wokka!!!'))
-37
-```
-
 {% call mainfig('kl_guesses.svg') %}
-Score of each guess by method. The maximum score using the Hamming distance is at 5. Using the Index of Coincidence is at 29.
+Score of each guess by method.
+
+Both methods agree on being 29 the most likely length
+but as the plot shows, both methods have quite different behaviours too.
 {% endcall %}
 
-<br />
-
-```python
+<!--
 >>> import sys
 >>> sys.path.append("./z/py/plotting")
 
@@ -104,9 +135,7 @@ Score of each guess by method. The maximum score using the Hamming distance is a
 >>> with show(save='./posts/matasano/kl_guesses.svg', columns = 2, transparent = True): # byexample: +timeout=600 +skip
 ...     _ = guesses.plot(style='o', subplots=True, layout=(2, 1))
 ...
-```
-
-I will take my changes with the length of 29 found using the IC.
+-->
 
 ## Guessing one byte at time
 
@@ -152,7 +181,7 @@ Now, we will break the key byte a byte using a
 >>> from cryptonita.attacks import brute_force, freq_attack
 >>> from cryptonita.scoring import all_ascii_printable
 
->>> length = lengths_ic.most_likely()
+>>> length = (lengths_hd | lengths_ic).most_likely()
 >>> bytes_of_key = []
 
 >>> for i in range(length):
@@ -208,7 +237,7 @@ discard the unlikely keys and just save the most likely:
 ```
 
 {% call marginnotes() %}
-More keys than grams of ordinay mass in the
+More keys than grams of ordinary mass in the
 [observable universe](https://en.wikipedia.org/wiki/Observable_universe)
 {% endcall %}
 
