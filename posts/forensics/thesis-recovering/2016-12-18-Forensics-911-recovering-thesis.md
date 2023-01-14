@@ -4,7 +4,7 @@ title: Forensics 911 - recovering a thesis of one year work
 tags: [forensics]
 ---
 
-{{ marginfig('trimming_scraping_ddrescue.png', indexonly=True) }}
+{{ marginfig('trimming_scraping_ddrescue.svg', indexonly=True) }}
 
 A friend of mine called me: a girl friend of him was hopeless trying to recover
 her thesis from a corrupted usb stick *three days* before her presentation.
@@ -117,7 +117,7 @@ the same manner that `dd` but unlike the latter, `ddrescue` will not stop
 if it found an error nor will put zeros nor discard the block
 if the reading fails.
 
-{% call marginfig('trimming_scraping_ddrescue.png') %}
+{% call marginfig('trimming_scraping_ddrescue.svg') %}
 After the initial block-wise read, `dd_rescue` re-reads blocks with
 errors.
 
