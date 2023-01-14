@@ -7,3 +7,4 @@ Tupfile
 .*.swn
 .*.swo
 /public-site/
+.check-secrets-impl.sh
