@@ -3,7 +3,7 @@
 from feedgen.feed import FeedGenerator
 import sys, yaml, datetime
 
-rss_filename, atom_filename, site_filename, *post_metadata_filenames = sys.argv[1:]
+rss_filename, atom_filename, feed_filename, site_filename, *post_metadata_filenames = sys.argv[1:]
 
 with open(site_filename, 'rt') as f:
     site = yaml.safe_load(f.read())
@@ -48,3 +48,7 @@ fg.atom_file(atom_filename, extensions=False, pretty=True)
 
 fg.link(href=site['url'] + '/' + site['name_rss'], rel='self')
 fg.rss_file(rss_filename, extensions=False, pretty=True)
+
+# this is a copy of atom file
+fg.link(href=site['url'] + '/' + site['name_feed'], rel='self')
+fg.atom_file(feed_filename, extensions=False, pretty=True)

@@ -34,7 +34,7 @@ endif
 !compile-md = |> ^ compile %B^ ./scripts/html.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !combine-ymls = |> ^ combine %B^ ./scripts/combine-ymls.py %1o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !compile-search = |> ^ compile search set %o ^ node ./scripts/build_search_index.js %f > %o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
-!make-feed = |> ^ feed %B^ ./scripts/make-feed.py %1o %2o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!make-feed = |> ^ feed %B^ ./scripts/make-feed.py %1o %2o %3o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !list-drafts = |> ^ drafts %B^ ./scripts/list-drafts.py %1f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 # Minifiers
@@ -246,7 +246,7 @@ endif
 : site.yaml {{ glob('posts/**/*.md', fmt='out/posts/meta/{:n.yml}') | join(' ') }}      \
     | {{ glob('posts/**/*.md', fmt='out/posts/html/{:n.html}') | join(' ') }}     \
     |> !make-feed                                               \
-    |> out/site/rss.xml out/site/atom.xml
+    |> out/site/rss.xml out/site/atom.xml out/site/feed.xml
 
 
 # Search data generation
