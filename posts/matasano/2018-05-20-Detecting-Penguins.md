@@ -19,8 +19,9 @@ Can you see the penguin?
 
 ## Warming up
 
-The following ciphertext was encrypted with AES in ECB mode (Electronic Code
-Book) with the given key.
+The following ciphertext was encrypted with AES in
+[Electronic Codebook mode (ECB)](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation)
+with the given key.
 
 In ECB each plaintext block is encrypted using the same key.
 
@@ -45,8 +46,7 @@ b"I'm back and I'm ringin' the bell<...>Play that funky music \n\x04\x04\x04\x04
 ```
 
 {% call mainfig('ecb-dec.png', max_width='60%') %}
-<br />
-Note how to encryption/decryption of one block don&apos;t depend of any other:
+Note how to encryption/decryption of one block don't depend of any other:
 this allows the encryption/decryption to be at random places and in parallel.
 {% endcall %}
 
@@ -58,7 +58,7 @@ will encrypt them to the *same* ciphertext block.
 [Detecting AES in ECB mode](https://cryptopals.com/sets/1/challenges/8)
 from a pool of random strings is therefore trivial: if the plaintext has two or
 more equal blocks, the ciphertext will have the same blocks repeated, something
-unlikely for a truly random string.
+**unlikely for a truly random string**.
 
 We can use the same technique done in
 [the previous post](/articles/2018/04/01/A-string-of-coincidences-is-not-a-coincidence.html)
@@ -97,7 +97,18 @@ than a coincidence of two or more bytes:
 ```
 
 {% call mainfig('score_pinguins.svg') %}
-Scores by method. For the Nblocks method, the size of the block is of 16 bytes.
+Scores by method.
+
+For the `Nblocks` method, the size of the block is of 16 bytes.
+
+Note how the Index of Coincidence (IC) detects the non-random ciphertext
+in both cases but it is much clearer when the IC is computed on 16-bytes blocks.
+
+This is because ECB encrypts to the same cipher block when the plain
+blocks are the same.
+
+Other vulnerable encryption modes will not be as easily detectable
+however.
 {% endcall %}
 
 <br />

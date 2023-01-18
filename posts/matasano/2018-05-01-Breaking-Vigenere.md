@@ -16,7 +16,12 @@ It is 101 cipher, which it is easy to break in theory, but it has more than
 one challenge hidden to be resolve in the practice.
 
 {{ spoileralert() }}
-Shall we?<!--more-->
+Shall we?
+
+{% call mainfig('break_repeat_key_transpose.svg', indexonly=True) %}
+{% endcall %}
+
+<!--more-->
 
 ## Hamming distance (at bit level)
 
@@ -27,6 +32,12 @@ consists in counting how many bits one differ of the other.
 In other words, we do an xor between the messages and count how many
 ones we get.
 
+```tex;mathjax
+\mbox{count-1-bits} \left( c_1 ⊕ c_2 \right) \rightarrow \mbox{hamming-distance} \left( c_1, c_2 \right)
+```
+
+Here is an example:
+
 ```python
 >>> from cryptonita import B                # byexample: +timeout=10
 >>> B('this is a test').hamming_distance(B('wokka wokka!!!'))
@@ -35,18 +46,48 @@ ones we get.
 
 ## Guessing the length of the key
 
+
 We will compute the Hamming distance between blocks of different
 lengths.
 
 Most of the case we will be computing the distance between 2 random
 ciphertext blocks.
 
-But if we hit the length of the key, the xor of 2 ciphertext blocks
+```tex;mathjax
+\begin{align*}  \\
+c_1 ⊕ c_2 & = \left( p_1 ⊕ k_i \right)  ⊕ \left( p_2 ⊕ k_j \right)  \\
+          & = \left( p_1 ⊕ p_2 \right)  ⊕ \left( k_i ⊕ k_j \right)
+\end{align*}
+```
+
+But if we hit the length of the key, `k_i = k_j`{.mathjax} and
+the xor of 2 ciphertext blocks
 will cancel out the random bits from the key exposing the xor
 of 2 plaintext blocks.
 
+```tex;mathjax
+\begin{align*}  \\
+c_1 ⊕ c_2 & = \left( p_1 ⊕ k_i \right)  ⊕ \left( p_2 ⊕ k_j \right)  \\
+          & = \left( p_1 ⊕ p_2 \right)  ⊕ \left( k_i ⊕ k_j \right)  \\
+          & = \left( p_1 ⊕ p_2 \right)
+\end{align*}
+```
+
 The idea is that the Hamming distance of them will be significantly
 shorter.
+
+{% call marginfig('hamming1.svg') %}
+Compute the Hamming distance between consecutive blocks of the same
+length and takes the maximum. Then scores it.
+
+Scores closer to 1
+means smaller distances and therefore the blocks of ciphertext looks
+that were xor'd with *the same key* as the xor of two blocks looks
+*less random*.
+
+Scores closer to 0 are the opposite: the xor of two blocks still looks
+random.
+{% endcall %}
 
 This is exactly what `key_length_by_hamming_distance` does: scores how
 likely a length is computing the Hamming distance between blocks of a
@@ -150,13 +191,9 @@ key](/articles/2018/03/01/In-XOR-We-Trust.html)!
 
 So we need to do this for all the offsets between 0 and l. In other words:
 
-```
-    0,  0+l,  0+2l    ... to break key[0]
-    1,  1+l,  1+2l    ... to break key[1]
-    2,  2+l,  2+2l    ... to break key[2]
-    :,   : ,   :           :   :
-  l-1, 2l-1,  3l-1    ... to break key[l-1]
-```
+
+{% call mainfig('break_repeat_key_transpose.svg') %}
+{% endcall %}
 
 To break this, we will need the frequency of ``etaoin shrdlu`` (I'm
 assuming that the plaintext is in ASCII human plain English):

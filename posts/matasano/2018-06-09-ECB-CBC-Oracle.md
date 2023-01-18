@@ -11,6 +11,9 @@ and how we can build
 to distinguish ECB from CBC using
 [cryptonita](https://pypi.org/project/cryptonita/)
 
+{% call mainfig('ecb_cbc_prefix_aligned.svg', width="70%", indexonly=true) %}
+{% endcall %}
+
 {{ spoileralert() }}
 This will be the bases for [breaking ECB](/articles/2018/06/10/Breaking-ECB.html)
 in a later post.<!--more-->
@@ -124,13 +127,16 @@ Everything else is secret for the adversary: the key, the IV, the mode.
 ...     global cfg
 ...     cfg = generate_config(cfg) # update the random attributes
 ...
-...     block_size = cfg.kargs['block_size']
+...     block_size = cfg.kargs['block_size']    # (known)
 ...
 ...     # prepend + append with two random strings; pad it later
 ...     plaintext = cfg.prefix + partial_plaintext + cfg.posfix
+...     #            (unknown)        (known)         (unknown)
+...
 ...     plaintext = plaintext.pad(block_size, cfg.pad_mode)
 ...
 ...     # encrypt the plaintext with one of the available modes
+...     # but exactly which, ECB or CBC, is unknown to us
 ...     if cfg.enc_mode == 'ecb':
 ...         ciphertext = enc_ecb(plaintext, cfg.key, block_size)
 ...     elif cfg.enc_mode == 'cbc':
@@ -165,45 +171,19 @@ With a (partial) plaintext of twice the block size we can know if
 the cipher is using ECB or CBC because if it is using ECB, two same
 plaintext blocks will be encrypted to the same ciphertext block
 
-```
-|----|----|----|----|
- AAAA AAAA .... ....    plaintext
-  |    |
-  V    V
-|----|----|----|----|
-  CA   CA  .... ....    ciphertext
-```
+{% call mainfig('ecb_cbc_no_prefix.svg', width='70%') %}
+{% endcall %}
 
 But because we have some *extra plaintext prepended*, we cannot know if our
 two blocks will be *aligned to the block boundary*.
 
-```
-|----|----|----|----|
- xAAA AAAA Ayyy ....    plaintext (not aligned)
-  |    |    |
-  V    V    V
-|----|----|----|----|
-  C1   CA   C2  ....    ciphertext
-
-
-|----|----|----|----|
- xxxx AAAA AAAA ....    plaintext (aligned)
-       |    |
-       V    V
-|----|----|----|----|
-       CA   CA  ....    ciphertext
-```
+{% call mainfig('ecb_cbc_prefix_unaligned.svg', width='70%') %}
+{% endcall %}
 
 To workaround this we set a plaintext three times the block size:
 
-```
-|----|----|----|----|
- xAAA AAAA AAAA Ayyy    plaintext (always aligned)
-  |    |    |    |
-  V    V    V    V
-|----|----|----|----|
-  C1   CA   CA   C2     ciphertext
-```
+{% call mainfig('ecb_cbc_prefix_aligned.svg', width='70%') %}
+{% endcall %}
 
 Now it is a matter of counting duplicated blocks.
 
@@ -216,7 +196,7 @@ otherwise CBC (so we will use ``has_duplicates`` directly).
 We will repeat this 1024 to prove that this works:
 
 ```python
->>> choosen_partial_plaintext = B('A' * block_size * 3)
+>>> choosen_partial_plaintext = B('a' * block_size * 3)
 
 >>> for i in range(1024):
 ...     c = encryption_oracle(choosen_partial_plaintext)
