@@ -353,7 +353,7 @@ digraph CG  {
     }
 
     // Processes
-    node [shape=circle,  color="#880000", style=bold, width=0.5, fixedsize=true] {
+    node [shape=circle,  color="#880000", style=bold, width=0.6, fixedsize=true] {
         "shell" [label="shell", group=lvl1];
         "echo" [label="echo"];
         "sleep" [label="sleep"];
