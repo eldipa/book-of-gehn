@@ -13,7 +13,8 @@ we can use this to build a *padding oracle*:
 a function that will tell us if an encrypted plaintext
 has a valid pad or not.
 
-Armed with this *padding oracle* we can break CBC
+It may not sound too much exiting but
+armed with this *padding oracle* we can **break CBC**
 one byte at time.
 
 {{ spoileralert() }}
@@ -42,11 +43,15 @@ the last byte will be ``01``:
 Now, if we change the last byte (we forge it), the unpad of the forged
 block will success or not based on what byte we set.
 
+Here is what I mean.
+
 There are three possible outcomes based on this last byte:
 
  - the unpad works because the last byte matches the original padding byte (``01``).
  - the unpad works because the last byte matches *another* padding sequence (``03``).
  - the unpad fails.
+
+## Padding check cases
 
 The first case happen with the forged byte is actually the original the
 last byte.
@@ -82,7 +87,7 @@ Traceback (most recent call last):
 ValueError: Bad padding 'pkcs#7' with last byte 0xff
 ```
 
-Armed with this we can build a padding oracle for CBC:
+Armed with this we can build a **padding oracle for CBC**:
 a function that will tell us if an encrypted plaintext
 has a valid pad or not.
 
@@ -110,6 +115,9 @@ has a valid pad or not.
 
 ## CBC decryption and padding
 
+{% call	marginfig('cbc_padding_oracle_xor.svg', width="60%") %}
+{% endcall %}
+
 Let's be `m`{.mathjax} the ith plaintext block,
 `c`{.mathjax} the i-1th ciphertext block and
 `x`{.mathjax} the decryption of the ith ciphertext block.
@@ -121,18 +129,21 @@ is reconstructed from this:
 x \oplus c = m
 ```
 
+{% call	marginfig('cbc_padding_oracle_patched.svg', width="90%") %}
+{% endcall %}
+
 Let's say now that instead of `c`{.mathjax}
-we use `f`{.mathjax}, a *forged* ciphertext block,
+we use `c'`{.mathjax}, a *forged* ciphertext block,
 if we are reconstructing the last plaintext block, this one will be:
 
 ```tex;mathjax
-x \oplus f = ?
+x \oplus c' = ?
 ```
 
 Now, because this is the last block, this will affect the padding
 of the final plaintext.
 
-The padding will be ok *only if* `x \oplus f`{.mathjax} is
+The padding will be ok **only if** `x \oplus c'`{.mathjax} is
 equals to one of these:
 
 ```
@@ -150,6 +161,7 @@ one byte at time.
 
 For the plaintext block `m`{.mathjax}, let's be `m_1`{.mathjax},
 the last byte of the block.
+
 Using the same convention, this last byte is
 
 ```tex;mathjax
@@ -157,24 +169,24 @@ x_1 \oplus c_1 = m_1
 ```
 
 If instead of `c_1`{.mathjax} we use a forged last byte
-`f_1`{.mathjax}, the decrypted byte will be
+`c'_1`{.mathjax}, the decrypted byte will be
 
 ```tex;mathjax
-x_1 \oplus f_1 = ?
+x_1 \oplus c'_1 = ?
 ```
 
 The decrypted message will have a valid padding only if:
 
 ```tex;mathjax
 \begin{cases}
-x_1 \oplus f_1 = 01 & (1)\\
-x_1 \oplus f_1 = pp & (2)
+x_1 \oplus c'_1 = 01 & (1)\\
+x_1 \oplus c'_1 = pp & (2)
 \end{cases}
 ```
 
-The case 2 means that `x_1 \oplus f_1`{.mathjax} is equal to
+The case 2 means that `x_1 \oplus c'_1`{.mathjax} is equal to
 the original padding byte and this will happen only if
-`f_1 = c_1`{.mathjax} or in other words if we didn't
+`c'_1 = c_1`{.mathjax} or in other words if we didn't
 forge anything.
 
 It doesn't add much info.
@@ -186,8 +198,8 @@ Then,
 
 ```tex;mathjax
 \begin{align*}
-x_1 \oplus f_1 & = 01                           \\
-           x_1 & = 01 \oplus f_1
+x_1 \oplus c'_1 & = 01                           \\
+           x_1 & = 01 \oplus c'_1
 \end{align*}
 ```
 
@@ -197,20 +209,20 @@ to break the last plaintext byte:
 ```tex;mathjax
 \begin{align*}
                 x_1 \oplus c_1 & = m_1          \\
-    (01 \oplus f_1) \oplus c_1 & = m_1
+    (01 \oplus c'_1) \oplus c_1 & = m_1
 \end{align*}
 ```
 
-as `f_1`{.mathjax} is our forged byte and `c_1`{.mathjax}
+as `c'_1`{.mathjax} is our forged byte and `c_1`{.mathjax}
 is the last byte of the previous ciphertext block, all of them known by us.
 
 The case 1 and 2 are easily identified as in the second case
-`f_1 = c_1`{.mathjax}.
+`c'_1 = c_1`{.mathjax}.
 
 There is, however, a special situation in which the case 1 and 2 are
 the same: this happens when the original padding byte is actually ``01``.
 
-Nevertheless, the equation `(01 \oplus f_1) \oplus c_1 = m_1`{.mathjax}
+Nevertheless, the equation `(01 \oplus c'_1) \oplus c_1 = m_1`{.mathjax}
 is still true.
 
 ## Guess the penultimate byte
@@ -220,12 +232,12 @@ of `m_1`{.mathjax} to ``02``:
 
 ```tex;mathjax
 \begin{align*}
-      x_1 \oplus f_1 & = 02                     \\
-                 f_1 & = (02 \oplus x_1)
+      x_1 \oplus c'_1 & = 02                     \\
+                 c'_1 & = (02 \oplus x_1)
 \end{align*}
 ```
 
-This `f_1`{.mathjax} is **not** the same than the previous section:
+This `c'_1`{.mathjax} is **not** the same than the previous section:
 it is a different
 forged byte used to forge a ``02`` in the last value of the plaintext.
 
@@ -233,7 +245,7 @@ With this, the penultimate byte will forge a plaintext with a
 *valid padding* only if:
 
 ```tex;mathjax
-x_2 \oplus f_2 = 02
+x_2 \oplus c'_2 = 02
 ```
 
 Then, for the case of a valid padding we can guess
@@ -241,15 +253,15 @@ Then, for the case of a valid padding we can guess
 
 ```tex;mathjax
 \begin{align*}
-      x_2 \oplus f_2 & = 02                     \\
-                 x_2 & = (02 \oplus f_2)
+      x_2 \oplus c'_2 & = 02                     \\
+                 x_2 & = (02 \oplus c'_2)
 \end{align*}
 ```
 
 ```tex;mathjax
 \begin{align*}
                    x_2 \oplus c_2 & = m_2                     \\
-      (02 \oplus f_2) \oplus c_2  & = m_2
+      (02 \oplus c'_2) \oplus c_2  & = m_2
 \end{align*}
 ```
 

@@ -27,7 +27,7 @@ Ready to break it?<!--more-->
 Let's implement a CTR. As usual we generate a pseudo-random
 configuration to parametrize the CTR.
 
-```python
+<!--
 >>> from cryptonita import B, load_bytes     # byexample: +timeout=10
 
 >>> import sys
@@ -35,6 +35,9 @@ configuration to parametrize the CTR.
 >>> from challenge import generate_config, enc_ctr, dec_ctr  # byexample: +timeout=10
 
 >>> seed = 20181204
+-->
+
+```python
 >>> bsize = 16
 
 >>> cfg = generate_config(random_state=seed, block_size=bsize,
@@ -139,12 +142,6 @@ returns a guess: a set of possible key bytes.
 
 To determine the correct key we need to try each of them by brute force
 (`brute_force`) and *"see"* which looks more "human text".
-
-This could be done by hand but we want to fully automate this... so no
-deal!
-
-The idea is to automate which deciphered text looks more or less like
-English text (the expected for our plaintexts) and discard any other.
 
 For this we *observe* the frequency of the letters in the deciphered plaintext
 and compare them with the *expected* frequency using a

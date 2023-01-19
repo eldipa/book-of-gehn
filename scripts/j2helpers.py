@@ -9,6 +9,7 @@ from tempfile import NamedTemporaryFile
 from subprocess import check_call, check_output, STDOUT
 
 
+
 # NOTE: this "artifact thing" has a race condition
 def create_artifact_file(output_file_path, type, *hash_items):
     if type == 'already-exists':

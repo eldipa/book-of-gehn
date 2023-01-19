@@ -14,12 +14,12 @@ This time the idea is not to reveal the key but to *forge* a plaintext.
 Welcome to the [ECB cut-and-paste](https://cryptopals.com/sets/2/challenges/13)
 challenge!<!--more-->
 
-### Prelude: profile creation
+### Prelude: profile request
 
 Imagen a scenario where two parties send encrypted messages using AES
-in ECB mode:
+in ECB mode.
 
-```python
+<!--
 >>> import sys
 >>> sys.path.append("./posts/matasano/assets")
 >>> from challenge import generate_config, enc_ecb, dec_ecb  # byexample: +timeout=10
@@ -29,7 +29,7 @@ in ECB mode:
 
 >>> # encrypt/decrypt under this 'random' environment
 >>> cfg = generate_config(random_state=seed, block_size=block_size, enc_mode='ecb')
-```
+-->
 
 Consider the following function that builds a ciphertext from an hypothetical
 *"create profile for a new user"*:
@@ -37,7 +37,7 @@ Consider the following function that builds a ciphertext from an hypothetical
 ```python
 >>> from cryptonita import B                # byexample: +timeout=10
 
->>> def profile_for(email):
+>>> def profile_request_for(email):
 ...     assert b'&' not in email
 ...     assert b'=' not in email
 ...     assert b'@'     in email
@@ -46,21 +46,27 @@ Consider the following function that builds a ciphertext from an hypothetical
 ...     msg = msg.pad(block_size, 'pkcs#7')
 ...     return enc_ecb(msg, cfg.key, block_size)
 
->>> c = profile_for(b'honest-email@example.com')
+>>> c = profile_request_for(b'honest-email@example.com')
 >>> c
 <...>\xc1\xa4\x89<...>
 ```
 
-The ``profile_for`` can create as many user as we want but all of them will
+The ``profile_request_for`` can create as many user as we want but all of them will
 have the same privilege level or role: ``user``.
+
+The adversary (us) can call this function as many times as he/she wants
+but it cannot neither change it (like disabling the checks) nor peak the
+secret key.
+
+### Prelude: profile creation
 
 Then the ciphertext can be sent to a server where the given credentials are
 stored and the profile is *"created"*.
 
 ```python
 >>> from urllib.parse import parse_qs
->>> def create_profile(ciphertext):
-...     msg = dec_ecb(ciphertext, cfg.key, block_size)
+>>> def create_profile(encrypted_request):
+...     msg = dec_ecb(encrypted_request, cfg.key, block_size)
 ...     msg = msg.unpad('pkcs#7')
 ...
 ...     return parse_qs(msg, strict_parsing=True)
@@ -69,38 +75,39 @@ stored and the profile is *"created"*.
 {b'email': [b'honest-email@example.com'], b'role': [b'user'], b'uid': [b'10']}
 ```
 
-## Forgery
+## Forgery (naive try)
 
-It would be cool to forge ``role=admin`` there but it is not possible.
+It would be cool to forge ``role=admin`` *with an injection there*
+but it is not possible.
 
 ```python
->>> profile_for(b'dishonest@evil.com&role=admin')
+>>> profile_request_for(b'dishonest@evil.com&role=admin')
 <...>
 AssertionError
 ```
 
 Let's forge **anyways** with [cryptonita](https://pypi.org/project/cryptonita/).
 
+## Forgery (as crypto pro)
+
 ### Block alignment
 
-We want to know how many bytes are needed so the plaintext
-at its right is aligned with the block boundary.
+In principle our partial plaintext is inserted at some *fixed but
+unknown* position.
 
-In other words, given the prefix ``email=`` we now that we need 10 bytes
-to append and complete the block leaving the rest of our own plaintext
-aligned with the block boundary:
+The first step is to know where.
 
-```python
->>> block_size - len("email=")
-10
-```
+The key insight is that if we insert 2 full and aligned blocks we will
+get 2 identical ciphertext blocks.
 
-We already know how to do this even if we don't know the prefix...
-when we have two blocks encrypted with to the same ciphertext block we are done:
+So we insert these and slowly add one extra byte at time until we get
+the two identical ciphertext blocks.
+
+The alignment required was exactly the amount of extra bytes inserted.
 
 ```python
 >>> for alignment in range(block_size):
-...     c = profile_for(B('@' * (block_size * 2 + alignment)))
+...     c = profile_request_for(B('@' * (block_size * 2 + alignment)))
 ...     indexes = list(c.nblocks(block_size).iduplicates(distance=0, idx_of='both'))
 ...     if indexes:
 ...         break
@@ -117,84 +124,100 @@ marking the *end* of the needed padding:
 1
 ```
 
-### Cut a block
+*Of course we could cheat a little!* If the *prefix is known*, we just
+do the maths:
 
 ```python
->>> align_block = B('A' * alignment)
+>>> block_size - len("email=")
+10
+```
+
+### Crafting the email
+
+`profile_request_for` *will encrypt for us anything*, as long as the
+email is a "valid email".
+
+We can prepare specially crafted one:
+
+```python
+>>> align_pad = B('A' * alignment)
 >>> target = B('admin').pad(block_size, 'pkcs#7')
 >>> posfix = B('@evil.com')
 
->>> crafted_email = align_block + target + posfix
+>>> crafted_email = align_pad + target + posfix
 >>> crafted_email
 'A<...>AAAadmin\x0b\x0b\x0b<padding>\x0b@evil.com'
 ```
 
-Now, when ``crafted_email`` gets encrypted, the ``admin\x0b...\x0b``
-will be aligned to the block boundary and it will be a full block
-ready to be cut:
+The `align_pad` ensures that what follows (`"admin"`) is
+*at the begin* of a block.
+
+The `target` is a full block with the string `"admin"` and a padding
+**as if** it were at the end of the plaintext (which it is not).
+
+The `posfix` just completes the crafting so the whole looks an email
+address.
+
+{% call	mainfig('cut_and_paste_align_before_cut.svg', width='60%') %}
+{% endcall %}
+
+### Cut the block
+
+Now we encrypt the crafted profile. The trick is that **we know**
+that a full block will be the encryption of `"admin"` and **we know**
+exactly where.
+
+This is because EBC encrypts all the blocks in the same way, no
+matter where they are.
 
 ```python
->>> c = profile_for(crafted_email)
+>>> c = profile_request_for(crafted_email)
 >>> cut = c.nblocks(block_size)[indexes[0]]
 ```
 
-```
-   add enough As to align the next block
-     |
-|--------|--------|---------|
- email=AA adminPPP @foo.....
-              |
-              V
-|--------|--------|---------|
-         :   C1   :
-         :.......cut
-```
+{% call	mainfig('cut_and_paste_align_cutting.svg' , width='60%') %}
+{% endcall %}
 
-where ``PPP`` is a ``pkcs#7``{.none} padding such as if the whole ``C1`` block was
-the last block of the ciphertext, the decryption + un-padding would success.
-
-### Paste a block
+### Paste the block
 
 Now, the final step.
 
-We will use our valid email (at the end *we* want to be admin) but it has
-to be special: it has to contain enough padding to align the *last* block
-so we can cut it and throw it away.
+{% call	marginnotes() %}
+In a real case you will also make your that the email is a valid one:
+the whole thing is about getting *you* an admin.
 
-In its replacement we will put our crafted cut cipher block.
+If you cannot login later, it would be pointless.
+{% endcall %}
+
+We craft another email but this time the goal is to align the `role=`
+plaintext *at the end* of the block.
+
+In other words, what follows `role=` must be at the begin of the next
+block.
+
+{% call	mainfig('cut_and_paste_align_cutting2.svg', width='90%') %}
+{% endcall %}
+
+Then we *paste the block*.
+
+In its replacement we will put our crafted cipher block.
 
 ```python
->>> c = profile_for(b'me-AAAAAAAAAAAAAAAAA@evil.com')
+>>> c = profile_request_for(b'me-AAAAAAAAAAAAAAAAA@evil.com')
 >>> forged = B(c, mutable=True)
 >>> forged[-block_size:] = cut
 ```
 
-The email address ``me-AAAAAAAAAAAAAAAAA@evil.com`` should be a valid
-one and with an account controlled by us if we want to do something
-beyond the cryptography exercise later.
+{% call	mainfig('cut_and_paste_align_pasting.svg', width='90%') %}
+{% endcall %}
 
 How many ``A`` we need to add will depend: I tried several times using
 ``create_profile`` as oracle until I got the payload aligned such the
-last *boundary* matched with the ``role=|user`` boundary.
+last *boundary* matched and no error was throw.
 
-The following diagram show this:
+## Forge!
 
-```
-  insert a valid email, with As to align the last block
-       |     |
-       |     |
-|--------|--------|--------|--------|    <= original
- email=me -AAA@evi ...role= userQQQQ           |
-     |        |        |                       |
-     |        |        |                       V
-    Ca       Cb       Cc       C1 (cut)  <=  encrypt
-     |        |        |        |              |
-     V        V        V        V              V
-|--------|--------|--------|--------|    <= decrypted
- email=me -AAA@evi ...role= adminPPP
-```
-
-Voila!, the plaintext is recovered and the padding removed and we
+Voila!, the plaintext is recovered by the server, the padding removed and we
 get a admin profile.
 
 ```python
@@ -204,3 +227,6 @@ get a admin profile.
  b'uid': [b'10']}
 ```
 
+
+{% call	mainfig('cut_and_paste_align_pasted.svg' ) %}
+{% endcall %}

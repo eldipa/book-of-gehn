@@ -22,7 +22,7 @@ to modify the plaintext at will.<!--more-->
 But first, let's define a random configuration with some fixed values like
 the block size or the encryption mode:
 
-```python
+<!--
 >>> from cryptonita import B                # byexample: +timeout=10
 
 >>> import sys
@@ -30,6 +30,9 @@ the block size or the encryption mode:
 >>> from challenge import generate_config, enc_cbc, dec_cbc  # byexample: +timeout=10
 
 >>> seed = 20180703   # make the tests 'random' but deterministic
+-->
+
+```python
 >>> block_size = 16     # leave this fixed, it is what happen in practice
 
 >>> cfg = generate_config(random_state=seed, block_size=block_size,
@@ -49,8 +52,11 @@ and then encrypt it:
 ...     return enc_cbc(msg, cfg.key, cfg.iv)
 ```
 
-Now imagine this quite-dumb role check function that process the
-previous ciphertext: if one of the fields is ``admin=true``
+That function leaves in a server but the adversary (us) is
+*free to inject* almost any data as the `"userdata"` field.
+
+Now imagine this quite-dumb role-check function that process the
+user's data: if one of the fields is ``admin=true``
 the user will be considered an Administrator:
 
 ```python
@@ -67,7 +73,7 @@ Traceback<...>
 AssertionError
 ```
 
-So the idea is to patch the ciphertext.
+So the idea is to **patch** the ciphertext.
 
 ## Bit flipping attack
 

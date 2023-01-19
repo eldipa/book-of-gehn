@@ -49,7 +49,7 @@ For testing, I'm going to use the following
 True
 ```
 
-## Cracking
+## Cracking (seed space exploration)
 
 It is quite common to find people that use the current time
 as their *secret* seed for the generator.
@@ -65,15 +65,17 @@ so it will impossible to find it by brute force"*
 
 Exploring 64 bits is quite hard but the seed is **not random**,
 therefore
-we do not need to explore the whole space.
+we do not need to explore the *whole space* but a **smaller space**.
 
 Instead we just explore the numbers in the vicinity of the current time
 which turns the
 [crack an MT19937 seed](https://cryptopals.com/sets/3/challenges/22)
-into a much simpler task:
+into a much simpler task.
+
+First, assuming that we known the first output of the PRNG, we build an
+oracle function to tell if we have found or not the secret seed.
 
 ```python
->>> from cryptonita.attacks import search    # byexample: +timeout=10
 >>> from functools import partial
 
 >>> def MT19937_oracle(seed, first_known_output):
@@ -81,14 +83,31 @@ into a much simpler task:
 ...     return next(g) == first_known_output
 
 >>> oracle = partial(MT19937_oracle, first_known_output=x)
+```
 
+Then, it just rest to test the seed space starting from an *educated guess*
+for the secret seed.
+
+For example we could guess that the seed is between 2048 seconds ago and
+2 times that in the future.
+
+```python
 >>> delta = 2048
 >>> start = int(time.time()) - delta
 >>> stop = start + delta*2
+```
 
+Now we test each possible seed in that range. `search` is a handy
+function for testing that implements some heuristics like trying first
+the numbers in the middle of the range before in the extremes.
+
+```python
+>>> from cryptonita.attacks import search    # byexample: +timeout=10
 >>> search(start, stop, oracle, likely='middle') == secret_seed      # byexample: +timeout=10
 True
 ```
+
+Gotcha!
 
 ## Cloning
 
