@@ -7,6 +7,7 @@
         <p class="subtitle">{{ page.date | date("%B %-d, %Y") }}</p>
 {% block content required %}
 {% endblock %}
+{% include "./z/incl/comments-section.html" %}
     </article>
     {% include "./z/incl/print-footer.html" %}
     {% include "./z/incl/footer.html" %}
