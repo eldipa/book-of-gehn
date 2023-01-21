@@ -34,6 +34,10 @@ publish:
 	@rsync --human-readable --partial --progress --recursive \
 	       --times --delete --links \
 	       --exclude ".git" 	\
+	       --exclude ".gitignore" 	\
+	       --exclude ".check-secrets.sh" 	\
+	       --exclude ".check-secrets-impl.sh" 	\
+	       --exclude ".pre-commit-config.yaml" 	\
 	       --exclude "**DRAFT**" 	\
 	       --exclude-from=out/pages/front/index.drafts 	\
                out/site/ public-site/
