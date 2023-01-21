@@ -17,6 +17,9 @@ One can replace part of the plaintext, extend it or even reduce it.
 
 But this beautiful property of a CTR mode (and any other stream cipher)
 is actually a booby-trap.
+
+{% call	mainfig('ctr-edit-slicing-window.svg', width='80%', indexonly=True ) %}
+{% endcall %}
 <!--more-->
 
 <!--
