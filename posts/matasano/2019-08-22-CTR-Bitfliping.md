@@ -26,9 +26,11 @@ the CTR encryption mode our victim.<!--more-->
 >>> block_size = 16     # leave this fixed, it is what happen in practice
 -->
 
+### Setup
+
 Recall from [CBC Bitflipping post](/articles/2018/07/03/CBC-Bitflipping.html)
-the scenario where we have a ``add_user_data`` function to *user*
-profiles:
+the scenario where we have a ``add_user_data`` function that adds
+arbitrary data to users' profiles:
 
 ```python
 >>> cfg = generate_config(random_state=seed, block_size=block_size,
@@ -42,15 +44,39 @@ profiles:
 ...     return enc_ctr(msg, cfg.key, cfg.nonce)
 ```
 
-We control the user's data but we cannot control the entire profile.
-In particular, we cannot say that we have the administration role
-adding ``admin=true``.
+On the server side there is a function that checks for admin role:
 
 ```python
 >>> def is_admin(c):
 ...     msg = dec_ctr(c, cfg.key, cfg.nonce)
 ...     return b'admin=true' in msg.split(b';')
 ```
+
+We control the user's data (`userdata` field)
+but we cannot control the entire profile.
+
+In particular, we cannot say that we have the administration role
+adding ``admin=true``.
+
+{% call	marginnotes() %}
+Well... technically the check in `add_user_data` is made with an
+`assert`.
+
+In Python these asserts are **removed** if the code is executed with the
+optimization flag so if the `add_user_data` runs with the flag on we
+could inject anything.
+
+So do not use `assert` for any real check.
+{% endcall %}
+
+So, no, we cannot do this:
+
+```python
+>>> add_user_data("somedata;admin=true")
+<...>AssertionError
+```
+
+## Bit flipping
 
 In [CBC Bitflipping post](/articles/2018/07/03/CBC-Bitflipping.html)
 we saw that CBC does not offer any protection against forgery and how to
