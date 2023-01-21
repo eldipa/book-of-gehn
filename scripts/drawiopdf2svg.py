@@ -12,6 +12,9 @@ import sys, os, glob
 #
 # Also, it copies the Drawio file
 
+if len(sys.argv) != 3:
+    print("Usage: py <src folder> <dst folder>")
+    sys.exit(1)
 
 srcfolder = sys.argv[1]
 dstfolder = sys.argv[2]
