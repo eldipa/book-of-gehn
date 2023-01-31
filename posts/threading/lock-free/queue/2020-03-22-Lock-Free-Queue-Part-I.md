@@ -38,7 +38,7 @@ do not waste this entry.
 
 The pointers serve as stop-markers: the producer will not write if
 the head points to an entry that is immediately before the entry
-pointed by the head; the consumer will not read if the tail and the
+pointed by the tail; the consumer will not read if the tail and the
 head are pointing to the same entry.
 
 {% call marginfig('queue-empty.png') %}
@@ -65,7 +65,7 @@ We cannot longer guarantee that the head was moved *after* writing
 the data even if the code say so. Keep reading. {% endcall %}
 
 Changing the order doesn't fix the problem: a producer may move the head
-before writing, trying to *reserver* the space but now a consumer may forward
+before writing, trying to *reserve* the space but now a consumer may forward
 the tail before the data was actually written reading entries that are empty.
 
 The problem is that the write **and** the move of the head is not a single
