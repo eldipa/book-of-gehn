@@ -98,12 +98,16 @@ For example we could guess that the seed is between 2048 seconds ago and
 ```
 
 Now we test each possible seed in that range. `search` is a handy
-function for testing that implements some heuristics like trying first
+function for the testing and `IntSpace` defines a search space
+with some heuristics like yielding first
 the numbers in the middle of the range before in the extremes.
 
 ```python
+>>> from cryptonita.space import IntSpace # byexample: +timeout=10
 >>> from cryptonita.attacks import search    # byexample: +timeout=10
->>> search(start, stop, oracle, likely='middle') == secret_seed      # byexample: +timeout=10
+
+>>> space = IntSpace(start, stop, start='middle')
+>>> search(space, oracle) == secret_seed      # byexample: +timeout=10
 True
 ```
 
@@ -230,7 +234,7 @@ guessed seed and see if a substring matches or not.
 ...     count = sum(s == p for s, p in zip(sngrams, pngrams))
 ...     return count == 1
 
->>> seed = search(0, 2**16, oracle)                         # byexample: +timeout=300
+>>> seed = search(IntSpace(2**16), oracle)                         # byexample: +timeout=300
 >>> prng = iter(MT19937(seed))
 >>> kstream = repack(prng, ifmt='>I', ofmt='>BBBB')
 
