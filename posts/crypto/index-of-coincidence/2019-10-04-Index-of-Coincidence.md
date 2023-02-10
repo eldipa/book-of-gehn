@@ -6,11 +6,12 @@ tags: [cryptography, index of coincidence]
 
 The concept of Index of Coincidence was introduced by William Friedman
 in 1922-1923 in the paper titled
-"The Index of Coincidence and its Applications in Cryptoanalysis".
+"The Index of Coincidence and its Applications in Cryptoanalysis"
+[[1]({{ asset('biblio/index_of_coincidence_1923.pdf') }})].
 
 The Navy Department (US) worked in the following years on this topic
 coming, in 1955, with a paper titled "The Index of Coincidence"
-by Howard Campaigne.
+by Howard Campaigne [[2]({{ asset('biblio/index_of_coincidence_1955.pdf') }})].
 
 However I found some confusing and misleading concepts in the *modern*
 literature.
