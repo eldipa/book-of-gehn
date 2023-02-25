@@ -45,6 +45,7 @@ publish:
 	@find public-site/ -name '**DRAFT**' -delete
 	# Point to the correct public web site
 	@grep -Rl 'http://127.0.0.1:4000' public-site/ | xargs -I{} sed -i 's%http://127.0.0.1:4000%https://book-of-gehn.github.io%g' {}
+	@grep -Rl 'http://127.0.0.1:6127' public-site/ | xargs -I{} sed -i 's%http://127.0.0.1:6127%http://192.34.63.156:6127%g' {}
 
 test-cgroup:
 	byexample @test/byexample.linux.cgroup

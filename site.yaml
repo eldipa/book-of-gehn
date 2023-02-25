@@ -8,6 +8,7 @@ url: "http://127.0.0.1:4000"
 name_atom: "atom.xml"
 name_rss: "rss.xml"
 name_feed: "feed.xml"
+analytics_url: "http://127.0.0.1:6127/ping.js"
 
 # These are the metadata that each post/page will have by default
 # More metadata, optionally overriding this one, can be added per
