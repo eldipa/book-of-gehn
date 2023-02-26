@@ -13,6 +13,6 @@
         {% endif %}
     </div>
 
-    <img src='{{ site["analytics_base_url"] }}{{ page['url'] | urlencode }}.png' async></img>
+    <img src='{{ site["analytics_base_url"] }}{{ page['url'] | urlencode }}.png' onerror="this.style.display='none'" async></img>
 </footer>
 ```
