@@ -12,5 +12,7 @@
         <a href="mailto:{{ site.email }}">{{site.email}}</a></span></br> <br>
         {% endif %}
     </div>
+
+    <img src='{{ site["analytics_base_url"] }}{{ page['url'] | urlencode }}.png' async></img>
 </footer>
 ```
