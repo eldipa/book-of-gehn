@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Congruence Closure with Z3"
-tags: [z3m smt, sat, solver, equivalence, congruence, equivalence, set]
+tags: [z3, smt, sat, solver, equivalence, congruence, equivalence, set]
 inline_default_language: python
 ---
 
