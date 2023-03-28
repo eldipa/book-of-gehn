@@ -19,6 +19,13 @@ function to_url_name(fname) {
     return fname.replace(/[.]md$/, ".html");
 }
 
+// NOTE: this must be the same as computed in scripts/front.py
+function to_post_id(fname) {
+    const url = ('articles/' + to_url_name(fname));
+    return url.replace(/\//g, '-').replace(/\./g, '-');
+}
+
+
 var ref2doc = {};
 var id = 0;
 var doc_count = 0;
@@ -76,8 +83,7 @@ const lunr_idx = lunr(function () {
 
             this.add(elem);
             ref2doc[id] = {
-                'title': title_str,
-                'path': to_url_name(fname)
+                'post_id': to_post_id(fname),
             };
 
             id++;
@@ -110,7 +116,7 @@ idx2.lunr_idx = lunr.Index.load(idx2.lunr_idx);
 
 const found = idx2.lunr_idx.search("+arm +qemu");
 found.forEach(function (match) {
-    process.stderr.write(idx2.ref2doc[match.ref].path + "\n");
+    process.stderr.write(idx2.ref2doc[match.ref].post_id + "\n");
     process.stderr.write(JSON.stringify(match, null, 2) + "\n");
 }, this);
 

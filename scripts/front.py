@@ -64,6 +64,10 @@ if ispost:
     page['date'] = '-'.join((y, m, d))
     page['url'] = "/".join((site['url'], 'articles', y, m, d, os.path.splitext(n)[0] + '.html'))
     page['public_html'] = "/".join(('articles', y, m, d, os.path.splitext(n)[0] + '.html'))
+
+    # Id for the post
+    page['post_id'] = "/".join(('articles', y, m, d, os.path.splitext(n)[0] + '.html'))
+    page['post_id'] = page['post_id'].replace('/', '-').replace(".", "-")
 else:
     # Given
     #   pages/index.md
