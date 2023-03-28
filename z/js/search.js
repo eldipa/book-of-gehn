@@ -2,9 +2,8 @@ $(document).ready(function () {
 var create_html_text_for_post = function create_html_text_for_post (doc) {
     const txt = `
         <span class="index-single-post">
-            <hr class="slender post-layout">
             <a href="articles/${doc.path}">
-                <h2 class="larger">${doc.title}</h2>
+                <h3 class="larger">${doc.title}</h2>
             </a>
         </span>
         `
@@ -22,34 +21,45 @@ $('#reset_search').hide();
 
 searchForm.addEventListener('reset', function (event) {
     $('#search_error').empty();
+    $('#search_error').hide();
+
     $('#search_results').empty();
     $('#search_results').hide();
+
     $('#reset_search').hide();
+    $('#article_main_group').show();
 })
 
-searchForm.addEventListener('submit', function (event) {
-    event.preventDefault()
+filterPostsByQuery = function (query) {
     $('#search_error').empty();
 
-    var query = searchField.value,
-        results = undefined,
+    var results = undefined,
         search_results = $('#search_results')
 
     if (!query)
         return;
+
+    $('#article_main_group').hide();
+    $('#reset_search').show();
 
     try {
         results = blog_search_lunr_idx.search(query)
     } catch(e) {
         if (e instanceof lunr.QueryParseError) {
             $('#search_error').append(`<p>Sorry, I couldn't understand you: "syntax error".</p>`);
+            $('#search_error').show();
             return
         } else {
             throw e
         }
     }
 
-    $('#reset_search').show();
+    if (results.length == 0) {
+        $('#search_error').append(`<p>Sorry, I couldn't find any post.</p>`);
+        $('#search_error').show();
+        return
+    }
+
     search_results.empty();
 
     results.forEach(function (result) {
@@ -59,5 +69,13 @@ searchForm.addEventListener('submit', function (event) {
         search_results.append(txt);
     })
     search_results.show();
+};
+
+searchForm.addEventListener('submit', function (event) {
+    event.preventDefault()
+
+    var query = searchField.value
+
+    filterPostsByQuery(query)
 })
 });
