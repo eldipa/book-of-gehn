@@ -3,13 +3,31 @@
   <body>
     {% include "./z/incl/header-for-posts.html" %}
     <article class="group">
-        <h1>{{ page.title }}</h1>
-        <p class="subtitle">{{ page.date | date("%B %-d, %Y") }}</p>
+    <h1>{{ page.title }}</h1>
+<p class="subtitle">{{ page.date | date("%B %-d, %Y") }}</p>
+
+
 {% block content required %}
 {% endblock %}
+
+    <p class="subtitle">Related:
+{% if page['tags'] -%}
+{% for tag in page['tags'][:-1] -%}
+<a href='{{ site.url }}/?tag="{{tag}}"'>{{tag}}</a>,
+{% endfor -%}
+<a href='{{ site.url }}/?tag="{{page['tags'][-1]}}"'>{{page['tags'][-1]}}</a>
+{% endif -%}
+</p>
+
 {% include "./z/incl/comments-section.html" %}
+
+
     </article>
+
+
     {% include "./z/incl/print-footer.html" %}
     {% include "./z/incl/footer.html" %}
+
+
   </body>
 </html>
