@@ -396,6 +396,19 @@ li > p {
 ul { list-style: circle inside; }
 ol { list-style: lower-roman; }
 
+// Make nested lists (order/unorder lists) indented to the right
+// and make them expand full (width: 100%) overriding the the width
+// of a parent <ul>
+ul  ul,  ol  ol {
+    width: 100%;
+    margin-left: 2rem;
+    padding-left: 0;
+}
+
+ul ul > li, ol ol > li {
+    list-style-type: "- ";
+}
+
 //li { padding: 0.5em 0; } //vertical padding on list items screws up vertical rhythym
 
 figure, figure img.maincolumn { max-width: 55%;

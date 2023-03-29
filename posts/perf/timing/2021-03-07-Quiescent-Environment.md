@@ -19,49 +19,105 @@ environment as much as possible.<!--more-->
 
 ## An incomplete cheatsheet
 
+For the impatient, let's do a quick cheatsheet. A more detailed
+checklist follows after.
+
+Let's assume that you want to make the CPUs 2 to 5 *very quiet*.
+
+Add the following kernel options:
+
+`intel_pstate=disabled amd_pstate=disabled cpufreq_disable=1 nosmt nohz_full=2-5 isolcpus=2-5 rcu_nocbs=2-5`
+
+You may add also `systemd.unit=multi-user.target` to those.
+
+With the kernel booted, configure it even further:
+
+```shell
+echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo
+echo 0 > /sys/devices/system/cpu/cpufreq/boost
+
+for X in {2..5}; do
+    echo "performance" | sudo tee /sys/devices/system/cpu/cpu$X/cpufreq/scaling_governor
+done
+```
+
+
+## An detailed but still-incomplete checklist
+
+This checklist goes for the different settings to make one ore more CPUs
+as much as isolated as possible from anything else so their performance
+is more detereminisc.
+
+Real isolation is impossible as there are a lot of things shared. Making
+the whole system as quiet as possible helps to reduce the noise.
+
+
+
 Isolate the machine:
 
- - use a bare metal machine or VMs if not possible. Try to
+ - Use a bare metal machine or VMs if not possible. Try to
 avoid container environments.
- - unplug the network cable or reduce by some mean the traffic (from
+
+ - Unplug the network cable or reduce by some mean the traffic (from
 outside the machine)
 
-At hardware level disable:
+### Kernel setup (boot options + sysfs)
 
- - Hyperthreading (hardware multitenancy)
- - Intel Turbo Boost or Overclocking [How-to (maybe)](https://askubuntu.com/questions/619875/disabling-intel-turbo-boost-in-ubuntu)
- - Dynamic Voltage & Frequency Scaling [How-to (maybe)](https://askubuntu.com/questions/523640/how-i-can-disable-cpu-frequency-scaling-and-set-the-system-to-performance)
+ - Hyperthreading / Symmetric Multithreading
+    - *Docs:* [rhel-smt](https://access.redhat.com/solutions/rhel-smt)
+    - *Kernel options:* `nosmt`
 
-At the kernel level:
+ - Intel Turbo Boost / Overclocking.
+    - *Docs:* [how-to](https://askubuntu.com/questions/619875/disabling-intel-turbo-boost-in-ubuntu)
+    - *Sysfs files:*
+      ```shell
+      echo 1 > /sys/devices/system/cpu/intel_pstate/no_turbo
+      echo 0 > /sys/devices/system/cpu/cpufreq/boost
+      ```
 
- - isolate one or more CPUs so you run your programs there without much
-interruptions from other tasks. Two options: removing the CPUs from the
-scheduler at boottime [(isolcpus)](https://www.kernel.org/doc/html/v4.19/admin-guide/kernel-parameters.html?highlight=isolcpu)
-or assigning them to an isolated cgroup at runtime
-[(cset)](https://manpages.ubuntu.com/manpages/bionic/man1/cset.1.html).
- - use a preconfigured
-[tuned](https://manpages.debian.org/buster/tuned/tuned.8.en.html) setup.
-[(repo)](https://github.com/redhat-performance/tuned/blob/master/profiles/realtime/tuned.conf);
-[(guide)](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-Realtime-Specific_Tuning).
- - disable the interruptions handling in those CPUs.
- - use thread's CPU affinity to assign the threads to each CPU (this is
-mandatory if you disabled the scheduler with `isolcpus`). See
-[taskset](https://man7.org/linux/man-pages/man1/taskset.1.html)
- - disable not needed kernel threads ? [may
-be](https://www.kernel.org/doc/Documentation/kernel-per-CPU-kthreads.txt); and
-other sources of noise. See [more](https://lwn.net/Articles/816298/)
+ - Dynamic Voltage & Frequency Scaling
+    - *Docs:* [how-to](https://askubuntu.com/questions/523640/how-i-can-disable-cpu-frequency-scaling-and-set-the-system-to-performance),
+      [archlinux](https://wiki.archlinux.org/title/CPU_frequency_scaling),
+      [kernel doc](https://www.kernel.org/doc/Documentation/cpu-freq/intel-pstate.txt)
+    - *Kernel options:* `intel_pstate=disabled` `amd_pstate=disabled` `cpufreq_disable=1`
+    - *Sysfs files:*
+      ```shell
+      echo "performance" | sudo tee /sys/devices/system/cpu/cpu$X/cpufreq/scaling_governor
+      ```
+ - Isolate one or more CPUs so you run your programs there without much
+interruptions from other tasks, including the kernel itself.
+    - *Docs:* [(kernel)](https://www.kernel.org/doc/html/v4.19/admin-guide/kernel-parameters.html)
+    - *Kernel options:* `isolcpus=CPUs` (removes the CPUs from the scheduler) `rcu_nocbs=CPUs` (don't use these to do rcu callbacks) `nohz_full=CPUs` (similar)
+    - Alternative you may user a `cgroup` from userspace with [(cset)](https://manpages.ubuntu.com/manpages/bionic/man1/cset.1.html) but the kernel options should be much better.
 
+ - Disable the GUI:
+    - *Kernel options:* `systemd.unit=multi-user.target` (for `systemd` systems), `text` (it did't work for me)
 
-At the user-space level:
+Fuhrer reading:
 
- - disable all the services that you can
- - follow some part of the
-[general](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-general_system_tuning)
-and
-[advanced](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-Realtime-Specific_Tuning)
-tuning guides.
+ - [kthreads (kernel doc)](https://www.kernel.org/doc/Documentation/kernel-per-CPU-kthreads.txt)
+ - [task-isolation mode (LWN article)](https://lwn.net/Articles/816298/)
 
-At the instrumentation level:
+### User space's services
+
+Disable all the services that you can. With isolated CPUs no code should run on
+them but that doesn't mean that they are really isolated.
+
+The CPUs will share the cache so a busy CPU may interfere with cache
+misses on an isolated one.
+
+Some docs:
+
+ - [General tuning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-general_system_tuning)
+ - [Realtime specific tuning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-Realtime-Specific_Tuning)
+ - [Use a preconfigured tuned setup](https://manpages.debian.org/buster/tuned/tuned.8.en.html), see [tuned.conf](https://github.com/redhat-performance/tuned/blob/master/profiles/realtime/tuned.conf)
+
+## Instrumentation guidelines
+
+No point to have a quiescent environment if the instrumentation in the
+experiment is inherently noisy.
+
+Some guidelines:
 
  - static low-overhead instrumentation if possible, dynamic if you can't
 recompile.
@@ -73,7 +129,7 @@ small-fast function targets; sometimes sampling is the only way however.
 [post](https://easyperf.net/blog/2020/02/26/coz-vs-sampling-profilers)
 and [video](https://www.youtube.com/watch?v=r-TLSBdHe1A).
 
-At the binary level:
+About the binary under test:
 
  - code alignment can be mostly controlled by the compiler, but it may
 add delays due the increasing of the binary. See
@@ -82,7 +138,7 @@ add delays due the increasing of the binary. See
 will be random noise and not *biased noise* which is much worst.
 [Stabilizer (may be)](https://github.com/ccurtsinger/stabilizer)
 
-The experiment:
+## The experiment setup
 
  - automate the setup of the machine as much as possible
  - automate the experiment execution so it can be reproduced again in
@@ -91,6 +147,12 @@ the future.
 possible, try to run several different benchmark programs that use your
 target function.
  - use different test suites and benchmarks ([google's](https://github.com/google/benchmark)).
+ - use thread's CPU affinity to assign the threads to each (isolated) CPU
+    - use [taskset](https://man7.org/linux/man-pages/man1/taskset.1.html) or
+    - use [sched_setaffinity](https://man7.org/linux/man-pages/man2/sched_setaffinity.2.html) or [pthread_setaffinity_np](https://man7.org/linux/man-pages/man3/pthread_setaffinity_np.3.html)
+
+
+
 
 ## Sources of noise in the environment
 
