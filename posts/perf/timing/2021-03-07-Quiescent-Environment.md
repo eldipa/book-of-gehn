@@ -20,17 +20,20 @@ environment as much as possible.<!--more-->
 ## An incomplete cheatsheet
 
 Isolate the machine:
+
  - use a bare metal machine or VMs if not possible. Try to
 avoid container environments.
  - unplug the network cable or reduce by some mean the traffic (from
 outside the machine)
 
 At hardware level disable:
+
  - Hyperthreading (hardware multitenancy)
  - Intel Turbo Boost or Overclocking [How-to (maybe)](https://askubuntu.com/questions/619875/disabling-intel-turbo-boost-in-ubuntu)
  - Dynamic Voltage & Frequency Scaling [How-to (maybe)](https://askubuntu.com/questions/523640/how-i-can-disable-cpu-frequency-scaling-and-set-the-system-to-performance)
 
 At the kernel level:
+
  - isolate one or more CPUs so you run your programs there without much
 interruptions from other tasks. Two options: removing the CPUs from the
 scheduler at boottime [(isolcpus)](https://www.kernel.org/doc/html/v4.19/admin-guide/kernel-parameters.html?highlight=isolcpu)
@@ -50,6 +53,7 @@ other sources of noise. See [more](https://lwn.net/Articles/816298/)
 
 
 At the user-space level:
+
  - disable all the services that you can
  - follow some part of the
 [general](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-general_system_tuning)
@@ -58,6 +62,7 @@ and
 tuning guides.
 
 At the instrumentation level:
+
  - static low-overhead instrumentation if possible, dynamic if you can't
 recompile.
  - prefer deterministic (like counting the elapsed time) over sampling, specially for
@@ -69,6 +74,7 @@ small-fast function targets; sometimes sampling is the only way however.
 and [video](https://www.youtube.com/watch?v=r-TLSBdHe1A).
 
 At the binary level:
+
  - code alignment can be mostly controlled by the compiler, but it may
 add delays due the increasing of the binary. See
 [post](https://easyperf.net/blog/2018/01/25/Code_alignment_options_in_llvm).
@@ -77,6 +83,7 @@ will be random noise and not *biased noise* which is much worst.
 [Stabilizer (may be)](https://github.com/ccurtsinger/stabilizer)
 
 The experiment:
+
  - automate the setup of the machine as much as possible
  - automate the experiment execution so it can be reproduced again in
 the future.
