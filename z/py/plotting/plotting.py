@@ -59,10 +59,16 @@ def latexify(fig_width=None, fig_height=None, columns=0, usetex=True, rc={}):
 
 # From matplotlib documentation
 SAVEFIG_KARGS = {
-        'dpi', 'facecolor', 'edgecolor',
-        'orientation', 'papertype', 'format',
-        'bbox_inches', 'pad_inches',
-        'frameon', 'metadata',
+        'dpi',
+        'facecolor',
+        'edgecolor',
+        'orientation',
+        'papertype',
+        'format',
+        'bbox_inches',
+        'pad_inches',
+        'frameon',
+        'metadata',
 
         # 'transparent',  on SVG files this does not work well,
         # it is better to use facecolor = (0, 0, 0, 0)
@@ -73,23 +79,24 @@ SAVEFIG_KARGS = {
 _inside_of_a_show_and_save_context = False
 
 @contextlib.contextmanager
-def show(save=None, *, skip=False, context='paper', style='darkgrid', **kargs):
+def show(save=None, *, skip=False, context='paper', style='darkgrid', transparent=True, **kargs):
     global _inside_of_a_show_and_save_context
 
     if skip:
         yield
         return
 
+    is_svg = save is not None and save.endswith('.svg')
+
     savefig_kargs = dict(bbox_inches='tight', dpi=600)
     savefig_kargs.update({k:v for k,v in kargs.items() if k in SAVEFIG_KARGS})
 
     latexify_kargs = {k:v for k,v in kargs.items() if k in LATEXIFY_KARGS}
 
-    transparent = kargs.pop('transparent', False)
-    if transparent and 'facecolor' in savefig_kargs:
-        raise Exception(f"You cannot mix 'transparent' with 'facecolor'. Sorry.")
+    if transparent and 'facecolor' in savefig_kargs and is_svg:
+        raise Exception(f"You cannot mix 'transparent' with 'facecolor' in a SVG. Sorry.")
 
-    if transparent:
+    if transparent and is_svg:
         savefig_kargs['facecolor'] = (0,0,0,0)
 
     unused_kargs = set(kargs.keys()) - SAVEFIG_KARGS - LATEXIFY_KARGS

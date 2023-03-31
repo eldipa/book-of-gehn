@@ -43,13 +43,17 @@ assert "'" not in dioname
 assert '"' not in dioname
 assert '\\' not in dioname
 
+inplace = srcfolder == dstfolder
+
 pdfs = glob.glob(srcfolder + '/*.pdf')
 
 if not pdfs:
     raise Exception(f"No PDF file was found in {srcfolder}")
 
 # Copy the DrawIO file into the folder
-os.system(f"cp '{dioname}' '{dstfolder}/'")
+if not inplace:
+    os.system(f"cp '{dioname}' '{dstfolder}/'")
+
 os.system(f"chmod 0644 {dstfolder}/*.drawio")
 
 # Convert the PDFs to SVGs
