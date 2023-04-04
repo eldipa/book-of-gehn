@@ -87,7 +87,15 @@ endif
 : {{f}} |> !cp |> {{f('out/site/img/{:f}', 'posts/')}} <postssassets>
 {% endfor %}
 #
-# End of the PNG pipeline ------
+# End of the SVG pipeline ------
+
+
+# ICO pipeline
+{% for f in glob('z/img/**/*.ico') -%}
+: {{f}} |> !cp |> {{f('out/site/img/{:f}', 'z/img/')}} <siteresources>
+{% endfor %}
+#
+# End of the ICO pipeline ------
 
 
 # CSS pipeline
