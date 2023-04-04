@@ -16,18 +16,6 @@
 			<h2 class="header-subtitle">{{ site.subtitle }}</h2>
 		{% endif %}
 
-    {#
-    add a link in the header for each Jekyll page only if it is not
-    a css file or it is wasn't explicitly excluded
-
-    With this code, iterate over 'all the pages' that Jekyll sees, which
-    basically are almost all the subfolder of the folder that has the
-    _config.yml plus some extra files.
-    For each one, it will create a link in the header.
-
-    For each subfolder, the index.html file is used to draw the page.
-    #}
-
     <nav class="group">
             <form id="blog-search-form">
                 <input type="search" placeholder="+must -not *fuzzy*"></input>
