@@ -237,6 +237,13 @@ p.small-subtitle { font-style: italic;
              display: block;
              line-height: 1;   }
 
+p.small-subtitle-with-top-margin { font-style: italic;
+             margin-top: 3rem;
+             margin-bottom: 1rem;
+             // font-size: 1.1rem; // use <p> defaults
+             display: block;
+             line-height: 1;   }
+
 p.margin-maker {
              margin-top: 1rem;
              margin-bottom: 3.4rem;

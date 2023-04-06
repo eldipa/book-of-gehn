@@ -10,7 +10,7 @@
 {% block content required %}
 {% endblock %}
 
-    <p class="subtitle">Related:
+    <p class="small-subtitle-with-top-margin">Related tags:
 {% if page['tags'] -%}
 {% for tag in page['tags'][:-1] -%}
 <a href='{{ site.url }}/?tag="{{tag}}"'>{{tag}}</a>,
