@@ -37,7 +37,7 @@ Some very well known hash functions *expose* their internal states which
 allows an adversary to **append** data to the message and
 **continue** the hash computation and generate a **new valid MAC**.
 
-Hence the name *"extension length attack"*.<!--more-->
+Hence the name *"length extension attack"*.<!--more-->
 
 ## Overview of keyed SHA-1
 
@@ -194,7 +194,7 @@ Bad MAC. Login aborted.
 False
 ```
 
-But we can do an extension length attack.
+But we can do an length extension attack.
 
 ### Get the hash state from the MAC
 
