@@ -48,7 +48,7 @@ publish:
 	@grep -Rl 'http://127.0.0.1:6127' public-site/ | xargs -I{} sed -i 's%http://127.0.0.1:6127%http://192.34.63.156:6127%g' {}
 
 ping-google:
-	wget https://www.google.com/ping?sitemap=https://book-of-gehn.github.io/sitemap.xml
+	wget https://www.google.com/ping?sitemap=https://book-of-gehn.github.io/sitemap.xml -O-
 
 test-cgroup:
 	byexample @test/byexample.linux.cgroup
