@@ -1,13 +1,21 @@
 title: The Book of Gehn
-description: "blog"
+description: "The low and the high level of a lot of things: crypto, math, hacking and computer stuff."
 baseurl: "/"
 subtitle: ""
 author: Martin Di Paola
 email: "martinp.dipaola@gmail.com"
 url: "http://127.0.0.1:4000"
+puburl: "https://book-of-gehn.github.io"
 name_atom: "atom.xml"
 name_rss: "rss.xml"
 name_feed: "feed.xml"
+
+sitemap_adds: [
+ "https://book-of-gehn.github.io/atom.xml",
+ "https://book-of-gehn.github.io/rss.xml",
+ "https://book-of-gehn.github.io/index.html",
+]
+
 analytics_base_url: "http://127.0.0.1:6127/img/"
 
 # These are the metadata that each post/page will have by default

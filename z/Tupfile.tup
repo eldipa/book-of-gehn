@@ -32,9 +32,11 @@ endif
 # Compilers
 !compile-scss = |> ^ compile %f^ sass --load-path=.  %1f %1o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !compile-md = |> ^ compile %B^ ./scripts/html.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!plainify = |> ^ plainify %B^ ./scripts/plainify.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !combine-ymls = |> ^ combine %B^ ./scripts/combine-ymls.py %1o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !compile-search = |> ^ compile search set %o ^ node ./scripts/build_search_index.js %f > %o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !make-feed = |> ^ feed %B^ ./scripts/make-feed.py %1o %2o %3o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!make-sitemap = |> ^ sitemap %B^ ./scripts/make-sitemap.py %1o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !list-drafts = |> ^ drafts %B^ ./scripts/list-drafts.py %1f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 # Minifiers
@@ -169,10 +171,28 @@ endif
 
 {# (!j2) Process each Jinja template Markdown file reading the YAML configuration
    and generate the "final" Markdown file. The same goes for the content
-   without layout and the excerpt. #}
-: {{ f('out/posts/front/{:n.md, .yml}') }} |> !j2 -e ENV |> {{ f('out/posts/md/{:b}') }} {{ artifacts_of(f, rel='posts', fmt='out/site/img/{:f}') | join(' ') }}
+   without layout and the excerpt.
+
+   First phase: YAML only #}
 : {{ f('out/posts/front/{:n.excerpt.md, .yml}') }} |> !j2 |> {{ f('out/posts/md/{:n.excerpt.md}') }}
 : {{ f('out/posts/front/{:n.no-layout.md, .yml}') }} |> !j2 |> {{ f('out/posts/md/{:n.no-layout.md}') }}
+
+
+{# (!plainify) Convert each Markdown into a Plain Text
+   using the yml to customize it further.
+   This goes for the post's excerpt only.
+#}
+: {{ f('out/posts/md/{:n.excerpt.md}') }} {{ f('out/posts/front/{:n.yml}') }} \
+    |  <postssassets> <siteresources>                              \
+    |> !plainify                                                    \
+    |> {{ f('out/posts/plain/{:n.plain}') }}
+
+
+{# (!j2) Second phase: pages only
+#}
+: {{ f('out/posts/front/{:n.md, .yml}') }} \
+   | {{ f('out/posts/plain/{:n.plain}') }} \
+   |> !j2 -e ENV |> {{ f('out/posts/md/{:b}') }} {{ artifacts_of(f, rel='posts', fmt='out/site/img/{:f}') | join(' ') }}
 
 
 {# (!compile-md) Compile each Markdown into a HTML
@@ -256,6 +276,18 @@ endif
     |> !make-feed                                               \
     |> out/site/rss.xml out/site/atom.xml out/site/feed.xml
 
+
+# Sitemap generation
+# ------------------
+: site.yaml {{ glob('posts/**/*.md', fmt='out/posts/meta/{:n.yml}') | join(' ') }}      \
+    | {{ glob('posts/**/*.md', fmt='out/posts/html/{:n.html}') | join(' ') }}     \
+    |> !make-sitemap                                                 \
+    |> out/site/sitemap.xml
+
+
+# Robots (copy)
+# -------------
+: z/robots.txt |> !cp |> out/site/robots.txt
 
 # Search data generation
 # ----------------------

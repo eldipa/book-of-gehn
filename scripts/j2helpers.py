@@ -122,6 +122,41 @@ def date(env, val, outfmt, infmt='%Y-%m-%d'):
     return d.strftime(outfmt)
 
 @jinja2.pass_context
+def as_quoted_list_of_images(ctx, val, prefix_site):
+    '''
+        Use it like:
+
+            -> {{ as_quoted_list_of_images([a, b], "https://foo.com") }}
+            -> "https://foo.com/img/bla/a", "https://foo.com/img/bla/b"
+
+    '''
+    images = [img(ctx, v, prefix_site=prefix_site) for v in val]
+    quoted = []
+    for v in images:
+        if '"' in v:
+            assert "'" not in v
+            quoted.append(f"'{v}'")
+        else:
+            assert '"' not in v
+            quoted.append(f'"{v}"')
+
+    return ', '.join(q for q in quoted)
+
+@jinja2.pass_context
+def readfile(ctx, val):
+    with open(val, 'rt') as f:
+        return f.read()
+
+@jinja2.pass_context
+def as_single_line_quotable(ctx, val):
+    val = val.replace('\n', ' ').replace('"', '')
+
+    # replace multiple spaces by a single one
+    val = ' '.join(val.split())
+
+    return val
+
+@jinja2.pass_context
 def j2(ctx, val, altctx=None):
     ''' Take the given string and process it with Jinja2
         as any other template using the given "alternative" context.
@@ -266,12 +301,21 @@ def post_process_by_hook(s, **opts):
 ```
 ''' % (opt_str, s)
 
-def url_from(src, home):
+def url_from(src, home, prefix_site=None):
     if any(src.startswith(x) for x in ('http://', 'https://', '//')):
         return src
 
     else:
-        return os.path.join(home, src)
+        url = os.path.join(home, src)
+        if prefix_site:
+            if prefix_site[-1] == '/':
+                prefix_site = prefix_site[:-1]
+            if url[0] == '/':
+                url = url[1:]
+
+            return prefix_site + '/' + url
+        else:
+            return url
 
 def as_css_style(**kargs):
     chks = []
@@ -394,16 +438,16 @@ f'''<p><label for='{id}' class='{lbl_cls}'> &#8853;</label>
 
 
 @jinja2.pass_context
-def asset(ctx, src):
+def asset(ctx, src, prefix_site=None):
     home = ctx.get('assestshome')
     assert home
-    return url_from(src, home=home)
+    return url_from(src, home=home, prefix_site=prefix_site)
 
 @jinja2.pass_context
-def img(ctx, src):
+def img(ctx, src, prefix_site=None):
     home = ctx.get('imghome')
     assert home
-    return url_from(src, home=home)
+    return url_from(src, home=home, prefix_site=prefix_site)
 
 
 @jinja2.pass_context
@@ -602,6 +646,9 @@ def j2_environment(env):
     env.globals['asset'] = asset
     env.globals['img'] = img
     env.globals['artifacts_of'] = artifacts_of
+    env.globals['as_quoted_list_of_images'] = as_quoted_list_of_images
+    env.globals['as_single_line_quotable'] = as_single_line_quotable
+    env.globals['readfile'] = readfile
 
     # Private functions called from J2 macros
     env.globals['_figures__fig'] = _figures__fig

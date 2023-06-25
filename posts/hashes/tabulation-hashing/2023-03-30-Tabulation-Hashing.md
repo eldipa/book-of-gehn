@@ -3,6 +3,7 @@ layout: post
 title: "Tabulation Hashing Implementation and Analysis"
 tags: [hash, hashing, perf, performance, cython]
 inline_default_language: python
+images_for_meta: ["tabulationhashing.svg"]
 ---
 
 There are a lot of hash algorithms for different use cases but

@@ -8,3 +8,4 @@ Tupfile
 .*.swo
 /public-site/
 .check-secrets-impl.sh
+stats/

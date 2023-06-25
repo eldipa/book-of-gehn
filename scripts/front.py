@@ -51,6 +51,10 @@ ispost = page['ispost']
 if 'tags' not in page:
     page['tags'] = []
 
+# Ensure the page has a "ishome" field
+if 'ishome' not in page:
+    page['ishome'] = False
+
 # Set the page URL and the date and save it into its metadata.
 #
 # The URL is different for Posts and Pages and the Pages
@@ -63,7 +67,10 @@ if ispost:
     y, m, d, n = os.path.basename(src_filename).split('-', 3)
     page['date'] = '-'.join((y, m, d))
     page['url'] = "/".join((site['url'], 'articles', y, m, d, os.path.splitext(n)[0] + '.html'))
+    page['puburl'] = "/".join((site['puburl'], 'articles', y, m, d, os.path.splitext(n)[0] + '.html'))
     page['public_html'] = "/".join(('articles', y, m, d, os.path.splitext(n)[0] + '.html'))
+
+    page['excerpt_plain'] = 'out/posts/plain/' + os.path.splitext(os.path.basename(src_filename))[0] + '.plain'
 
     # Id for the post
     page['post_id'] = "/".join(('articles', y, m, d, os.path.splitext(n)[0] + '.html'))
@@ -74,6 +81,7 @@ else:
     # the URL will be /<site-url>/index.html
     n = src_filename
     page['url'] = "/".join((site['url'], os.path.splitext(n)[0]  + '.html'))
+    page['puburl'] = "/".join((site['puburl'], os.path.splitext(n)[0]  + '.html'))
     page['public_html'] = "/".join((os.path.splitext(n)[0]  + '.html'))
 
 

@@ -2,6 +2,7 @@
 layout: page
 title: ""
 ispost: false
+ishome: true
 ---
 <script>
 $(document).ready(function () {

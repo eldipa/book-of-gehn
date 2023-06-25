@@ -4,10 +4,60 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <meta name="description" content="{% if page.title %}{{ page.title | e }}{% else %}{{site.description | e }}{% endif %}{% if page['excerpt_plain'] is defined %} {{ as_single_line_quotable(readfile(page['excerpt_plain'])) | e }}{% endif %}">
+
+  {#
+  https://schema.org/BlogPosting
+  https://developers.google.com/search/docs/appearance/structured-data/article#author-bp
+  #}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      {% if page.ispost %}
+          "@type": "BlogPosting",
+          "headline": "{{ page.title | e }}",
+          {% if page.images_for_meta is defined %}
+          {% if page.images_for_meta %}
+          "image": [
+             {{ as_quoted_list_of_images(page.images_for_meta, site.puburl) }}
+           ],
+          {% endif %}
+          {% endif %}
+          {% if page.date is defined %}
+          "datePublished": "{{ page.date | date('%Y-%m-%dT00:00:00+00:00') }}",
+          "dateModified": "{{ page.date | date('%Y-%m-%dT00:00:00+00:00') }}",
+          {% endif %}
+
+          "author": [{
+              "@type": "Person",
+              "name": "{{site.author}}",
+              "url": "{{site.puburl}}"
+            }]
+      {% elif page.ishome %}
+          "@type": "WebSite",
+          "name" : "{{site.title | e}}",
+          "url" : "{{site.puburl}}"
+      {% else %}
+          "@type": "WebPage",
+          "name" : "{% if page.title %}{{page.title | e}}{% else %}{{ site.title | e}}{% endif %}",
+          "url" : "{{page.puburl}}"
+      {% endif %}
+    }
+  </script>
+
+
+  {% if 'DRAFT' in page.tags or 'HIDDEN' in page.tags %}
+  <meta name="robots" content="none">
+  {% endif %}
+
   <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
+
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
 
-  <meta name="description" content="{% if page.title %}{{ page.title | e | truncate(600) }}{% else %}{{ site.description }}{% endif %}">
+  {# RSS is enough, adding Atom may confuse the searchers #}
+  <link rel="alternate" type="application/rss+xml" href="{{site.puburl}}/{{site.name_rss}}">
+
+  <link rel="canonical" href="{{ page['url'] }}">
 
   <link href='/css/load-lato-fonts.min.css' rel='stylesheet' type='text/css'>
 
@@ -40,8 +90,6 @@
   <script src='/js/fix_syntax_highlight.min.js'></script>
   <link rel="stylesheet" type="text/css" href="/css/tufte.min.css">
   <link rel="stylesheet" type="text/css" href="/css/latex.min.css">
-
-  <link rel="canonical" href="{{ page['url'] }}">
 
   <link rel="stylesheet" type="text/css" href="/css/font-awesome-5.min.css">
 
