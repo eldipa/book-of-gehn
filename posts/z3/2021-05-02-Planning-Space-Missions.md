@@ -235,7 +235,7 @@ inequalities:
 >>> s.pop()
 ```
 
-Now we use *boolean expressions* which may make more sense:
+Now we use *boolean expressions* that may make more sense:
 
 ```python
 >>> from z3 import And, If

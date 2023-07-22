@@ -151,7 +151,7 @@ Assertions are great for check invariants of the code: things that
 
 {% call marginnotes() %}
 Well, this is true for C/C++ but not strictly true for Python. An
-`assert` in Python raises an `AssertionError` which can be captured like
+`assert` in Python raises an `AssertionError` that can be captured like
 any other exception.
 
 You may think that nobody would want to capture an `AssertionError` but,
@@ -205,7 +205,7 @@ faster or slower. The first thing to validate is that the output of your
 benchmark makes sense.
 
 In `pyte` a benchmark test consists in a input file that it is passed
-through `pyte.Stream` which turns it into actions on the `pyte.Screen`.
+through `pyte.Stream` that turns it into actions on the `pyte.Screen`.
 
 It is important then that this processing makes sense before using it
 for benchmarking.

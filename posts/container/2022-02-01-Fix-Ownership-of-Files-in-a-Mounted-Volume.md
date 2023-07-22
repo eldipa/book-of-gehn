@@ -9,7 +9,7 @@ The file system of a docker container is ephemeral: it will disappear as
 soon as the container is destroyed.
 
 To prevent data losses you can mount a folder *of the host* into the
-container which will survive the destroy of the container.
+container that will survive the destroy of the container.
 
 But it is not uncommon to find issues with the ownership and permissions
 of the *shared* files.
@@ -167,7 +167,7 @@ You can skip this step for the scenario 1 and use the original UID/GID
 
 For example, let's pick `1201` for the UID and `1224` for the group.
 
-We can check this running `grep` and getting a 0 response which means
+We can check this running `grep` and getting a 0 response that means
 that the id was not found (so it is not used)
 
 ```shell

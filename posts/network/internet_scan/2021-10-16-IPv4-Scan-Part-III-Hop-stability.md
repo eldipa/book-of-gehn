@@ -18,7 +18,7 @@ See the observations done in the
 
 These time to live (TTL) are numbers between 0 and 255
 set by the host. In its journey, the packet goes through different
-routers which each decrements by one the TTL.
+routers that each decrements by one the TTL.
 
 Once a packet has a TTL of zero, the router will discard it.
 
@@ -184,7 +184,7 @@ Dict{Int32, Int64} with 217 entries:
 ```
 
 {% call marginnotes() %}
-Yes, the `(-)` is the binary operator *minus* or subtraction which is
+Yes, the `(-)` is the binary operator *minus* or subtraction that is
 applied row by row to the maximum and minimum values (`:max` and `:min`
 columns).
  {% endcall %}

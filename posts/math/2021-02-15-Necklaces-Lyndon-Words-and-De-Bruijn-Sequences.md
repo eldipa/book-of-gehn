@@ -32,7 +32,7 @@ elements of the class have the same relation.
 Mathematically, each class is defined as
 
 ```tex;mathjax
- C = { x \in X \vert a \sim x }   
+ C = { x \in X \vert a \sim x }
 ```
 
 Where `a`{.mathjax} is one element of the set `X`{.mathjax} that is used as a reference.
@@ -108,7 +108,7 @@ You may find multiple substrings that repeated form the same
 string. For example 01010101 can be formed repeating 0101 twice
 or 01 four times.
 
-The fact is that 0101 is in turn periodic. The substring which it
+The fact is that 0101 is in turn periodic. The substring that it
 is *aperiodic* is called the *aperiodic reduction* of the original
 string.
 
@@ -229,7 +229,7 @@ The count of distinct De Bruijn sequences for an alphabet of `k`{.mathjax} eleme
 and an order of `n`{.mathjax} is
 
 ```tex;mathjax
- \frac{(k!)^{k^{n-1}}}{k^n} 
+ \frac{(k!)^{k^{n-1}}}{k^n}
 ```
 
 ## De Bruijn graphs

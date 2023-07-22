@@ -15,7 +15,7 @@ trusted *application* virtual machines (App) from absolute untrusted
 {{ marginfig('qubes-ips.png', indexonly=True) }}
 
 These last ones have the drivers required to handle ethernet and wifi cards
-which expose them to a potentially deathly bug lurking in the drivers.
+that expose them to a potentially deathly bug lurking in the drivers.
 
 An additional VM is put in the middle between App VMs and Net VMs. This
 absolute trusted *proxy* VM serves as a safe firewall (Proxy).
@@ -26,7 +26,7 @@ forwarded up and down along this chain of VMs.<!--more-->
 {% call mainfig('qubes-network.png') %}
 Three App VMs: one for work, other for personal stuff, both considered
 relatively-trusted and one more VM for untrusted stuff, all connected
-to the "firewall" VM which forwards the packets to the Net VM.
+to the "firewall" VM that forwards the packets to the Net VM.
 
 The "firewall" VM is isolated except for
 the firewall/routing processing so it is considered trusted while Net VM
@@ -86,7 +86,7 @@ administrated](https://en.wikipedia.org/wiki/MAC_address) MAC:
 
 ## Routing
 
-Here a ping from the App VM is routed to the Proxy VM which
+Here a ping from the App VM is routed to the Proxy VM that
 in turns routes the packet to the Net VM and the outside world
 and the response goes back through the same path to the App VM
 
@@ -116,7 +116,7 @@ root@proxyvm:# tcpdump -n -i vif37.0
 {{ marginfig('qubes-arp.png') }}
 
 The ARP request/reply is the App VM asking for the MAC address
-of its configured gateway, the `10.137.7.1` which it is the IP
+of its configured gateway, the `10.137.7.1` that it is the IP
 of the Proxy VM's `vif37.0` interface.
 
 ```shell

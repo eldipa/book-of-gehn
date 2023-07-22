@@ -69,14 +69,14 @@ additional lookup (instead of `char.fg` you have `char.style.fg`).
  - Make `Char` a mutable object allowing changes in the `data` and
 `width` fields to be in-place instead of creating a new `Char` object.
  - Sparse-aware algorithms for `Screen.index` and `Screen.reverse_index`
-which improved indirectly `Screen.draw` and `Stream.feed`.
+that improved indirectly `Screen.draw` and `Stream.feed`.
  - Sparse-aware algorithms for `Screen.resize`
  - Sparse-aware algorithms for `Screen.tabstop`
  - Sparse-aware algorithms for `ScreenHistory.prev_page` and
 `ScreenHistory.next_page`.
  - Sparse-aware algorithms for `Screen.insert_characters`,
 `Screen.delete_characters`, `Screen.insert_lines` and
-`Screen.delete_characters` which improved the performance of *"terminal
+`Screen.delete_characters` that improved the performance of *"terminal
 aware"* programs.
  - Statistics about `Screen`'s buffer and lines to have insight about
 the sparsity and usage of these elements. (The API is not not standard
@@ -89,7 +89,7 @@ public part and the internals. Iterate over `LineView` still yields
  - Make the public `Screen.history`'s `top` and `bottom` queues return
 `LineView` and not `Line` objects
  - Make the private attribute `Screen._buffer` a `dict` and not a
-`defaultdict`. This prevent adding entries unintentionally which would
+`defaultdict`. This prevent adding entries unintentionally that would
 make the buffer less sparse and therefore slow.
  - If the current cursor attributes (style) matches the default
 attributes of the screen, do not write explicit spaces on erase methods
@@ -267,7 +267,7 @@ of the cursor internally and update it only at the exit. This saved a
 few lookups.
 
 While not been frequently called, `Screen.index` was the next bottleneck
-for `Screen.draw`: it moves all the lines of the screen which it means
+for `Screen.draw`: it moves all the lines of the screen that it means
 that all the entries of the buffer are rewritten.
 
 `Screen.index` and `Screen.reverse_index` were optimized to take advantage

@@ -58,7 +58,7 @@ drwxr-xr-x 2 root root    0 Jan  1  1970 B
 drwxr-xr-x 2 root root    0 Jan  1  1970 C
 ```
 
-Inside each folder there are the files which represent the *discs*
+Inside each folder there are the files that represent the *discs*
 of the game.
 
 Initially all the files (discs) are in the first folder (tower).

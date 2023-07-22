@@ -29,7 +29,7 @@ process to a cgroup freely. That would make the implementation of
 each controller harder.
 
 In `v2` the hierarchy is subject to the *no internal process*
-constraint which ensures that a controller will have all the processes
+constraint that ensures that a controller will have all the processes
 in leaves of its domain tree.
 
 This is the last of a 3-post series about `cgroup` and certainly, this
@@ -642,7 +642,7 @@ $ echo '+cpu' > test/cg1/cg1_1/cgroup.subtree_control
 
 In contrast with `test/cg1/` we didn't have trouble enabling on `test/cg2/`'s and
 `test/cg3/`'s children because in the first case `test/cg2/` is empty and
-in the second case is the child `test/cg3/cg3_1/` which it is empty.
+in the second case is the child `test/cg3/cg3_1/` that it is empty.
 
 ```shell
 $ echo '+cpu' > test/cg2/cgroup.subtree_control

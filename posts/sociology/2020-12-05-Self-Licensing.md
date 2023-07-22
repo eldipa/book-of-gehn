@@ -18,6 +18,6 @@ The person no necessary needs to do the good action to have the
 enough to have the boost.
 
 Even the person does not need to do anything. The boost can be
-transferred from a group which the person identify herself
+transferred from a group that the person identify herself
 as belonging to.
 {% endcall %}

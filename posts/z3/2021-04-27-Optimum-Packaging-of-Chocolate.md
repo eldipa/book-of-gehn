@@ -192,7 +192,7 @@ The former can be solved in polinomial time. while the
 latter is NP-complete.
 
 Z3 uses the [Simplex
-algorithm](https://en.wikipedia.org/wiki/Simplex_algorithm) which has
+algorithm](https://en.wikipedia.org/wiki/Simplex_algorithm) that has
 exponential time in the worst case but polinomial time in the practice.
 Other solvers can do it better and it had been proved that when we use
 real numbers the algorithm has polinomial time, like the ones based on

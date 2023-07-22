@@ -158,7 +158,7 @@ import Pkg; Pkg.add("PyPlot")
 
 
 {% call marginnotes() %}
-The `:foo` are symbols which in our case are the names of the columns. The
+The `:foo` are symbols that in our case are the names of the columns. The
 `∘` (`\circ` in Latex) is the *composite operator*: `length ∘ unique` is
 equivalent to `length(unique(x))`.
 The whole `:reason => length ∘ unique => :nunique` reads as: take the
@@ -225,15 +225,15 @@ one.
 
 {% call marginnotes() %}
 Sanity check: from the distribution of probes per port we know that we
-have 13038 ports with 2 probes which will contribute with 13038 rows to
+have 13038 ports with 2 probes that will contribute with 13038 rows to
 the difference dataframe;
 
-750 ports with 3 probes which will contribute
+750 ports with 3 probes that will contribute
 with 750 * 2 rows to the result; 27 ports with 4 probes contributing
 with 27 * 3 rows and finally 1 port with 5 probes contributing with 5 *
 4 rows.
 
-The expected total is 14623 which it is exactly the row count
+The expected total is 14623 that it is exactly the row count
 of `df2`.
  {% endcall %}
 

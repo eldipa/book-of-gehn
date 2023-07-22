@@ -90,7 +90,7 @@ lines.
 {% call marginnotes() %}
 The use of `dtype={"clock type": "category"}`{.python} is important. Pandas
 will load these strings and it will create a category for each distinct
-label which internally is represented as an integer.
+label that internally is represented as an integer.
 
 This reduces by two orders of magnitud the memory usage
 (`d.memory_usage(True, True)`{.python} to compare them).
@@ -176,7 +176,7 @@ the minimum resolution of the function.
 Fast but it is also super imprecise.
 
 More than 75% of the differences between two consecutive measurements
-are zero which means that `gettimeofday()` returns a cached value and it
+are zero that means that `gettimeofday()` returns a cached value and it
 is updated very infrequently.
 
 ```

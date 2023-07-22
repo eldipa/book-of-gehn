@@ -258,7 +258,7 @@ which content is controlled by us.
  - ``monster_attack`` does free the ``player_struct`` but it doesn't set
 ``is_user_created`` to 0 so we may have a **double free** if we call
 ``delete_player`` later.
- - unfortunately ``monster_attack`` may return 0 which makes ``player_attack``
+ - unfortunately ``monster_attack`` may return 0 that makes ``player_attack``
 to call ``exit()``; only under a specific path ``monster_attack`` returns 1.
 
 Something similar happen in ``monster_defense`` and ``roar`` functions with

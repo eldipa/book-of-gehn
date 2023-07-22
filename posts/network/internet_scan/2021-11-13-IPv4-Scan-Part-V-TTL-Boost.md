@@ -125,7 +125,7 @@ And none of those makes sense...
 
 ### Revising the assumptions
 
-To have a difference of 191, or we need `M=304`{.mathjax} or we need `m=-78`{.mathjax} which it
+To have a difference of 191, or we need `M=304`{.mathjax} or we need `m=-78`{.mathjax} that it
 is impossible: TTL must be between 0 and 255!
 
 Let's review the assumptions so far:

@@ -32,7 +32,7 @@ the begin of the stack frame.
 
 As we saw [previously](/articles/2021/01/14/Smashing-ARM-Stack-for-Fun-Part-I.html),
 the stack frame includes the *previous* value
-of `fp` but not `lr` which it is *immediately below*.
+of `fp` but not `lr` that it is *immediately below*.
 
 So a buffer overflow of 0x44 bytes will overwrite the stored `fp` and an
 overflow of 0x48 will overwrite `fp` and `lr`.

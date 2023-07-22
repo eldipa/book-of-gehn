@@ -57,7 +57,7 @@ LZMA         | 153390408            |   94.069%
 
 The compressed date times represent the 41.480% of the total. The current
 implementation encodes the deltas in 8 bytes and compresses the stream
-using LZMA which may not be the best tool for this.
+using LZMA that may not be the best tool for this.
 
 8 bytes perhaps is too much: if there is a log line each hour we can
 represent the delta in microseconds using only 32 bits.
@@ -80,7 +80,7 @@ a *time independent*?
 Think in ``host evaluator: info No evaluator for``. It is very
 likely to be repeated several times but if its *frequency* is
 too low, several *other* lines could appear between one repetition
-and the other which may confuse and reduce the performance
+and the other that may confuse and reduce the performance
 of the compressor.
 
 Clustering the lines should bring them closer but if the operation

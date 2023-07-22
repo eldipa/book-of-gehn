@@ -179,7 +179,7 @@ generate repeated goals (so we don't have cycles).
 Having then a *single* starting goal, the *successive application* of
 the tactics forms a *tree*.
 
-We can extend this and have *multiple* starting goals in which case we
+We can extend this and have *multiple* starting goals in that case we
 will have an *acyclic graph* like described in [3]. (in [3] is more
 specific and refers to *goals* and *tactics* as *states* (of a proof)
 and *rules of induction* but they are the same idea).
@@ -286,7 +286,7 @@ terms of tacticals and tactics.
 
 ## Probes or formula measures
 
-A *probe* or *formula measure* is a tactic which does not modify the
+A *probe* or *formula measure* is a tactic that does not modify the
 goal set but it fails or not based on attributes or properties of the
 current goal set.
 

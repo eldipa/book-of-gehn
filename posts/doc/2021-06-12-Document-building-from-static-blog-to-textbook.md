@@ -172,7 +172,7 @@ for (var i = 0; i < elems.length; i++) {
 }
 ```
 
-I could do the same with Pandoc which uses
+I could do the same with Pandoc that uses
 [Pygments](https://pygments.org/) for the highlighting. I've already
 have some experience with it from my [interactive assembler
 *iasm*](https://github.com/bad-address/iasm) so it is factible.

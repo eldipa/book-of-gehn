@@ -71,7 +71,7 @@ the `pc` is the address of the current about-to-be-executed instruction
 *plus* 8 bytes.
  {% endcall %}
 
-Let's see  `ldr r1, [pc, #0x5c]` which translates to 0x104d4 + 0x5c + 0x8:
+Let's see  `ldr r1, [pc, #0x5c]` that translates to 0x104d4 + 0x5c + 0x8:
 
 ```nasm
 pwndbg> x/1wx 0x10538

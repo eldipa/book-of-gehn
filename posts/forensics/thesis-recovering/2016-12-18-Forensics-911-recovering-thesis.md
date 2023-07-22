@@ -43,7 +43,7 @@ choice that crossed my mind but not the best.
 a file reading one block of data at time and avoiding mounting
 the file system at all.
 
-The disk can only be read and written in terms of sectors which in
+The disk can only be read and written in terms of sectors that in
 general have a 512 bytes of size. Because of that it is desired to set the size
 of the blocks of `dd` for reading and writing to a multiple of the sector size.
 
@@ -103,8 +103,8 @@ been designed for forensics purposes.
 ## Cloning the disk with `GNU ddrescue`
 
 There are a lot of tools for recovering out there, some are based in `dd`,
-other don't. I found quite useful the tool `GNU ddrescue` which despite
-the name it's not based in `dd` at all.
+other don't. I found quite useful the tool `GNU ddrescue`, which despite
+the name, it's not based in `dd` at all.
 
 Watch out there, there is also a tool called `dd_rescue`
 (notice the underscore) that has nothing to do with `GNU ddrescue`.
@@ -139,7 +139,7 @@ This is called *scraping* the block.
 
 
 What is the output of all this process? An image of the disk with holes in it
-representing the missing bad sectors and the log file which keeps track
+representing the missing bad sectors and the log file that keeps track
 of those holes.
 
 Here there are the lines of code:
@@ -227,8 +227,8 @@ This looks good, the first sector is designated to the partition table
 and the disk has only one FAT32 partition.
 
 The lengths are in sector terms so to know the size of the partition in
-bytes we can just do (8374256 * 512.0) / (1024 ^ 3) which yields 3.99
-gigabytes which it makes sense given that the usb stick is of 4 gigabytes.
+bytes we can just do (8374256 * 512.0) / (1024 ^ 3) that yields 3.99
+gigabytes and it makes sense given that the usb stick is of 4 gigabytes.
 
 The output of `mmls` can be a little confusing because it is showing that
 the first and the second slices start both at the 0 position.

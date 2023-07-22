@@ -135,7 +135,7 @@ About the binary under test:
 add delays due the increasing of the binary. See
 [post](https://easyperf.net/blog/2018/01/25/Code_alignment_options_in_llvm).
  - if you cannot control it, randomize it: you will add noise but it
-will be random noise and not *biased noise* which is much worst.
+will be random noise and not *biased noise* that is much worst.
 [Stabilizer (may be)](https://github.com/ccurtsinger/stabilizer)
 
 ## The experiment setup

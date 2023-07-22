@@ -39,12 +39,12 @@ where it belongs, under the sight of the *Big Brother*.
 
 ### Isolate a wifi card with Network Namespaces
 
-In a modern linux implementation we can use a ``Network Namespace`` which
+In a modern linux implementation we can use a ``Network Namespace`` that
 can create isolated full network stacks with their own routes and firewall
 rules.
 
 Any program running inside that namespace will see only that network stack
-which it is perfect for our purpose.
+that it is perfect for our purpose.
 
 Let's create it first; pick a nice name and run:
 
@@ -149,7 +149,7 @@ $ ip netns exec "starbucks" wpa_supplicant -B -i "wlan0" -c "/tmp/starbucks_wpa_
 ```
 
 In both cases, the ``$SSID`` is the name of the wifi network
-which you want to connect.
+that you want to connect.
 
 To setup the IP address, the gateway and the DNS server we can use
 a DHCP client:

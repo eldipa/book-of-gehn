@@ -24,7 +24,7 @@ This post is a walk-through for loading and preprocessing it.<!--more-->
 
 ## Loading JSON
 
-The original dataset is in JSON which it is not the most
+The original dataset is in JSON that it is not the most
 space-efficient format.
 
 It consists in an array of hosts and per host we have an array of ports.

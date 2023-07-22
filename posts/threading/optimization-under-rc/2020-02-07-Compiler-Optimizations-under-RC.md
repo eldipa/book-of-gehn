@@ -61,7 +61,7 @@ The array of `DATASZ == 256` numbers is initially zeroed. Two
 threads increment each value by one `ROUNDS == 10` times.
 
 The displayed number is
-the sum of the values which should give `256 * 10 * 2 == 5120`.
+the sum of the values that should give `256 * 10 * 2 == 5120`.
  {% endcall %}
 
 Surprisingly the code seems to work computing the correct result.
@@ -119,7 +119,7 @@ it, nobody will change it ever so, unless the condition is set
 from the begin, it is an infinite loop.
 
 So the compiler decided to rewrite it as a single check and
-an infinite loop which explains why the program hangs.
+an infinite loop that explains why the program hangs.
 
 ## Volatile
 

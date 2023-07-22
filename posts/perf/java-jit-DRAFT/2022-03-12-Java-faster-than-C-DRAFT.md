@@ -121,7 +121,7 @@ quite close to the `-O3` line at the end.
 
 This is the **just in time compiler** in action.
 
-The program runs a very tight loop which it is executed millions of
+The program runs a very tight loop that it is executed millions of
 times. The JVM decides that the code would benefit if it is compiled
 to native code and optimized, like `-O3` is.
 

@@ -168,7 +168,7 @@ In fact, the values that `IC(s_1,s_2)`{.mathjax}
 go from 0 to `cN`{.mathjax}.
 
 A *normalized* IC can be obtained from `(\ref{IdxCoincs1s2})`{.mathjax} if we divide it
-by `cN`{.mathjax} which it is the same to ask for `PrC(S_1,S_2)`{.mathjax}:
+by `cN`{.mathjax} that it is the same to ask for `PrC(S_1,S_2)`{.mathjax}:
 
 ```tex;mathjax
 

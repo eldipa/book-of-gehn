@@ -178,7 +178,7 @@ how `inc()` is called three times.
 ```
 
 `LocalsFormatter` can also use the user-provided variables
-which will take precedence:
+that will take precedence:
 
 ```python
 >>> def printf(fmt, *args, **kargs):

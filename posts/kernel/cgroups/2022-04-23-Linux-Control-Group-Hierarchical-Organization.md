@@ -47,9 +47,9 @@ implementation or hierarchy while I will write cgroup or cgroups to
 refer about one or more groups in particular.
 {% endcall %}
 
-`cgroup` can be split into two components: the *core* which mandates how
+`cgroup` can be split into two components: the *core* that mandates how
 the cgroups, processes and controllers are organized and the *resource
-controllers* which do the real resource distribution and enforce limits.
+controllers* that do the real resource distribution and enforce limits.
 
 In this post I'll focus on the core only.
 
@@ -214,7 +214,7 @@ partitions but all of them are inside the *same* `domain threaded` group.
 
 In `v1` the threads of a process
 could live in a different, totally unrelated part of the hierarchy
-which made the implementation of the controllers much complex.
+that made the implementation of the controllers much complex.
 
 
 
@@ -384,7 +384,7 @@ represents which cgroup type can *contain* which (sub) `cgroup`.
 For example one `domain threaded` can have one or more `threaded`
 cgroups.
 
-*Root* is a very special cgroup which can contain any other type of
+*Root* is a very special cgroup that can contain any other type of
 cgroup: `domain`, `domain threaded` and `threaded`.
 
 The diagram follows the semantics of an UML diagram.
@@ -392,7 +392,7 @@ The diagram follows the semantics of an UML diagram.
 
 We can summarize all the above in the following:
 
- - A domain can be divided into more (sub) `domains` just creating more
+ - A domain can be divided into more  `domains` just creating more
    (sub) cgroups with `mkdir`.
  - A cgroup can be turned into a `threaded` cgroup;
    its parent cgroup is automatically turned into a `domain threaded`.

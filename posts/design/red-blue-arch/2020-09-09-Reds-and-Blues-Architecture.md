@@ -25,7 +25,7 @@ Imagine that we need to accept requests from a client and forward them
 to a server.
 
 The server will do the real job and it will return us the result of the
-operation which we will store in a database.
+operation that we will store in a database.
 
 But the server is stateful and processing the same request twice will
 corrupt the server.
@@ -141,7 +141,7 @@ states that every resource must be characterized by three metrics:
    often queued
  - errors: well, that, errors, like drops.
 
-There are two categories of resources which differ in the definition of
+There are two categories of resources that differ in the definition of
 *utilization*:
 
  - IO resources, like network, disk: the utilization is the amount of

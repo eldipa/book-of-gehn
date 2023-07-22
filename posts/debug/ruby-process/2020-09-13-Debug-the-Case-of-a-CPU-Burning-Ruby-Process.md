@@ -147,7 +147,7 @@ If a fork happen after one thread increments the counter but before
 someone decrements it, the child process will get stuck waiting for the
 counter to be zero.
 
-This makes totally sense for `executor.rb` which main task is to fork and
+This makes totally sense for `executor.rb` that main task is to fork and
 exec other processes.
 
 But I need to be sure that this is the bug.

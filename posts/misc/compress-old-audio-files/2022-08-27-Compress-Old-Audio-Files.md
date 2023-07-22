@@ -58,7 +58,7 @@ that maintains the same quality of my files (which range between 96k and
 ffmpeg -i $fn -acodec libopus -b:a 50k $name.webm
 ```
 
-Final tweak, I have some videos which I only care their audio. We can
+Final tweak, I have some videos that I only care their audio. We can
 instruct `ffmpeg` to get those with the "no video" option (`-nv`).
 
 ## Scripting

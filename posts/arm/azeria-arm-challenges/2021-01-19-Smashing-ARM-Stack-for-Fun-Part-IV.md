@@ -114,7 +114,7 @@ pwndbg> pdisass 0x10484-8
 
 This is not the only way to do it.
 
-I could search for a `puts`{.cpp} call which whole be more likely to be the
+I could search for a `puts`{.cpp} call that would be more likely to be the
 one that we are looking for:
 
 ```shell

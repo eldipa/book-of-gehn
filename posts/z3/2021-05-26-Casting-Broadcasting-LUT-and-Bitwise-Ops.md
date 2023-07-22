@@ -191,7 +191,7 @@ However, this problem is NP-complete in general.
 
 The non-human counterpart is the [Quine-McCluskey algorithm](
 https://en.wikipedia.org/wiki/Quine%E2%80%93McCluskey_algorithm)
-which can handle much more inputs.
+that can handle much more inputs.
 
 
 {% call marginnotes() %}

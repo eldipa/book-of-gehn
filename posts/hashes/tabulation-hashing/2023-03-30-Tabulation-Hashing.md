@@ -135,7 +135,7 @@ or fancy Pythonic indexing.
 everything is C data. In such case we can release the GIL during its
 execution with `nogil` (concurrent friendly)
 
-`c_hash_x` is a `cdef` function which means it can be called only from
+`c_hash_x` is a `cdef` function that means it can be called only from
 within C code.
 
 To make it accessible from Python we code:
@@ -246,7 +246,7 @@ left-shifted meaning that it ran faster than tabulation hashing.
 
 But the dispersion density is much interesting!
 
-For tabulation hashing we have very high peaks which means smaller
+For tabulation hashing we have very high peaks that means smaller
 dispersion of the measurements.
 
 Tabulation hashing in mostly affected by cache misses as it is primary
@@ -266,8 +266,8 @@ Tabulation hashing is slower than linear hashing but close.
 The comparison however is not taking into account that a linear hashing
 has less math properties than the tabulation hashing.
 
-For example the latter is 3-way independence which some applications
-requires and a linear hashing would not be applicable.
+For example the latter is 3-way independence that some applications
+require and a linear hashing would not be applicable.
 
 My `cython` [implementation](https://github.com/eldipa/tabulation-hashing)
 does not make any of vectorized memory access

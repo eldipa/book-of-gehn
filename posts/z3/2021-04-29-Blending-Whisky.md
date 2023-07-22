@@ -78,7 +78,7 @@ Now the system is linear again.
 What about the restrictions of each recipe?
 
 It would be wonderful to put something like this
-which it is a literal translation of the problem into inequalities:
+that it is a literal translation of the problem into inequalities:
 
 ```tex;mathjax
 

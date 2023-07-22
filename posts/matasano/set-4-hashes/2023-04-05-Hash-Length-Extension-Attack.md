@@ -33,7 +33,7 @@ otherwise it is not.
 
 Unfortunately this *prefix-keyed hash* for MAC is **broken**.
 
-Some very well known hash functions *expose* their internal states which
+Some very well known hash functions *expose* their internal states that
 allows an adversary to **append** data to the message and
 **continue** the hash computation and generate a **new valid MAC**.
 
@@ -82,7 +82,7 @@ The final state is then used to compute the final hash.
 {% call	mainfig('hash-states.svg') %}
 {% endcall %}
 
-Note how the hash states `h_1` depends of the first block `b_0` which
+Note how the hash states `h_1` depends of the first block `b_0` that
 contains the secret key (or at least the begin of it).
 
 Therefore, the `h_1` cannot be guessed by an adversary or any other

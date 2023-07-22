@@ -10,7 +10,7 @@ Speed-reading of
 
 # The Arm instruction set
 
-Arm is a Reduced Instruction Set Computer (RISC) which have a small set
+Arm is a Reduced Instruction Set Computer (RISC) that have a small set
 of instructions of fixed size in contrast with the Complex Instruction
 Set Computer (CISC).
 
@@ -23,7 +23,7 @@ bits and ARMv8 introduced the 64 bits addresses.
 ### Almost everything is conditional
 
 Instructions can be executed conditionally. This avoids explicit jumps
-which are slower and the overall code size is smaller.
+that are slower and the overall code size is smaller.
 
 Use this for small snippets and fallback to traditional branches/jumps
 when the code is too large.
@@ -268,7 +268,7 @@ Several registers can be loaded or stored with a single *load multiple*
 (`ldm`) and *store multiple* (`stm`) instructions.
 
 They have a base address, a *set* of registers and an *indexing affix*
-which controls how to "iterate the array/memory".
+that controls how to "iterate the array/memory".
 
 Four indexing exists: increment of the base address after/before accessing
 the memory (`ia`/`ib`) and decrement of the base address after/before
@@ -339,7 +339,7 @@ The first two receive a label while the last one operates with a
 register.
 
 More branches exist including *branch with change to Jazelle* (`bxj`)
-which can switch to a special mode that
+that can switch to a special mode that
 [executes Java bytecode](https://en.wikipedia.org/wiki/Jazelle) if
 supported.
 

@@ -285,7 +285,7 @@ color palette used by the heatmap.
 
 ## Open questions
 
-We used an array of 8 elements of `int` which gives us 32 bytes.
+We used an array of 8 elements of `int` that gives us 32 bytes.
 Current technology uses cache lines of 64 bytes. Will the results
 in this post change if we use larger arrays?
 

@@ -403,7 +403,7 @@ unsat
 The extra assumption `s != 64` is because while 64 is a valid position,
 it is *also* used as an error.
 
-A trivial error settings which *violates* the minimum/maximum range
+A trivial error settings that *violates* the minimum/maximum range
 could be:
 
 ```python
@@ -494,7 +494,7 @@ one iteration and the next one for all the 64 iterations:
 
 In the code above I introduced an auxiliary `c` variable. This is
 because the C variable `c = 0` will be interpreted by Z3's `If` as a
-boolean (`false`) which cannot be promoted later to a `BitVec`.
+boolean (`false`) that cannot be promoted later to a `BitVec`.
 
 To enforce the correct type, we use a `BitVecVal` value initialized to
 0.

@@ -278,7 +278,7 @@ and only a few punctuation symbols we can narrow the set of guesses further:
 >>> all_in_alphabet = partial(all_in_alphabet, alphabet=alphabet)
 ```
 
-Now, we filter out any key which decrypted message does not fit in
+Now, we filter out any key that the decrypted message does not fit in
 out plaintext model.
 
 Once again we will obtain a **guess**, but a shorter one this time:
@@ -344,7 +344,7 @@ perfectly visible like "aitn't", "soul", "I'm" and "degree".
 
 ## Final thoughts
 
-``cape_hash`` is symmetric cipher which, despite of having a 65536 bytes
+``cape_hash`` is symmetric cipher that, despite of having a 65536 bytes
 length key, the key stream is repeated each 256
 of plaintext enabling a *cipher only attack*.
 

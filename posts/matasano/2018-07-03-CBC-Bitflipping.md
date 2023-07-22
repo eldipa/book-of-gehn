@@ -88,7 +88,7 @@ but we will have control of the *next* plaintext block.
 {% call marginnotes() %}
 We don't know if our inject plaintext
 will be aligned to the block size boundary. To ensure that we inject
-padding of twice the block size which warranties that at least one block
+padding of twice the block size that warranties that at least one block
 will be full with our ``A``s
 {% endcall %}
 

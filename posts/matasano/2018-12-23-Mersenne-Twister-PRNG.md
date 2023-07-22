@@ -68,7 +68,7 @@ therefore
 we do not need to explore the *whole space* but a **smaller space**.
 
 Instead we just explore the numbers in the vicinity of the current time
-which turns the
+that turns the
 [crack an MT19937 seed](https://cryptopals.com/sets/3/challenges/22)
 into a much simpler task.
 

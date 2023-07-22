@@ -11,7 +11,7 @@ testing.
 One is the *expected* dataframe, crafted by us
 and it will be the *source of truth* for the test.
 
-The other is the *obtained* dataframe which is the result of the
+The other is the *obtained* dataframe that is the result of the
 experiment that we want to check.
 
 Doing a naive comparison will not work: first we may want to *tolerate*

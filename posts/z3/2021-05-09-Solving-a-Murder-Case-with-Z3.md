@@ -222,7 +222,7 @@ Nop! Someone is lying!
 [art_claims, bob_claims]
 ```
 
-Z3 can calculate the *unsat core* which it is a subset of the *tracked*
+Z3 can calculate the *unsat core* that it is a subset of the *tracked*
 restrictions that lead to *unsatisfiable* result.
 
 So Art's or Bob's claims is/are producing contradictions.

@@ -155,7 +155,7 @@ The pcap had only one single TCP stream but in much nosier captures
 it is handy to use ``Statistic > Conversations`` in ``wireshark``
 to summarize the protocols, addresses and ports. {% endcall %}
 
-Not secret at all. ``srcport`` is the source port chosen by the OS which
+Not secret at all. ``srcport`` is the source port chosen by the OS that
 from the [pcap]({{ asset('cipherchat.pcap') }})
 we know that it is 47898.
 

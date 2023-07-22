@@ -165,7 +165,7 @@ bits because in Z3 (and it a lot of other languages), the negative
 numbers are in 2-complement representation.
 
 This `1` bits mask *allows* the right side to be xor'd with the left
-side `elseval ^ thenval ^ elseval` which reduces to `thenval`.
+side `elseval ^ thenval ^ elseval` that reduces to `thenval`.
 
 This why the **branchless** bithack works and more over, from *where*
 those multiplications come: from the 2-complement.

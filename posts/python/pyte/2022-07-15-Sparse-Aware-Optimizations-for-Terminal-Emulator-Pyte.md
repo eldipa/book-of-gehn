@@ -11,7 +11,7 @@ compares the obtained results with the expected ones, from your docs
 too.
 
 If a mismatch happen we say that the *example* in your documentation
-failed which could mean one fo two things:
+failed that could mean one of two things:
 
  - your code (the snippet) does not do what you expect so it has a bug
  - or the code does exactly what it is supposed but you forgot to update
