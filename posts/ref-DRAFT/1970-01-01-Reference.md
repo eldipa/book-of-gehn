@@ -233,6 +233,8 @@ from [here]({{ asset('foo/bar.rb') }}) you can download a particular file.
 
 ## Horizontal line
 
+HEY: this breaks!
+
 Bla bla bla
 {{ hline() }}
 Bla bla bla

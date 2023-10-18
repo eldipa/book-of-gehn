@@ -266,12 +266,15 @@ class Path(str):
         return out
 
     def __call__(self, fmt, rel=None):
-        if rel:
-            p = self.rel(rel)
-        else:
-            p = self
+        try:
+            if rel:
+                p = self.rel(rel)
+            else:
+                p = self
 
-        return p.fmt(fmt)
+            return p.fmt(fmt)
+        except Exception as err:
+            raise Exception(f"Failed to format '{fmt}' with '{self.s}' (rel='{rel}')")
 
 def ensure_html_block(s):
     # Note: leave the newlines before the begin of and after

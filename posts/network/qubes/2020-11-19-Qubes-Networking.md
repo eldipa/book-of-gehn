@@ -47,7 +47,7 @@ root@appvm:# ip address show
        valid_lft forever preferred_lft forever
 ```
 
-{{ hline() }}
+
 
 ```shell
 root@proxyvm:# ip address show
@@ -95,7 +95,7 @@ root@appvm:# ping -c 1 8.8.8.8
 64 bytes from 8.8.8.8: icmp_seq=1 ttl=53 time=12.1 ms
 ```
 
-{{ hline() }}
+
 
 ```shell
 root@appvm:# tcpdump -n -i eth0
@@ -104,7 +104,7 @@ root@appvm:# tcpdump -n -i eth0
 (icmp omitted)
 ```
 
-{{ hline() }}
+
 
 ```shell
 root@proxyvm:# tcpdump -n -i vif37.0
@@ -155,7 +155,7 @@ root@appvm:# tcpdump -n -i eth0
 23:56:58.027402 IP 8.8.8.8 > 10.137.7.27: ICMP echo reply, id 1177, seq 1, length 64
 ```
 
-{{ hline() }}
+
 
 ```shell
 root@proxyvm:# tcpdump -n -i vif37.0
@@ -378,7 +378,7 @@ root@appvm:# tcpdump -n -i eth0
 23:58:30.337391 IP 10.137.7.1.53 > 10.137.7.27.46734: 26595 1/0/0 A 172.217.172.46 (44)
 ```
 
-{{ hline() }}
+
 
 ```shell
 root@proxyvm:# tcpdump -n -i vif37.0
