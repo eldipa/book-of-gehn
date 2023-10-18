@@ -22,13 +22,13 @@ $spacing-unit:     30px;
 .highlight-candombe, .highlight-candombe-inline {
     @extend %vertical-rhythm;
 
-    .c     { color: #998; font-style: italic } // Comment
+    .c     { color: #7b7b6e; font-style: italic } // Comment
     //.err   { color: #a61717; background-color: #e3d2d2 } // Error
     .k     { font-weight: bold } // Keyword
     .o     { font-weight: bold } // Operator
-    .cm    { color: #998; font-style: italic } // Comment.Multiline
-    .cp    { color: #999; font-weight: bold } // Comment.Preproc
-    .c1    { color: #998; font-style: italic } // Comment.Single
+    .cm    { color: #7b7b6e; font-style: italic } // Comment.Multiline
+    .cp    { color: #7b7b6e; font-weight: bold } // Comment.Preproc
+    .c1    { color: #7b7b6e; font-style: italic } // Comment.Single
     .cs    { color: #999; font-weight: bold; font-style: italic } // Comment.Special
     .gd    { color: #000; background-color: #fdd } // Generic.Deleted
     .gd .x { color: #000; background-color: #faa } // Generic.Deleted.Specific
@@ -84,8 +84,10 @@ $spacing-unit:     30px;
 }
 
 .highlight-candombe {
-    background: transparent;
+    //background: transparent;
     text-shadow: initial;
+    background: linear-gradient(to right, #f4efeaff, #f4efea00);
+    border-radius: .2rem;
 }
 
 .highlight-candombe-inline {

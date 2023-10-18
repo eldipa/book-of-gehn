@@ -833,3 +833,13 @@ span.as-paragraph {
     @extend p;
     display: inline-block;
 }
+
+div.highlight-candombe {
+    min-width: 55%;
+    max-width: 75%;
+}
+
+div.highlight-candombe > pre {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
