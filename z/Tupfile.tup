@@ -42,7 +42,7 @@ endif
 # Minifiers
 !minify-css = |> ^ minify %f^ cleancss -O1 --source-map -o %1o %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !minify-js = |> ^ minify %f^ uglifyjs --source-map --compress --mangle -o %1o -- %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
-!minify-png = |> ^ minify %f^ optipng -o7 --strip all -quiet -out %1o %1f |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!minify-png = |> ^ minify %f^ ./scripts/minify-png.py  |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/ ^tmp/
 !minify-gif = |> ^ minify %f^ gifsicle --no-warnings --optimize=3 -i %1f -o %1o  |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 
 !add-refs = |> ^ ref %B^ ./scripts/add-refs.py %f %o  |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
@@ -69,11 +69,11 @@ endif
 
 # PNG pipeline
 {% for f in glob('posts/**/*.png') -%}
-: {{f}} |> !minify-png |> {{f('out/site/img/{:f}', 'posts/')}} <postssassets>
+: {{f}} |> !minify-png %1f {{f('{:t}')}} tmp/ %1o |> {{f('out/site/img/{:f^t}', 'posts/')}} <postssassets>
 {% endfor %}
 
 {% for f in glob('z/img/**/*.png') -%}
-: {{f}} |> !minify-png |> {{f('out/site/img/{:f}', 'z/img/')}} <siteresources>
+: {{f}} |> !minify-png %1f {{f('{:t}')}} tmp/ %1o |> {{f('out/site/img/{:f^t}', 'z/img/')}} <siteresources>
 {% endfor %}
 #
 # End of the PNG pipeline ------

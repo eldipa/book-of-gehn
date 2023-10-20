@@ -9,3 +9,4 @@ Tupfile
 /public-site/
 .check-secrets-impl.sh
 stats/
+tmp/

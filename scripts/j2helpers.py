@@ -210,8 +210,42 @@ class Path(str):
     Date+Name (name, without the path or extension but with a name format)
     out/posts/j2md/{:D}.html
     out/posts/j2md/2017/04/16/foo.html
+
+    Full (file path as is) but with the tags stripped away
+    out/posts/j2md/{:f^t}
+    out/posts/j2md/posts/bar/2017-04-16-foo.md
+
+    Name plus extension(s) but with the tags stripped away
+    out/posts/j2md/{:n.html^t}
+    out/posts/j2md/2017-04-16-foo.html
+
+    Tags only (single string). In this case there are no tags
+    so the string consists in only "T:"
+    {:t}
+    T:
+
+
+    s = posts/bar/2017-04-16-foo-T:zaz,egg.md
+
+    Full (file path as is) but with the tags stripped away
+    out/posts/j2md/{:f^t}
+    out/posts/j2md/posts/bar/2017-04-16-foo.md
+
+    Name plus extension(s) but with the tags stripped away
+    out/posts/j2md/{:n.html^t}
+    out/posts/j2md/2017-04-16-foo.html
+
+    Tags only (single string)
+    {:t}
+    T:zaz,egg
     '''
     def __format__(self, format):
+        if format.endswith('^t'):
+            format = format[:-2]
+            stripped, _ = self._extract_tags_from_self()
+            return Path(stripped).__format__(format)
+
+
         if format in ('b', 'basename'):
             val = os.path.basename(self.s)
 
@@ -232,8 +266,24 @@ class Path(str):
 
             val = os.path.join(year, month, day, name)
 
+        elif format in ('t',):
+            _, val = self._extract_tags_from_self()
+
         return val
 
+    def _extract_tags_from_self(self):
+        fname, ext = os.path.splitext(os.path.basename(self.s))
+        try:
+            fname, tags_s = fname.rsplit('-TAGS-', 1)
+            tags_s = 'T:' + tags_s
+        except:
+            tags_s = 'T:'
+
+        if ext.startswith(os.path.extsep):
+            ext = ext[len(os.path.extsep):]
+
+        fname_ext = os.path.extsep.join((fname, ext))
+        return os.path.join(os.path.dirname(self.s), fname_ext), tags_s
 
     def _handle_extensions(self, format, val):
         extensions = [e.strip() for e in format.split(',')]
@@ -274,7 +324,7 @@ class Path(str):
 
             return p.fmt(fmt)
         except Exception as err:
-            raise Exception(f"Failed to format '{fmt}' with '{self.s}' (rel='{rel}')")
+            raise Exception(f"Failed to format '{fmt}' with '{self.s}' (rel='{rel}'): {err}")
 
 def ensure_html_block(s):
     # Note: leave the newlines before the begin of and after
