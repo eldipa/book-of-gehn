@@ -285,9 +285,10 @@ endif
     |> out/site/sitemap.xml
 
 
-# Robots (copy)
-# -------------
+# Robots + seclab flag (copy)
+# ---------------------------
 : z/robots.txt |> !cp |> out/site/robots.txt
+: z/seclab-flag.txt |> !cp |> out/site/1820f86f18f27-seclab-flag.txt
 
 # Search data generation
 # ----------------------
