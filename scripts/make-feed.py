@@ -18,29 +18,33 @@ fg.description(site['description'])
 fg.language('en')
 
 for fname in post_metadata_filenames:
-    with open(fname, 'rt') as f:
-        post = yaml.safe_load(f.read())
+    try:
+        with open(fname, 'rt') as f:
+            post = yaml.safe_load(f.read())
 
-    if 'DRAFT' in post['tags'] or 'HIDDEN' in post['tags']:
-        continue
+        if 'DRAFT' in post['tags'] or 'HIDDEN' in post['tags']:
+            continue
 
-    fe = fg.add_entry()
-    fe.title(post['title'])
-    fe.link(href=post['url'], title=post['title'], rel='alternate', type="text/html")
-    fe.id(post['url'])
+        fe = fg.add_entry()
+        fe.title(post['title'])
+        fe.link(href=post['url'], title=post['title'], rel='alternate', type="text/html")
+        fe.id(post['url'])
 
-    date = datetime.datetime.strptime(post['date'], '%Y-%m-%d')
-    date = date.replace(tzinfo=datetime.timezone.utc)
+        date = datetime.datetime.strptime(post['date'], '%Y-%m-%d')
+        date = date.replace(tzinfo=datetime.timezone.utc)
 
-    fe.published(date)
-    fe.updated(date)
+        fe.published(date)
+        fe.updated(date)
 
-    fe.content(open(post['refs']['content-html'], 'rt').read(), type="html")
+        fe.content(open(post['refs']['content-html'], 'rt').read(), type="html")
 
-    for cat in post['tags']:
-        fe.category(term=cat, label=cat)
+        for cat in post['tags']:
+            fe.category(term=cat, label=cat)
 
-    fe.author(name=site['author'])
+        fe.author(name=site['author'])
+    except Exception as err:
+        print(f"Error processing {fname}: {err}")
+        raise
 
 
 fg.link(href=site['url'] + '/' + site['name_atom'], rel='self')
