@@ -402,7 +402,7 @@ def _figures__fig(ctx, src, caption, max_width, width, cls, alt, location, home)
 
     if width is None and src.endswith('.svg'):
         # SVG image files are "elastic" by nature. Set them to the full
-        # extend of the parent node in the HTML.
+        # extend of the parent node in the HTML. TODO not sure!
         width = '100%'
 
     # optional style
@@ -412,7 +412,10 @@ def _figures__fig(ctx, src, caption, max_width, width, cls, alt, location, home)
         )
 
     img_cls = cls
-    img_html = f'''<img {style} class='{img_cls}' alt='{alt}' src='{src}' />'''
+    if src.endswith('.svg'):
+        img_html = f'''<object {style} class='{img_cls}' align='middle' data='{src}' type='image/svg+xml'></object>'''
+    else:
+        img_html = f'''<img {style} class='{img_cls}' alt='{alt}' src='{src}' />'''
 
     return put_figure_in_layout(ctx, img_html, caption, cls, location, home)
 
