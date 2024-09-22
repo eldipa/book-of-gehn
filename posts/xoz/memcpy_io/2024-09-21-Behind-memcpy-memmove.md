@@ -1,7 +1,7 @@
 ---
 title: "Behind `memcpy`/`memmove`: overlap, words and alignment"
 layout: post
-tags: [memory, memcpy, copy, bytes, xoz, DRAFT, HIDDEN]
+tags: [memory, memcpy, copy, bytes, xoz]
 inline_default_language: cpp
 ---
 
