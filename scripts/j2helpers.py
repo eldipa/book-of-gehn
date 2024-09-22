@@ -374,6 +374,7 @@ def as_css_style(**kargs):
     chks = []
     for name, val in kargs.items():
         if val is not None:
+            name = name.replace('_', '-')
             chks.append(f"{name}: {val};")
 
     if not chks:
@@ -384,7 +385,7 @@ def as_css_style(**kargs):
     return f'style="{style}"'
 
 @jinja2.pass_context
-def _figures__fig(ctx, src, caption, max_width, width, cls, alt, location, home):
+def _figures__fig(ctx, src, caption, max_width, width, cls, alt, location, home, vertical_align):
     ''' Generate HTML code to show an image that it is at <src>.
 
         If <src> is not absolute (see url_from), the image is searched
@@ -408,7 +409,9 @@ def _figures__fig(ctx, src, caption, max_width, width, cls, alt, location, home)
     # optional style
     style = as_css_style(
         max_width = max_width,
-        width = width
+        width = width,
+        display = ('inline-block' if location == 'inline' else None),
+        vertical_align = vertical_align,
         )
 
     img_cls = cls
@@ -471,6 +474,9 @@ f'''<p><figure><figcaption><span markdown='1'>''') +\
 post_process_by_hook(caption, input_format='markdown', output_format='plain-block') + \
 ensure_html_block(f'''</span></figcaption>
 {img_html}</figure></p>''')
+
+    elif location == 'inline':
+        return f'''{img_html}'''
     else:
         assert False
 
