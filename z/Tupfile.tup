@@ -32,6 +32,7 @@ endif
 # Compilers
 !compile-scss = |> ^ compile %f^ sass --load-path=.  %1f %1o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !compile-md = |> ^ compile %B^ ./scripts/html.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
+!compile-slide = |> ^ compile %B^ ./scripts/mdslides.py %1f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !plainify = |> ^ plainify %B^ ./scripts/plainify.sh %1f %2f %1o |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !combine-ymls = |> ^ combine %B^ ./scripts/combine-ymls.py %1o %f |>   | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
 !compile-search = |> ^ compile search set %o ^ node ./scripts/build_search_index.js %f > %o |>  | ^scripts/__pycache__/* ^scripts/x/__pycache__/* ^dbg/
@@ -89,6 +90,10 @@ endif
 # SVG pipeline
 {% for f in glob('posts/**/*.svg') -%}
 : {{f}} |> !use-local-woff2-fonts-in-svg |> {{f('out/site/img/{:f}', 'posts/')}} <postssassets>
+{% endfor %}
+
+{% for f in glob('slides/**/*.svg') -%}
+: {{f}} |> !use-local-woff2-fonts-in-svg |> {{f('out/site/slides/img/{:f}', 'slides/')}} <postssassets>
 {% endfor %}
 #
 # End of the SVG pipeline ------
@@ -269,6 +274,36 @@ endif
 {% endfor %}
 #
 # End of the Page pipeline ------
+
+
+# Slides pipeline
+# ---------------
+{% for f in glob('slides/**/*.md', rel='slides/') -%}
+
+{#  Compile the slide and obtain the .html
+    Notice how we compile only the .md (.no-layout and .excerpt are ignored #}
+: {{ f('slides/{:f}') }}   \
+    |  <siteresources>                                      \
+    |> !compile-slide                                          \
+    |> {{ f('out/slides/html-part/{:f.html}') }}
+
+{#
+    Like in the Posts pipepline, extract the front matter of the Slides.
+    Note: the .no-layout.md and .excerpt.md of a Slides are not used. #}
+: {{ f('out/slides/html-part/{:f.html}') }}                                     \
+    |> !extract-front                                       \
+    |> {{ f('out/slides/front/{:f.html, .no-layout.md, .excerpt.md, .yml}') }}
+
+{#  Run j2 to get
+    the final html#}
+: {{ f('out/slides/front/{:f.html, .yml}') }}           \
+    |> !j2 -e ENV                                               \
+    |> {{ f('out/site/slides/{:f.html}') }}
+
+# ------------------------
+{% endfor %}
+#
+# End of the Slide pipeline ------
 
 
 # Feed generation
