@@ -1,0 +1,35 @@
+<html>
+  {% include "./z/incl/head-for-slides.html" %}
+  <body>
+    <div class="reveal">
+        <div class="slides">
+{% block content required %}
+{% endblock %}
+        </div>
+    </div>
+
+    <script src="/js/reveal.min.js"></script>
+    <script src="/js/reveal-plugins/notes/notes.min.js"></script>
+    <script src="/js/reveal-plugins/markdown/markdown.min.js"></script>
+    <script src="/js/reveal-plugins/highlight/highlight.min.js"></script>
+    <script src="/js/reveal-plugins/math/math.min.js"></script>
+    <script>
+        // More info about initialization & config:
+        // - https://revealjs.com/initialization/
+        // - https://revealjs.com/config/
+        Reveal.initialize({
+            controls : false,
+            markdown : {smartypants: true},
+            width : 960,
+            height : 540,
+            showNotes : true,
+            hash: true,
+            // Learn about plugins: https://revealjs.com/plugins/
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath ]
+        });
+    </script>
+
+{#{% include "./z/incl/footer.html" %}#}
+  </body>
+</html>
+
