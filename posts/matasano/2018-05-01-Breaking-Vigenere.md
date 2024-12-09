@@ -156,7 +156,7 @@ another scoring function: the
 {29 -> 0.0598, 40 -> 0.0235, 30 -> 0.0232, 10 -> 0.0230, 26 -> 0.0223}
 ```
 
-{% call mainfig('kl_guesses.svg') %}
+{% call mainfig('kl_guesses.svg', width='100%') %}
 Score of each guess by method.
 
 Both methods agree on being 29 the most likely length

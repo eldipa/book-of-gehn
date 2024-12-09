@@ -164,6 +164,7 @@ tree structure know as the *proof tree*:
 {% call maindiag('prooftree.svg', 'dot') %}
 ```dot
 digraph G {
+  bgcolor="transparent";
   layout = dot;
   rankdir="LR";
   G -> G1 [label="elim"];
@@ -188,6 +189,7 @@ and *rules of induction* but they are the same idea).
 {% call maindiag('tree2.svg', 'dot') %}
 ```dot
 digraph G {
+  bgcolor="transparent";
   layout = dot;
 
   {

@@ -39,7 +39,7 @@ Two minutes of sampling was done for the good and the bad
 $ ./rbspy report -f flamegraph -i data.gz  -o out-good.svg      # byexample: +skip
 ```
 
-{% call fullfig('flame-ruby-executor.png') %}
+{% call fullfig('flame-ruby-executor.png', width='100%') %}
 Flamegraph of 2 minutes sampling. On top a good behaving `executor.rb`,
 spending most of the time waiting (right side). On bottom, its evil twin
 with a totally broken call stack.

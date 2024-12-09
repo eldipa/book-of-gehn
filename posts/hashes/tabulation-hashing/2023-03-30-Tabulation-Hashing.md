@@ -202,7 +202,7 @@ Where `a` and `b` are random numbers of `h`{.mathjax} bits and `N` is `2^h`{.mat
 The beauty of this function is that is really simple and fast because we can use `numpy` to write a vectorized
 version to hash several keys in one shot.
 
-{% call	mainfig('cmp_runtime_32-32_and_64-64_full_lin.svg') %}
+{% call	mainfig('cmp_runtime_32-32_and_64-64_full_lin.svg', width='100%') %}
 Comparison of elapsed time (in nanoseconds) of tabulation hashing and linear hashing
 for a 32-32 `k`{.mathjax}-`h`{.mathjax} bits on the left and 64-64
 bits on the right.
@@ -235,7 +235,7 @@ For reference here is the [code for plotting and raw dataset]({{ asset('') }}).
 
 ## Noise measurement evaluation
 
-{% call	fullfig('cmp_runtime_noise_full_lin.svg') %}
+{% call	fullfig('cmp_runtime_noise_full_lin.svg', width='100%') %}
 Dispersion of the elapsed time measured in each experiment (in
 nanoseconds).
 On top is tabulation hashing, on bottom is linear hashing.

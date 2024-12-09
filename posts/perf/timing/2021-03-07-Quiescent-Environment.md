@@ -164,7 +164,7 @@ interruptions) and more.
 
 Graphical interfaces, network traffic and disk usage add to the mix.
 
-{% call fullfig('all-services-up-and-down.svg') %}
+{% call fullfig('all-services-up-and-down.svg', width='100%') %}
 The elapsed time of `foo()` executed 1000 times and sorted
 from the smallest value to the largest. The last 10 values were drop
 (not shown); numbers are in nanoseconds. On the left the experiment

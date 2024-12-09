@@ -12,7 +12,7 @@ preprocessed in my
 **has** duplicated entries. These are scans
 to the same host and port but with a different timestamp.
 
-{% call marginfig('time_interval_hist.svg', indexonly=True) %}
+{% call marginfig('time_interval_hist.svg', indexonly=True, width='100%') %}
 Histogram of the interval between probes to the same host-port in seconds.
 {% endcall %}
 
@@ -278,7 +278,7 @@ Dict{Union{Missing, Int32}, Int64} with 30 entries:
 
 Certainly a histogram is better for this case:
 
-{% call mainfig('time_interval_hist.svg') %}
+{% call mainfig('time_interval_hist.svg', width='100%') %}
 Histogram of intervals between probes to the same host-port in seconds.
 
 The median (5.0) and the mean (6.89) are labeled. The vertical axis is

@@ -96,7 +96,7 @@ than a coincidence of two or more bytes:
 >>> methods['IC - Nblocks sequence'] = scores
 ```
 
-{% call mainfig('score_pinguins.svg') %}
+{% call mainfig('score_pinguins.svg', width='100%') %}
 Scores by method.
 
 For the `Nblocks` method, the size of the block is of 16 bytes.

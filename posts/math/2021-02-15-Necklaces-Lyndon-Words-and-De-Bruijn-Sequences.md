@@ -253,6 +253,7 @@ For instance, for the given binary strings 00 and 01 we have:
 {% call maindiag('00-01.svg', 'dot') %}
 ```dot
 digraph G {
+  bgcolor="transparent";
   layout = dot;
   rankdir="LR";
   00 -> 01 [label=" 1"];
@@ -267,6 +268,7 @@ we have:
 {% call maindiag('00-01-10-11.svg', 'dot') %}
 ```dot
 digraph G {
+    bgcolor="transparent";
     layout = circo;
     node [shape = circle, margin = 0];
 

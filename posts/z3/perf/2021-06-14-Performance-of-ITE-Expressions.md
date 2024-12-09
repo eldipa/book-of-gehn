@@ -17,7 +17,7 @@ reordering to minimize the impact of a branch.
 They do a good job but still a *branch* is potentially expensive so they
 are replaced by *branchless* variants.
 
-{% call marginfig('min-check-elapsed-per-func-in-encrypt-experiment.svg', indexonly=True) %}
+{% call marginfig('min-check-elapsed-per-func-in-encrypt-experiment.svg', indexonly=True, width='100%') %}
 Minimum  `check-elapsed` time (y axis) per branch/branchless function (x axis).
 {% endcall %}
 
@@ -327,7 +327,7 @@ be.
 The first thing that we can see is how each `xtime*` performed in each
 experiment.
 
-{% call fullfig('mean-check-elapsed-per-func-experiment.svg') %}
+{% call fullfig('mean-check-elapsed-per-func-experiment.svg', width='100%') %}
 Mean  `check-elapsed` time (y axis) per `xtime*` function (x axis).
 Each subplot corresponds to a different experiment.
 {% endcall %}
@@ -354,7 +354,7 @@ mean?
 
 We can rule that out measuring the *minimum* instead of the *mean*.
 
-{% call mainfig('min-check-elapsed-per-func-in-encrypt-experiment.svg') %}
+{% call mainfig('min-check-elapsed-per-func-in-encrypt-experiment.svg', width='100%') %}
 Minimum  `check-elapsed` time (y axis) per `xtime*` function (x axis).
 Each subplot corresponds to a different experiment. Note how the plot
 has the same shape than before.
@@ -370,7 +370,7 @@ It's unclear what they mean however.
 Exploring a little it seems that there is a relationship between `'added
 eqs'` and the elapsed time.
 
-{% call mainfig('rel-check-elapsed-and-added-eqs.svg') %}
+{% call mainfig('rel-check-elapsed-and-added-eqs.svg', width='100%') %}
 Relation and linear regression between the time that `check()` took and
 the amount of `added eqs`. They follow almost a perfect linear
 relationship.
@@ -379,7 +379,7 @@ relationship.
 Let's see how many `eqs` were `added` in the
 `encrypt_rounds_experiment`:
 
-{% call mainfig('mean-added-eqs-per-func-in-encrypt-experiment.svg') %}
+{% call mainfig('mean-added-eqs-per-func-in-encrypt-experiment.svg', width='100%') %}
 Mean `added eqs` (y axis) per `xtime*` function (x axis).
 Each subplot corresponds to a different experiment. Note how the plot
 has the same shape than before showing a strong relationship between

@@ -5,7 +5,7 @@ tags: [pandas, julia, categorical, ordinal, parquet, statistics, seaborn]
 inline_default_language: julia
 ---
 
-{% call marginfig('ttl_hist_log_scale.svg', indexonly=True) %}
+{% call marginfig('ttl_hist_log_scale.svg', indexonly=True, width='100%') %}
 Histogram of TTL observed: the peaks indicate the different operative systems and their relative position respect the expected positions estimate the mean distance between the hosts and the scanner in hop count.
 {% endcall %}
 
@@ -54,7 +54,7 @@ julia> all_rounds = combine(all_rounds_g, :ttl => mode => :ttl)
 
 Now we plot the histogram of `all_rounds`.
 
-{% call mainfig('ttl_hist_log_scale.svg') %}
+{% call mainfig('ttl_hist_log_scale.svg', width='100%') %}
 Histogram of TTL observed: the peaks indicate the different operative systems
 and their relative position respect the expected positions estimate
 the mean distance between the hosts and the scanner in hop count.
@@ -127,7 +127,7 @@ julia> [64, 128, 254] - [49, 112, 239]
 So the scanner is at 15 - 16 hops of distance, on average, from any
 other host in the network.
 
-{% call mainfig('ttl_hist_log_scale_shifted.svg') %}
+{% call mainfig('ttl_hist_log_scale_shifted.svg', width='100%') %}
 Histogram of TTL observed but with the values shifted to the right
 to compensate the fact that the TTLs are decremented during their travel
 through the network.

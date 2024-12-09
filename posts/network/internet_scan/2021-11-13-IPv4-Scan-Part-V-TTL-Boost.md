@@ -11,7 +11,7 @@ we analyzed the TTL of the responses from all the scanned hosts.
 In particular we used the TTL range: the difference between
 the smallest and the greatest TTL seen per host.
 
-{% call marginfig('multirounds_ttl_range_unbiased__hist.svg', indexonly=True) %}
+{% call marginfig('multirounds_ttl_range_unbiased__hist.svg', indexonly=True, width='100%') %}
 Histogram of TTL range between rounds of scans to the same host showing how much stable the routes are.
 {% endcall %}
 
@@ -31,7 +31,7 @@ We can plot `multirounds_range` in a histogram. Recap that `multirounds_range`
 is the range of TTLs, that means `rounds_ttl[:,:max] - rounds_ttl[:,:min]`; a quick
 histogram was shown before as `hist_biased`.
 
-{% call mainfig('multirounds_ttl_range_unbiased__hist.svg') %}
+{% call mainfig('multirounds_ttl_range_unbiased__hist.svg', width='100%') %}
 Histogram of TTL range between rounds of scans to the same host showing how much stable the routes are.
 
 The dataset does not include hosts scanned only once.
@@ -85,7 +85,7 @@ Back to the numbers, *what the hell do those peaks mean?*
 
 ## Analysis of the 3 secondary peaks
 
-{{ marginfig('multirounds_ttl_range_unbiased__hist.svg') }}
+{{ marginfig('multirounds_ttl_range_unbiased__hist.svg', width='100%') }}
 
 Let's ignore the peak at 0 (those are the stable routes). Why do we have
 3 secondary peaks?

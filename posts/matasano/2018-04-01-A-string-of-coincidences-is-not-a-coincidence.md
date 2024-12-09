@@ -274,7 +274,7 @@ of crafted strings.
 
 Here is the plot of the scores calculated by the different methods:
 
-{% call fullfig('scores_by_method.svg') %}
+{% call fullfig('scores_by_method.svg', width='100%') %}
 Scores by method. Notice how the element 170th gets the lower value in most cases indicating that the string is not random.
 {% endcall %}
 
