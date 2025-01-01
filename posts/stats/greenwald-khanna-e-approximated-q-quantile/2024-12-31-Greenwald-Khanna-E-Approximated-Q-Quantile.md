@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Greenwald-Khanna e-approximated q-quantile - a review"
-tags: [stats, quantile, rank, sublinear, DRAFT, HIDDEN]
+tags: [stats, quantile, rank, sublinear]
 inline_default_language: mathjax
 ---
 
@@ -17,7 +17,7 @@ the rank `r` will be at index `r`.
 
 But when `n` gets really large, it is unfeasible to store or sort *all* the observations.
 
-[Greenwald and Khanna (GK01)]({{ asset('quantiles-GK-algorithm.pdf') }})
+Greenwald and Khanna
  developed a data structure that solves
 this but with a trade off: we can
 answer which value is at rank `r` within *certain error*.
@@ -39,6 +39,7 @@ implementation.
 
 TL;DR -> [python implementation in cryptonita](https://github.com/cryptonitas/cryptonita/blob/93688906dbaf781618d86e17e0a156dfe806fbc5/cryptonita/stats/distribution_summary.py)
 <!--more-->
+Paper -> [Greenwald and Khanna (GK01)]({{ asset('quantiles-GK-algorithm.pdf') }})
 
 ## Square one: what is wrong with using a sorted array?
 
